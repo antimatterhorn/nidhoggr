@@ -1,1 +1,0 @@
-PYB11Generator_add_module(test_np_array)
