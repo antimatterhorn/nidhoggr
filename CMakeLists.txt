@@ -1,11 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 project(ReactionDiffusion)
 
-set(CMAKE_CXX_STANDARD 11)
+# Set the path to the pyb11 executable
+set(PYB11GENERATOR_ROOT_DIR ${CMAKE_SOURCE_DIR}/extern/PYB11Generator)
+include(${PYB11GENERATOR_ROOT_DIR}/cmake/PYB11Generator.cmake)
 
 # Add the grid source file
-add_library(grid src/grid.cpp)
+add_subdirectory(src)
 
-# Add the executable, linking with the grid library
-add_executable(ReactionDiffusion src/main.cpp)
-target_link_libraries(ReactionDiffusion grid)
