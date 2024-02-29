@@ -5,6 +5,6 @@ project(ReactionDiffusion)
 set(PYB11GENERATOR_ROOT_DIR ${CMAKE_SOURCE_DIR}/extern/PYB11Generator)
 include(${PYB11GENERATOR_ROOT_DIR}/cmake/PYB11Generator.cmake)
 
-# Add the grid source file
+# Add the source files
 add_subdirectory(src)
 

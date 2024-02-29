@@ -1,1 +1,1 @@
-PYB11Generator_add_module(Grid)
+PYB11Generator_add_module(RDE)
