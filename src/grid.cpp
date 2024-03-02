@@ -8,23 +8,33 @@ class Grid {
 
 private:
     std::vector<std::vector<std::vector<double>>> xx;
+    std::vector<std::vector<double>> rho;
+    std::vector<std::vector<double>> maxC;
     int gsize_x;
     int gsize_y;
-    int nConc;
-    double A;
-    double D;
+    int nConc;      // number of concentrations
+    int nConn;      // number of connections
+    double A;       // reaction coefficient
+    double D;       // diffusion coefficient
 
 public:
     Grid(int n, int size_x, int size_y) : nConc(n), gsize_x(size_x), gsize_y(size_y),
-        xx(n, std::vector<std::vector<double>>(size_x, std::vector<double>(size_y, 0))) {}
+        xx(n, std::vector<std::vector<double>>(size_x, std::vector<double>(size_y, 0))),
+        rho(size_x, std::vector<double>(size_y, 0)),
+        maxC(size_x, std::vector<double>(size_y, 0)) {
+            //if (nConc %2 == 0)
+            if (nConc != 3)  // for now just deal with 3
+            {
+                //std::cout << "Need odd number of concentrations for this implementation." << std::endl;
+                std::cout << "Need 3 concentrations for this implementation." << std::endl;
+                std::exit(EXIT_FAILURE);
+            }
+            nConn = (n-1)<<1;
+            A = 0.2;
+            D = 0.7;
+        }
 
     void initialize() {
-        //if (nConc %2 == 0)
-        if (nConc != 3)  // for now just deal with 3
-        {
-            std::cout << "Need odd number of concentrations for this implementation." << std::endl;
-            std::exit(EXIT_FAILURE);
-        }
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> dis(0, nConc-1);
