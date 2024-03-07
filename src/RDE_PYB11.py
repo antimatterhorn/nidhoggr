@@ -10,6 +10,8 @@ class Grid:
         return
     def print(self):
         return
+    def getCell(self,i="int",j="int"):
+        return
     
     A = PYB11property("double", getter="getA", setter="setA", doc="reaction coefficient")
     D = PYB11property("double", getter="getD", setter="setD", doc="diffusion coefficient")
