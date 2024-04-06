@@ -1,1 +1,1 @@
-PYB11Generator_add_module(RDE)
+PYB11Generator_add_module(LinearAlgebra)
