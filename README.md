@@ -6,10 +6,11 @@ git submodule update --init --recursive
 
 mkdir build
 
-FEM/
+Nidhoggr/
 |-- src/
-|   |-- vector_math.cpp
-|   |-- vector_math_interface.cpp
+|   |-- vector_math.cc
+|   |-- vector_math.py
+|   |-- ...
 |-- tests/
 |-- build/
 
