@@ -11,4 +11,3 @@ include(${PYB11GENERATOR_ROOT_DIR}/cmake/PYB11Generator.cmake)
 
 # Add the source files
 add_subdirectory(src)
-

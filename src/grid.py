@@ -8,6 +8,9 @@ class Grid:
         return
     def pyinit3(self,nx="int",ny="int",nz="int",sx="double",sy="double",sz="double"):
         return
+    @PYB11pyname("state")
+    def getState(self,id="int"):
+        return
 
     nx = PYB11property("int", getter="getnx", doc="The number of x coords.")
     ny = PYB11property("int", getter="getny", doc="The number of y coords.")
