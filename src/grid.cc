@@ -6,6 +6,7 @@
 #include <cmath>
 #include "vector_math.cc"
 
+namespace Mesh {
 template <int dim>
 class Grid {
 private:
@@ -95,3 +96,4 @@ public:
         return std::any_cast<VectorMath::Vector<dim>>(getState(id)["position"]);
     }
 };
+}
