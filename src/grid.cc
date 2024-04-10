@@ -78,7 +78,20 @@ public:
     double getdy() const { return dy; }
     double getdz() const { return dz; }
 
-    std::map<std::string, std::any>& getStateVector(int i, int j, int k) {
-        return stateVectors[(k * ny + j) * nx + i];
+    // Getter method to access state vector of a cell by ID
+    std::map<std::string, std::any>& getState(int id) {
+        // it may be possible to simply access the id-th state vector, but maybe with parallelization
+        // this wouldn't work in the future. so i'm making this general
+        for (auto& stateVector : stateVectors) {
+            if (std::any_cast<int>(stateVector["id"]) == id) {
+                return stateVector;
+            }
+        }
+        throw std::out_of_range("Cell ID not found");
+    }
+
+    // Getter method to retrieve position of a cell by ID
+    VectorMath::Vector<dim> getPosition(int id) {
+        return std::any_cast<VectorMath::Vector<dim>>(getState(id)["position"]);
     }
 };
