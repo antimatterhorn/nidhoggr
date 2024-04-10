@@ -10,7 +10,6 @@ private:
     double dy; // Grid spacing in y-direction
     double dz; // Grid spacing in z-direction
 
-    // Array to store grid coordinates
     std::vector<double> coords;
 
 public:
@@ -35,7 +34,6 @@ public:
         initializeGrid();
     }
 
-    // Method to initialize grid coordinates
     void initializeGrid() {
         // Resize the grid coordinate array
         coords.resize(nx * ny * nz * dim);
@@ -53,7 +51,6 @@ public:
         }
     }
 
-    // Method to print grid coordinates (for debugging)
     void printGridCoordinates() {
         int idx = 0;
         for (int k = 0; k < nz; ++k) {
@@ -71,7 +68,6 @@ public:
         }
     }
 
-    // Getter methods for grid properties
     int getnx() const { return nx; }
     int getny() const { return ny; }
     int getnz() const { return nz; }

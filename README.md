@@ -1,5 +1,6 @@
 # nidhoggr
-`
+
+```bash
 git pull
 git submodule update --init --recursive
 
@@ -15,4 +16,5 @@ FEM/
 inside build directory->
 cmake ..
 make
-`
+
+```
