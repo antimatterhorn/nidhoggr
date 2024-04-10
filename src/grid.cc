@@ -56,7 +56,7 @@ public:
             stateVector["id"] = idx++;
         }
 
-        // Compute and store the position of each cell as the center
+        // Compute and store the position of each cell center
         for (int k = 0; k < nz; ++k) {
             for (int j = 0; j < ny; ++j) {
                 for (int i = 0; i < nx; ++i) {
@@ -64,7 +64,8 @@ public:
                     for (int d = 0; d < dim; ++d) {
                         position.values[d] = (d == 0 ? i * dx + 0.5 * dx : (d == 1 ? j * dy + 0.5 * dy : k * dz + 0.5 * dz));
                     }
-                    stateVectors[(k * ny + j) * nx + i]["position"] = position;
+                    idx = (k * ny + j) * nx + i;
+                    stateVectors[idx]["position"] = position;
                 }
             }
         }
