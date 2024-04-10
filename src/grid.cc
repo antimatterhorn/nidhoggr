@@ -1,6 +1,6 @@
 #include <vector>
 
-template <int Dim>
+template <int dim>
 class Grid {
 private:
     int nx; // Number of grid cells in x-direction
@@ -38,15 +38,15 @@ public:
     // Method to initialize grid coordinates
     void initializeGrid() {
         // Resize the grid coordinate array
-        coords.resize(nx * ny * nz * Dim);
+        coords.resize(nx * ny * nz * dim);
 
         // Loop through grid cells and assign coordinates
         for (int k = 0; k < nz; ++k) {
             for (int j = 0; j < ny; ++j) {
                 for (int i = 0; i < nx; ++i) {
                     // Compute coordinates of the grid cell center
-                    for (int d = 0; d < Dim; ++d) {
-                        coords[((k * ny + j) * nx + i) * Dim + d] = (d == 0 ? i * dx + 0.5 * dx : (d == 1 ? j * dy + 0.5 * dy : k * dz + 0.5 * dz));
+                    for (int d = 0; d < dim; ++d) {
+                        coords[((k * ny + j) * nx + i) * dim + d] = (d == 0 ? i * dx + 0.5 * dx : (d == 1 ? j * dy + 0.5 * dy : k * dz + 0.5 * dz));
                     }
                 }
             }
@@ -60,8 +60,8 @@ public:
             for (int j = 0; j < ny; ++j) {
                 for (int i = 0; i < nx; ++i) {
                     std::cout << "(";
-                    for (int d = 0; d < Dim; ++d) {
-                        std::cout << coords[idx++] << (d < Dim - 1 ? ", " : "");
+                    for (int d = 0; d < dim; ++d) {
+                        std::cout << coords[idx++] << (d < dim - 1 ? ", " : "");
                     }
                     std::cout << ") ";
                 }
