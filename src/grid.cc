@@ -1,4 +1,10 @@
 #include <vector>
+#include <iostream>
+#include <any>
+#include <map>
+#include <string>
+#include <cmath>
+#include "vector_math.cc"
 
 template <int dim>
 class Grid {
@@ -10,7 +16,7 @@ private:
     double dy; // Grid spacing in y-direction
     double dz; // Grid spacing in z-direction
 
-    std::vector<double> coords;
+    std::vector<std::map<std::string, std::any>> stateVectors;
 
 public:
     // Constructor for 1D grid
@@ -34,37 +40,33 @@ public:
         initializeGrid();
     }
 
-    void initializeGrid() {
-        // Resize the grid coordinate array
-        coords.resize(nx * ny * nz * dim);
-
-        // Loop through grid cells and assign coordinates
-        for (int k = 0; k < nz; ++k) {
-            for (int j = 0; j < ny; ++j) {
-                for (int i = 0; i < nx; ++i) {
-                    // Compute coordinates of the grid cell center
-                    for (int d = 0; d < dim; ++d) {
-                        coords[((k * ny + j) * nx + i) * dim + d] = (d == 0 ? i * dx + 0.5 * dx : (d == 1 ? j * dy + 0.5 * dy : k * dz + 0.5 * dz));
-                    }
-                }
-            }
+    // Method to add a new variable to the state vector
+    template<typename T>
+    void addStateVariable(const std::string& name, T initialValue) {
+        for (auto& stateVector : stateVectors) {
+            stateVector[name] = initialValue;
         }
     }
 
-    void printGridCoordinates() {
+    void initializeGrid() {
+        // Resize the state vectors for each cell
+        stateVectors.resize(nx * ny * nz);
         int idx = 0;
+        for (auto& stateVector : stateVectors) {
+            stateVector["id"] = idx++;
+        }
+
+        // Compute and store the position of each cell as the center
         for (int k = 0; k < nz; ++k) {
             for (int j = 0; j < ny; ++j) {
                 for (int i = 0; i < nx; ++i) {
-                    std::cout << "(";
+                    VectorMath::Vector<dim> position;
                     for (int d = 0; d < dim; ++d) {
-                        std::cout << coords[idx++] << (d < dim - 1 ? ", " : "");
+                        position.values[d] = (d == 0 ? i * dx + 0.5 * dx : (d == 1 ? j * dy + 0.5 * dy : k * dz + 0.5 * dz));
                     }
-                    std::cout << ") ";
+                    stateVectors[(k * ny + j) * nx + i]["position"] = position;
                 }
-                std::cout << std::endl;
             }
-            std::cout << std::endl;
         }
     }
 
@@ -74,4 +76,8 @@ public:
     double getdx() const { return dx; }
     double getdy() const { return dy; }
     double getdz() const { return dz; }
+
+    std::map<std::string, std::any>& getStateVector(int i, int j, int k) {
+        return stateVectors[(k * ny + j) * nx + i];
+    }
 };
