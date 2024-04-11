@@ -21,8 +21,8 @@ private:
     double dy; // Grid spacing in y-direction
     double dz; // Grid spacing in z-direction
 
-    std::vector<std::map<std::string, std::any>> stateVectors;
-
+    //std::vector<std::map<std::string, std::any>> stateVectors;
+    std::vector<VectorMath::Vector<dim>> positions;
 public:
     // Constructor for 1D grid
     Grid(int num_cells_x, double spacing_x) 
@@ -46,20 +46,21 @@ public:
     }
 
     // Method to add a new variable to the state vector
-    template<typename T>
-    void addStateVariable(const std::string& name, T initialValue) {
-        for (auto& stateVector : stateVectors) {
-            stateVector[name] = initialValue;
-        }
-    }
+    // template<typename T>
+    // void addStateVariable(const std::string& name, T initialValue) {
+    //     for (auto& stateVector : stateVectors) {
+    //         stateVector[name] = initialValue;
+    //     }
+    // }
 
     void initializeGrid() {
         // Resize the state vectors for each cell
-        stateVectors.resize(nx * ny * nz);
+        //stateVectors.resize(nx * ny * nz);
+        positions.resize(nx*ny*nz);
         int idx = 0;
-        for (auto& stateVector : stateVectors) {
-            stateVector["id"] = idx++;
-        }
+        // for (auto& stateVector : stateVectors) {
+        //     stateVector["id"] = idx++;
+        // }
 
         // Compute and store the position of each cell center
         for (int k = 0; k < nz; ++k) {
@@ -70,7 +71,7 @@ public:
                         position.values[d] = (d == 0 ? i * dx + 0.5 * dx : (d == 1 ? j * dy + 0.5 * dy : k * dz + 0.5 * dz));
                     }
                     idx = (k * ny + j) * nx + i;
-                    stateVectors[idx]["position"] = position;
+                    positions[idx] = position;
                 }
             }
         }
@@ -83,6 +84,11 @@ public:
     double getdy() const { return dy; }
     double getdz() const { return dz; }
 
+    std::vector<VectorMath::Vector<dim>> getPositions() const { return positions; }
+    VectorMath::Vector<dim> getPosition(int id){
+        return positions[id];
+    }
+/*
     // Getter method to access state vector of a cell by ID
     std::map<std::string, std::any>& getStateVector(int id) {
         // it may be possible to simply access the id-th state vector, but maybe with parallelization
@@ -121,5 +127,6 @@ public:
     VectorMath::Vector<dim> getPosition(int id) {
         return std::any_cast<VectorMath::Vector<dim>>(getState(id)["position"]);
     }
+*/
 };
 }

@@ -8,8 +8,14 @@ class Grid:
         return
     def pyinit3(self,nx="int",ny="int",nz="int",sx="double",sy="double",sz="double"):
         return
-    @PYB11pyname("state")
-    def getState(self,id="int"):
+    # @PYB11pyname("state")
+    # def getState(self,id="int"):
+    #     return
+    # @PYB11pyname("position")
+    # def getPosition(self,id="int"):
+    #     return
+    @PYB11pyname("positions")
+    def getPositions(self):
         return
     @PYB11pyname("position")
     def getPosition(self,id="int"):
