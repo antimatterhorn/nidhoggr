@@ -5,9 +5,10 @@
 #include <string>
 #include <cmath>
 #include "vector_math.cc"
-#include <pybind11/pybind11.h>  
-#include <pybind11/stl.h>       
-//#include <pybind11/any.h>   this header seems to be missing from pybind11 but is req'd  
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
+#include <pybind11/functional.h>
+#include <pybind11/complex.h>
 
 namespace Mesh {
 template <int dim>
@@ -83,7 +84,7 @@ public:
     double getdz() const { return dz; }
 
     // Getter method to access state vector of a cell by ID
-    std::map<std::string, std::any>& getState(int id) {
+    std::map<std::string, std::any>& getStateVector(int id) {
         // it may be possible to simply access the id-th state vector, but maybe with parallelization
         // this wouldn't work in the future. so i'm making this general
         for (auto& stateVector : stateVectors) {
@@ -92,6 +93,28 @@ public:
             }
         }
         throw std::out_of_range("Cell ID not found");
+    }
+
+    // Getter method to access state vector of a cell by ID
+    py::dict getState(int id) {
+        for (auto& stateVector : stateVectors) {
+            auto it = stateVector.find("id");
+            if (it != stateVector.end() && std::any_cast<int>(it->second) == id)
+                return convertStateVectorToDict(stateVector); // Convert and return state vector
+        }
+
+        // If ID not found, throw an exception
+        throw std::out_of_range("Cell ID not found");
+    }
+
+    // Function to convert the state vector (std::map) to a Python dictionary
+    py::dict convertStateVectorToDict(const std::map<std::string, std::any>& stateVector) {
+        py::dict py_state_vector;
+        for (auto const& entry : stateVector) {
+            py::str key = py::str(entry.first);
+            py_state_vector[key] = pybind11::cast(entry.second);  // Assuming this still works
+        }
+        return py_state_vector;
     }
 
     // Getter method to retrieve position of a cell by ID
