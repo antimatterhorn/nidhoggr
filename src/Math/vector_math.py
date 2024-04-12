@@ -56,3 +56,19 @@ def quadCentroid(p1="Vector2D",p2="Vector2D",p3="Vector2D",p4="Vector2D"):
 
 def quadArea(p1="Vector2D",p2="Vector2D",p3="Vector2D",p4="Vector2D"):
     return
+
+Vector1d = PYB11TemplateClass(Vector,
+                              template_parameters = ("1"),
+                              cppname = "Vector<1>",
+                              pyname = "Vector1d",
+                              docext = " (1D).")
+Vector2d = PYB11TemplateClass(Vector,
+                              template_parameters = ("2"),
+                              cppname = "Vector<2>",
+                              pyname = "Vector2d",
+                              docext = " (2D).")
+Vector3d = PYB11TemplateClass(Vector,
+                              template_parameters = ("3"),
+                              cppname = "Vector<3>",
+                              pyname = "Vector3d",
+                              docext = " (3D).") 
