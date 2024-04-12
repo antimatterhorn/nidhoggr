@@ -6,9 +6,9 @@ class Field:
         return
 
     name = PYB11property("std::string", getter="getName", doc="The name of the field.")
+    fieldtype = PYB11property("std::string", getter="getType", doc="The datatype of the field.")
 
-# VectorField = PYB11TemplateClass(Field,
-#                               template_parameters = ("Vector<dim>"),
-#                               cppname = "Field<Vector<dim>>",
-#                               pyname = "VectorField",
-#                               docext = " (Vector).")
+@PYB11template("typename T")
+class FieldList:
+    def pyinit(self,field="Field<%(typename T)s>",numFields="int"):
+        return

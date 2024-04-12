@@ -14,12 +14,12 @@ class Grid:
     # @PYB11pyname("position")
     # def getPosition(self,id="int"):
     #     return
-    @PYB11pyname("positions")
-    def getPositions(self):
-        return
-    @PYB11pyname("position")
-    def getPosition(self,id="int"):
-        return
+    # @PYB11pyname("positions")
+    # def getPositions(self):
+    #     return
+    # @PYB11pyname("position")
+    # def getPosition(self,id="int"):
+    #     return
 
     nx = PYB11property("int", getter="getnx", doc="The number of x coords.")
     ny = PYB11property("int", getter="getny", doc="The number of y coords.")

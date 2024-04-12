@@ -5,6 +5,7 @@
 #include <string>
 #include <cmath>
 #include "../Math/vector_math.cc"
+#include "../Field/field.cc"
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/functional.h>
@@ -22,18 +23,21 @@ private:
     double dz; // Grid spacing in z-direction
 
     //std::vector<std::map<std::string, std::any>> stateVectors;
-    std::vector<VectorMath::Vector<dim>> positions;
+    //std::vector<VectorMath::Vector<dim>> positions;
+    FieldList<VectorMath::Vector<dim>> positions;
 public:
     // Constructor for 1D grid
     Grid(int num_cells_x, double spacing_x) 
         : nx(num_cells_x), ny(1), nz(1), dx(spacing_x), dy(0.0), dz(0.0) {
         // Initialize the grid coordinates
+        positions = FieldList<VectorMath::Vector<dim>>(Field<VectorMath::Vector<dim>>("position"),nx);
         initializeGrid();
     }
 
     // Constructor for 2D grid
     Grid(int num_cells_x, int num_cells_y, double spacing_x, double spacing_y) 
         : nx(num_cells_x), ny(num_cells_y), nz(1), dx(spacing_x), dy(spacing_y), dz(0.0) {
+        positions = FieldList<VectorMath::Vector<dim>>(Field<VectorMath::Vector<dim>>("position"),nx*ny);
         // Initialize the grid coordinates
         initializeGrid();
     }
@@ -41,6 +45,7 @@ public:
     // Constructor for 3D grid
     Grid(int num_cells_x, int num_cells_y, int num_cells_z, double spacing_x, double spacing_y, double spacing_z) 
         : nx(num_cells_x), ny(num_cells_y), nz(num_cells_z), dx(spacing_x), dy(spacing_y), dz(spacing_z) {
+        positions = FieldList<VectorMath::Vector<dim>>(Field<VectorMath::Vector<dim>>("position"),nx*ny*nz);
         // Initialize the grid coordinates
         initializeGrid();
     }
@@ -56,7 +61,7 @@ public:
     void initializeGrid() {
         // Resize the state vectors for each cell
         //stateVectors.resize(nx * ny * nz);
-        positions.resize(nx*ny*nz);
+        
         int idx = 0;
         // for (auto& stateVector : stateVectors) {
         //     stateVector["id"] = idx++;
