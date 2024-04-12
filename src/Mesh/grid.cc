@@ -1,9 +1,5 @@
 #include <vector>
-#include <iostream>
-#include <any>
-#include <map>
 #include <string>
-#include <cmath>
 #include "../Math/vector_math.cc"
 #include "../Field/field.cc"
 #include <pybind11/pybind11.h>
