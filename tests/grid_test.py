@@ -1,4 +1,9 @@
+import sys
+sys.path.append("Math")
+sys.path.append("Mesh")
+
 from Mesh import *
+from LinearAlgebra import *
 
 myGrid = Grid3d(3,3,3,0.1,0.1,0.1)
 

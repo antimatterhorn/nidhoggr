@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 #include <cmath>
-#include "vector_math.cc"
+#include "../Math/vector_math.cc"
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/functional.h>
