@@ -50,11 +50,18 @@ public:
         return fields.size();
     }
 
-    Field<T>& getField(size_t index) {
-        return fields[index];
-    }
+    const std::vector<Field<T>>& getFields() const { return fields; }
+
+    Field<T>& getField(size_t index) { return fields[index]; }
 
     Field<T>& operator[](size_t index) {
         return fields[index];
+    }
+
+    FieldList<T>& operator=(const FieldList<T>& other) {
+        if (this != &other) { // Avoid self-assignment
+            fields = other.fields;
+        }
+        return *this;
     }
 };

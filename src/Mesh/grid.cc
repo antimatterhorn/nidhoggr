@@ -71,9 +71,15 @@ public:
     double getdy() const { return dy; }
     double getdz() const { return dz; }
 
-    std::vector<VectorMath::Vector<dim>> getPositions() const { return positions; }
-    VectorMath::Vector<dim> getPosition(int id){
-        return positions[id];
+    std::vector<VectorMath::Vector<dim>> getPositions() {
+        std::vector<VectorMath::Vector<dim>> positionsVec;
+        for (const auto& field : positions.getFields()) {
+            positionsVec.push_back(field.getValue());
+        }
+        return positionsVec;
+    }
+    Field<VectorMath::Vector<dim>> getPosition(int id){
+        return positions.getField(id);
     }
 };
 }
