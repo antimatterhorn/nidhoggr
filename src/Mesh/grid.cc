@@ -22,8 +22,6 @@ private:
     double dy; // Grid spacing in y-direction
     double dz; // Grid spacing in z-direction
 
-    //std::vector<std::map<std::string, std::any>> stateVectors;
-    //std::vector<VectorMath::Vector<dim>> positions;
     FieldList<VectorMath::Vector<dim>> positions;
 public:
     // Constructor for 1D grid
@@ -47,22 +45,9 @@ public:
         initializeGrid();
     }
 
-    // Method to add a new variable to the state vector
-    // template<typename T>
-    // void addStateVariable(const std::string& name, T initialValue) {
-    //     for (auto& stateVector : stateVectors) {
-    //         stateVector[name] = initialValue;
-    //     }
-    // }
-
     void initializeGrid() {
-        // Resize the state vectors for each cell
-        //stateVectors.resize(nx * ny * nz);
         positions = FieldList<VectorMath::Vector<dim>>(Field<VectorMath::Vector<dim>>("position"),nx*ny*nz);
         int idx = 0;
-        // for (auto& stateVector : stateVectors) {
-        //     stateVector["id"] = idx++;
-        // }
 
         // Compute and store the position of each cell center
         for (int k = 0; k < nz; ++k) {
@@ -90,45 +75,5 @@ public:
     VectorMath::Vector<dim> getPosition(int id){
         return positions[id];
     }
-/*
-    // Getter method to access state vector of a cell by ID
-    std::map<std::string, std::any>& getStateVector(int id) {
-        // it may be possible to simply access the id-th state vector, but maybe with parallelization
-        // this wouldn't work in the future. so i'm making this general
-        for (auto& stateVector : stateVectors) {
-            if (std::any_cast<int>(stateVector["id"]) == id) {
-                return stateVector;
-            }
-        }
-        throw std::out_of_range("Cell ID not found");
-    }
-
-    // Getter method to access state vector of a cell by ID
-    py::dict getState(int id) {
-        for (auto& stateVector : stateVectors) {
-            auto it = stateVector.find("id");
-            if (it != stateVector.end() && std::any_cast<int>(it->second) == id)
-                return convertStateVectorToDict(stateVector); // Convert and return state vector
-        }
-
-        // If ID not found, throw an exception
-        throw std::out_of_range("Cell ID not found");
-    }
-
-    // Function to convert the state vector (std::map) to a Python dictionary
-    py::dict convertStateVectorToDict(const std::map<std::string, std::any>& stateVector) {
-        py::dict py_state_vector;
-        for (auto const& entry : stateVector) {
-            py::str key = py::str(entry.first);
-            py_state_vector[key] = pybind11::cast(entry.second);  // Assuming this still works
-        }
-        return py_state_vector;
-    }
-
-    // Getter method to retrieve position of a cell by ID
-    VectorMath::Vector<dim> getPosition(int id) {
-        return std::any_cast<VectorMath::Vector<dim>>(getState(id)["position"]);
-    }
-*/
 };
 }
