@@ -1,13 +1,21 @@
+#include "../Field/field.cc"
+#include "../Math/vector_math.cc"
+
 namespace Hydro {
 template <int dim>
 class HydroState {
 public:
-    double density;
-    std::array<double, dim> momentum;
-    double energy;
+    FieldList<double> density;
+    FieldList<VectorMath::Vector<dim>> momentum;
+    FieldList<double> specific_energy;
 
-    HydroState(double rho = 0.0, const std::array<double, dim>& mom = {}, double E = 0.0) 
-        : density(rho), momentum(mom), energy(E) {}
+    HydroState() {}
+
+    HydroState(int numNodes) {
+        density = FieldList<double>("density",numNodes);
+        momentum = FieldList<VectorMath::Vector<dim>>("momentum",numNodes);
+        specific_energy = FieldList<double>("specific_energy",numNodes);
+    }
 
     ~HydroState() {}
 };

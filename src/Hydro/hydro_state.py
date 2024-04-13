@@ -2,7 +2,9 @@ from PYB11Generator import *
 
 @PYB11template("dim")
 class HydroState:
-    def pyinit(self,rho="double",mom="std::array<double, %(dim)s>",E="double"):
+    def pyinit(self):
+        return
+    def pyinit1(self,numNodes="int"):
         return
 
 HydroState1d = PYB11TemplateClass(HydroState,
