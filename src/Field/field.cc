@@ -2,6 +2,13 @@
 #include <vector>
 #include <typeinfo>
 
+
+// Base class for all FieldList types
+class FieldListBase {
+public:
+    virtual ~FieldListBase() {}  // Make the base class polymorphic
+};
+
 /*
 template <typename T>
 class Field {
