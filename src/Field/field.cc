@@ -37,7 +37,7 @@ public:
 };
 */
 template <typename T>
-class FieldList {
+class FieldList : public FieldListBase {
 private:
     std::vector<T> fields;
     std::string name;
