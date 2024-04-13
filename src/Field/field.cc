@@ -62,4 +62,9 @@ public:
         }
         return *this;
     }
+
+    FieldList<T>& operator+(const T& other) {
+        addField(other);
+        return *this;
+    }
 };
