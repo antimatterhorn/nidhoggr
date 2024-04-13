@@ -20,6 +20,8 @@ class Grid:
     @PYB11pyname("position")
     def getPosition(self,id="int"):
         return
+    def setOrigin(self,origin="VectorMath::Vector<%(dim)s>"):
+        return
 
     nx = PYB11property("int", getter="getnx", doc="The number of x coords.")
     ny = PYB11property("int", getter="getny", doc="The number of y coords.")

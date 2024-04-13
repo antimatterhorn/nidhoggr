@@ -93,7 +93,26 @@ public:
         return dotProduct(other);
     }
 
+    Vector<dim> operator=(const Vector<dim>& other) {
+        if (this != &other) { // Avoid self-assignment
+            values = other.values;
+        }
+        return *this;
+    }
 
+    Vector<dim> operator-=(const Vector<dim>& other) {
+        for (int i = 0; i < dim; ++i) {
+            values[i] -= other.values[i];
+        }
+        return *this;
+    }
+
+    Vector<dim> operator+=(const Vector<dim>& other) {
+        for (int i = 0; i < dim; ++i) {
+            values[i] += other.values[i];
+        }
+        return *this;
+    }
 
     Vector<dim> operator/(const double other) const {
         return scalarProduct(1.0/other);

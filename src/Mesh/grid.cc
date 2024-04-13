@@ -60,6 +60,12 @@ public:
         }
     }
 
+    void setOrigin(VectorMath::Vector<dim> origin) {
+        for (int i = 0; i < positions.getSize(); ++i) {
+            positions[i] -= origin; // this is very not correct
+        }
+    }
+
     int getnx() const { return nx; }
     int getny() const { return ny; }
     int getnz() const { return nz; }
