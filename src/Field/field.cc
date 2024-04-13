@@ -7,35 +7,11 @@
 class FieldListBase {
 public:
     virtual ~FieldListBase() {}  // Make the base class polymorphic
+
+    virtual bool hasName() const = 0; 
+    virtual std::string getName() const = 0;
 };
 
-/*
-template <typename T>
-class Field {
-private:
-    T value;
-    std::string name;
-public:
-    Field() {}
-
-    Field(const std::string& fieldName)
-        : name(fieldName) {}
-
-    Field(const std::string& fieldName, const T& fieldValue)
-        : value(fieldValue), name(fieldName) {}
-    
-    ~Field() {}
-
-    Field& operator=(const T& newValue) {
-        value = newValue;
-        return *this;
-    }
-
-    T getValue() const { return value; }
-    std::string getName() const { return name; }
-    std::string getType() const { return typeid(value).name(); }
-};
-*/
 template <typename T>
 class FieldList : public FieldListBase {
 private:
@@ -74,4 +50,9 @@ public:
         addField(other);
         return *this;
     }
+
+    // Method to check if the FieldList has a name
+    bool hasName() const override { return !name.empty(); }
+
+    std::string getName() const override { return name; }
 };

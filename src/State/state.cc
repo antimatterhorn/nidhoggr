@@ -1,4 +1,5 @@
 #include <vector>
+#include <string>
 #include "../Field/field.cc" 
 
 class State {
@@ -29,13 +30,32 @@ public:
 
     std::vector<FieldListBase*> getFieldLists() { return fieldLists; }
 
-    template<typename T>
-    FieldList<T>& getFieldList(size_t index) {
+    FieldListBase* getFieldList(size_t index) {
         return fieldLists[index];
+    }
+
+    FieldListBase* getFieldList(const std::string& name) const {
+        for (FieldListBase* fieldList : fieldLists) {
+            if (fieldList->hasName() && fieldList->getName() == name) {
+                return fieldList;
+            }
+        }
+        return nullptr; // Return nullptr if no matching FieldList is found
     }
 
     size_t getFieldListCount() const {
         return fieldLists.size();
+    }
+
+    std::vector<std::string> fieldNames() const {
+        std::vector<std::string> names;
+        for (const auto& fieldList : fieldLists) {
+            // Check if the pointer is valid and the FieldList has a name
+            if (fieldList && fieldList->hasName()) {
+                names.push_back(fieldList->getName());
+            }
+        }
+        return names;
     }
 
     ~State() {
