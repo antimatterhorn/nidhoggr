@@ -1,9 +1,4 @@
-import sys
-sys.path.append("Math")
-sys.path.append("Field")
-
-from LinearAlgebra import *
-from Field import *
+from nidhoggr import *
 
 if __name__ == "__main__":
     vec1 = Vector3d(1.0,2.0,3.0)
