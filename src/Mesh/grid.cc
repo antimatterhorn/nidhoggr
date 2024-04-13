@@ -42,7 +42,7 @@ public:
     }
 
     void initializeGrid() {
-        positions = FieldList<VectorMath::Vector<dim>>(Field<VectorMath::Vector<dim>>("position"),nx*ny*nz);
+        positions = FieldList<VectorMath::Vector<dim>>("position",nx*ny*nz);
         int idx = 0;
 
         // Compute and store the position of each cell center
@@ -68,13 +68,9 @@ public:
     double getdz() const { return dz; }
 
     std::vector<VectorMath::Vector<dim>> getPositions() {
-        std::vector<VectorMath::Vector<dim>> positionsVec;
-        for (const auto& field : positions.getFields()) {
-            positionsVec.push_back(field.getValue());
-        }
-        return positionsVec;
+        return positions.getFields();
     }
-    Field<VectorMath::Vector<dim>> getPosition(int id){
+    VectorMath::Vector<dim> getPosition(int id){
         return positions.getField(id);
     }
 };
