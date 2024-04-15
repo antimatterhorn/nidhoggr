@@ -1,6 +1,6 @@
 #include <vector>
 #include <string>
-#include "../Field/field.cc" 
+#include "../DataBase/field.cc" 
 
 class State {
 private:
@@ -45,6 +45,10 @@ public:
 
     size_t getFieldListCount() const {
         return fieldLists.size();
+    }
+
+    size_t getNumNodes() const {
+        return fieldLists[0]->getSize();
     }
 
     std::vector<std::string> fieldNames() const {
