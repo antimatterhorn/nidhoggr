@@ -6,7 +6,6 @@ namespace Hydro {
 template <int dim>
 class Hydro {
 protected:
-    std::vector<FieldListBase*> hydroFieldLists;
     NodeList* nodeList;
 public:
     FieldList<double> density;
@@ -26,7 +25,5 @@ public:
     }
 
     virtual ~Hydro() {}
-
-    std::vector<FieldListBase*> getHydroFieldLists() { return hydroFieldLists; }
 };
 }
