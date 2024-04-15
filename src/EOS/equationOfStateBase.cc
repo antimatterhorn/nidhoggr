@@ -1,9 +1,9 @@
 #include <vector>
 
 // Base class for Equation of State
-class EquationOfStateBase {
+class EquationOfState {
 public:
-    virtual ~EquationOfStateBase() {}
+    virtual ~EquationOfState() {}
 
     virtual double computePressure(double density, double internalEnergy) const = 0;
 

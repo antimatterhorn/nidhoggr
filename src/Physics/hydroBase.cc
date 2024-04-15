@@ -27,6 +27,6 @@ public:
 
     virtual ~Hydro() {}
 
-    virtual std::vector<FieldListBase*> getHydroFieldLists() { return hydroFieldLists; }
+    std::vector<FieldListBase*> getHydroFieldLists() { return hydroFieldLists; }
 };
 }

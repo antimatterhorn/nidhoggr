@@ -1,6 +1,6 @@
 #include "equationOfStateBase.cc"
 
-class IdealGasEOS : public EquationOfStateBase {
+class IdealGasEOS : public EquationOfState {
 private:
     double gamma; 
 
