@@ -1,6 +1,12 @@
+
+#ifndef TENSORMATH_HH
+#define TENSORMATH_HH
+
 #include <string>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#include <vector>
+#include <array>
+#include <cmath>
+#include <algorithm>
 
 namespace TensorMath {
 template <int dim>
@@ -211,3 +217,5 @@ Tensor<dim> operator*(const double other, const Tensor<dim>& tens) {
     return tens*other;
 }
 }
+
+#endif // TENSORMATH_HH

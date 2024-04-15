@@ -1,4 +1,5 @@
-#include "equationOfStateBase.cc"
+#include "equationOfStateBase.hh"
+#include <cmath>
 
 class IdealGasEOS : public EquationOfState {
 private:

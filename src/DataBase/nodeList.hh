@@ -1,5 +1,9 @@
+#ifndef NODELIST_HH
+#define NODELIST_HH
+
 #include <vector>
 #include <string>
+#include "fieldList.hh"
 
 class NodeList {
 private:
@@ -66,3 +70,5 @@ public:
         }
     }
 };
+
+#endif // NODELIST_HH

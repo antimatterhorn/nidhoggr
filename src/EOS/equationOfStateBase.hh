@@ -1,3 +1,6 @@
+#ifndef EQUATIONOFSTATEBASE_HH
+#define EQUATIONOFSTATEBASE_HH
+
 #include <vector>
 
 // Base class for Equation of State
@@ -12,3 +15,4 @@ public:
     virtual double computeSoundSpeed(double density, double pressure) const = 0;
 };
 
+#endif // EQUATIONOFSTATEBASE_HH

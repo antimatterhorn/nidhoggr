@@ -1,9 +1,12 @@
-// vector_math.cpp
+
+#ifndef VECTORMATH_HH
+#define VECTORMATH_HH
 
 #include <vector>
 #include <string>
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#include <array>
+#include <cmath>
+#include <algorithm>
 
 namespace VectorMath {
 template <int dim>
@@ -229,5 +232,4 @@ Vector<dim> operator*(const double other, const Vector<dim>& vec) {
 }
 }
 
-
-
+#endif // VECTORMATH_HH

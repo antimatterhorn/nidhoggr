@@ -1,6 +1,6 @@
-#include "../DataBase/fieldList.cc"
-#include "../DataBase/nodeList.cc"
-#include "../Math/vector_math.cc"
+#include "../DataBase/fieldList.hh"
+#include "../DataBase/nodeList.hh"
+#include "../Math/vector_math.hh"
 
 namespace Hydro {
 template <int dim>

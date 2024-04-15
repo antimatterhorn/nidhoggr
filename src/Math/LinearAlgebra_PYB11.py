@@ -1,6 +1,6 @@
 from PYB11Generator import *
 PYB11namespaces = ["VectorMath","TensorMath"]
-PYB11includes = ['"vector_math.cc"','"tensor_math.cc"']
+PYB11includes = ['"vector_math.hh"','"tensor_math.hh"']
 
 from vector_math import *
 
