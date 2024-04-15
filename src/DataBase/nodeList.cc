@@ -1,29 +1,28 @@
 #include <vector>
 #include <string>
-#include "../DataBase/field.cc" 
 
-class State {
+class NodeList {
 private:
     std::vector<FieldListBase*> fieldLists;
 public:
-    State() {}
+    NodeList() {}
 
     void addFieldList(FieldListBase* fieldListPtr) {
         fieldLists.push_back(fieldListPtr);
     }
 
-    void addState(const State& other) {
+    void addNodeList(const NodeList& other) {
         fieldLists.insert(fieldLists.end(), other.fieldLists.begin(), other.fieldLists.end());
     }
 
-    State operator+(const State& other) const {
-        State newState = *this; 
-        newState.addState(other);
-        return newState;
+    NodeList operator+(const NodeList& other) const {
+        NodeList newNodeList = *this; 
+        newNodeList.addNodeList(other);
+        return newNodeList;
     }
 
-    State& operator+=(const State& other) {
-        addState(other);
+    NodeList& operator+=(const NodeList& other) {
+        addNodeList(other);
         return *this;
     }
 
@@ -61,7 +60,7 @@ public:
         return names;
     }
 
-    ~State() {
+    ~NodeList() {
         for (auto fieldList : fieldLists) {
             delete fieldList;
         }

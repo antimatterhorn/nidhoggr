@@ -1,4 +1,5 @@
-#include "../State/state.cc"
+#include "../DataBase/fieldList.cc"
+#include "../DataBase/nodeList.cc"
 #include "../Math/vector_math.cc"
 
 namespace Hydro {
@@ -6,7 +7,7 @@ template <int dim>
 class Hydro {
 protected:
     std::vector<FieldListBase*> hydroFieldLists;
-    State* state;
+    NodeList* nodeList;
 public:
     FieldList<double> density;
     FieldList<VectorMath::Vector<dim>> momentum;
@@ -14,14 +15,14 @@ public:
 
     Hydro() {}
 
-    Hydro(int numNodes, State* statePtr) : state(statePtr) {
+    Hydro(int numNodes, NodeList* nodeListPtr) : nodeList(nodeListPtr) {
         density = FieldList<double>("density",numNodes);
         momentum = FieldList<VectorMath::Vector<dim>>("momentum",numNodes);
         specific_energy = FieldList<double>("specific_energy",numNodes);
 
-        state->addFieldList(&density);
-        state->addFieldList(&momentum);
-        state->addFieldList(&specific_energy);
+        nodeList->addFieldList(&density);
+        nodeList->addFieldList(&momentum);
+        nodeList->addFieldList(&specific_energy);
     }
 
     virtual ~Hydro() {}

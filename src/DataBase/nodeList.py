@@ -1,5 +1,5 @@
 from PYB11Generator import *
 
-class State:
+class NodeList:
     def pyinit(self):
         return
