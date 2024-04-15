@@ -8,9 +8,8 @@ private:
 public:
     State() {}
 
-    template<typename T>
-    void addFieldList(const FieldList<T>& fieldList) {
-        fieldLists.push_back(fieldList);
+    void addFieldList(FieldListBase* fieldListPtr) {
+        fieldLists.push_back(fieldListPtr);
     }
 
     void addState(const State& other) {

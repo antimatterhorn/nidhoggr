@@ -1,30 +1,31 @@
-#include "../DataBase/field.cc"
+#include "../State/state.cc"
 #include "../Math/vector_math.cc"
 
 namespace Hydro {
 template <int dim>
-class HydroState {
-private:
+class Hydro {
+protected:
     std::vector<FieldListBase*> hydroFieldLists;
+    State* state;
 public:
     FieldList<double> density;
     FieldList<VectorMath::Vector<dim>> momentum;
     FieldList<double> specific_energy;
 
-    HydroState() {}
+    Hydro() {}
 
-    HydroState(int numNodes) {
+    Hydro(int numNodes, State* statePtr) : state(statePtr) {
         density = FieldList<double>("density",numNodes);
         momentum = FieldList<VectorMath::Vector<dim>>("momentum",numNodes);
         specific_energy = FieldList<double>("specific_energy",numNodes);
 
-        hydroFieldLists.push_back(&density);
-        hydroFieldLists.push_back(&momentum);
-        hydroFieldLists.push_back(&specific_energy);
+        state->addFieldList(&density);
+        state->addFieldList(&momentum);
+        state->addFieldList(&specific_energy);
     }
 
-    ~HydroState() {}
+    virtual ~Hydro() {}
 
-    std::vector<FieldListBase*> getHydroFieldLists() { return hydroFieldLists; }
+    virtual std::vector<FieldListBase*> getHydroFieldLists() { return hydroFieldLists; }
 };
 }
