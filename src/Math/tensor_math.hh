@@ -113,20 +113,6 @@ public:
         return !result;
     }
 
-
-    // Getter methods for individual components
-    /*
-    components[0][0]: xx component
-    components[0][1]: xy component
-    components[0][2]: xz component
-    components[1][0]: yx component
-    components[1][1]: yy component
-    components[1][2]: yz component
-    components[2][0]: zx component
-    components[2][1]: zy component
-    components[2][2]: zz component     
-    */
-
     double xx() const {
         return components[0][0];
     }

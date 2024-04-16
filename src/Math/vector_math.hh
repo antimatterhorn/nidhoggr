@@ -18,9 +18,7 @@ public:
     // Constructors
     Vector() {
         // Initialize values array based on the dimension
-        for (int i = 0; i < dim; ++i) {
-            values[i] = 0.0;
-        }
+        for (int i = 0; i < dim; ++i) { values[i] = 0.0; }
     }
 
     // Constructor with initializer list
@@ -66,7 +64,7 @@ public:
         return result;
     }
 
-    Vector<3> crossProduct(const Vector<dim>& other) const {
+    Vector<3> crossProduct(const Vector<3>& other) const {
         Vector<3> result = {
             values[1] * other.values[2] - values[2] * other.values[1],
             values[2] * other.values[0] - values[0] * other.values[2],

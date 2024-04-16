@@ -15,8 +15,8 @@ public:
     Hydro() {}
 
     Hydro(int numNodes, NodeList* nodeListPtr) : nodeList(nodeListPtr) {
-        density = FieldList<double>("density",numNodes);
-        momentum = FieldList<VectorMath::Vector<dim>>("momentum",numNodes);
+        density         = FieldList<double>("density",numNodes);
+        momentum        = FieldList<VectorMath::Vector<dim>>("momentum",numNodes);
         specific_energy = FieldList<double>("specific_energy",numNodes);
 
         nodeList->addFieldList(&density);
