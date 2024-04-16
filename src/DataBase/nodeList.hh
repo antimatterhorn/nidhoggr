@@ -11,6 +11,12 @@ private:
 public:
     NodeList() {}
 
+    NodeList(int numNodes) {
+        FieldList<int> ids("id",numNodes);
+        for (int i=0; i<numNodes;++i) { ids[i] = i; }
+        addFieldList(&ids);
+    }
+
     void addFieldList(FieldListBase* fieldListPtr) {
         fieldLists.push_back(fieldListPtr);
     }
