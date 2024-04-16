@@ -22,4 +22,6 @@ public:
     virtual double computeSoundSpeed(double density, double pressure) const override {
         return std::sqrt(gamma * pressure / density);
     }
+
+    double getGamma() const { return gamma; }
 };
