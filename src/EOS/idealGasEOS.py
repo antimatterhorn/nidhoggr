@@ -1,7 +1,7 @@
 from PYB11Generator import *
 
 class IdealGasEOS:
-    def pyinit(self,specificHeatRatio="double"):
+    def pyinit(self,specificHeatRatio="double",constants="PhysicalConstants&"):
         return
     def computePressure(self,density="double",internalEnergy="double"):
         return

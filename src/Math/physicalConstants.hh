@@ -23,6 +23,7 @@ private:
     const double Sigma;
     const double BlackBody;
     const double Planck;
+    const double EpsilonZero;
 
     // The reference MKS data we base our values on.
     const double mpMKS =     1.67262192369e-27;//1.672621777  // kg
@@ -35,6 +36,7 @@ private:
     const double NAvogadro = 6.02214076e23;//6.02214129   // mol^-1
     const double StefanBoltzmannMKS = 5.670374419e-8;//5.67   // W/m^2/K^4
     const double PlanckMKS = 6.62607015e-34; // J*s
+    const double EpsilonZeroMKS = 8.85418782e-12; // C^2*s^2/kg/m^3
 
 public:
     PhysicalConstants(const double unitLm,
@@ -59,7 +61,8 @@ public:
         UnitMassDensity(unitMkg/(unitLm*unitLm*unitLm)),
         Sigma(StefanBoltzmannMKS*unitTeK*unitTeK*unitTeK*unitTeK/unitMkg*unitTsec*unitTsec*unitTsec),
         BlackBody(4*StefanBoltzmannMKS*unitTeK*unitTeK*unitTeK*unitTeK/cMKS*unitTsec*unitTsec*unitLm/unitMkg),
-        Planck(PlanckMKS*unitTsec/(unitMkg*unitLm*unitLm)) {}
+        Planck(PlanckMKS*unitTsec/(unitMkg*unitLm*unitLm)),
+        EpsilonZero(EpsilonZeroMKS*pow(unitLm,3.0)*unitMkg/(pow(unitTsec,2.0)*pow(unitCcou,2.0))) {}
 
     // The fundamental independent quantities.
     double unitLengthMeters() const { return mUnitLm; }
@@ -82,6 +85,7 @@ public:
     double blackBodyConstant() const { return BlackBody; }
     double planckConstant() const { return Planck; }
     double unitEnergyJ() const { return UnitEnergyJ; }
+    double epsilonZero() const { return EpsilonZero; }
 
 };
 

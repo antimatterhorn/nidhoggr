@@ -23,3 +23,4 @@ class PhysicalConstants:
     blackBodyConstant = PYB11property("double", getter="blackBodyConstant", doc="blackBodyConstant")
     planckConstant = PYB11property("double", getter="planckConstant", doc="planckConstant")
     unitEnergyJ = PYB11property("double", getter="unitEnergyJ", doc="unitEnergyJ")
+    epsilonZero = PYB11property("double", getter="epsilonZero", doc="epsilonZero")

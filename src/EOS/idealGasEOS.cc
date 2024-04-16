@@ -1,4 +1,5 @@
 #include "equationOfStateBase.hh"
+#include "../Math/physicalConstants.hh"
 #include <cmath>
 
 class IdealGasEOS : public EquationOfState {
@@ -6,7 +7,7 @@ private:
     double gamma; 
 
 public:
-    IdealGasEOS(double specificHeatRatio) : gamma(specificHeatRatio) {}
+    IdealGasEOS(double specificHeatRatio, PhysicalConstants& constants) : EquationOfState(constants), gamma(specificHeatRatio) {}
 
     // Method to compute pressure given density and internal energy
     virtual double computePressure(double density, double internalEnergy) const override {

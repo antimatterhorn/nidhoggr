@@ -2,10 +2,13 @@
 #define EQUATIONOFSTATEBASE_HH
 
 #include <vector>
+#include "../Math/physicalConstants.hh"
 
 // Base class for Equation of State
 class EquationOfState {
 public:
+    EquationOfState(PhysicalConstants& constants) {}
+    
     virtual ~EquationOfState() {}
 
     virtual double computePressure(double density, double internalEnergy) const = 0;
