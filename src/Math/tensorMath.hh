@@ -8,7 +8,7 @@
 #include <cmath>
 #include <algorithm>
 
-namespace TensorMath {
+namespace GeoMath {
 template <int dim>
 class Tensor {
 public:

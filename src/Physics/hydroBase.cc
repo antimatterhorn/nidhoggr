@@ -1,6 +1,6 @@
 #include "../DataBase/fieldList.hh"
 #include "../DataBase/nodeList.hh"
-#include "../Math/vector_math.hh"
+#include "../Math/vectorMath.hh"
 
 namespace Hydro {
 template <int dim>
@@ -9,7 +9,7 @@ protected:
     NodeList* nodeList;
 public:
     FieldList<double> density;
-    FieldList<VectorMath::Vector<dim>> momentum;
+    FieldList<GeoMath::Vector<dim>> momentum;
     FieldList<double> specific_energy;
 
     Hydro() {}
@@ -17,7 +17,7 @@ public:
     Hydro(NodeList* nodeListPtr) : nodeList(nodeListPtr) {
         int numNodes = nodeList->getNumNodes();
         density         = FieldList<double>("density",numNodes);
-        momentum        = FieldList<VectorMath::Vector<dim>>("momentum",numNodes);
+        momentum        = FieldList<GeoMath::Vector<dim>>("momentum",numNodes);
         specific_energy = FieldList<double>("specific_energy",numNodes);
 
         nodeList->addFieldList(&density);

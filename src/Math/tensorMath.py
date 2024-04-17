@@ -45,3 +45,19 @@ class Tensor:
     zz = PYB11property("double", getter="zz", doc="The zz tensor component.")
 
     determinant = PYB11property("double", getter="determinant", doc="The determinant of the tensor.")
+
+Tensor1d = PYB11TemplateClass(Tensor,
+                              template_parameters = ("1"),
+                              cppname = "Tensor<1>",
+                              pyname = "Tensor1d",
+                              docext = " (1D).")
+Tensor2d = PYB11TemplateClass(Tensor,
+                              template_parameters = ("2"),
+                              cppname = "Tensor<2>",
+                              pyname = "Tensor2d",
+                              docext = " (2D).")
+Tensor3d = PYB11TemplateClass(Tensor,
+                              template_parameters = ("3"),
+                              cppname = "Tensor<3>",
+                              pyname = "Tensor3d",
+                              docext = " (3D).") 
