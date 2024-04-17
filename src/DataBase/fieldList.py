@@ -6,11 +6,27 @@ class FieldList:
         return
     def addField(self,field="%(typename T)s"):
         return
-    @PYB11returnpolicy("reference_internal")
-    @PYB11implementation("[](T& self, int i) { const int n = self.size(); if (i >= n) throw py::index_error(); return &self[(i %% n + n) %% n]; }")
-    def __call__(self):
-        "Index into a Field"
-        #return "%(Value)s&"
-        return
     
     size = PYB11property("int", getter="getSize", doc="The size of the FieldList.")
+    name = PYB11property("std::string", getter="getName", doc="The name of the FieldList.")
+
+FieldListofInt = PYB11TemplateClass(FieldList,
+                              template_parameters = ("int"),
+                              cppname = "FieldList<int>",
+                              pyname = "FieldListofInt",
+                              docext = " (int).")
+FieldListofDouble = PYB11TemplateClass(FieldList,
+                              template_parameters = ("double"),
+                              cppname = "FieldList<double>",
+                              pyname = "FieldListofDouble",
+                              docext = " (double).")
+FieldListofFloat = PYB11TemplateClass(FieldList,
+                              template_parameters = ("float"),
+                              cppname = "FieldList<float>",
+                              pyname = "FieldListofFloat",
+                              docext = " (float).")
+FieldListofString = PYB11TemplateClass(FieldList,
+                              template_parameters = ("std::string"),
+                              cppname = "FieldList<std::string>",
+                              pyname = "FieldListofString",
+                              docext = " (std::string).")
