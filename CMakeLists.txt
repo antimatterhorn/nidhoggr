@@ -12,6 +12,7 @@ include(${PYB11GENERATOR_ROOT_DIR}/cmake/PYB11Generator.cmake)
 # Add the source files
 add_subdirectory(src/Math)
 add_subdirectory(src/DataBase)
+add_subdirectory(src/Integrator)
 add_subdirectory(src/Mesh)
 add_subdirectory(src/EOS)
 add_subdirectory(src/State)

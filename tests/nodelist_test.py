@@ -9,6 +9,7 @@ if __name__ == "__main__":
     myFieldList.addField(b)
     print(myFieldList.name)
 
-    #myNodeList = NodeList(2)
-    #myNodeList.addFieldList(myFieldList) not properly bound yet
-    #print(myNodeList.numNodes)
+    myNodeList = NodeList(2)
+    #myNodeList.addFieldListofDouble(myFieldList)
+    print(myNodeList.numNodes)
+    print(myNodeList.fieldNames)
