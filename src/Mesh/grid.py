@@ -14,9 +14,9 @@ class Grid:
     # @PYB11pyname("position")
     # def getPosition(self,id="int"):
     #     return
-    @PYB11pyname("positions")
-    def getPositions(self):
-        return
+    # @PYB11pyname("positions")
+    # def getPositions(self):
+    #     return
     @PYB11pyname("position")
     def getPosition(self,id="int"):
         return

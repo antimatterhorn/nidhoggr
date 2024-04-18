@@ -22,7 +22,7 @@ public:
 
     // Method to compute internal energy given density and pressure
     virtual double computeInternalEnergy(double density, double pressure) const override {
-        return 0; // fix this later
+        return 0; // need some kind of error that indicates this is not supported
     }
 
     // Method to compute sound speed given density and pressure
@@ -31,4 +31,6 @@ public:
     }
 
     double getGamma() const { return gamma; }
+    double getKappa() const { return kappa; }
+    double getIndex() const { return index; }
 };

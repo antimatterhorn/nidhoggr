@@ -69,11 +69,11 @@ public:
     double getdy() const { return dy; }
     double getdz() const { return dz; }
 
-    std::vector<GeoMath::Vector<dim>> getPositions() {
-        return positions.getFields();
-    }
+    // std::vector<GeoMath::Vector<dim>> getPositions() {
+    //     return positions.getFields();
+    // }
     GeoMath::Vector<dim> getPosition(int id){
-        return positions.getField(id);
+        return positions[id];
     }
 };
 }

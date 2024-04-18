@@ -11,3 +11,5 @@ class PolytropicEOS:
         return
     
     gamma = PYB11property("double", getter="getGamma", doc="Specific heat ratio.")
+    kappa = PYB11property("double", getter="getKappa", doc="Polytropic constant.")
+    index = PYB11property("double", getter="getIndex", doc="Polytropic index.")
