@@ -1,4 +1,4 @@
-#include "../DataBase/fieldList.hh"
+#include "../DataBase/field.hh"
 #include "../DataBase/nodeList.hh"
 #include "../Math/vectorMath.hh"
 
@@ -8,21 +8,21 @@ class Hydro {
 protected:
     NodeList* nodeList;
 public:
-    FieldList<double> density;
-    FieldList<GeoMath::Vector<dim>> momentum;
-    FieldList<double> specific_energy;
+    Field<double> density;
+    Field<GeoMath::Vector<dim>> momentum;
+    Field<double> specific_energy;
 
     Hydro() {}
 
     Hydro(NodeList* nodeListPtr) : nodeList(nodeListPtr) {
         int numNodes = nodeList->getNumNodes();
-        density         = FieldList<double>("density",numNodes);
-        momentum        = FieldList<GeoMath::Vector<dim>>("momentum",numNodes);
-        specific_energy = FieldList<double>("specific_energy",numNodes);
+        density         = Field<double>("density",numNodes);
+        momentum        = Field<GeoMath::Vector<dim>>("momentum",numNodes);
+        specific_energy = Field<double>("specific_energy",numNodes);
 
-        nodeList->addFieldList(&density);
-        nodeList->addFieldList(&momentum);
-        nodeList->addFieldList(&specific_energy);
+        nodeList->addField(&density);
+        nodeList->addField(&momentum);
+        nodeList->addField(&specific_energy);
     }
 
     virtual ~Hydro() {}

@@ -1,7 +1,7 @@
 #include <vector>
 #include <string>
 #include "../Math/vectorMath.hh"
-#include "../DataBase/fieldList.hh"
+#include "../DataBase/field.hh"
 
 namespace Mesh {
 template <int dim>
@@ -14,7 +14,7 @@ private:
     double dy; // Grid spacing in y-direction
     double dz; // Grid spacing in z-direction
 
-    FieldList<GeoMath::Vector<dim>> positions;
+    Field<GeoMath::Vector<dim>> positions;
 public:
     // Constructor for 1D grid
     Grid(int num_cells_x, double spacing_x) 
@@ -38,7 +38,7 @@ public:
     }
 
     void initializeGrid() {
-        positions = FieldList<GeoMath::Vector<dim>>("position");
+        positions = Field<GeoMath::Vector<dim>>("position");
         int idx = 0;
 
         // Compute and store the position of each cell center
@@ -50,7 +50,7 @@ public:
                         position.values[d] = (d == 0 ? i * dx + 0.5 * dx : (d == 1 ? j * dy + 0.5 * dy : k * dz + 0.5 * dz));
                     }
                     idx = (k * ny + j) * nx + i;
-                    positions.addField(position);   // i think i want positions to always exist regardless of this class
+                    positions.addValue(position);   // i think i want positions to always exist regardless of this class
                                                     // so come back to this later to remove this
                 }
             }

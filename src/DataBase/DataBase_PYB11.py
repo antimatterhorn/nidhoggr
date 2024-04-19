@@ -1,5 +1,5 @@
 from PYB11Generator import *
-PYB11includes = ['"fieldList.hh"','"nodeList.hh"']
+PYB11includes = ['"field.hh"','"nodeList.hh"']
 
-from fieldList import *
+from field import *
 from nodeList import *
