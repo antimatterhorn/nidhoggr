@@ -8,8 +8,10 @@ mkdir build
 
 Nidhoggr/
 |-- src/
-|   |-- vector_math.cc
-|   |-- vector_math.py
+|   |-- Math/
+|   |   |-- vectorMath.cc
+|   |   |-- vectorMath.py
+|   |   |-- ...
 |   |-- ...
 |-- tests/
 |-- build/
@@ -19,3 +21,5 @@ cmake ..
 make
 
 ```
+
+for now, hard link the test files into the build/src directory to use them. 

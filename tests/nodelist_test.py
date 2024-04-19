@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from nidhoggr import *
 
 if __name__ == "__main__":
@@ -7,7 +8,7 @@ if __name__ == "__main__":
     myFieldList = FieldListofDouble("position",2)
     myFieldList.addField(a)
     myFieldList.addField(b)
-    print(myFieldList.name)
+    print(myFieldList.name,myFieldList.values)
 
     myNodeList = NodeList(2)
     #myNodeList.addFieldListofDouble(myFieldList)
