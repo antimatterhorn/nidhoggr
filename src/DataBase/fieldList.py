@@ -9,6 +9,7 @@ class FieldList:
     
     size = PYB11property("int", getter="getSize", doc="The size of the FieldList.")
     name = PYB11property("std::string", getter="getName", doc="The name of the FieldList.")
+    fields = PYB11property("std::vector<%(T)s>", getter="getFields", doc="The fields.")
 
 FieldListofInt = PYB11TemplateClass(FieldList,
                               template_parameters = ("int"),

@@ -8,7 +8,7 @@ if __name__ == "__main__":
     myFieldList = FieldListofDouble("position",2)
     myFieldList.addField(a)
     myFieldList.addField(b)
-    print(myFieldList.name,myFieldList.values)
+    print(myFieldList.name)
 
     myNodeList = NodeList(2)
     #myNodeList.addFieldListofDouble(myFieldList)
