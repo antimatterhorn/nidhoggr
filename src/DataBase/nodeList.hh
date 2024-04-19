@@ -12,13 +12,13 @@ public:
     NodeList() {}
 
     NodeList(int numNodes) {
-        FieldList<int> ids("id",numNodes);
-        for (int i=0; i<numNodes;++i) { ids[i] = i; }
+        FieldList<int> ids("id");        
+        for (int i=0; i<numNodes;++i) { ids.addField(i); }
         addFieldList(&ids);
     }
 
     void addFieldList(FieldListBase* fieldListPtr) {
-        fieldLists.push_back(fieldListPtr);
+        fieldLists.emplace_back(fieldListPtr);
     }
 
     void addNodeList(const NodeList& other) {

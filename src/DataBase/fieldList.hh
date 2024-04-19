@@ -23,8 +23,8 @@ private:
 public:
     FieldList() {}
 
-    FieldList(const std::string& fieldName, size_t numFields)
-        : name(fieldName), fields(numFields) {}
+    FieldList(const std::string& fieldName)
+        : name(fieldName) {}
 
     void addField(const T& field) {
         fields.push_back(field);

@@ -38,7 +38,7 @@ public:
     }
 
     void initializeGrid() {
-        positions = FieldList<GeoMath::Vector<dim>>("position",nx*ny*nz);
+        positions = FieldList<GeoMath::Vector<dim>>("position");
         int idx = 0;
 
         // Compute and store the position of each cell center
@@ -50,7 +50,8 @@ public:
                         position.values[d] = (d == 0 ? i * dx + 0.5 * dx : (d == 1 ? j * dy + 0.5 * dy : k * dz + 0.5 * dz));
                     }
                     idx = (k * ny + j) * nx + i;
-                    positions[idx] = position;
+                    positions.addField(position);   // i think i want positions to always exist regardless of this class
+                                                    // so come back to this later to remove this
                 }
             }
         }

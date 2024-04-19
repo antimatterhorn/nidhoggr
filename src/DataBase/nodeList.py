@@ -3,7 +3,7 @@ from PYB11Generator import *
 class NodeList:
     def pyinit(self):
         return
-    def pyinit1(self,numNodes="int"):
+    def pyinit1(self,numNodes= ("unsigned", "0")):
         return
     @PYB11pycppname("addFieldList")
     def addFieldListofDouble(self,fieldList="FieldListofDouble"):

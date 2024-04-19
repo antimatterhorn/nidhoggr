@@ -1,15 +1,33 @@
 from PYB11Generator import *
 
+
+#-------------------------------------------------------------------------------
+# FieldBase
+#-------------------------------------------------------------------------------
+class FieldListBase:
+    "Base class for FieldLists -- not much to implement in Python."
+
 @PYB11template("typename T")
-class FieldList:
-    def pyinit(self,fieldName="std::string",numFields="int"):
+class FieldList(FieldListBase):
+    
+    PYB11typedefs = """
+    typedef FieldList<%(T)s> FieldListType;
+    typedef %(T)s FieldType;
+"""
+       
+    def pyinit(self,fieldName="std::string"):
         return
-    def addField(self,field="%(typename T)s"):
+    def addField(self,field="FieldType"):
         return
     
+    @PYB11cppname("operator[]")
+    @PYB11keepalive(0,1)
+    def __getitem__(self, index="const unsigned"):
+        return "FieldType"
+
     size = PYB11property("int", getter="getSize", doc="The size of the FieldList.")
     name = PYB11property("std::string", getter="getName", doc="The name of the FieldList.")
-    fields = PYB11property("std::vector<%(T)s>", getter="getFields", doc="The fields.")
+    fields = PYB11property("std::vector<FieldType>", getter="getFields", doc="The fields.")
 
 FieldListofInt = PYB11TemplateClass(FieldList,
                               template_parameters = ("int"),
