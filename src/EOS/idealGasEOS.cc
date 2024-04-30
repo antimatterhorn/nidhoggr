@@ -6,7 +6,9 @@ private:
     double gamma; 
 
 public:
-    IdealGasEOS(double specificHeatRatio, PhysicalConstants& constants) : EquationOfState(constants), gamma(specificHeatRatio) {}
+    IdealGasEOS(double specificHeatRatio, PhysicalConstants& constants) : 
+        EquationOfState(constants), 
+        gamma(specificHeatRatio) {}
 
     // Method to compute pressure given density and internal energy
     virtual double computePressure(double density, double internalEnergy) const override {
