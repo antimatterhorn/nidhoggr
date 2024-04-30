@@ -18,7 +18,7 @@ private:
     bool isValidName(const std::string& name) const {
         for (char c : name) {
             // Check if the character is not alphanumeric or whitespace
-            if (!std::isalnum(c) && !std::isspace(c)) {
+            if (!std::isalnum(c)) {
                 return false;
             }
         }

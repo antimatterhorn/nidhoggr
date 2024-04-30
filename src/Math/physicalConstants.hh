@@ -26,17 +26,17 @@ private:
     const double EpsilonZero;
 
     // The reference MKS data we base our values on.
-    const double mpMKS =     1.67262192369e-27;//1.672621777  // kg
-    const double meMKS =     9.1093837015e-31;// 9.10938291  // kg
-    const double qeMKS =     1.602176634e-19;//1.602176565 // Coulombs
-    const double GMKS =      6.67430e-11; //6.67384     // N*m^2/kg^2
-    const double cMKS =      2.99792458e8;    // m/s
-    const double kBMKS =     1.380649e-23;//1.3806488   // J/K
-    const double RgasMKS =   8.314462618;//8.3144621       // J/mole/K
-    const double NAvogadro = 6.02214076e23;//6.02214129   // mol^-1
-    const double StefanBoltzmannMKS = 5.670374419e-8;//5.67   // W/m^2/K^4
-    const double PlanckMKS = 6.62607015e-34; // J*s
-    const double EpsilonZeroMKS = 8.85418782e-12; // C^2*s^2/kg/m^3
+    const double mpMKS =     1.67262192369e-27;         // kg
+    const double meMKS =     9.1093837015e-31;          // kg
+    const double qeMKS =     1.602176634e-19;           // Coulombs
+    const double GMKS =      6.67430e-11;               // N*m^2/kg^2
+    const double cMKS =      2.99792458e8;              // m/s
+    const double kBMKS =     1.380649e-23;              // J/K
+    const double RgasMKS =   8.314462618;               // J/mole/K
+    const double NAvogadro = 6.02214076e23;             // mol^-1
+    const double StefanBoltzmannMKS = 5.670374419e-8;   // W/m^2/K^4
+    const double PlanckMKS = 6.62607015e-34;            // J*s
+    const double EpsilonZeroMKS = 8.85418782e-12;       // C^2*s^2/kg/m^3
 
 public:
     PhysicalConstants(const double unitLm,
