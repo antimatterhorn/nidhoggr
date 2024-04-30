@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include "field.hh"
+#include "name.hh"
 
 class NodeList {
 private:
@@ -39,17 +40,17 @@ public:
 
     std::vector<FieldBase*> getFields() { return fields; }
 
-    // FieldBase* getField(size_t index) {
-    //     return fields[index];
-    // }
-
-    FieldBase* getField(const std::string& name) const {
+    FieldBase* getFieldByName(const Name& name) const {
         for (FieldBase* field : fields) {
             if (field->hasName() && field->getName() == name) {
                 return field;
             }
         }
         return nullptr; // Return nullptr if no matching FieldList is found
+    }
+
+    FieldBase* getField(const std::string& name) const {
+        return getFieldByName(Name(name));
     }
 
     size_t getFieldCount() const {
@@ -65,7 +66,7 @@ public:
         for (const auto& field : fields) {
             // Check if the pointer is valid and the FieldList has a name
             if (field && field->hasName()) {
-                names.push_back(field->getName());
+                names.push_back(field->getNameString());
             }
         }
         return names;

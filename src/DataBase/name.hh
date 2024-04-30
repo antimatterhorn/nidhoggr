@@ -40,9 +40,16 @@ public:
     bool empty() const { return myName.empty(); }
 
     bool operator==(const Name& other) const {
-        // Convert both strings to lowercase for comparison
+        return compare(other.name());
+    }
+
+    bool operator==(const std::string& other) const {
+        return compare(other);
+    }
+
+    bool compare(const std::string other) const {
         std::string name1_lower = myName;
-        std::string name2_lower = other.myName;
+        std::string name2_lower = other;
         std::transform(name1_lower.begin(), name1_lower.end(), name1_lower.begin(), ::tolower);
         std::transform(name2_lower.begin(), name2_lower.end(), name2_lower.begin(), ::tolower);
 

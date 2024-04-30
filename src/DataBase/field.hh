@@ -11,7 +11,8 @@ public:
     virtual ~FieldBase() {}  // Make the base class polymorphic
 
     virtual bool hasName() const = 0;
-    virtual std::string getName() const = 0;
+    virtual Name getName() const = 0;
+    virtual std::string getNameString() const = 0;
     virtual size_t getSize() const = 0;
 };
 
@@ -64,7 +65,11 @@ public:
         return !name.empty();
     }
 
-    std::string getName() const override {
+    Name getName() const override {
+        return name;
+    }
+
+    std::string getNameString() const override {
         return name.name();
     }
 };
