@@ -2,7 +2,7 @@
 #define EQUATIONOFSTATEBASE_HH
 
 #include <vector>
-#include "../Math/physicalConstants.hh"
+#include "../Type/physicalConstants.hh"
 
 // Base class for Equation of State
 class EquationOfState {

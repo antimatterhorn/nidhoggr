@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include "field.hh"
-#include "name.hh"
+#include "../Type/name.hh"
 
 class NodeList {
 private:

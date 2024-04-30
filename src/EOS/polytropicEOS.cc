@@ -1,5 +1,4 @@
 #include "equationOfStateBase.hh"
-#include "../Math/physicalConstants.hh"
 #include <cmath>
 
 class PolytropicEOS : public EquationOfState {

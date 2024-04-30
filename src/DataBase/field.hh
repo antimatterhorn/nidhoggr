@@ -3,7 +3,7 @@
 
 #include <string>
 #include <vector>
-#include "name.hh"
+#include "../Type/name.hh"
 
 // Base class for all Field types
 class FieldBase {
