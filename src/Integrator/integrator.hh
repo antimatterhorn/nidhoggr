@@ -21,7 +21,7 @@ public:
         std::vector<double> nextState = addVectors(initialState,scalarMultiply(DxDt(t,initialState),dt));
         return nextState;
     }
-
+protected:
     std::vector<double> addVectors(const std::vector<double>& v1, const std::vector<double>& v2) {
         std::vector<double> result;
         for (size_t i = 0; i < v1.size(); ++i) {
@@ -37,9 +37,6 @@ public:
         }
         return result;
     }
-private:
-
-
 };
 
 #endif // INTEGRATOR_HH

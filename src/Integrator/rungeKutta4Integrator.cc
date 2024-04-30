@@ -2,7 +2,7 @@
 #include "integrator.hh"
 
 
-class RungeKutta4Integrator : public Integrator {
+class RungeKutta4Integrator : Integrator {
 public:
     RungeKutta4Integrator(const DerivativeFunction& derivativeFunc) : Integrator(derivativeFunc) {}
 
@@ -17,9 +17,6 @@ public:
 
         return nextState;
     }
-
 private:
     
-
-
 };
