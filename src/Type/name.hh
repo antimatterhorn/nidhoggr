@@ -25,7 +25,9 @@ private:
         return true;
     }
 public:
-    Name() {}
+    Name() {
+        myName = "no name";
+    }
 
     Name(const std::string& name) {
         // Validate the input string
