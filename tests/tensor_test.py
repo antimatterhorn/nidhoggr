@@ -1,7 +1,4 @@
-import sys
-sys.path.append("Math")
-
-from LinearAlgebra import *
+from nidhoggr import *
 
 if __name__ == "__main__":
     m1 = Tensor2d(1.0,2.0,3.0,4.0)
