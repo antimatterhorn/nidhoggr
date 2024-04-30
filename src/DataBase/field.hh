@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include "name.hh"
 
 // Base class for all Field types
 class FieldBase {
@@ -18,7 +19,7 @@ template <typename T>
 class Field : public FieldBase {
 private:
     std::vector<T> values;
-    std::string name;
+    Name name;
 
 public:
     Field() {}
@@ -64,7 +65,7 @@ public:
     }
 
     std::string getName() const override {
-        return name;
+        return name.name();
     }
 };
 
