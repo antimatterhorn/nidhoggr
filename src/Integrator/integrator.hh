@@ -4,9 +4,10 @@
 #include <functional>
 #include <vector>
 #include <cstddef>
+#include "../DataBase/field.hh"
 
 // Define a type alias for the derivative function
-using DerivativeFunction = std::function<std::vector<double>(double, const std::vector<double>&)>;
+using DerivativeFunction = std::function<Field<double>(double, const Field<double>&)>;
 
 class Integrator {
 public:
@@ -16,27 +17,13 @@ public:
 
     ~Integrator() {}
 
-    virtual std::vector<double> integrate(std::vector<double> initialState, double t, double dt) {
+    virtual Field<double> integrate(const Field<double>& initialState, double t, double dt) {
         // fwd euler
-        std::vector<double> nextState = addVectors(initialState,scalarMultiply(DxDt(t,initialState),dt));
+        Field<double> nextState = initialState + DxDt(t,initialState)*dt;
         return nextState;
     }
 protected:
-    std::vector<double> addVectors(const std::vector<double>& v1, const std::vector<double>& v2) {
-        std::vector<double> result;
-        for (size_t i = 0; i < v1.size(); ++i) {
-            result.push_back(v1[i] + v2[i]);
-        }
-        return result;
-    }
 
-    std::vector<double> scalarMultiply(const std::vector<double>& v, double scalar) {
-        std::vector<double> result;
-        for (double val : v) {
-            result.push_back(val * scalar);
-        }
-        return result;
-    }
 };
 
 #endif // INTEGRATOR_HH

@@ -32,9 +32,9 @@ public:
         values.push_back(value);
     }
 
-    size_t getSize() const {
-        return values.size();
-    }
+    size_t getSize() const { return values.size(); }
+
+    size_t size() const { return getSize(); }
 
     const std::vector<T>& getValues() const {
         return values;
@@ -56,9 +56,43 @@ public:
         return *this;
     }
 
-    Field<T>& operator+(const T& other) {
-        addValue(other);
-        return *this;
+    Field<T> operator+(const Field<T>& other) const {
+        return add(other);
+    }
+
+    Field<T> operator-(const Field<T>& other) const {
+        return sub(other);
+    }
+
+    Field<T> operator*(const double other) const {
+        return scalarProduct(other);
+    }
+    
+    Field<T> add(const Field<T>& other) const {
+        Field<T> result;
+        for (int i = 0; i < this->size(); ++i) {
+            result.values[i] = values[i] + other.values[i];
+        }
+        result.name = this->name;
+        return result;
+    }
+
+    Field<T> sub(const Field<T>& other) const {
+        Field<T> result;
+        for (int i = 0; i < this->size(); ++i) {
+            result.values[i] = values[i] - other.values[i];
+        }
+        result.name = this->name;
+        return result;
+    }
+
+    Field<T> scalarProduct(const double other) const {
+        Field<T> result;
+        for (int i = 0; i < this->size(); ++i) {
+            result.values[i] = values[i] * other;
+        }
+        result.name = this->name;
+        return result;
     }
 
     bool hasName() const override {
