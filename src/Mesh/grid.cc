@@ -14,7 +14,7 @@ private:
     double dy; // Grid spacing in y-direction
     double dz; // Grid spacing in z-direction
 
-    Field<GeoMath::Vector<dim>> positions;
+    Field<Lin::Vector<dim>> positions;
 public:
     // Constructor for 1D grid
     Grid(int num_cells_x, double spacing_x) 
@@ -38,14 +38,14 @@ public:
     }
 
     void initializeGrid() {
-        positions = Field<GeoMath::Vector<dim>>("position");
+        positions = Field<Lin::Vector<dim>>("position");
         int idx = 0;
 
         // Compute and store the position of each cell center
         for (int k = 0; k < nz; ++k) {
             for (int j = 0; j < ny; ++j) {
                 for (int i = 0; i < nx; ++i) {
-                    GeoMath::Vector<dim> position;
+                    Lin::Vector<dim> position;
                     for (int d = 0; d < dim; ++d) {
                         position.values[d] = (d == 0 ? i * dx + 0.5 * dx : (d == 1 ? j * dy + 0.5 * dy : k * dz + 0.5 * dz));
                     }
@@ -57,7 +57,7 @@ public:
         }
     }
 
-    void setOrigin(GeoMath::Vector<dim> origin) {
+    void setOrigin(Lin::Vector<dim> origin) {
         for (int i = 0; i < positions.getSize(); ++i) {
             positions[i] -= origin; // this is very not correct
         }
@@ -70,10 +70,10 @@ public:
     double getdy() const { return dy; }
     double getdz() const { return dz; }
 
-    // std::vector<GeoMath::Vector<dim>> getPositions() {
+    // std::vector<Lin::Vector<dim>> getPositions() {
     //     return positions.getFields();
     // }
-    GeoMath::Vector<dim> getPosition(int id){
+    Lin::Vector<dim> getPosition(int id){
         return positions[id];
     }
 };

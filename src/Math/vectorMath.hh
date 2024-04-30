@@ -8,7 +8,7 @@
 #include <cmath>
 #include <algorithm>
 
-namespace GeoMath {
+namespace Lin {
 template <int dim>
 class Vector {
 public:
@@ -193,7 +193,7 @@ Vector2D quadCentroid(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3
     return (p1+p2+p3+p4)/4.0;
 }
 
-double triangleArea(const GeoMath::Vector2D& p1, const GeoMath::Vector2D& p2, const GeoMath::Vector2D& p3) {
+double triangleArea(const Lin::Vector2D& p1, const Lin::Vector2D& p2, const Lin::Vector2D& p3) {
     double a = (p1 - p2).magnitude();
     double b = (p2 - p3).magnitude();
     double c = (p3 - p1).magnitude();

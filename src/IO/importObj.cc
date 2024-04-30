@@ -5,10 +5,10 @@
 #include <sstream>
 #include "../Math/vectorMath.hh"
 
-std::pair<std::vector<GeoMath::Vector<2>>, std::vector<std::vector<int>>> importObj2d(const std::string& file_path, const std::string& axes="(x,z)") {
+std::pair<std::vector<Lin::Vector<2>>, std::vector<std::vector<int>>> importObj2d(const std::string& file_path, const std::string& axes="(x,z)") {
     assert(axes == "(x,y)" || axes == "(x,z)" || axes == "(y,z)");
 
-    std::vector<GeoMath::Vector<2>> vertices;
+    std::vector<Lin::Vector<2>> vertices;
     std::vector<std::vector<int>> faces;
 
     std::ifstream file(file_path);

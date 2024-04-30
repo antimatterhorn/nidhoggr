@@ -9,7 +9,7 @@ protected:
     NodeList* nodeList;
 public:
     Field<double> density;
-    Field<GeoMath::Vector<dim>> momentum;
+    Field<Lin::Vector<dim>> momentum;
     Field<double> specific_energy;
 
     Hydro() {}
@@ -17,7 +17,7 @@ public:
     Hydro(NodeList* nodeListPtr) : nodeList(nodeListPtr) {
         int numNodes = nodeList->getNumNodes();
         density         = Field<double>("density",numNodes);
-        momentum        = Field<GeoMath::Vector<dim>>("momentum",numNodes);
+        momentum        = Field<Lin::Vector<dim>>("momentum",numNodes);
         specific_energy = Field<double>("specific_energy",numNodes);
 
         nodeList->addField(&density);
