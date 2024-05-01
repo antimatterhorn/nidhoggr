@@ -18,7 +18,8 @@ public:
 
     ~Integrator() {}
 
-    virtual Field<T> integrate(const Field<T>& initialState, double t, double dt) {
+    virtual Field<T> 
+    integrate(const Field<T>& initialState, double t, double dt) {
         Field<T> nextState = initialState + DxDt(t,initialState)*dt;
         return nextState;
     }

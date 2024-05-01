@@ -36,7 +36,8 @@ public:
     }
 
     // Methods
-    Tensor<dim> add(const Tensor<dim>& other) const {
+    Tensor<dim> 
+    add(const Tensor<dim>& other) const {
         Tensor<dim> result;
         for (int i = 0; i < dim*dim; ++i) {
             result.values[i] = values[i] + other.values[i];
@@ -45,7 +46,8 @@ public:
         return result;
     }
 
-    Tensor<dim> sub(const Tensor<dim>& other) const {
+    Tensor<dim> 
+    sub(const Tensor<dim>& other) const {
         Tensor<dim> result;
         for (int i = 0; i < dim*dim; ++i) {
             result.values[i] = values[i] - other.values[i];
@@ -54,7 +56,8 @@ public:
         return result;
     }
 
-    Tensor<dim> scalarProduct(double scalar) const {
+    Tensor<dim> 
+    scalarProduct(double scalar) const {
         Tensor<dim> result;
         for (int i = 0; i < dim*dim; ++i) {
             result.values[i] = values[i] * scalar;
@@ -63,7 +66,8 @@ public:
         return result;
     }
 
-    double determinant() const {
+    double 
+    determinant() const {
         double result;
         if constexpr (dim==1)
             result = values[0];
@@ -77,23 +81,28 @@ public:
     }
 
     // Operators
-    Tensor<dim> operator+(const Tensor<dim>& other) const {
+    Tensor<dim> 
+    operator+(const Tensor<dim>& other) const {
         return add(other);
     }
 
-    Tensor<dim> operator-(const Tensor<dim>& other) const {
+    Tensor<dim> 
+    operator-(const Tensor<dim>& other) const {
         return sub(other);
     }
 
-    Tensor<dim> operator*(const double other) const {
+    Tensor<dim> 
+    operator*(const double other) const {
         return scalarProduct(other);
     }
 
-    Tensor<dim> operator-() const {
+    Tensor<dim> 
+    operator-() const {
         return scalarProduct(-1.0);
     }
 
-    bool operator==(const Tensor<dim> other) const {
+    bool 
+    operator==(const Tensor<dim> other) const {
         bool result = true;
         for (int i = 0; i < dim*dim; ++i) {
             if(values[i] != other.values[i])
@@ -103,7 +112,8 @@ public:
         return result;
     }
 
-    bool operator!=(const Tensor<dim> other) const {
+    bool 
+    operator!=(const Tensor<dim> other) const {
         bool result = true;
         for (int i = 0; i < dim*dim; ++i) {
             if(values[i] != other.values[i])
@@ -164,7 +174,8 @@ public:
         return components[2][2];
     }
 
-    std::string toString() const {
+    std::string 
+    toString() const {
         std::string result = "Tensor " + std::to_string(dim) + "x" + std::to_string(dim) + ":\n";
 
         for (int i = 0; i < dim; ++i) {
@@ -184,7 +195,8 @@ public:
 private:
     std::array<std::array<double, dim>, dim> components;
 
-    void assignComponents()
+    void 
+    assignComponents()
     {
         for (int i = 0; i < dim; ++i) {
             for (int j = 0; j < dim; ++j) {
@@ -199,7 +211,8 @@ using Tensor2D = Tensor<2>;
 using Tensor3D = Tensor<3>;
 
 template <int dim>
-Tensor<dim> operator*(const double other, const Tensor<dim>& tens) {
+Tensor<dim> 
+operator*(const double other, const Tensor<dim>& tens) {
     return tens*other;
 }
 }

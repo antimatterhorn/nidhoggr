@@ -7,7 +7,8 @@ public:
     RungeKutta4Integrator(const DerivativeFunction& derivativeFunc) : Integrator<T>(derivativeFunc) {}
 
     // Integrate method using Runge-Kutta 4
-    Field<T> integrate(const Field<T>& initialState, double t, double dt) override {
+    Field<T> 
+    integrate(const Field<T>& initialState, double t, double dt) override {
         Field<T> k1 = this->DxDt(t, initialState);
         Field<T> k2 = this->DxDt(t + dt / 2, initialState + k1*(dt / 2));
         Field<T> k3 = this->DxDt(t + dt / 2, initialState + k2*(dt / 2));

@@ -32,7 +32,8 @@ public:
     }
 
     // Methods
-    Vector<dim> add(const Vector<dim>& other) const {
+    Vector<dim> 
+    add(const Vector<dim>& other) const {
         Vector<dim> result;
         for (int i = 0; i < dim; ++i) {
             result.values[i] = values[i] + other.values[i];
@@ -40,7 +41,8 @@ public:
         return result;
     }
 
-    Vector<dim> sub(const Vector<dim>& other) const {
+    Vector<dim> 
+    sub(const Vector<dim>& other) const {
         Vector<dim> result;
         for (int i = 0; i < dim; ++i) {
             result.values[i] = values[i] - other.values[i];
@@ -48,7 +50,8 @@ public:
         return result;
     }
 
-    double dotProduct(const Vector<dim>& other) const {
+    double 
+    dotProduct(const Vector<dim>& other) const {
         double result = 0.0;
         for (int i = 0; i < dim; ++i) {
             result += values[i] * other.values[i];
@@ -56,7 +59,8 @@ public:
         return result;
     }
 
-    Vector<dim> scalarProduct(double scalar) const {
+    Vector<dim> 
+    scalarProduct(double scalar) const {
         Vector<dim> result;
         for (int i = 0; i < dim; ++i) {
             result.values[i] = values[i] * scalar;
@@ -64,7 +68,8 @@ public:
         return result;
     }
 
-    Vector<3> crossProduct(const Vector<3>& other) const {
+    Vector<3> 
+    crossProduct(const Vector<3>& other) const {
         Vector<3> result = {
             values[1] * other.values[2] - values[2] * other.values[1],
             values[2] * other.values[0] - values[0] * other.values[2],
@@ -74,52 +79,62 @@ public:
     }
 
     // Operators
-    Vector<dim> operator+(const Vector<dim>& other) const {
+    Vector<dim> 
+    operator+(const Vector<dim>& other) const {
         return add(other);
     }
 
-    Vector<dim> operator-(const Vector<dim>& other) const {
+    Vector<dim> 
+    operator-(const Vector<dim>& other) const {
         return sub(other);
     }
 
-    Vector<dim> operator*(const double other) const {
+    Vector<dim> 
+    operator*(const double other) const {
         return scalarProduct(other);
     }
 
-    Vector<dim> operator-() const {
+    Vector<dim> 
+    operator-() const {
         return scalarProduct(-1.0);
     }
 
-    double operator*(const Vector<dim> other) const {
+    double 
+    operator*(const Vector<dim> other) const {
         return dotProduct(other);
     }
 
-    Vector<dim> operator=(const Vector<dim>& other) {
+    Vector<dim> 
+    operator=(const Vector<dim>& other) {
         if (this != &other) { // Avoid self-assignment
             values = other.values;
         }
         return *this;
     }
 
-    Vector<dim> operator-=(const Vector<dim>& other) {
+    Vector<dim> 
+    operator-=(const Vector<dim>& other) {
         for (int i = 0; i < dim; ++i) {
             values[i] -= other.values[i];
         }
         return *this;
     }
 
-    Vector<dim> operator+=(const Vector<dim>& other) {
+    Vector<dim> 
+    operator+=(const Vector<dim>& other) {
         for (int i = 0; i < dim; ++i) {
             values[i] += other.values[i];
         }
         return *this;
     }
 
-    Vector<dim> operator/(const double other) const {
+    Vector<dim> 
+    operator/(const double other) const {
         return scalarProduct(1.0/other);
     }
 
-    bool operator==(const Vector<dim> other) const {
+    bool 
+    operator==(const Vector<dim> other) const {
         bool result = true;
         for (int i = 0; i < dim; ++i) {
             if(values[i] != other.values[i])
@@ -129,7 +144,8 @@ public:
         return result;
     }
 
-    bool operator!=(const Vector<dim> other) const {
+    bool 
+    operator!=(const Vector<dim> other) const {
         bool result = true;
         for (int i = 0; i < dim; ++i) {
             if(values[i] != other.values[i])
@@ -154,7 +170,8 @@ public:
         return values.size() > 2 ? values[2] : 0.0;
     }
 
-    std::string toString() const {
+    std::string 
+    toString() const {
         std::string result = "(";
         for (int i = 0; i < dim; ++i) {
             if (i > 0) {
@@ -166,7 +183,8 @@ public:
         return result;
     }
 
-    double mag2() const {
+    double 
+    mag2() const {
         double result = 0.0;
         for (double value : values) {
             result += value*value;
@@ -174,11 +192,13 @@ public:
         return result;
     }
 
-    double magnitude() const {
+    double 
+    magnitude() const {
         return std::sqrt(mag2());
     }
 
-    static const unsigned numElements = dim;
+    static const unsigned 
+    numElements = dim;
 
 private:
 
@@ -193,7 +213,8 @@ Vector2D quadCentroid(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3
     return (p1+p2+p3+p4)/4.0;
 }
 
-double triangleArea(const Lin::Vector2D& p1, const Lin::Vector2D& p2, const Lin::Vector2D& p3) {
+double 
+triangleArea(const Lin::Vector2D& p1, const Lin::Vector2D& p2, const Lin::Vector2D& p3) {
     double a = (p1 - p2).magnitude();
     double b = (p2 - p3).magnitude();
     double c = (p3 - p1).magnitude();
@@ -202,7 +223,8 @@ double triangleArea(const Lin::Vector2D& p1, const Lin::Vector2D& p2, const Lin:
     return std::sqrt(s * (s - a) * (s - b) * (s - c));
 }
 
-double quadArea(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3, const Vector2D& p4) {
+double 
+quadArea(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3, const Vector2D& p4) {
     // Sort points in clockwise order
     std::vector<const Vector2D*> sortedPoints = {&p1, &p2, &p3, &p4};
     std::sort(sortedPoints.begin(), sortedPoints.end(), [](const Vector2D* a, const Vector2D* b) {
@@ -225,7 +247,8 @@ double quadArea(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3, cons
     }
 }
 template <int dim>
-Vector<dim> operator*(const double other, const Vector<dim>& vec) {
+Vector<dim> 
+operator*(const double other, const Vector<dim>& vec) {
     return vec*other;
 }
 }

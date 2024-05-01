@@ -10,6 +10,9 @@ public:
 
     ~State() {};
 
-    NodeList* getNodeList() { return nodeListPtr; }
-    EquationOfState* getEOS() { return eosPtr; }
+    NodeList* 
+    getNodeList() { return nodeListPtr; }
+    
+    EquationOfState* 
+    getEOS() { return eosPtr; }
 };

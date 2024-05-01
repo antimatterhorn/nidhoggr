@@ -38,19 +38,24 @@ public:
         myName = name;
     }
 
-    std::string name() const { return myName; }
+    std::string 
+    name() const { return myName; }
 
-    bool empty() const { return myName.empty(); }
+    bool 
+    empty() const { return myName.empty(); }
 
-    bool operator==(const Name& other) const {
+    bool 
+    operator==(const Name& other) const {
         return compare(other.name());
     }
 
-    bool operator==(const std::string& other) const {
+    bool 
+    operator==(const std::string& other) const {
         return compare(other);
     }
 
-    bool compare(const std::string other) const {
+    bool 
+    compare(const std::string other) const {
         std::string name1_lower = myName;
         std::string name2_lower = other;
         std::transform(name1_lower.begin(), name1_lower.end(), name1_lower.begin(), ::tolower);
@@ -60,7 +65,8 @@ public:
         return name1_lower == name2_lower;
     }
 
-    Name& operator=(const std::string& name) {
+    Name& 
+    operator=(const std::string& name) {
         if (!isValidName(name)) {
             throw std::invalid_argument("Invalid name provided");
         }
