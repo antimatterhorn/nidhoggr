@@ -19,12 +19,34 @@ class Field(FieldBase):
     def addValue(self,field="FieldType"):
         return
     
-    @PYB11cppname("operator[]")
-    @PYB11keepalive(0,1)
-    def __getitem__(self, index="const unsigned"):
-        return "FieldType"
+    @PYB11virtual
+    @PYB11const
+    def size(self):
+        "Number of elements"
+        return "unsigned"
 
-    size = PYB11property("int", getter="getSize", doc="The size of the Field.")
+    @PYB11cppname("operator[]")
+    @PYB11returnpolicy("reference_internal")
+    @PYB11implementation('[](Field<FieldType>& self, int i) { const int n = self.size(); if (i >= n) throw py::index_error(); return &self[(i %% n + n) %% n]; }')
+    def __getitem__(self):
+        return
+
+    # @PYB11implementation("[](Field<FieldType>& self, int i, const %(Value)s v) { const int n = self.size(); if (i >= n) throw py::index_error(); self[(i %% n + n) %% n] = v; }")
+    # def __setitem__(self):
+    #     "Set a value"
+
+    # @PYB11implementation("[](const FieldType& self) { return py::make_iterator(self.begin(), self.end()); }, py::keep_alive<0,1>()")
+    # def __iter__(self):
+    #     "Python iteration through a Field."
+
+    @PYB11returnpolicy("reference_internal")
+    @PYB11implementation("[](Field<FieldType>& self, int i) { const int n = self.size(); if (i >= n) throw py::index_error(); return &self[(i %% n + n) %% n]; }")
+    def __call__(self):
+        "Index into a Field"
+        return
+
+
+        
     name = PYB11property("std::string", getter="getNameString", doc="The name of the Field.")
     values = PYB11property("std::vector<FieldType>", getter="getValues", doc="The values.")
 
