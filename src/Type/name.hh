@@ -26,12 +26,13 @@ private:
     }
 public:
     Name() {
-        myName = "no name";
+        myName = "noName";
     }
 
     Name(const std::string& name) {
         // Validate the input string
         if (!isValidName(name)) {
+            std::cerr << "Invalid name provided: " << name << std::endl;
             throw std::invalid_argument("Invalid name provided");
         }
         myName = name;
