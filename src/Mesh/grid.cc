@@ -70,9 +70,6 @@ public:
     double getdy() const { return dy; }
     double getdz() const { return dz; }
 
-    // std::vector<Lin::Vector<dim>> getPositions() {
-    //     return positions.getFields();
-    // }
     Lin::Vector<dim> getPosition(int id){
         return positions[id];
     }

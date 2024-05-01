@@ -25,7 +25,7 @@ class Field(FieldBase):
         return "FieldType"
 
     size = PYB11property("int", getter="getSize", doc="The size of the Field.")
-    name = PYB11property("std::string", getter="getName", doc="The name of the Field.")
+    name = PYB11property("std::string", getter="getNameString", doc="The name of the Field.")
     values = PYB11property("std::vector<FieldType>", getter="getValues", doc="The values.")
 
 FieldofInt = PYB11TemplateClass(Field,

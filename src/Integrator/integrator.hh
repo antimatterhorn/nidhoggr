@@ -5,21 +5,21 @@
 #include <vector>
 #include <cstddef>
 #include "../DataBase/field.hh"
+#include "../Math/vectorMath.hh"
 
-// Define a type alias for the derivative function
-using DerivativeFunction = std::function<Field<double>(double, const Field<double>&)>;
 
+template <typename T>
 class Integrator {
 public:
+    using DerivativeFunction = std::function<Field<T>(T, const Field<T>&)>;
     DerivativeFunction DxDt;
     
     Integrator (const DerivativeFunction& derivativeFunc) : DxDt(derivativeFunc) {}
 
     ~Integrator() {}
 
-    virtual Field<double> integrate(const Field<double>& initialState, double t, double dt) {
-        // fwd euler
-        Field<double> nextState = initialState + DxDt(t,initialState)*dt;
+    virtual Field<T> integrate(const Field<T>& initialState, double t, double dt) {
+        Field<T> nextState = initialState + DxDt(t,initialState)*dt;
         return nextState;
     }
 protected:
