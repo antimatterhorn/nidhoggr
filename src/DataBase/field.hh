@@ -48,9 +48,9 @@ public:
         return values[index];
     }
 
-    const T& operator[](size_t index) const {
-        return values[index];
-    }
+    // const T& operator[](size_t index) const {
+    //     return values[index];
+    // }
 
     Field<T>& operator=(const Field<T>& other) {
         if (this != &other) { // Avoid self-assignment
