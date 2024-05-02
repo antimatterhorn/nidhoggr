@@ -69,7 +69,7 @@ public:
     void
     update() {
         // Temporary grid to store updated concentrations
-        Field<std::array<double, 3>> updated_xx("temp",xx.size()); 
+        Field<std::array<double, 3>> updated_xx("xx",xx.size()); 
 
         for (int j = 0; j < grid.size_y(); ++j) {
             for (int i = 0; i < grid.size_x(); ++i) {
