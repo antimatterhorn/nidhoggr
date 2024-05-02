@@ -1,1 +1,2 @@
 PYB11Generator_add_module(Hydro)
+PYB11Generator_add_module(RDE)

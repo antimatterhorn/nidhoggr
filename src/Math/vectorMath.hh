@@ -104,15 +104,17 @@ public:
         return dotProduct(other);
     }
 
-    Vector<dim> 
+    Vector<dim>& 
     operator=(const Vector<dim>& other) {
         if (this != &other) { // Avoid self-assignment
-            values = other.values;
+            for (unsigned int i = 0; i < 3; ++i) {
+                values[i] = other.values[i];
+            }
         }
         return *this;
     }
 
-    Vector<dim> 
+    Vector<dim>&
     operator-=(const Vector<dim>& other) {
         for (int i = 0; i < dim; ++i) {
             values[i] -= other.values[i];
@@ -120,7 +122,7 @@ public:
         return *this;
     }
 
-    Vector<dim> 
+    Vector<dim>&
     operator+=(const Vector<dim>& other) {
         for (int i = 0; i < dim; ++i) {
             values[i] += other.values[i];
@@ -155,7 +157,15 @@ public:
         return !result;
     }
 
+    const double&
+    operator[](const unsigned int index) const {
+        return values[index];
+    }
 
+    double&
+    operator[](const unsigned int index) {
+        return values[index];
+    }
 
     // Getter methods for individual components
     double x() const {

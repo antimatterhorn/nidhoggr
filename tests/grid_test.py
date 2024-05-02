@@ -11,4 +11,4 @@ myGrid = Grid2d(nx,ny,dx,dy)
 myGrid.setOrigin(origin)
 
 print(myGrid.nx,myGrid.ny,myGrid.nz,myGrid.dx,myGrid.dy,myGrid.dz)
-print(myGrid.positions()[0])
+print(myGrid.position(0))

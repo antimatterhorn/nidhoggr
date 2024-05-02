@@ -121,6 +121,14 @@ public:
         return name.name();
     }
 
+    void
+    fill(unsigned int n, T val) {
+        for(int i=0;i<n;i++)
+        {
+            this->addValue(val);
+        }
+    }
+
 };
 
 #endif // FIELD_HH

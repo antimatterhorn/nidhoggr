@@ -1,3 +1,6 @@
+#ifndef GRID_HH
+#define GRID_HH
+
 #include <vector>
 #include <string>
 #include "../Math/vectorMath.hh"
@@ -66,6 +69,10 @@ public:
     int getnx() const { return nx; }
     int getny() const { return ny; }
     int getnz() const { return nz; }
+    int size_x() const { return nx; }
+    int size_y() const { return ny; }
+    int size_z() const { return nz; }
+    int size() const { return positions.size(); }
     double getdx() const { return dx; }
     double getdy() const { return dy; }
     double getdz() const { return dz; }
@@ -75,3 +82,5 @@ public:
     }
 };
 }
+
+#endif // GRID_HH
