@@ -10,12 +10,14 @@ used throughout the code, and to implement simple bool checking with case-insens
 #include <algorithm>
 #include <cctype>
 #include <stdexcept>
+#include <iostream>
 
 class Name {
 private:
     std::string myName;
 
-    bool isValidName(const std::string& name) const {
+    bool 
+    isValidName(const std::string& name) const {
         for (char c : name) {
             // Check if the character is not alphanumeric
             if (!std::isalnum(c)) {
