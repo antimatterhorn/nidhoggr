@@ -13,7 +13,6 @@ namespace Physics {
 class RockPaperScissors {
 private:
     Mesh::Grid<2> grid;
-    //unsigned int nConc;
     Field<std::array<double, 3>> xx;
     Field<double> rho;
 
@@ -37,7 +36,6 @@ private:
                     fac = 0.2;
                 int iidx = grid.index(ii,jj);
                 double thatCon = xx[iidx][c];
-                //del += (thatCon-thisCon)/fac;
                 del += thatCon*fac; // this is a kernel based approach
             }
         }
@@ -52,15 +50,12 @@ public:
             xx = Field<std::array<double, 3>>("xx",n);
             rho = Field<double>("rho",n);
             this->initialize();
-            // xx.fill(n,Lin::Vector<3>());
-            // rho.fill(n,0.0);
     }
 
     void
     initialize() {
         std::random_device rd;
         std::mt19937 gen(rd());
-        //std::uniform_int_distribution<> dis(0, nConc-1);
         std::uniform_int_distribution<> dis(0, 2);
         for (int j = 0; j < grid.size_y(); ++j) {
             for (int i = 0; i < grid.size_x(); ++i) {
@@ -74,8 +69,8 @@ public:
     void
     update() {
         // Temporary grid to store updated concentrations
-        Field<std::array<double, 3>> updated_xx;        
-        updated_xx.fill(xx.size(),std::array<double, 3>());
+        Field<std::array<double, 3>> updated_xx("temp",xx.size()); 
+
         for (int j = 0; j < grid.size_y(); ++j) {
             for (int i = 0; i < grid.size_x(); ++i) {
                 int idx = grid.index(i,j);
