@@ -1,3 +1,8 @@
+/*
+This simulates a kind of reaction diffusion model with rock-paper-scissors rules.
+Not general enough to be used for anything physical. 
+*/
+
 #include "../DataBase/field.hh"
 #include "../DataBase/nodeList.hh"
 #include "../Math/vectorMath.hh"
