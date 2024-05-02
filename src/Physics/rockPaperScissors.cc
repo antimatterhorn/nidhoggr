@@ -5,7 +5,7 @@
 #include <random>
 
 namespace Physics {
-class ReactionDiffusion {
+class RockPaperScissors {
 private:
     Mesh::Grid<2> grid;
     //unsigned int nConc;
@@ -16,7 +16,7 @@ private:
     double A;
     double D;
 public:
-    ReactionDiffusion(Mesh::Grid<2> grid, double A, double D) : 
+    RockPaperScissors(Mesh::Grid<2> grid, double A, double D) : 
         grid(grid),
         A(A),
         D(D) {
