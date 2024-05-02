@@ -21,5 +21,3 @@ cmake ..
 make
 
 ```
-
-for now, hard link the test files into the build/src directory to use them. 

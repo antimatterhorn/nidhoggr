@@ -1,4 +1,3 @@
-import importlib
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import numpy as np
@@ -13,7 +12,6 @@ from DataBase import *
 from LinearAlgebra import *
 from RPS import *
 
-n = 3
 x = 100
 y = 100
 grid = Grid2d(n, x, y,1,1,1)
