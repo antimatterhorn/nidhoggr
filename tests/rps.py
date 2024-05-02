@@ -14,14 +14,8 @@ from RPS import *
 
 x = 100
 y = 100
-grid = Grid2d(n, x, y,1,1,1)
-
-print(grid.position(1))
-
+grid = Grid2d(x, y,1,1)
 rps = RockPaperScissors(grid,0.8,0.4)
-
-#grid.A = 0.8
-#grid.D = 0.4
 
 fig, ax = plt.subplots()
 
@@ -33,12 +27,11 @@ def update(frame):
     for i in range(x):
         for j in range(y):
             cell = rps.getCell(i, j)
-            print(cell)
             rgb_grid[i, j][0] = cell.x
             rgb_grid[i, j][1] = cell.y
             rgb_grid[i, j][2] = cell.z
     # Plot the grid
     ax.imshow(rgb_grid, origin='lower', extent=[0, x, 0, y], interpolation='nearest')
 
-#ani = FuncAnimation(fig, update, frames=100, interval=50)
-#plt.show()
+ani = FuncAnimation(fig, update, frames=100, interval=50)
+plt.show()

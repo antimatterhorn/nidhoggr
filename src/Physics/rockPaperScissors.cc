@@ -51,7 +51,7 @@ public:
         n(grid.size()) {
             xx = Field<Lin::Vector<3>>("xx",n);
             rho = Field<double>("rho",n);
-            
+            this->initialize();
             // xx.fill(n,Lin::Vector<3>());
             // rho.fill(n,0.0);
     }
