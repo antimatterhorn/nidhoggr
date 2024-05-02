@@ -11,5 +11,3 @@ class RockPaperScissors:
         return
     def getCell(self,i="int",j="int"):
         return
-    def getCellData(self,i="int",j="int"):
-        return

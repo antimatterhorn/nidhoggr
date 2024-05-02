@@ -14,7 +14,7 @@ class RockPaperScissors {
 private:
     Mesh::Grid<2> grid;
     //unsigned int nConc;
-    Field<Lin::Vector<3>> xx;
+    Field<std::array<double, 3>> xx;
     Field<double> rho;
 
     double A;
@@ -49,7 +49,7 @@ public:
         A(A),
         D(D),
         n(grid.size()) {
-            xx = Field<Lin::Vector<3>>("xx",n);
+            xx = Field<std::array<double, 3>>("xx",n);
             rho = Field<double>("rho",n);
             this->initialize();
             // xx.fill(n,Lin::Vector<3>());
@@ -74,8 +74,8 @@ public:
     void
     update() {
         // Temporary grid to store updated concentrations
-        Field<Lin::Vector<3>> updated_xx;        
-        updated_xx.fill(xx.size(),Lin::Vector<3>());
+        Field<std::array<double, 3>> updated_xx;        
+        updated_xx.fill(xx.size(),std::array<double, 3>());
         for (int j = 0; j < grid.size_y(); ++j) {
             for (int i = 0; i < grid.size_x(); ++i) {
                 int idx = grid.index(i,j);
@@ -111,15 +111,10 @@ public:
         }
     }
 
-    Lin::Vector<3>
+    std::array<double, 3>
     getCell(int i, int j) {
         int idx = grid.index(i,j);
         return xx[idx];
-    }
-
-    std::array<double, 3>
-    getCellData(int i, int j) {
-        return getCell(i,j).values;
     }
 };
 }

@@ -12,8 +12,8 @@ from DataBase import *
 from LinearAlgebra import *
 from RPS import *
 
-x = 100
-y = 100
+x = 150
+y = 150
 grid = Grid2d(x, y,1,1)
 rps = RockPaperScissors(grid,0.8,0.4)
 
@@ -26,7 +26,7 @@ def update(frame):
     rgb_grid = np.zeros((x, y, 3))
     for i in range(x):
         for j in range(y):
-            rgb_grid[i, j] = rps.getCellData(i,j)
+            rgb_grid[i, j] = rps.getCell(i,j)
     # Plot the grid
     ax.imshow(rgb_grid, origin='lower', extent=[0, x, 0, y], interpolation='nearest')
 
