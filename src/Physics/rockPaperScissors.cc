@@ -24,7 +24,7 @@ private:
     double 
     deriv(int c, int x, int y) {
         double del = 0;
-        int idx = y * grid.size_x() + x;
+        int idx = grid.index(x,y);
         double thisCon = xx[idx][c];
         for(int j=y-1;j<y+2;++j) {
             for(int i=x-1;i<x+2;++i) {
@@ -35,7 +35,7 @@ private:
                     fac = 0.05; 
                 else
                     fac = 0.2;
-                int iidx = jj*grid.size_x() + ii;
+                int iidx = grid.index(ii,jj);
                 double thatCon = xx[iidx][c];
                 //del += (thatCon-thisCon)/fac;
                 del += thatCon*fac; // this is a kernel based approach
@@ -65,7 +65,7 @@ public:
         for (int j = 0; j < grid.size_y(); ++j) {
             for (int i = 0; i < grid.size_x(); ++i) {
                 int choice = dis(gen);
-                int idx = j * grid.size_x() + i;
+                int idx = grid.index(i,j);
                 xx[idx][choice] = 1.0; // or any other initial concentration value for this choice
             }
         }
@@ -78,7 +78,7 @@ public:
         updated_xx.fill(xx.size(),Lin::Vector<3>());
         for (int j = 0; j < grid.size_y(); ++j) {
             for (int i = 0; i < grid.size_x(); ++i) {
-                int idx = j * grid.size_x() + i;
+                int idx = grid.index(i,j);
                 rho[idx] = 0;
                 for(int c=0;c<3;++c) 
                     rho[idx] += xx[idx][c];           
@@ -87,7 +87,7 @@ public:
         for(int c=0;c<3;++c) {
             for (int j = 0; j < grid.size_y(); ++j) {
                 for (int i = 0; i < grid.size_x(); ++i) {
-                    int idx = j * grid.size_x() + i;
+                    int idx = grid.index(i,j);
                     int nc = (c+1)%3;   // this only works for 3 concentrations!
                     double r = rho[idx];
                     double u = xx[idx][c];
@@ -113,7 +113,7 @@ public:
 
     Lin::Vector<3>
     getCell(int i,int j) {
-        int idx = j * grid.size_x() + i;
+        int idx = grid.index(i,j);
         return xx[idx];
     }
 };

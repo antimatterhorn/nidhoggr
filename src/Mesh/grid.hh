@@ -40,9 +40,9 @@ public:
         initializeGrid();
     }
 
-    void initializeGrid() {
+    void 
+    initializeGrid() {
         positions = Field<Lin::Vector<dim>>("position");
-        int idx = 0;
 
         // Compute and store the position of each cell center
         for (int k = 0; k < nz; ++k) {
@@ -52,7 +52,6 @@ public:
                     for (int d = 0; d < dim; ++d) {
                         position.values[d] = (d == 0 ? i * dx + 0.5 * dx : (d == 1 ? j * dy + 0.5 * dy : k * dz + 0.5 * dz));
                     }
-                    idx = (k * ny + j) * nx + i;
                     positions.addValue(position);   // i think i want positions to always exist regardless of this class
                                                     // so come back to this later to remove this
                 }
@@ -60,10 +59,21 @@ public:
         }
     }
 
-    void setOrigin(Lin::Vector<dim> origin) {
+    void 
+    setOrigin(Lin::Vector<dim> origin) {
         for (int i = 0; i < positions.getSize(); ++i) {
             positions[i] -= origin; // this is very not correct
         }
+    }
+
+    int
+    index(int i, int j) {
+        return j * nx + i;
+    }
+
+    int
+    index(int i, int j, int k) {
+        return (k * ny + j) * nx + i;;
     }
 
     int getnx() const { return nx; }
