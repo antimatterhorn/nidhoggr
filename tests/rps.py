@@ -20,16 +20,13 @@ rps = RockPaperScissors(grid,0.8,0.4)
 fig, ax = plt.subplots()
 
 def update(frame):
-    rps.update()
+    rps.step(1)
     ax.clear()
     # Generate RGB values for each cell
     rgb_grid = np.zeros((x, y, 3))
     for i in range(x):
         for j in range(y):
-            cell = rps.getCell(i, j)
-            rgb_grid[i, j][0] = cell.x
-            rgb_grid[i, j][1] = cell.y
-            rgb_grid[i, j][2] = cell.z
+            rgb_grid[i, j] = rps.getCellData(i,j)
     # Plot the grid
     ax.imshow(rgb_grid, origin='lower', extent=[0, x, 0, y], interpolation='nearest')
 

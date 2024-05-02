@@ -112,9 +112,14 @@ public:
     }
 
     Lin::Vector<3>
-    getCell(int i,int j) {
+    getCell(int i, int j) {
         int idx = grid.index(i,j);
         return xx[idx];
+    }
+
+    std::array<double, 3>
+    getCellData(int i, int j) {
+        return getCell(i,j).values;
     }
 };
 }
