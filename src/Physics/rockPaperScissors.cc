@@ -16,19 +16,44 @@ private:
     //unsigned int nConc;
     Field<Lin::Vector<3>> xx;
     Field<double> rho;
-    Field<double> maxC;
 
     double A;
     double D;
+    unsigned int n;
+
+    double 
+    deriv(int c, int x, int y) {
+        double del = 0;
+        int idx = y * grid.size_x() + x;
+        double thisCon = xx[idx][c];
+        for(int j=y-1;j<y+2;++j) {
+            for(int i=x-1;i<x+2;++i) {
+                int ii = ((i%grid.size_x())+grid.size_x())%grid.size_x(); // this is like python's mod op
+                int jj = ((j%grid.size_y())+grid.size_y())%grid.size_y();
+                double fac = 0;
+                if(ii!=x && jj!=y)
+                    fac = 0.05; 
+                else
+                    fac = 0.2;
+                int iidx = jj*grid.size_x() + ii;
+                double thatCon = xx[iidx][c];
+                //del += (thatCon-thisCon)/fac;
+                del += thatCon*fac; // this is a kernel based approach
+            }
+        }
+        return del;
+    }
 public:
     RockPaperScissors(Mesh::Grid<2> grid, double A, double D) : 
         grid(grid),
         A(A),
-        D(D) {
-            unsigned int n = grid.size();
-            xx.fill(n,Lin::Vector<3>());
-            rho.fill(n,0.0);
-            maxC.fill(n,0.0);
+        D(D),
+        n(grid.size()) {
+            xx = Field<Lin::Vector<3>>("xx",n);
+            rho = Field<double>("rho",n);
+            
+            // xx.fill(n,Lin::Vector<3>());
+            // rho.fill(n,0.0);
     }
 
     void
@@ -44,6 +69,52 @@ public:
                 xx[idx][choice] = 1.0; // or any other initial concentration value for this choice
             }
         }
+    }
+
+    void
+    update() {
+        // Temporary grid to store updated concentrations
+        Field<Lin::Vector<3>> updated_xx;        
+        updated_xx.fill(xx.size(),Lin::Vector<3>());
+        for (int j = 0; j < grid.size_y(); ++j) {
+            for (int i = 0; i < grid.size_x(); ++i) {
+                int idx = j * grid.size_x() + i;
+                rho[idx] = 0;
+                for(int c=0;c<3;++c) 
+                    rho[idx] += xx[idx][c];           
+            }
+        }
+        for(int c=0;c<3;++c) {
+            for (int j = 0; j < grid.size_y(); ++j) {
+                for (int i = 0; i < grid.size_x(); ++i) {
+                    int idx = j * grid.size_x() + i;
+                    int nc = (c+1)%3;   // this only works for 3 concentrations!
+                    double r = rho[idx];
+                    double u = xx[idx][c];
+                    double dudt = D*deriv(c,i,j);
+                    dudt += u*(1.0-r);
+                    dudt -= u*A*xx[idx][nc];
+                    updated_xx[idx][c] = std::max(std::min(1.0,xx[idx][c]+dudt),0.0);
+                    // this assumes dt = 1 which is fine for now
+                }
+            }
+        }
+
+        xx = updated_xx;
+    }
+
+    void
+    step(unsigned int nsteps) {
+        for(unsigned int i=0;i<nsteps;++i)
+        {
+            update();
+        }
+    }
+
+    Lin::Vector<3>
+    getCell(int i,int j) {
+        int idx = j * grid.size_x() + i;
+        return xx[idx];
     }
 };
 }

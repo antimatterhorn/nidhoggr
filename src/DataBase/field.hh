@@ -28,6 +28,11 @@ public:
 
     Field(const std::string& fieldName)
         : name(fieldName) {}
+    
+    Field(const std::string& fieldName, unsigned int numElements)
+        : name(fieldName) {
+        this->fill(numElements,T());
+    }
 
     void 
     addValue(const T& value) {
