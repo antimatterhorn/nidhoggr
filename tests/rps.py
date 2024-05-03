@@ -14,5 +14,5 @@ rps = RockPaperScissors(grid,0.8,0.4)
 
 
 bounds = (x,y)
-update_method = AnimationUpdateMethod(rps.getCell,rps.update)
+update_method = AnimationUpdateMethod(call=rps.getCell,stepper=rps.update)
 animate(bounds,update_method)

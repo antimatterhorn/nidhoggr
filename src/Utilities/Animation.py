@@ -24,8 +24,8 @@ def animate(bounds, update_method, frames=100, interval=50):
     plt.show()
 
 class AnimationUpdateMethod:
-    def __init__(self,module_call,module_stepper):
-        self.module_call = module_call
-        self.module_stepper = module_stepper
+    def __init__(self,call,stepper):
+        self.module_call = call
+        self.module_stepper = stepper
     def __call__(self,i,j):
         return self.module_call(i,j)
