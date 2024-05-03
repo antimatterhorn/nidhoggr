@@ -1,0 +1,1 @@
+configure_file(animation.py animation.py COPYONLY)
