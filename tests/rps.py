@@ -5,7 +5,7 @@ sys.path.append("../build/src/Utilities")
 
 from Mesh import *
 from RPS import *
-from animation import *
+from Animation import *
 
 x = 100
 y = 100

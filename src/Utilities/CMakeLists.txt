@@ -1,1 +1,1 @@
-configure_file(animation.py animation.py COPYONLY)
+configure_file(Animation.py Animation.py COPYONLY)
