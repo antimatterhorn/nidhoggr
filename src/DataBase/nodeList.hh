@@ -82,6 +82,14 @@ public:
         return names;
     }
 
+    Field<int>& 
+    nodes() {
+        return ids;
+    }
+
+    unsigned int 
+    size() const { return getNumNodes(); }
+
     ~NodeList() {
         // for (auto field : fields) {
         //     delete field;
