@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import numpy as np
 
-def animate(bounds, update_method, frames=100, interval=50):
+def animate(bounds, update_method, frames=100, interval=50, scale=1):
     fig, ax = plt.subplots()
 
     x = bounds[0]
@@ -13,12 +13,12 @@ def animate(bounds, update_method, frames=100, interval=50):
         ax.clear()
 
         # Generate RGB values for each cell
-        rgb_grid = np.zeros((x, y, 3))
-        for i in range(x):
-            for j in range(y):
-                rgb_grid[i, j] = update_method.module_call(i,j)
+        rgb_grid = np.zeros((x*scale, y*scale, 3))
+        for i in range(x*scale):
+            for j in range(y*scale):
+                rgb_grid[i, j] = update_method.module_call(i%x,j%y)
         # Plot the grid
-        ax.imshow(rgb_grid, origin='lower', extent=[0, x, 0, y], interpolation='nearest')
+        ax.imshow(rgb_grid, origin='lower', extent=[0, x*scale, 0, y*scale], interpolation='nearest')
 
     ani = FuncAnimation(fig, update, frames=frames, interval=interval)
     plt.show()

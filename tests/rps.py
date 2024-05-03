@@ -10,7 +10,7 @@ from Animation import *
 x = 100
 y = 100
 grid = Grid2d(x, y,1,1)
-rps = RockPaperScissors(grid,0.8,0.4)
+rps = RockPaperScissors(grid=grid,A=0.8,D=0.4)
 
 
 bounds = (x,y)

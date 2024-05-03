@@ -1,7 +1,7 @@
 from PYB11Generator import *
 
 class RockPaperScissors:
-    def pyinit(self,grid="Mesh::Grid<2>",A="double",B="double"):
+    def pyinit(self,grid="Mesh::Grid<2>",A="double",D="double"):
         return
     def initialize(self):
         return
