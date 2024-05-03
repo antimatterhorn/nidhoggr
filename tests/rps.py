@@ -2,18 +2,14 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import numpy as np
 import sys
-sys.path.append("../build/src/Math")
-sys.path.append("../build/src/DataBase")
 sys.path.append("../build/src/Mesh")
 sys.path.append("../build/src/Physics")
 
 from Mesh import *
-from DataBase import *
-from LinearAlgebra import *
 from RPS import *
 
-x = 150
-y = 150
+x = 125
+y = 125
 grid = Grid2d(x, y,1,1)
 rps = RockPaperScissors(grid,0.8,0.4)
 

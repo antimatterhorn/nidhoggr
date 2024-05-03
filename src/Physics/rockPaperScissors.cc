@@ -4,8 +4,6 @@ Not general enough to be used for anything physical.
 */
 
 #include "../DataBase/field.hh"
-#include "../DataBase/nodeList.hh"
-#include "../Math/vectorMath.hh"
 #include "../Mesh/grid.hh"
 #include <random>
 
