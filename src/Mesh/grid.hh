@@ -52,8 +52,7 @@ public:
                     for (int d = 0; d < dim; ++d) {
                         position.values[d] = (d == 0 ? i * dx + 0.5 * dx : (d == 1 ? j * dy + 0.5 * dy : k * dz + 0.5 * dz));
                     }
-                    positions.addValue(position);   // i think i want positions to always exist regardless of this class
-                                                    // so come back to this later to remove this
+                    positions.addValue(position);   
                 }
             }
         }
@@ -67,14 +66,13 @@ public:
     }
 
     int
-    index(int i, int j) {
-        return j * nx + i;
-    }
+    index(int i) { return i; }
 
     int
-    index(int i, int j, int k) {
-        return (k * ny + j) * nx + i;;
-    }
+    index(int i, int j) { return j * nx + i; }
+
+    int
+    index(int i, int j, int k) { return (k * ny + j) * nx + i; }
 
     int getnx() const { return nx; }
     int getny() const { return ny; }
@@ -87,7 +85,8 @@ public:
     double getdy() const { return dy; }
     double getdz() const { return dz; }
 
-    Lin::Vector<dim> getPosition(int id){
+    Lin::Vector<dim> 
+    getPosition(int id){
         return positions[id];
     }
 };

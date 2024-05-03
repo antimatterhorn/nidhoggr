@@ -8,8 +8,8 @@ sys.path.append("../build/src/Physics")
 from Mesh import *
 from RPS import *
 
-x = 125
-y = 125
+x = 100
+y = 100
 grid = Grid2d(x, y,1,1)
 rps = RockPaperScissors(grid,0.8,0.4)
 

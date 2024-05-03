@@ -14,9 +14,8 @@ private:
     Field<std::array<double, 3>> xx;
     Field<double> rho;
 
-    double A;
-    double D;
-    unsigned int n;
+    double A, D;
+    unsigned int n, sx, sy;
 
     double 
     deriv(int c, int x, int y) {
@@ -25,8 +24,8 @@ private:
         double thisCon = xx[idx][c];
         for(int j=y-1;j<y+2;++j) {
             for(int i=x-1;i<x+2;++i) {
-                int ii = ((i%grid.size_x())+grid.size_x())%grid.size_x(); // this is like python's mod op
-                int jj = ((j%grid.size_y())+grid.size_y())%grid.size_y();
+                int ii = ((i%sx)+sx)%sx; // this is like python's mod op
+                int jj = ((j%sy)+sy)%sy;
                 double fac = 0;
                 if(ii!=x && jj!=y)
                     fac = 0.05; 
@@ -44,7 +43,9 @@ public:
         grid(grid),
         A(A),
         D(D),
-        n(grid.size()) {
+        n(grid.size()),
+        sx(grid.size_x()),
+        sy(grid.size_y()) {
             xx = Field<std::array<double, 3>>("xx",n);
             rho = Field<double>("rho",n);
             this->initialize();
@@ -55,8 +56,8 @@ public:
         std::random_device rd;
         std::mt19937 gen(rd());
         std::uniform_int_distribution<> dis(0, 2);
-        for (int j = 0; j < grid.size_y(); ++j) {
-            for (int i = 0; i < grid.size_x(); ++i) {
+        for (int j = 0; j < sy; ++j) {
+            for (int i = 0; i < sx; ++i) {
                 int choice = dis(gen);
                 int idx = grid.index(i,j);
                 xx[idx][choice] = 1.0; // or any other initial concentration value for this choice
@@ -69,8 +70,8 @@ public:
         // Temporary grid to store updated concentrations
         Field<std::array<double, 3>> updated_xx("xx",xx.size()); 
 
-        for (int j = 0; j < grid.size_y(); ++j) {
-            for (int i = 0; i < grid.size_x(); ++i) {
+        for (int j = 0; j < sy; ++j) {
+            for (int i = 0; i < sx; ++i) {
                 int idx = grid.index(i,j);
                 rho[idx] = 0;
                 for(int c=0;c<3;++c) 
@@ -78,8 +79,8 @@ public:
             }
         }
         for(int c=0;c<3;++c) {
-            for (int j = 0; j < grid.size_y(); ++j) {
-                for (int i = 0; i < grid.size_x(); ++i) {
+            for (int j = 0; j < sy; ++j) {
+                for (int i = 0; i < sx; ++i) {
                     int idx = grid.index(i,j);
                     int nc = (c+1)%3;   // this only works for 3 concentrations!
                     double r = rho[idx];
@@ -99,9 +100,7 @@ public:
     void
     step(unsigned int nsteps) {
         for(unsigned int i=0;i<nsteps;++i)
-        {
             update();
-        }
     }
 
     std::array<double, 3>
