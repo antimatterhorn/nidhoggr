@@ -88,6 +88,20 @@ public:
         return nullptr; 
     }
 
+    template <int dim>
+    Field<Lin::Vector<dim>>*
+    position() const {
+        for (FieldBase* field : _fields) {
+            if (field->hasName() && field->getName() == Name("position")) {
+                Field<Lin::Vector<dim>>* positionField = dynamic_cast<Field<Lin::Vector<dim>>*>(field);
+                if (positionField != nullptr) {
+                    return positionField; // Return the mass field if found
+                }
+            }
+        }
+        return nullptr; 
+    }
+
     size_t 
     getFieldCount() const {
         return _fields.size();

@@ -11,6 +11,8 @@ protected:
     NodeList* nodeList;
 public:
     Field<double> mass; // Pointer to Field<double>
+    Field<Lin::Vector<dim>> position;
+    Field<Lin::Vector<dim>> velocity;
 
     Physics(NodeList* nodeListPtr) : nodeList(nodeListPtr) {
         int numNodes = nodeList->size();
@@ -20,12 +22,27 @@ public:
         } else {
             mass = *nodeList->mass(); // Assign mass to point to the existing mass field
         } 
+
+        if (nodeList->velocity<dim>() == nullptr) {
+            velocity = new Field<Lin::Vector<dim>>("velocity", numNodes); // Create a new Field<double>
+            nodeList->addField(&velocity); // Add the mass field to the nodeList
+        } else {
+            velocity = *nodeList->velocity<dim>(); // Assign mass to point to the existing mass field
+        }
+
+        if (nodeList->position<dim>() == nullptr) {
+            position = new Field<Lin::Vector<dim>>("position", numNodes); // Create a new Field<double>
+            nodeList->addField(&position); // Add the mass field to the nodeList
+        } else {
+            position = *nodeList->position<dim>(); // Assign mass to point to the existing mass field
+        }
     }
 
-    virtual ~Physics() {
-
-    }
+    virtual ~Physics() {}
 };
+using Physics1D = Physics<1>;
+using Physics2D = Physics<2>;
+using Physics3D = Physics<3>;
 }
 
 #endif //PHYSICS_HH
