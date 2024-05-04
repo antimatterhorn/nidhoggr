@@ -1,3 +1,6 @@
+#ifndef STATE_HH
+#define STATE_HH
+
 #include "../EOS/equationOfStateBase.hh"
 #include "../DataBase/nodeList.hh"
 
@@ -16,3 +19,5 @@ public:
     EquationOfState* 
     getEOS() { return eosPtr; }
 };
+
+#endif //STATE_HH

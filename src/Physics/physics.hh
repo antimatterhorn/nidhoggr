@@ -4,6 +4,7 @@
 #include "../DataBase/nodeList.hh"
 #include "../Math/vectorMath.hh"
 #include "../Type/physicalConstants.hh"
+#include "../Integrator/integrator.hh"
 
 namespace Physics {
 template <int dim>

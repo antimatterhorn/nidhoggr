@@ -6,21 +6,21 @@
 #include <cstddef>
 #include "../DataBase/field.hh"
 #include "../Math/vectorMath.hh"
+#include "../State/state.hh"
 
 
-template <typename T>
 class Integrator {
 public:
-    using DerivativeFunction = std::function<Field<T>(T, const Field<T>&)>;
-    DerivativeFunction DxDt;
+    State state;
     
-    Integrator (const DerivativeFunction& derivativeFunc) : DxDt(derivativeFunc) {}
+    Integrator (const State& state) : state(state) {}
 
     ~Integrator() {}
 
-    virtual Field<T> 
-    integrate(const Field<T>& initialState, double t, double dt) {
-        Field<T> nextState = initialState + DxDt(t,initialState)*dt;
+    template <typename T>
+    Field<T> 
+    integrate(const Field<T>& initialState, const std::function<Field<T>(T, const Field<T>&)>& deriv, double t, double dt) {
+        Field<T> nextState = initialState + deriv(t,initialState)*dt;
         return nextState;
     }
 protected:
