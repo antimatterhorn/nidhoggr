@@ -3,6 +3,7 @@
 
 #include "../DataBase/nodeList.hh"
 #include "../Math/vectorMath.hh"
+#include "../Type/physicalConstants.hh"
 
 namespace Physics {
 template <int dim>
@@ -13,8 +14,11 @@ public:
     Field<double> mass; // Pointer to Field<double>
     Field<Lin::Vector<dim>> position;
     Field<Lin::Vector<dim>> velocity;
+    PhysicalConstants& constants;
 
-    Physics(NodeList* nodeListPtr) : nodeList(nodeListPtr) {
+    Physics(NodeList* nodeListPtr, PhysicalConstants& constants) : 
+        nodeList(nodeListPtr), 
+        constants(constants) {
         int numNodes = nodeList->size();
         if (nodeList->mass() == nullptr) {
             mass = new Field<double>("mass", numNodes); // Create a new Field<double>

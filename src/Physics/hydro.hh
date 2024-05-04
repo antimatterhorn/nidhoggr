@@ -7,12 +7,12 @@ namespace Physics {
 template <int dim>
 class Hydro : public Physics<dim> {
 protected:
-    NodeList* nodeList;
 public:
 
     Hydro() {}
 
-    Hydro(NodeList* nodeListPtr) : Physics<dim>(nodeListPtr), nodeList(nodeListPtr) {
+    Hydro(NodeList* nodeListPtr, PhysicalConstants& constants) : 
+        Physics<dim>(nodeListPtr,constants) {
 
     }
 
