@@ -44,6 +44,9 @@ public:
     }
 
     virtual ~Physics() {}
+
+    virtual void
+    UpdateDerivatives(const double dt) const = 0;
 };
 using Physics1D = Physics<1>;
 using Physics2D = Physics<2>;
