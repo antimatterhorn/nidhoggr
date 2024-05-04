@@ -12,6 +12,7 @@ if __name__ == "__main__":
 
     myNodeList = NodeList(2)
     myNodeList.addField(myField)
+    #myNodeList.insertField[float]("something") these aren't being properly exposed in PYB11 just yet
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
     print("position[0] =",myNodeList.getField("position")[0])

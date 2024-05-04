@@ -11,18 +11,32 @@ class NodeList {
 private:
     std::vector<FieldBase*> _fields;
     Field<int> _ids;
+    std::vector<FieldBase*> _extraFields;
 public:
     NodeList() {}
 
     NodeList(int numNodes) {  
         _ids = Field<int>("id");     
-        for (int i=0; i<numNodes;++i) { _ids.addValue(i); }
+        for (int i=0; i<numNodes; ++i) { _ids.addValue(i); }
         addField(&_ids);
     }
 
-    void 
-    addField(FieldBase* fieldPtr) {
+    ~NodeList() {
+        // Clean up memory for extra fields
+        for (auto fieldPtr : _extraFields) {
+            delete fieldPtr;
+        }
+    }
+
+    void addField(FieldBase* fieldPtr) {
         _fields.emplace_back(fieldPtr);
+    }
+
+    template <typename T>
+    void insertField(std::string name) {
+        Field<T>* newField = new Field<T>(name, this->size());
+        _extraFields.emplace_back(newField); // Store pointer to the new field
+        addField(newField); // Add pointer to the new field to _fields
     }
 
     void 
@@ -132,9 +146,6 @@ public:
     unsigned int 
     size() const { return getNumNodes(); }
 
-    ~NodeList() {
-
-    }
 };
 
 #endif // NODELIST_HH

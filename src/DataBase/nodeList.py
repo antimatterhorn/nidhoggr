@@ -7,6 +7,9 @@ class NodeList:
         return
     def addField(self,field="FieldBase*"):
         return
+    @PYB11template("typename T")
+    def insertField(self,name="std::string"):
+        return
     def getField(self,name="std::string"):
         return
     
