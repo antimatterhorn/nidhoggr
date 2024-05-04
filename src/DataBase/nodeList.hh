@@ -5,28 +5,29 @@
 #include <string>
 #include "field.hh"
 #include "../Type/name.hh"
+#include "../Math/vectorMath.hh"
 
 class NodeList {
 private:
-    std::vector<FieldBase*> fields;
-    Field<int> ids;
+    std::vector<FieldBase*> _fields;
+    Field<int> _ids;
 public:
     NodeList() {}
 
     NodeList(int numNodes) {  
-        ids = Field<int>("id");     
-        for (int i=0; i<numNodes;++i) { ids.addValue(i); }
-        addField(&ids);
+        _ids = Field<int>("id");     
+        for (int i=0; i<numNodes;++i) { _ids.addValue(i); }
+        addField(&_ids);
     }
 
     void 
     addField(FieldBase* fieldPtr) {
-        fields.emplace_back(fieldPtr);
+        _fields.emplace_back(fieldPtr);
     }
 
     void 
     addNodeList(const NodeList& other) {
-        fields.insert(fields.end(), other.fields.begin(), other.fields.end());
+        _fields.insert(_fields.end(), other._fields.begin(), other._fields.end());
     }
 
     NodeList 
@@ -43,11 +44,11 @@ public:
     }
 
     std::vector<FieldBase*> 
-    getFields() { return fields; }
+    getFields() { return _fields; }
 
     FieldBase* 
     getFieldByName(const Name& name) const {
-        for (FieldBase* field : fields) {
+        for (FieldBase* field : _fields) {
             if (field->hasName() && field->getName() == name) {
                 return field;
             }
@@ -60,20 +61,47 @@ public:
         return getFieldByName(Name(name));
     }
 
+    Field<double>*
+    mass() const {
+        for (FieldBase* field : _fields) {
+            if (field->hasName() && field->getName() == Name("mass")) {
+                Field<double>* massField = dynamic_cast<Field<double>*>(field);
+                if (massField != nullptr) {
+                    return massField; // Return the mass field if found
+                }
+            }
+        }
+        return nullptr; 
+    }
+
+    template <int dim>
+    Field<Lin::Vector<dim>>*
+    velocity() const {
+        for (FieldBase* field : _fields) {
+            if (field->hasName() && field->getName() == Name("velocity")) {
+                Field<Lin::Vector<dim>>* velocityField = dynamic_cast<Field<Lin::Vector<dim>>*>(field);
+                if (velocityField != nullptr) {
+                    return velocityField; // Return the mass field if found
+                }
+            }
+        }
+        return nullptr; 
+    }
+
     size_t 
     getFieldCount() const {
-        return fields.size();
+        return _fields.size();
     }
 
     size_t 
     getNumNodes() const {
-        return fields[0]->getSize();
+        return _fields[0]->getSize();
     }
 
     std::vector<std::string> 
     fieldNames() const {
         std::vector<std::string> names;
-        for (const auto& field : fields) {
+        for (const auto& field : _fields) {
             // Check if the pointer is valid and the FieldList has a name
             if (field && field->hasName()) {
                 names.push_back(field->getNameString());
@@ -84,16 +112,14 @@ public:
 
     Field<int>& 
     nodes() {
-        return ids;
+        return _ids;
     }
 
     unsigned int 
     size() const { return getNumNodes(); }
 
     ~NodeList() {
-        // for (auto field : fields) {
-        //     delete field;
-        // }
+
     }
 };
 
