@@ -6,4 +6,7 @@ if __name__ == "__main__":
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
-    constantGravity = constantGravity2d()
+    constants = PhysicalConstants(1.0, 1.0, 1.0, 1.0, 1.0)
+    eos = IdealGasEOS(1.0,constants)
+
+    state = State(myNodeList,eos)

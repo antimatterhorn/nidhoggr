@@ -1,4 +1,4 @@
-#include "equationOfStateBase.hh"
+#include "equationOfState.hh"
 #include <cmath>
 
 class PolytropicEOS : public EquationOfState {
@@ -15,21 +15,21 @@ public:
         }
 
     // Method to compute pressure given density and internal energy
-    virtual double 
-    computePressure(double density, double internalEnergy) const override {
-        return kappa*pow(density,gamma);
+    virtual void 
+    setPressure(Field<double>& pressure, const Field<double>& density, const Field<double>& internalEnergy) const override {
+        //return kappa*pow(density,gamma);
     }
 
     // Method to compute internal energy given density and pressure
-    virtual double 
-    computeInternalEnergy(double density, double pressure) const override {
-        return 0; // need some kind of error that indicates this is not supported
+    virtual void 
+    setInternalEnergy(Field<double>& internalEnergy, const Field<double>& density, const Field<double>& pressure) const override {
+        //return 0; // need some kind of error that indicates this is not supported
     }
 
     // Method to compute sound speed given density and pressure
-    virtual double 
-    computeSoundSpeed(double density, double pressure) const override {
-        return std::sqrt(gamma*kappa*pow(density,gamma - 1.0));
+    virtual void 
+    setSoundSpeed(Field<double>& soundSpeed, const Field<double>& density, const Field<double>& internalEnergy) const override {
+        //return std::sqrt(gamma*kappa*pow(density,gamma - 1.0));
     }
 
     double getGamma() const { return gamma; }

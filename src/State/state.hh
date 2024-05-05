@@ -1,7 +1,7 @@
 #ifndef STATE_HH
 #define STATE_HH
 
-#include "../EOS/equationOfStateBase.hh"
+#include "../EOS/equationOfState.hh"
 #include "../DataBase/nodeList.hh"
 
 class State {
