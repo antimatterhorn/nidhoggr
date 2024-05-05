@@ -14,4 +14,3 @@ if __name__ == "__main__":
     print("|a| =",vec2.magnitude)
 
     import LinearAlgebra as lin
-    print(dir(lin))

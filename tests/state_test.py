@@ -6,16 +6,18 @@ if __name__ == "__main__":
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
-    constants = PhysicalConstants(1.0, 1.0, 1.0)
-    eos = IdealGasEOS(1.0,constants)
-
+    #constants = PhysicalConstants(1.0, 1.0, 1.0)
+    constants = MKS()
+    print("G =",constants.G)
+    eos = IdealGasEOS(5.0/3.0,constants)
+    print("gamma =",eos.gamma)
     state = State(myNodeList,eos)
 
     db = DataBase()
     db.EnrollNodeList(myNodeList,state)
 
-    constantGravity = ConstantGravity2d(db,constants,Vector2d(0,-1))
+    constantGravity = ConstantGravity2d(myNodeList,constants,Vector2d(0,-9.8))
 
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
-    print("accel =",myNodeList.velocity())
+    print("mass[0] =",myNodeList.mass()[0])

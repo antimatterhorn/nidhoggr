@@ -2,7 +2,9 @@ from PYB11Generator import *
 
 @PYB11template("dim")
 class PhysicsBase:
-    def pyinit(self,dataBase="DataBase*",constants="PhysicalConstants&"):
+    def pyinit(self,
+               _nodeList="NodeList*",
+               _constants="PhysicalConstants&"):
         return
     
     

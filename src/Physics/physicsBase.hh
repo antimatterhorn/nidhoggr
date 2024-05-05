@@ -11,15 +11,13 @@ namespace Physics {
 template <int dim>
 class PhysicsBase {
 protected:
-    DataBase* dataBase;
+    NodeList* nodeList;
     PhysicalConstants& constants;
 public:
-    PhysicsBase(DataBase* dataBase, PhysicalConstants& constants) : 
-        dataBase(dataBase), 
-        constants(constants) {
-        for (auto nodeList : dataBase->nodeLists) {
-            VerifyFields(nodeList);
-        }
+    PhysicsBase(NodeList* _nodeList, PhysicalConstants& _constants) : 
+        nodeList(_nodeList), 
+        constants(_constants) {
+        VerifyFields(nodeList);
     }
 
     virtual ~PhysicsBase() {}

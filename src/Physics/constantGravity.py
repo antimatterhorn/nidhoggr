@@ -4,9 +4,9 @@ from physicsBase import *
 @PYB11template("dim")
 class ConstantGravity(PhysicsBase):
     def pyinit(self,
-               dataBase="DataBase*",
-               constants="PhysicalConstants&",
-               gravityVector="Lin::Vector<%(dim)s>&"):
+               _nodeList="NodeList*",
+               _constants="PhysicalConstants&",
+               _gravityVector="Lin::Vector<%(dim)s>&"):
         return
 
 ConstantGravity1d = PYB11TemplateClass(ConstantGravity,

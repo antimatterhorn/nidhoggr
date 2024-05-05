@@ -8,16 +8,15 @@ protected:
 public:
     ConstantGravity() {}
 
-    ConstantGravity(DataBase* dataBase, PhysicalConstants& constants, Lin::Vector<dim>& gravityVector) : 
-        PhysicsBase<dim>(dataBase,constants),
-        gravityVector(gravityVector) {
-        for (auto nodeList : dataBase->nodeLists) {
-            int numNodes = nodeList->size();
-            if (nodeList->getField<Lin::Vector<dim>>("acceleration") == nullptr)
-                nodeList->insertField<Lin::Vector<dim>>("acceleration");
-            for (int i=0; i<numNodes; ++i)
-                nodeList->getField<Lin::Vector<dim>>("acceleration")->setValue(i,gravityVector);
-        }
+    ConstantGravity(NodeList* _nodeList, PhysicalConstants& _constants, Lin::Vector<dim>& _gravityVector) : 
+        PhysicsBase<dim>(_nodeList,_constants),
+        gravityVector(_gravityVector) {
+        NodeList* nodeList = this->nodeList;
+        int numNodes = nodeList->size();
+        if (nodeList->getField<Lin::Vector<dim>>("acceleration") == nullptr)
+            nodeList->insertField<Lin::Vector<dim>>("acceleration");
+        for (int i=0; i<numNodes; ++i)
+            nodeList->getField<Lin::Vector<dim>>("acceleration")->setValue(i,gravityVector);
     }
 
     virtual ~ConstantGravity() {}
