@@ -1,5 +1,6 @@
 from PYB11Generator import *
 PYB11namespaces = ["Physics"]
-PYB11includes = ['"physics.hh"','"constantGravity.cc"']
+PYB11includes = ['"physicsBase.hh"','"constantGravity.cc"']
 
-from physics import *
+from physicsBase import *
+from constantGravity import *

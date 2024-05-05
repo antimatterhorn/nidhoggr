@@ -1,7 +1,12 @@
 from PYB11Generator import *
 
 class PhysicalConstants:
-    def pyinit(self, unitLm="double", unitMkg="double", unitTsec="double", unitTeK="double", unitCcou="double"):
+    def pyinit(self, 
+               unitLm="const double", 
+               unitMkg="const double", 
+               unitTsec="const double", 
+               unitTeK= ("const double",1.0),
+               unitCcou=("const double",1.0)):
         return
 
     unitLengthMeters = PYB11property("double", getter="unitLengthMeters", doc="unitLengthMeters")

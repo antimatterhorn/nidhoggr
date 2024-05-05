@@ -24,6 +24,7 @@ class Field(FieldBase):
     def size(self):
         "Number of elements"
         return "unsigned"
+    
 
     @PYB11cppname("operator[]")
     @PYB11returnpolicy("reference_internal")
@@ -70,3 +71,21 @@ FieldofString = PYB11TemplateClass(Field,
                               cppname = "Field<std::string>",
                               pyname = "FieldofString",
                               docext = " (std::string).")
+
+FieldofVector1d = PYB11TemplateClass(Field,
+                              template_parameters = ("Lin::Vector<1>"),
+                              cppname = "Field<Lin::Vector<1>>",
+                              pyname = "FieldofVector1d",
+                              docext = " (Lin::Vector<1>).")
+
+FieldofVector2d = PYB11TemplateClass(Field,
+                              template_parameters = ("Lin::Vector<2>"),
+                              cppname = "Field<Lin::Vector<2>>",
+                              pyname = "FieldofVector2d",
+                              docext = " (Lin::Vector<2>).")
+
+FieldofVector3d = PYB11TemplateClass(Field,
+                              template_parameters = ("Lin::Vector<3>"),
+                              cppname = "Field<Lin::Vector<3>>",
+                              pyname = "FieldofVector3d",
+                              docext = " (Lin::Vector<3>).")

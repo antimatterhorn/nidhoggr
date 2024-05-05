@@ -1,5 +1,5 @@
-#ifndef PHYSICS_HH
-#define PHYSICS_HH
+#ifndef PHYSICSBASE_HH
+#define PHYSICSBASE_HH
 
 #include "../DataBase/nodeList.hh"
 #include "../DataBase/dataBase.hh"
@@ -9,12 +9,12 @@
 
 namespace Physics {
 template <int dim>
-class Physics {
+class PhysicsBase {
 protected:
     DataBase* dataBase;
     PhysicalConstants& constants;
 public:
-    Physics(DataBase* dataBase, PhysicalConstants& constants) : 
+    PhysicsBase(DataBase* dataBase, PhysicalConstants& constants) : 
         dataBase(dataBase), 
         constants(constants) {
         for (auto nodeList : dataBase->nodeLists) {
@@ -22,10 +22,10 @@ public:
         }
     }
 
-    virtual ~Physics() {}
+    virtual ~PhysicsBase() {}
 
-    virtual void
-    UpdateDerivatives(const double dt) const = 0;
+    // virtual void
+    // UpdateDerivatives(const double dt) const = 0;
 
     virtual void
     VerifyFields(NodeList* nodeList) {
@@ -41,9 +41,6 @@ public:
 
     }
 };
-using Physics1D = Physics<1>;
-using Physics2D = Physics<2>;
-using Physics3D = Physics<3>;
-}
 
+}
 #endif //PHYSICS_HH

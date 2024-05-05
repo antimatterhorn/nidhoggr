@@ -23,9 +23,9 @@ public:
 
     ~NodeList() {
         // Clean up memory for extra fields
-        for (auto fieldPtr : _extraFields) {
-            delete fieldPtr;
-        }
+        // for (auto fieldPtr : _extraFields) {
+        //     delete fieldPtr;
+        // }
     }
 
     void addField(FieldBase* fieldPtr) {
@@ -60,19 +60,21 @@ public:
     std::vector<FieldBase*> 
     getFields() { return _fields; }
 
-    FieldBase* 
+    template <typename T>
+    Field<T>* 
     getFieldByName(const Name& name) const {
         for (FieldBase* field : _fields) {
             if (field->hasName() && field->getName() == name) {
-                return field;
+                return dynamic_cast<Field<T>*>(field);
             }
         }
         return nullptr; // Return nullptr if no matching FieldList is found
     }
 
-    FieldBase* 
+    template <typename T>
+    Field<T>* 
     getField(const std::string& name) const {
-        return getFieldByName(Name(name));
+        return getFieldByName<T>(Name(name));
     }
 
     Field<double>*

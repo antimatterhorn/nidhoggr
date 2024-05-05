@@ -51,6 +51,9 @@ public:
     T& 
     getValue(const unsigned int index) { return values[index]; }
 
+    void
+    setValue(const unsigned int index, T val) { values[index] = val; }
+
     T& 
     operator[](const unsigned int index) { return values[index]; }
 
