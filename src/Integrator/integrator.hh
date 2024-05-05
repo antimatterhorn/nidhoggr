@@ -19,7 +19,10 @@ public:
 
     template <typename T>
     Field<T> 
-    integrate(const Field<T>& initialState, const std::function<Field<T>(T, const Field<T>&)>& deriv, double t, double dt) {
+    integrate(const Field<T>& initialState, 
+                const std::function<Field<T>(T, 
+                const Field<T>&)>& deriv, 
+                double t, double dt) {
         Field<T> nextState = initialState + deriv(t,initialState)*dt;
         return nextState;
     }

@@ -6,18 +6,20 @@
 
 class State {
 private:
-    EquationOfState* eosPtr;
-    NodeList* nodeListPtr;
+    EquationOfState* _eos;
+    NodeList* _nodeList;
 public:
-    State(NodeList* nodeList, EquationOfState* eos) : nodeListPtr(nodeList), eosPtr(eos) {};
+    State(NodeList* nodeList, EquationOfState* eos) : 
+        _nodeList(nodeList), 
+        _eos(eos) {};
 
     ~State() {};
 
     NodeList* 
-    getNodeList() { return nodeListPtr; }
+    nodeList() { return _nodeList; }
     
     EquationOfState* 
-    getEOS() { return eosPtr; }
+    eos() { return _eos; }
 };
 
 #endif //STATE_HH
