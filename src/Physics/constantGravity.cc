@@ -24,4 +24,16 @@ public:
     EvaluateDerivatives(const double dt) override {
         // compute accelerations
     }
+
+    Field<Lin::Vector<dim>> 
+    derivative(double t, const Field<Lin::Vector<dim>>& y, std::string yp) {
+        // Example differential equation: dy/dt = y'
+        // in this case, i don't use the field "y" to calculate y'
+        Field<Lin::Vector<dim>> dydt("dydt-"+yp);
+        NodeList* nodeList = this->nodeList;
+        for (size_t i = 0; i < y.size(); ++i) {
+            dydt.addValue(nodeList->getField<Lin::Vector<dim>>(yp)[i]);
+        }
+    return dydt;
+}
 };

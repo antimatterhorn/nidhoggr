@@ -1,25 +1,30 @@
 #ifndef STATE_HH
 #define STATE_HH
 
-#include "../EOS/equationOfState.hh"
 #include "../DataBase/nodeList.hh"
 
 class State {
 private:
-    EquationOfState* _eos;
-    NodeList* _nodeList;
+    FieldBase* field;
+    NodeList* nodeList;
 public:
-    State(NodeList* nodeList, EquationOfState* eos) : 
-        _nodeList(nodeList), 
-        _eos(eos) {};
+    State(FieldBase* field, NodeList* nodeList) : 
+        field(field),
+        nodeList(nodeList) {};
 
     ~State() {};
 
-    NodeList* 
-    nodeList() { return _nodeList; }
-    
-    EquationOfState* 
-    eos() { return _eos; }
+    template <typename T>
+    void
+    copyField() {
+        int numNodes = nodeList->size();
+        std::string name = field->getNameString();
+        if (nodeList->getField<T>("copy-of-"+name) == nullptr)
+            nodeList->insertField<T>("copy-of-"+name);
+        for (int i=0; i<numNodes; ++i)
+            nodeList->getField<T>("copy-of-"+name)->setValue(i,field[i]);
+    }
+
 };
 
 #endif //STATE_HH
