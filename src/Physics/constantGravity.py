@@ -8,6 +8,9 @@ class ConstantGravity(PhysicsBase):
                _constants="PhysicalConstants&",
                _gravityVector="Lin::Vector<%(dim)s>&"):
         return
+    # @PYB11virtual
+    # def UpdateDerivatives(self,dt="const double"):
+    #     return "void"
 
 ConstantGravity1d = PYB11TemplateClass(ConstantGravity,
                               template_parameters = ("1"),

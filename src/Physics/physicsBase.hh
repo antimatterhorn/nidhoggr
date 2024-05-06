@@ -22,8 +22,8 @@ public:
 
     virtual ~PhysicsBase() {}
 
-    // virtual void
-    // UpdateDerivatives(const double dt) const = 0;
+    virtual void
+    UpdateDerivatives(const double dt) {}
 
     virtual void
     VerifyFields(NodeList* nodeList) {

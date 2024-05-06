@@ -22,7 +22,7 @@ public:
     virtual ~ConstantGravity() {}
 
     virtual void
-    UpdateDerivatives(const double dt) {
+    UpdateDerivatives(const double dt) override {
         // compute accelerations
     }
 };
