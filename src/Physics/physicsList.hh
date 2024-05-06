@@ -1,26 +1,23 @@
 #ifndef PHYSICSLIST_HH
 #define PHYSICSLIST_HH
 
-#include "physicsBase.hh"
+#include "physics.hh"
 #include <vector>
 
-namespace Physics {
 template <int dim>
 class PhysicsList {
 private:
-    std::vector<PhysicsBase<dim>*> packages;
+    std::vector<Physics<dim>*> packages;
 public:
     PhysicsList() {}
 
     ~PhysicsList() {}
 
     void
-    addPackage(PhysicsBase<dim>* physics) {
+    addPackage(Physics<dim>* physics) {
         packages.push_back(physics);
     }
 };
 
-
-}
 
 #endif

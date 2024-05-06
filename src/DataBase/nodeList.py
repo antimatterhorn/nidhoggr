@@ -15,12 +15,19 @@ class NodeList:
         return "<%(T)s>"
     def mass(self):
         return
-    @PYB11template("int dim")
+    @PYB11template("dim")
     def velocity(self):
         return "Vector<%(dim)s>"
-    @PYB11template("int dim")
+    @PYB11template("dim")
     def position(self):
         return "Vector<%(dim)s>"
     numNodes = PYB11property("int", getter="getNumNodes", doc="The number of nodes in the nodeList.")
     count = PYB11property("int", getter="getFieldCount", doc="The number of fields in the nodeList.")
     fieldNames = PYB11property("std::vector<std::string>", getter="fieldNames", doc="The names of fields in the nodeList.")
+
+    velocity1d = PYB11TemplateFunction(velocity,
+                                template_parameters = ("1"))
+    velocity2d = PYB11TemplateFunction(velocity,
+                                template_parameters = ("2"))
+    velocity3d = PYB11TemplateFunction(velocity,
+                                template_parameters = ("3"))

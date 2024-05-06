@@ -4,7 +4,7 @@ from PYB11Generator import *
 class PhysicsList:
     def pyinit(self):
         return
-    def addPackage(self,physics="PhysicsBase<%(dim)s>*"):
+    def addPackage(self,physics="Physics<%(dim)s>*"):
         return
     
     

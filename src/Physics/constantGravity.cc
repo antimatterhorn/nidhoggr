@@ -1,15 +1,14 @@
-#include "physicsBase.hh"
+#include "physics.hh"
 
-namespace Physics {
 template <int dim>
-class ConstantGravity : public PhysicsBase<dim> {
+class ConstantGravity : public Physics<dim> {
 protected:
     Lin::Vector<dim> gravityVector;
 public:
     ConstantGravity() {}
 
     ConstantGravity(NodeList* _nodeList, PhysicalConstants& _constants, Lin::Vector<dim>& _gravityVector) : 
-        PhysicsBase<dim>(_nodeList,_constants),
+        Physics<dim>(_nodeList,_constants),
         gravityVector(_gravityVector) {
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
@@ -19,11 +18,10 @@ public:
             nodeList->getField<Lin::Vector<dim>>("acceleration")->setValue(i,gravityVector);
     }
 
-    virtual ~ConstantGravity() {}
+    ~ConstantGravity() {}
 
-    virtual void
-    UpdateDerivatives(const double dt) override {
+    void
+    EvaluateDerivatives(const double dt) override {
         // compute accelerations
     }
 };
-}

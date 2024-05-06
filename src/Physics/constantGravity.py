@@ -1,8 +1,8 @@
 from PYB11Generator import *
-from physicsBase import *
+from physics import *
 
 @PYB11template("dim")
-class ConstantGravity(PhysicsBase):
+class ConstantGravity(Physics):
     def pyinit(self,
                _nodeList="NodeList*",
                _constants="PhysicalConstants&",

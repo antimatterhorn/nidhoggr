@@ -1,7 +1,7 @@
 from PYB11Generator import *
 
 @PYB11template("dim")
-class PhysicsBase:
+class Physics:
     def pyinit(self,
                _nodeList="NodeList*",
                _constants="PhysicalConstants&"):
@@ -11,18 +11,18 @@ class PhysicsBase:
     #     return "void"
     
     
-PhysicsBase1d = PYB11TemplateClass(PhysicsBase,
+Physics1d = PYB11TemplateClass(Physics,
                               template_parameters = ("1"),
-                              cppname = "PhysicsBase<1>",
-                              pyname = "PhysicsBase1d",
+                              cppname = "Physics<1>",
+                              pyname = "Physics1d",
                               docext = " (1D).")
-PhysicsBase2d = PYB11TemplateClass(PhysicsBase,
+Physics2d = PYB11TemplateClass(Physics,
                               template_parameters = ("2"),
-                              cppname = "PhysicsBase<2>",
-                              pyname = "PhysicsBase2d",
+                              cppname = "Physics<2>",
+                              pyname = "Physics2d",
                               docext = " (2D).")
-PhysicsBase3d = PYB11TemplateClass(PhysicsBase,
+Physics3d = PYB11TemplateClass(Physics,
                               template_parameters = ("3"),
-                              cppname = "PhysicsBase<3>",
-                              pyname = "PhysicsBase3d",
+                              cppname = "Physics<3>",
+                              pyname = "Physics3d",
                               docext = " (3D).") 
