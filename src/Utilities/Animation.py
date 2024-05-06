@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import numpy as np
 
-def animateGrid(bounds, update_method, frames=100, interval=50, scale=1):
+def AnimateGrid2d(bounds, update_method, frames=100, interval=50, scale=1):
     fig, ax = plt.subplots()
 
     x = bounds[0]
@@ -23,11 +23,11 @@ def animateGrid(bounds, update_method, frames=100, interval=50, scale=1):
     ani = FuncAnimation(fig, update, frames=frames, interval=interval)
     plt.show()
 
-def animatePoints(points):
+def AnimatePoints(points):
     fig, ax = plt.subplots()
     plt.show()
 
-class AnimationUpdateMethod:
+class AnimationUpdateMethod2d:
     def __init__(self,call,stepper):
         self.module_call = call
         self.module_stepper = stepper

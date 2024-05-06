@@ -36,7 +36,6 @@ public:
 
         if (nodeList->position<dim>() == nullptr) 
             nodeList->insertField<Lin::Vector<dim>>("position"); // Add the position field to the nodeList
-
     }
 };
 

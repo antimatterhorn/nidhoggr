@@ -1,11 +1,14 @@
 import sys
-sys.path.append("../build/src/Math")
-sys.path.append("../build/src/DataBase")
-sys.path.append("../build/src/Mesh")
-sys.path.append("../build/src/State")
-sys.path.append("../build/src/Physics")
-sys.path.append("../build/src/EOS")
-sys.path.append("../build/src/Type")
+buildir = "../build/src/"
+
+for dir in ["Math",
+            "DataBase",
+            "Mesh",
+            "State",
+            "Physics",
+            "EOS",
+            "Type"]:
+    sys.path.append(buildir+dir)
 
 from Mesh import *
 from DataBase import *
