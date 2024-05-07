@@ -48,8 +48,8 @@ public:
     const std::vector<T>& 
     getValues() const { return values; }
 
-    T& 
-    getValue(const unsigned int index) { return values[index]; }
+    const T& 
+    getValue(const unsigned int index) const { return values[index]; }
 
     void
     setValue(const unsigned int index, T val) { values[index] = val; }
@@ -79,34 +79,28 @@ public:
         return *this;
     }
 
-    Field<T> 
-    operator+(const Field<T>& other) const {
-        Field<T> result;
+    Field<T> operator+(const Field<T>& other) const {
+        Field<T> result(*this); // Create a copy of the current object
         for (int i = 0; i < this->size(); ++i) {
-            result.values[i] = values[i] + other.values[i];
+            result.setValue(i, this->getValue(i) + other.getValue(i)); // Perform element-wise addition
         }
-        result.name = this->name;
-        return result;
+        return result; // Return the result
     }
 
-    Field<T> 
-    operator-(const Field<T>& other) const {
-        Field<T> result;
+    Field<T> operator-(const Field<T>& other) const {
+        Field<T> result(*this); // Create a copy of the current object
         for (int i = 0; i < this->size(); ++i) {
-            result.values[i] = values[i] - other.values[i];
+            result.setValue(i, this->getValue(i) - other.getValue(i)); // Perform element-wise addition
         }
-        result.name = this->name;
-        return result;
+        return result; // Return the result
     }
 
-    Field<T> 
-    operator*(const double other) const {
-        Field<T> result;
+    Field<T> operator*(const double other) const {
+        Field<T> result(*this); // Create a copy of the current object
         for (int i = 0; i < this->size(); ++i) {
-            result.values[i] = values[i] * other;
+            result.setValue(i, this->getValue(i) * other); // Perform element-wise scalar multiplication
         }
-        result.name = this->name;
-        return result;
+        return result; // Return the result
     }
 
     bool 
