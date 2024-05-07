@@ -40,6 +40,7 @@ public:
                     Field<Lin::Vector<dim>> initialState = this->integrate(vectorField,time,dt);
                 std::cout << "integrated??" << " " << std::endl;
             }
+            // gotta store these back to their fields now...
         }
         time += dt;
     }
