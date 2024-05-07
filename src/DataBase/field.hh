@@ -60,6 +60,12 @@ public:
     const T& 
     operator[](const unsigned int index) const { return values[index]; }
 
+    void
+    copyValues(const Field<T>& other) {
+        if (this!= &other) 
+            values = other.values;
+    }
+
     Field<T>& 
     operator=(const Field<T>& other) {
         if (this != &other) { // Avoid self-assignment

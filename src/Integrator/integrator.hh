@@ -19,15 +19,23 @@ public:
 
     ~Integrator() {}
 
-    // template <typename T>
-    // Field<T> 
-    // integrate(const Field<T>& initialState, 
-    //             const std::function<Field<T>(T, 
-    //             const Field<T>&)>& deriv, 
-    //             double t, double dt) {
-    //     Field<T> nextState = initialState + deriv(t,initialState)*dt;
-    //     return nextState;
-    // }
+    virtual
+    Field<double> 
+    integrateScalar(const Field<double>& initialState, 
+                const std::function<Field<double>(double, const Field<double>&)>& deriv, 
+                double t, double dt) {
+        Field<double> nextState = initialState + deriv(t,initialState)*dt;
+        return nextState;
+    }
+
+    virtual
+    Field<Lin::Vector<dim>> 
+    integrateVector(const Field<Lin::Vector<dim>>& initialState, 
+                const std::function<Field<Lin::Vector<dim>>(Lin::Vector<dim>, const Field<Lin::Vector<dim>>&)>& deriv, 
+                double t, double dt) {
+        Field<Lin::Vector<dim>> nextState = initialState + deriv(t+dt,initialState)*dt;
+        return nextState;
+    }
 protected:
     const Physics<dim>* physics;
 };

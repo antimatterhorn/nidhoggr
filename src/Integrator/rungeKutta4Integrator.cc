@@ -7,19 +7,36 @@ public:
 
     ~RungeKutta4Integrator() {}
 
-    // Integrate method using Runge-Kutta 4
-    // template <typename T>
-    // Field<T> 
-    // integrate(const Field<T>& initialState, 
-    //             const std::function<Field<T>(T, const Field<T>&)>& deriv, 
-    //             double t, double dt) {
-    //     Field<T> k1 = deriv(t, initialState);
-    //     Field<T> k2 = deriv(t + dt / 2, initialState + k1*(dt / 2));
-    //     Field<T> k3 = deriv(t + dt / 2, initialState + k2*(dt / 2));
-    //     Field<T> k4 = deriv(t + dt, initialState + k3 * dt);
+    //Integrate method using Runge-Kutta 4
+    virtual
+    Field<double> 
+    integrateScalar(const Field<double>& initialState, 
+                const std::function<Field<double>(double, 
+                const Field<double>&)>& deriv, 
+                double t, double dt) override {
+        Field<double> k1 = deriv(t, initialState);
+        Field<double> k2 = deriv(t + dt / 2, initialState + k1*(dt / 2));
+        Field<double> k3 = deriv(t + dt / 2, initialState + k2*(dt / 2));
+        Field<double> k4 = deriv(t + dt, initialState + k3 * dt);
 
-    //     Field<T> nextState = initialState + (k1 + k2*2 + k3*2 + k4) * (dt / 6);
+        Field<double> nextState = initialState + (k1 + k2*2 + k3*2 + k4) * (dt / 6);
 
-    //     return nextState;
-    // }
+        return nextState;
+    }
+
+    virtual
+    Field<Lin::Vector<dim>> 
+    integrateVector(const Field<Lin::Vector<dim>>& initialState, 
+                const std::function<Field<Lin::Vector<dim>>(Lin::Vector<dim>, 
+                const Field<Lin::Vector<dim>>&)>& deriv, 
+                double t, double dt) override {
+        Field<Lin::Vector<dim>> k1 = deriv(t, initialState);
+        Field<Lin::Vector<dim>> k2 = deriv(t + dt / 2, initialState + k1*(dt / 2));
+        Field<Lin::Vector<dim>> k3 = deriv(t + dt / 2, initialState + k2*(dt / 2));
+        Field<Lin::Vector<dim>> k4 = deriv(t + dt, initialState + k3 * dt);
+
+        Field<Lin::Vector<dim>> nextState = initialState + (k1 + k2*2 + k3*2 + k4) * (dt / 6);
+
+        return nextState;
+    }
 };
