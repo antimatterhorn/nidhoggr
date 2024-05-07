@@ -10,7 +10,7 @@ public:
     //Integrate method using Runge-Kutta 4
     virtual
     Field<double> 
-    integrateScalar(const Field<double>& initialState, 
+    integrate(const Field<double>& initialState, 
                 const std::function<Field<double>(double, 
                 const Field<double>&)>& deriv, 
                 double t, double dt) override {
@@ -26,7 +26,7 @@ public:
 
     virtual
     Field<Lin::Vector<dim>> 
-    integrateVector(const Field<Lin::Vector<dim>>& initialState, 
+    integrate(const Field<Lin::Vector<dim>>& initialState, 
                 const std::function<Field<Lin::Vector<dim>>(Lin::Vector<dim>, 
                 const Field<Lin::Vector<dim>>&)>& deriv, 
                 double t, double dt) override {

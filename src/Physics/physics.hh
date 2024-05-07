@@ -15,19 +15,19 @@ protected:
 public:
     std::vector<FieldBase*> derivFields;
     
-    Physics(NodeList* _nodeList, PhysicalConstants& _constants) : 
-        nodeList(_nodeList), 
-        constants(_constants) {
+    Physics(NodeList* nodeList, PhysicalConstants& constants) : 
+        nodeList(nodeList), 
+        constants(constants) {
         VerifyFields(nodeList);
     }
 
     virtual ~Physics() {}
 
-    virtual Field<double>*
-    EvaluateDerivatives(const Field<double>& field, const double t) { return nullptr; }
+    virtual void
+    EvaluateDerivatives(const Field<double>* initialState, Field<double>& interimState, const double t)  {  }
 
-    virtual Field<Lin::Vector<dim>>*
-    EvaluateDerivatives(const Field<Lin::Vector<dim>>& field, const double t) { return nullptr; }
+    virtual void
+    EvaluateDerivatives(const Field<Lin::Vector<dim>>* initialState, Field<Lin::Vector<dim>>& interimState, const double t) {  }
 
     virtual void
     VerifyFields(NodeList* nodeList) {

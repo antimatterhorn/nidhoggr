@@ -64,7 +64,12 @@ public:
     Field<T>* 
     getFieldByName(const Name& name) const {
         for (FieldBase* field : _fields) {
-            if (field->hasName() && field->getName() == name) {
+            std::cout << "this field = " << field->getNameString() << std::endl;
+        }
+        for (FieldBase* field : _fields) {
+            std::cout << "in getName loop of " << _fields.size() << std::endl;
+            if (field->hasName() && field->getNameString() == name.name()) {
+                std::cout << "found name" << std::endl;
                 return dynamic_cast<Field<T>*>(field);
             }
         }

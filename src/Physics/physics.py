@@ -3,8 +3,8 @@ from PYB11Generator import *
 @PYB11template("dim")
 class Physics:
     def pyinit(self,
-               _nodeList="NodeList*",
-               _constants="PhysicalConstants&"):
+               nodeList="NodeList*",
+               constants="PhysicalConstants&"):
         return
     # @PYB11pure_virtual
     # def UpdateDerivatives(self,dt="const double"):

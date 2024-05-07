@@ -126,7 +126,10 @@ public:
 
     bool 
     hasName() const override {
-        return !name.empty();
+        if(name.name().size() > 0)
+            return true;
+        else
+            return false;
     }
 
     Name 

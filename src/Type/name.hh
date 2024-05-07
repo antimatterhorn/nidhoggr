@@ -41,7 +41,12 @@ public:
     }
 
     std::string 
-    name() const { return myName; }
+    name() const { 
+        if (myName.size() > 0)
+            return myName;
+        else
+            return "noName";
+    }
 
     bool 
     empty() const { return myName.empty(); }

@@ -28,23 +28,31 @@ public:
 
     ~ConstantGravity() {}
 
-    virtual Field<Lin::Vector<dim>>*
-    EvaluateDerivatives(const Field<Lin::Vector<dim>>& field, const double t) override {
+    virtual void
+    EvaluateDerivatives(const Field<Lin::Vector<dim>>* initialState, Field<Lin::Vector<dim>>& interimState, const double t) override {
         // compute accelerations
-        std::cout << "in eval";
+        std::cout << "in eval" << std::endl;
         NodeList* nodeList = this->nodeList;
+        std::cout << nodeList->getFieldCount() << std::endl;
+        // for (std::string fieldName : nodeList->fieldNames()) {
+        //     std::cout << fieldName << std::endl;
+        // }
         int numNodes = nodeList->size();
-        dydt = Field<Lin::Vector<dim>>("dydt",numNodes);
-        if(field.getName() == "position") {
-            Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-            std::cout << "in position";
+        std::cout << "check name" << " " << initialState->getNameString() << std::endl;
+        if(initialState->getNameString() == "position") {
+            std::cout << "in position eval" << std::endl;
+            Field<Lin::Vector<dim>> *velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
+            std::cout << "got velocity" << std::endl;
+            dydt = Field<Lin::Vector<dim>>("dydt",numNodes);
             dydt.copyValues(velocity);
         }
-        else if(field.getName() == "velocity") {
+        else if(initialState->getNameString() == "velocity") {
             Field<Lin::Vector<dim>>* acceleration = nodeList->getField<Lin::Vector<dim>>("acceleration");
-            dydt.copyValues(acceleration);
+            std::cout << "in velocity" << std::endl;
+            dvdt = Field<Lin::Vector<dim>>("dvdt",numNodes);
+            dvdt.copyValues(acceleration);
         }
-        return &dydt;
+        
     }
 
     Field<Lin::Vector<dim>> 
