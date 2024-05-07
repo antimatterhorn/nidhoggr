@@ -4,9 +4,9 @@ from physics import *
 @PYB11template("dim")
 class ConstantGravity(Physics):
     def pyinit(self,
-               _nodeList="NodeList*",
-               _constants="PhysicalConstants&",
-               _gravityVector="Lin::Vector<%(dim)s>&"):
+               nodeList="NodeList*",
+               constants="PhysicalConstants&",
+               gravityVector="Lin::Vector<%(dim)s>&"):
         return
     # @PYB11virtual
     # def UpdateDerivatives(self,dt="const double"):

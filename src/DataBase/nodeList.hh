@@ -3,22 +3,23 @@
 
 #include <vector>
 #include <string>
+#include <memory> // Include for std::shared_ptr
 #include "field.hh"
 #include "../Type/name.hh"
 #include "../Math/vectorMath.hh"
 
 class NodeList {
 private:
-    std::vector<FieldBase*> _fields;
+    std::vector<std::shared_ptr<FieldBase>> _fields;
     Field<int> _ids;
-    std::vector<FieldBase*> _extraFields;
+    std::vector<std::shared_ptr<FieldBase>> _extraFields;
 public:
     NodeList() {}
 
     NodeList(int numNodes) {  
         _ids = Field<int>("id");     
         for (int i=0; i<numNodes; ++i) { _ids.addValue(i); }
-        addField(&_ids);
+        addField(std::make_shared<Field<int>>(_ids));
     }
 
     ~NodeList() {
@@ -28,19 +29,18 @@ public:
         // }
     }
 
-    void addField(FieldBase* fieldPtr) {
-        _fields.emplace_back(fieldPtr);
+    void addField(const std::shared_ptr<FieldBase>& fieldPtr) {
+        _fields.push_back(fieldPtr);
     }
 
     template <typename T>
-    void insertField(std::string name) {
-        Field<T>* newField = new Field<T>(name, this->size());
-        _extraFields.emplace_back(newField); // Store pointer to the new field
+    void insertField(const std::string& name) {
+        auto newField = std::make_shared<Field<T>>(name, this->size());
+        _extraFields.push_back(newField); // Use make_shared for field creation
         addField(newField); // Add pointer to the new field to _fields
     }
 
-    void 
-    addNodeList(const NodeList& other) {
+    void addNodeList(const NodeList& other) {
         _fields.insert(_fields.end(), other._fields.begin(), other._fields.end());
     }
 
@@ -57,24 +57,22 @@ public:
         return *this;
     }
 
-    std::vector<FieldBase*> 
-    getFields() { return _fields; }
+    // std::vector<FieldBase*> 
+    // getFields() { return _fields; }
 
     template <typename T>
-    Field<T>* 
-    getFieldByName(const Name& name) const {
-        for (FieldBase* field : _fields) {
-            std::cout << "this field = " << field->getNameString() << std::endl;
-        }
-        for (FieldBase* field : _fields) {
-            std::cout << "in getName loop of " << _fields.size() << std::endl;
-            if (field->hasName() && field->getNameString() == name.name()) {
-                std::cout << "found name" << std::endl;
-                return dynamic_cast<Field<T>*>(field);
+    Field<T>* getFieldByName(const Name& name) const {
+        for (const auto& fieldPtr : _fields) {
+            if (fieldPtr->hasName() && fieldPtr->getNameString() == name.name()) {
+                Field<T>* castedField = dynamic_cast<Field<T>*>(fieldPtr.get());
+                if (castedField != nullptr) {
+                    return castedField; // Return the field if found and correctly casted
+                }
             }
         }
-        return nullptr; // Return nullptr if no matching FieldList is found
+        return nullptr; // Return nullptr if no matching field is found
     }
+
 
     template <typename T>
     Field<T>* 
@@ -84,25 +82,17 @@ public:
 
     Field<double>*
     mass() const {
-        for (FieldBase* field : _fields) {
-            if (field->hasName() && field->getName() == Name("mass")) {
-                Field<double>* massField = dynamic_cast<Field<double>*>(field);
-                if (massField != nullptr) {
-                    return massField; // Return the mass field if found
-                }
-            }
-        }
-        return nullptr; 
+        return getFieldByName<double>(Name("mass")); 
     }
 
     template <int dim>
     Field<Lin::Vector<dim>>*
     velocity() const {
-        for (FieldBase* field : _fields) {
-            if (field->hasName() && field->getName() == Name("velocity")) {
-                Field<Lin::Vector<dim>>* velocityField = dynamic_cast<Field<Lin::Vector<dim>>*>(field);
+        for (const auto& fieldPtr : _fields) {
+            if (fieldPtr->hasName() && fieldPtr->getName() == Name("velocity")) {
+                Field<Lin::Vector<dim>>* velocityField = dynamic_cast<Field<Lin::Vector<dim>>*>(fieldPtr.get());
                 if (velocityField != nullptr) {
-                    return velocityField; // Return the mass field if found
+                    return velocityField; // Return the velocity field if found
                 }
             }
         }
@@ -112,16 +102,17 @@ public:
     template <int dim>
     Field<Lin::Vector<dim>>*
     position() const {
-        for (FieldBase* field : _fields) {
-            if (field->hasName() && field->getName() == Name("position")) {
-                Field<Lin::Vector<dim>>* positionField = dynamic_cast<Field<Lin::Vector<dim>>*>(field);
+        for (const auto& fieldPtr : _fields) {
+            if (fieldPtr->hasName() && fieldPtr->getName() == Name("position")) {
+                Field<Lin::Vector<dim>>* positionField = dynamic_cast<Field<Lin::Vector<dim>>*>(fieldPtr.get());
                 if (positionField != nullptr) {
-                    return positionField; // Return the mass field if found
+                    return positionField; // Return the position field if found
                 }
             }
         }
         return nullptr; 
     }
+
 
     size_t 
     getFieldCount() const {

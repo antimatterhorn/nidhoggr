@@ -22,6 +22,6 @@ if __name__ == "__main__":
 
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
-    print("mass[0] =",myNodeList.mass()[0])
+
     
     integrator.step(0.1)

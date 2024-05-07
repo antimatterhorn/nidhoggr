@@ -10,10 +10,10 @@ protected:
 public:
     ConstantGravity() {}
 
-    ConstantGravity(NodeList* _nodeList, PhysicalConstants& _constants, Lin::Vector<dim>& _gravityVector) : 
-        Physics<dim>(_nodeList,_constants),
-        gravityVector(_gravityVector) {
-        NodeList* nodeList = this->nodeList;
+    ConstantGravity(NodeList* nodeList, PhysicalConstants& constants, Lin::Vector<dim>& gravityVector) : 
+        Physics<dim>(nodeList,constants),
+        gravityVector(gravityVector) {
+
         int numNodes = nodeList->size();
         if (nodeList->getField<Lin::Vector<dim>>("acceleration") == nullptr)
             nodeList->insertField<Lin::Vector<dim>>("acceleration");
@@ -29,28 +29,20 @@ public:
     ~ConstantGravity() {}
 
     virtual void
-    EvaluateDerivatives(const Field<Lin::Vector<dim>>* initialState, Field<Lin::Vector<dim>>& interimState, const double t) override {
+    EvaluateDerivatives(const Field<Lin::Vector<dim>>* initialState, Field<Lin::Vector<dim>>& deriv, const double t) override {
         // compute accelerations
-        std::cout << "in eval" << std::endl;
         NodeList* nodeList = this->nodeList;
-        std::cout << nodeList->getFieldCount() << std::endl;
         // for (std::string fieldName : nodeList->fieldNames()) {
         //     std::cout << fieldName << std::endl;
         // }
         int numNodes = nodeList->size();
-        std::cout << "check name" << " " << initialState->getNameString() << std::endl;
         if(initialState->getNameString() == "position") {
-            std::cout << "in position eval" << std::endl;
             Field<Lin::Vector<dim>> *velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-            std::cout << "got velocity" << std::endl;
-            dydt = Field<Lin::Vector<dim>>("dydt",numNodes);
-            dydt.copyValues(velocity);
+            deriv.copyValues(velocity);
         }
         else if(initialState->getNameString() == "velocity") {
             Field<Lin::Vector<dim>>* acceleration = nodeList->getField<Lin::Vector<dim>>("acceleration");
-            std::cout << "in velocity" << std::endl;
-            dvdt = Field<Lin::Vector<dim>>("dvdt",numNodes);
-            dvdt.copyValues(acceleration);
+            deriv.copyValues(acceleration);
         }
         
     }
@@ -64,6 +56,6 @@ public:
         for (size_t i = 0; i < y.size(); ++i) {
             dydt.addValue(nodeList->getField<Lin::Vector<dim>>(yp)[i]);
         }
-    return dydt;
-}
+        return dydt;
+    }
 };

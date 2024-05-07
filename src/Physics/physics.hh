@@ -24,10 +24,10 @@ public:
     virtual ~Physics() {}
 
     virtual void
-    EvaluateDerivatives(const Field<double>* initialState, Field<double>& interimState, const double t)  {  }
+    EvaluateDerivatives(const Field<double>* initialState, Field<double>& deriv, const double t)  {  }
 
     virtual void
-    EvaluateDerivatives(const Field<Lin::Vector<dim>>* initialState, Field<Lin::Vector<dim>>& interimState, const double t) {  }
+    EvaluateDerivatives(const Field<Lin::Vector<dim>>* initialState, Field<Lin::Vector<dim>>& deriv, const double t) {  }
 
     virtual void
     VerifyFields(NodeList* nodeList) {

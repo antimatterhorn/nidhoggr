@@ -81,21 +81,6 @@ public:
 
     Field<T> 
     operator+(const Field<T>& other) const {
-        return add(other);
-    }
-
-    Field<T> 
-    operator-(const Field<T>& other) const {
-        return sub(other);
-    }
-
-    Field<T> 
-    operator*(const double other) const {
-        return scalarProduct(other);
-    }
-    
-    Field<T> 
-    add(const Field<T>& other) const {
         Field<T> result;
         for (int i = 0; i < this->size(); ++i) {
             result.values[i] = values[i] + other.values[i];
@@ -105,7 +90,7 @@ public:
     }
 
     Field<T> 
-    sub(const Field<T>& other) const {
+    operator-(const Field<T>& other) const {
         Field<T> result;
         for (int i = 0; i < this->size(); ++i) {
             result.values[i] = values[i] - other.values[i];
@@ -115,7 +100,7 @@ public:
     }
 
     Field<T> 
-    scalarProduct(const double other) const {
+    operator*(const double other) const {
         Field<T> result;
         for (int i = 0; i < this->size(); ++i) {
             result.values[i] = values[i] * other;
