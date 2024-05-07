@@ -4,6 +4,7 @@
 #include <functional>
 #include <vector>
 #include <cstddef>
+#include <iostream>
 #include "../DataBase/field.hh"
 #include "../Math/vectorMath.hh"
 #include "../State/state.hh"
@@ -14,30 +15,56 @@ class Physics; // forward declaration
 
 template <int dim>
 class Integrator {
+protected:
+    Physics<dim>* physics;
+    double time;
 public:
-    Integrator (const Physics<dim>* physics) : physics(physics) {}
+    Integrator (Physics<dim>* physics) : physics(physics) {}
 
     ~Integrator() {}
 
+    virtual void
+    step(double dt) {
+        std::cout << "in step";
+        for (FieldBase* field : physics->derivFields) {
+            std::cout << "in loop";
+            if (typeid(*field) == typeid(Field<double>)) {
+                Field<double> initialState = this->integrate(initialState,time,dt);
+            } else if (typeid(*field) == typeid(Field<Lin::Vector<dim>>)) {
+                Field<Lin::Vector<dim>> initialState = this->integrate(initialState,time,dt);
+            }
+        }
+        time += dt;
+    }
+
     virtual
     Field<double> 
-    integrateScalar(const Field<double>& initialState, 
-                const std::function<Field<double>(double, const Field<double>&)>& deriv, 
+    integrate(const Field<double>& initialState, 
                 double t, double dt) {
-        Field<double> nextState = initialState + deriv(t,initialState)*dt;
+        //Field<double> nextState = initialState + deriv(t,initialState)*dt;
+        Field<double>* interimState = physics->EvaluateDerivatives(initialState,t+dt);
+        Field<double> nextState = initialState;
+        std::cout << "nextState created";
+        if (interimState) {
+            Field<double>& field = *interimState;
+            nextState = nextState + field*dt;
+        }
         return nextState;
     }
 
     virtual
     Field<Lin::Vector<dim>> 
-    integrateVector(const Field<Lin::Vector<dim>>& initialState, 
-                const std::function<Field<Lin::Vector<dim>>(Lin::Vector<dim>, const Field<Lin::Vector<dim>>&)>& deriv, 
+    integrate(const Field<Lin::Vector<dim>>& initialState, 
                 double t, double dt) {
-        Field<Lin::Vector<dim>> nextState = initialState + deriv(t+dt,initialState)*dt;
+        //Field<Lin::Vector<dim>> nextState = initialState + deriv(t+dt,initialState)*dt;
+        Field<Lin::Vector<dim>>* interimState = physics->EvaluateDerivatives(initialState,t+dt);
+        Field<Lin::Vector<dim>> nextState = initialState;
+        if (interimState) {
+            Field<Lin::Vector<dim>>& field = *interimState;
+            nextState = nextState + field*dt;
+        }
         return nextState;
     }
-protected:
-    const Physics<dim>* physics;
 };
 
 #endif 

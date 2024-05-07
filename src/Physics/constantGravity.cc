@@ -1,9 +1,12 @@
 #include "physics.hh"
+#include <iostream>
 
 template <int dim>
 class ConstantGravity : public Physics<dim> {
 protected:
     Lin::Vector<dim> gravityVector;
+    Field<Lin::Vector<dim>> dydt;
+    Field<Lin::Vector<dim>> dvdt;
 public:
     ConstantGravity() {}
 
@@ -16,13 +19,32 @@ public:
             nodeList->insertField<Lin::Vector<dim>>("acceleration");
         for (int i=0; i<numNodes; ++i)
             nodeList->getField<Lin::Vector<dim>>("acceleration")->setValue(i,gravityVector);
+        
+        Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
+        this->derivFields.push_back(position);
+        Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
+        this->derivFields.push_back(velocity);
     }
 
     ~ConstantGravity() {}
 
-    void
-    EvaluateDerivatives(const double dt) override {
+    virtual Field<Lin::Vector<dim>>*
+    EvaluateDerivatives(const Field<Lin::Vector<dim>>& field, const double t) override {
         // compute accelerations
+        std::cout << "in eval";
+        NodeList* nodeList = this->nodeList;
+        int numNodes = nodeList->size();
+        dydt = Field<Lin::Vector<dim>>("dydt",numNodes);
+        if(field.getName() == "position") {
+            Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
+            std::cout << "in position";
+            dydt.copyValues(velocity);
+        }
+        else if(field.getName() == "velocity") {
+            Field<Lin::Vector<dim>>* acceleration = nodeList->getField<Lin::Vector<dim>>("acceleration");
+            dydt.copyValues(acceleration);
+        }
+        return &dydt;
     }
 
     Field<Lin::Vector<dim>> 

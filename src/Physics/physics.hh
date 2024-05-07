@@ -13,6 +13,8 @@ protected:
     NodeList* nodeList;
     PhysicalConstants& constants;
 public:
+    std::vector<FieldBase*> derivFields;
+    
     Physics(NodeList* _nodeList, PhysicalConstants& _constants) : 
         nodeList(_nodeList), 
         constants(_constants) {
@@ -21,8 +23,11 @@ public:
 
     virtual ~Physics() {}
 
-    virtual void
-    EvaluateDerivatives(const double dt) {}
+    virtual Field<double>*
+    EvaluateDerivatives(const Field<double>& field, const double t) { return nullptr; }
+
+    virtual Field<Lin::Vector<dim>>*
+    EvaluateDerivatives(const Field<Lin::Vector<dim>>& field, const double t) { return nullptr; }
 
     virtual void
     VerifyFields(NodeList* nodeList) {
