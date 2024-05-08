@@ -31,26 +31,24 @@ public:
         // compute accelerations
         NodeList* nodeList = this->nodeList;
         PhysicalConstants constants = this->constants;
-        // for (std::string fieldName : nodeList->fieldNames()) {
-        //     std::cout << fieldName << std::endl;
-        // }
         int numNodes = nodeList->size();
+
+        Field<Lin::Vector<dim>>* acceleration = nodeList->getField<Lin::Vector<dim>>("acceleration");
+        Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
+        for (int i=0; i<numNodes ; ++i) {
+            Lin::Vector<dim> pos = position->getValue(i);
+            double r = (pointSourceLocation - pos).magnitude();
+            Lin::Vector<dim> rDir = (pointSourceLocation - pos)*(1.0/r);
+            //acceleration->setValue(i,pointSourceMass*constants.G()/(r*r)*rDir);
+            acceleration->setValue(i,pointSourceMass*1.0/(r*r)*rDir);
+        }
         if(initialState->getNameString() == "position") {
             Field<Lin::Vector<dim>> *velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-            Field<Lin::Vector<dim>> *acceleration = nodeList->getField<Lin::Vector<dim>>("acceleration");
             Field<Lin::Vector<dim>> dxdt;
             dxdt = *velocity + (*acceleration)*t;
             deriv.copyValues(dxdt);
         }
         else if(initialState->getNameString() == "velocity") {
-            Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
-            Field<Lin::Vector<dim>>* acceleration = nodeList->getField<Lin::Vector<dim>>("acceleration");
-            for (int i=0; i<numNodes ; ++i) {
-                Lin::Vector<dim> pos = position->getValue(i);
-                double r = (pointSourceLocation - pos).magnitude();
-                Lin::Vector<dim> rDir = (pointSourceLocation - pos)*(1.0/r);
-                acceleration->setValue(i,pointSourceMass*constants.G()/(r*r)*rDir);
-            }
             deriv.copyValues(acceleration);
         }
         

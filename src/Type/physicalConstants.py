@@ -5,8 +5,8 @@ class PhysicalConstants:
                unitLm="const double", 
                unitMkg="const double", 
                unitTsec="const double", 
-               unitTeK= ("const double",1.0),
-               unitCcou=("const double",1.0)):
+               unitTeK= "const double",
+               unitCcou="const double"):
         return
 
     unitLengthMeters = PYB11property("double", getter="unitLengthMeters", doc="unitLengthMeters")

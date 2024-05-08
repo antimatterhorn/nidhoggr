@@ -7,8 +7,7 @@
 
 class PhysicalConstants {
 private:
-    // Independent variables.
-    double mUnitLm, mUnitMkg, mUnitTsec, mUnitTeK, mUnitCcou;
+
 
     // The reference MKS data we base our values on.
     const double mpMKS =     1.67262192369e-27;         // kg
@@ -24,48 +23,39 @@ private:
     const double EpsilonZeroMKS = 8.85418782e-12;       // C^2*s^2/kg/m^3
 
     // Dependent variables.
-    const double UnitEnergyJ;
-    const double ProtonMass;
-    const double ElectronMass;
-    const double ElectronCharge;
-    const double GGravity;
-    const double cLight;
-    const double kBoltzmann;
-    const double MolarGasConstant;
-    const double KelvinsToEnergyPerMole;
-    const double UnitMassDensity;
-    const double Sigma;
-    const double BlackBody;
-    const double Planck;
-    const double EpsilonZero;
+    double UnitEnergyJ;
+    double ProtonMass;
+    double ElectronMass;
+    double ElectronCharge;
+    double GGravity;
+    double cLight;
+    double kBoltzmann;
+    double MolarGasConstant;
+    double KelvinsToEnergyPerMole;
+    double UnitMassDensity;
+    double Sigma;
+    double BlackBody;
+    double Planck;
+    double EpsilonZero;
 
 public:
+    // Independent variables.
+    double mUnitLm, mUnitMkg, mUnitTsec, mUnitTeK, mUnitCcou;
+    
     PhysicalConstants(const double unitLm,
-                    const double unitMkg,
-                    const double unitTsec,
-                    const double unitTeK = 1.0,
-                    const double unitCcou = 1.0): // Coulomb > Ampere
-        mUnitLm(unitLm),
+                        const double unitMkg,
+                        const double unitTsec,
+                        const double unitTeK,
+                        const double unitCcou)
+        : mUnitLm(unitLm),
         mUnitMkg(unitMkg),
         mUnitTsec(unitTsec),
         mUnitTeK(unitTeK),
-        mUnitCcou(unitCcou),
-        UnitEnergyJ(unitMkg * pow(unitLm / unitTsec,2.0)),
-        ProtonMass(mpMKS/unitMkg),
-        ElectronMass(meMKS/unitMkg),
-        ElectronCharge(qeMKS / unitCcou),
-        GGravity(GMKS/(unitLm/unitMkg*pow(unitLm/unitTsec,2.0))),
-        cLight(cMKS/(unitLm/unitTsec)),
-        kBoltzmann(kBMKS*unitTeK/(unitMkg*pow(unitLm/unitTsec,2.0))),
-        MolarGasConstant(RgasMKS*unitTeK/(unitMkg*pow(unitLm/unitTsec,2.0))),
-        KelvinsToEnergyPerMole(unitMkg*pow(unitLm/unitTsec,2.0)/(kBMKS*unitTeK)*NAvogadro),
-        UnitMassDensity(unitMkg/(unitLm*unitLm*unitLm)),
-        Sigma(StefanBoltzmannMKS*unitTeK*unitTeK*unitTeK*unitTeK/unitMkg*unitTsec*unitTsec*unitTsec),
-        BlackBody(4*StefanBoltzmannMKS*unitTeK*unitTeK*unitTeK*unitTeK/cMKS*unitTsec*unitTsec*unitLm/unitMkg),
-        Planck(PlanckMKS*unitTsec/(unitMkg*unitLm*unitLm)),
-        EpsilonZero(EpsilonZeroMKS*pow(unitLm,3.0)*unitMkg/(pow(unitTsec,2.0)*pow(unitCcou,2.0))) { }
+        mUnitCcou(unitCcou) {
+    }
 
 
+    
     
     // The fundamental independent quantities.
     double unitLengthMeters() const { return mUnitLm; }
@@ -75,20 +65,20 @@ public:
     double unitChargeCoulomb() const { return mUnitCcou; }
 
     // All the stuff we provide.
-    double protonMass() const { return ProtonMass; }
-    double electronMass() const { return ElectronMass; }
-    double electronCharge() const { return ElectronCharge; }
-    double G() const { return GGravity; }
-    double c() const { return cLight; }
-    double kB() const { return kBoltzmann; }
-    double molarGasConstant() const { return MolarGasConstant; }
-    double kelvinsToEnergyPerMole() const { return KelvinsToEnergyPerMole; }
-    double unitMassDensity() const { return UnitMassDensity; }
-    double stefanBoltzmannConstant() const { return Sigma; }
-    double blackBodyConstant() const { return BlackBody; }
-    double planckConstant() const { return Planck; }
-    double unitEnergyJ() const { return UnitEnergyJ; }
-    double epsilonZero() const { return EpsilonZero; }
+    double protonMass() const { return mpMKS / mUnitMkg; }
+    double electronMass() const { return meMKS / mUnitMkg; }
+    double electronCharge() const { return qeMKS / mUnitCcou; }
+    double G() const { return GMKS / (mUnitLm / mUnitMkg * pow(mUnitLm / mUnitTsec, 2.0)); }
+    double c() const { return cMKS / (mUnitLm / mUnitTsec); }
+    double kB() const { return kBMKS * mUnitTeK / (mUnitMkg * pow(mUnitLm / mUnitTsec, 2.0)); }
+    double molarGasConstant() const { return RgasMKS * mUnitTeK / (mUnitMkg * pow(mUnitLm / mUnitTsec, 2.0)); }
+    double kelvinsToEnergyPerMole() const { return mUnitMkg * pow(mUnitLm / mUnitTsec, 2.0) / (kBMKS * mUnitTeK) * NAvogadro; }
+    double unitMassDensity() const { return mUnitMkg / (mUnitLm * mUnitLm * mUnitLm); }
+    double stefanBoltzmannConstant() const { return StefanBoltzmannMKS * mUnitTeK * mUnitTeK * mUnitTeK * mUnitTeK / (mUnitMkg * mUnitTsec * mUnitTsec * mUnitTsec); }
+    double blackBodyConstant() const { return 4 * StefanBoltzmannMKS * mUnitTeK * mUnitTeK * mUnitTeK * mUnitTeK / (cMKS * mUnitTsec * mUnitTsec * mUnitLm / mUnitMkg); }
+    double planckConstant() const { return PlanckMKS * mUnitTsec / (mUnitMkg * mUnitLm * mUnitLm); }
+    double unitEnergyJ() const { return mUnitMkg * pow(mUnitLm / mUnitTsec, 2.0); }
+    double epsilonZero() const { return EpsilonZeroMKS * pow(mUnitLm, 3.0) * mUnitMkg / (pow(mUnitTsec, 2.0) * pow(mUnitCcou, 2.0)); }
 
 };
 
