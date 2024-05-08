@@ -45,9 +45,9 @@ class Vector:
     def crossProduct(self):
         return
 
-    x = PYB11property("double", getter="x", doc="The x coordinate.")
-    y = PYB11property("double", getter="y", doc="The y coordinate.")
-    z = PYB11property("double", getter="z", doc="The z coordinate.")
+    x = PYB11property("double", getter="x", setter="setX", doc="The x coordinate.")
+    y = PYB11property("double", getter="y", setter="setY", doc="The y coordinate.")
+    z = PYB11property("double", getter="z", setter="setZ", doc="The z coordinate.")
 
     magnitude = PYB11property("double", getter="magnitude", doc="The magnitude of the vector.")
 

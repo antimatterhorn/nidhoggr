@@ -180,6 +180,19 @@ public:
         return values.size() > 2 ? values[2] : 0.0;
     }
 
+    void setX(double val) {
+        values[0] = val;
+    }
+    void setY(double val) {
+        if (values.size() > 1)
+            values[1] = val;
+    }
+    void setZ(double val) {
+        if (values.size() > 2)
+            values[2] = val;
+    }
+
+
     std::string 
     toString() const {
         std::string result = "(";

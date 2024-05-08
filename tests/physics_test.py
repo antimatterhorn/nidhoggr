@@ -19,6 +19,9 @@ if __name__ == "__main__":
     constantGravity = ConstantGravity2d(myNodeList,constants,Vector2d(0,-9.8))
     integrator = RungeKutta4Integrator2d(constantGravity)
   
+    velocity = myNodeList.getFieldVector2d("velocity")
+    velocity[0].y = 10.0
+
     print(myNodeList.position())
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
