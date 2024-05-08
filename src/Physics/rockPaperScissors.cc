@@ -70,6 +70,7 @@ public:
         // Temporary grid to store updated concentrations
         Field<std::array<double, 3>> updated_xx("xx",xx.size()); 
 
+        #pragma omp parallel for collapse(2)
         for (int j = 0; j < sy; ++j) {
             for (int i = 0; i < sx; ++i) {
                 int idx = grid.index(i,j);
@@ -78,6 +79,7 @@ public:
                     rho[idx] += xx[idx][c];           
             }
         }
+        #pragma omp parallel for collapse(2)
         for(int c=0;c<3;++c) {
             for (int j = 0; j < sy; ++j) {
                 for (int i = 0; i < sx; ++i) {
