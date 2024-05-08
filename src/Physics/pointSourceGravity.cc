@@ -41,6 +41,9 @@ public:
             Lin::Vector<dim> rDir = (pointSourceLocation - pos)*(1.0/r);
             //acceleration->setValue(i,pointSourceMass*constants.G()/(r*r)*rDir);
             acceleration->setValue(i,pointSourceMass*1.0/(r*r)*rDir);
+            // need to come back and fix this later when constants work!!!!
+            // !!!!
+            // !!!!
         }
         if(initialState->getNameString() == "position") {
             Field<Lin::Vector<dim>> *velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
