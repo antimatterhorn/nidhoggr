@@ -25,54 +25,41 @@ public:
 
     virtual void
     step(double dt) {
-        std::cout << "in step" << std::endl;
         for (FieldBase* field : physics->derivFields) {
-            std::cout << "in loop " << field->getNameString() << " " << field->size() <<  std::endl;
             if (typeid(*field) == typeid(Field<double>)) {
                 Field<double>* doubleField = dynamic_cast<Field<double>*>(field);
-                if (doubleField)
-                    Field<double> initialState = this->integrate(doubleField,time,dt);
+                if (doubleField) {
+                    Field<double> DxDt = this->Derivative(doubleField,time,dt);
+                    doubleField->copyValues(*doubleField + DxDt*dt);
+                    // this is forward euler integration
+                }
             } else if (typeid(*field) == typeid(Field<Lin::Vector<dim>>)) {
-                std::cout << "in vector cast" << std::endl;
                 Field<Lin::Vector<dim>>* vectorField = dynamic_cast<Field<Lin::Vector<dim>>*>(field);
-                std::cout << "about to integrate" << std::endl;
-                if (vectorField)
-                    Field<Lin::Vector<dim>> initialState = this->integrate(vectorField,time,dt);
-                std::cout << "integrated??" << " " << std::endl;
+                if (vectorField) {
+                    Field<Lin::Vector<dim>> DxDt = this->Derivative(vectorField,time,dt);
+                    vectorField->copyValues(*vectorField + DxDt*dt);
+                }
             }
-            // gotta store these back to their fields now...
         }
         time += dt;
     }
 
     virtual
     Field<double> 
-    integrate(const Field<double>* initialState, 
+    Derivative(const Field<double>* initialState, 
                 double t, double dt) {
-        //Field<double> nextState = initialState + deriv(t,initialState)*dt;
-        Field<double> interimState;
-        physics->EvaluateDerivatives(initialState,interimState,t+dt);
-        Field<double> nextState = *initialState;
-        nextState = nextState + interimState*dt;
-        return nextState;
+        Field<double> deriv = Field<double>("deriv"+initialState->getNameString(),initialState->size());
+        physics->EvaluateDerivatives(initialState,deriv,dt);
+        return deriv;
     }
 
     virtual
     Field<Lin::Vector<dim>> 
-    integrate(const Field<Lin::Vector<dim>>* initialState, 
+    Derivative(const Field<Lin::Vector<dim>>* initialState, 
                 double t, double dt) {
-        //Field<Lin::Vector<dim>> nextState = initialState + deriv(t+dt,initialState)*dt;
-        std::cout << "in integrate" << " " << initialState->getNameString() << " " << initialState->size() <<  std::endl;
         Field<Lin::Vector<dim>> deriv = Field<Lin::Vector<dim>>("deriv"+initialState->getNameString(),initialState->size());
-        std::cout << "in interim" << " " << std::endl;
-        physics->EvaluateDerivatives(initialState,deriv,t+dt);
-        std::cout << "out of eval" << " " << std::endl;
-        Field<Lin::Vector<dim>> nextState = *initialState;
-        //= initialState;
-        std::cout << "computing nextState " << deriv.size() << " " << nextState.size()<< std::endl;
-        nextState = nextState + deriv*dt;
-        std::cout << "leaving integrate" << " " << std::endl;
-        return nextState;
+        physics->EvaluateDerivatives(initialState,deriv,dt);
+        return deriv;
     }
 };
 
