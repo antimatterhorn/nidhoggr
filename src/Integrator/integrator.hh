@@ -24,7 +24,7 @@ public:
     ~Integrator() {}
 
     virtual void
-    step(double dt) {
+    Step(double dt) {
         for (FieldBase* field : physics->derivFields) {
             if (typeid(*field) == typeid(Field<double>)) {
                 Field<double>* doubleField = dynamic_cast<Field<double>*>(field);
@@ -61,6 +61,8 @@ public:
         physics->EvaluateDerivatives(initialState,deriv,dt);
         return deriv;
     }
+
+    virtual double const Time() { return time;}
 };
 
 #endif 

@@ -6,7 +6,7 @@ class RungeKutta4Integrator(Integrator):
     def pyinit(self,
                physics="Physics<%(dim)s>*"):
         return
-    def step(self,dt="double"):
+    def Step(self,dt="double"):
         return
     
 RungeKutta4Integrator1d = PYB11TemplateClass(RungeKutta4Integrator,

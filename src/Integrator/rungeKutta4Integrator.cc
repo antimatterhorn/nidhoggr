@@ -9,7 +9,7 @@ public:
     ~RungeKutta4Integrator() {}
 
     virtual void
-    step(double dt) override {
+    Step(double dt) override {
         Physics<dim>* physics = this->physics;
         double time = this->time;
         
@@ -46,7 +46,7 @@ public:
                 }
             }
         }
-        time += dt;
+        this->time += dt;
     }
 
     virtual

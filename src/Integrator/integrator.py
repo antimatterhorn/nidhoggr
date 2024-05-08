@@ -5,7 +5,9 @@ class Integrator:
     def pyinit(self,
                physics="Physics<%(dim)s>*"):
         return
-    def step(self,dt="double"):
+    def Step(self,dt="double"):
+        return
+    def Time(self):
         return
     
 Integrator1d = PYB11TemplateClass(Integrator,

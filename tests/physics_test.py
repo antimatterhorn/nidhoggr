@@ -17,11 +17,13 @@ if __name__ == "__main__":
     #db.EnrollNodeList(myNodeList,state)
 
     constantGravity = ConstantGravity2d(myNodeList,constants,Vector2d(0,-9.8))
-    integrator = Integrator2d(constantGravity)
+    integrator = RungeKutta4Integrator2d(constantGravity)
   
-
+    print(myNodeList.position())
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
+    for i in range(30):
+        print(integrator.Time(),myNodeList.getFieldVector2d("position")[0].y)
+        integrator.Step(0.1)
     
-    integrator.step(0.1)

@@ -38,7 +38,10 @@ public:
         int numNodes = nodeList->size();
         if(initialState->getNameString() == "position") {
             Field<Lin::Vector<dim>> *velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-            deriv.copyValues(velocity);
+            Field<Lin::Vector<dim>> *acceleration = nodeList->getField<Lin::Vector<dim>>("acceleration");
+            Field<Lin::Vector<dim>> dxdt;
+            dxdt = *velocity + (*acceleration)*t;
+            deriv.copyValues(dxdt);
         }
         else if(initialState->getNameString() == "velocity") {
             Field<Lin::Vector<dim>>* acceleration = nodeList->getField<Lin::Vector<dim>>("acceleration");
