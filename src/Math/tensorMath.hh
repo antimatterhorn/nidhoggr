@@ -19,17 +19,14 @@ public:
     // Constructors
     Tensor() {
         // Initialize values array based on the dimension
-        for (int i = 0; i < dim*dim; ++i) {
+        for (int i = 0; i < dim*dim; ++i)
             values[i] = 0.0;
-        }
     }
 
     // Constructor with initializer list
     Tensor(std::initializer_list<double> init) {
-        if (init.size() != dim*dim) {
-            throw std::invalid_argument("Invalid number of arguments for Tensor constructor");
-        }
-        
+        if (init.size() != dim*dim)
+            throw std::invalid_argument("Invalid number of arguments for Tensor constructor");      
         // Copy values from initializer list to array
         std::copy(init.begin(), init.end(), values.begin());
     }
@@ -38,27 +35,24 @@ public:
     Tensor<dim> 
     add(const Tensor<dim>& other) const {
         Tensor<dim> result;
-        for (int i = 0; i < dim*dim; ++i) {
+        for (int i = 0; i < dim*dim; ++i)
             result.values[i] = values[i] + other.values[i];
-        }
         return result;
     }
 
     Tensor<dim> 
     sub(const Tensor<dim>& other) const {
         Tensor<dim> result;
-        for (int i = 0; i < dim*dim; ++i) {
+        for (int i = 0; i < dim*dim; ++i)
             result.values[i] = values[i] - other.values[i];
-        }
         return result;
     }
 
     Tensor<dim> 
     scalarProduct(double scalar) const {
         Tensor<dim> result;
-        for (int i = 0; i < dim*dim; ++i) {
+        for (int i = 0; i < dim*dim; ++i)
             result.values[i] = values[i] * scalar;
-        }
         return result;
     }
 
@@ -118,9 +112,10 @@ public:
     operator==(const Tensor<dim> other) const {
         bool result = true;
         for (int i = 0; i < dim*dim; ++i) {
-            if(values[i] != other.values[i])
+            if(values[i] != other.values[i]) {
                 result = false;
                 break;
+            }
         }
         return result;
     }
@@ -129,9 +124,10 @@ public:
     operator!=(const Tensor<dim> other) const {
         bool result = true;
         for (int i = 0; i < dim*dim; ++i) {
-            if(values[i] != other.values[i])
+            if(values[i] != other.values[i]){
                 result = false;
                 break;
+            }
         }
         return !result;
     }
@@ -145,9 +141,8 @@ public:
     }
 
     double xz() const {
-        if (dim < 3) {
+        if (dim < 3)
             throw std::out_of_range("Insufficient dimensionality");
-        }
         return component(0,2);
     }
 
@@ -160,65 +155,56 @@ public:
     }
 
     double yz() const {
-        if (dim < 3) {
+        if (dim < 3)
             throw std::out_of_range("Insufficient dimensionality");
-        }
         return component(1,2);
     }
 
     double zx() const {
-        if (dim < 3) {
+        if (dim < 3)
             throw std::out_of_range("Insufficient dimensionality");
-        }
         return component(2,0);
     }
 
     double zy() const {
-        if (dim < 3) {
+        if (dim < 3)
             throw std::out_of_range("Insufficient dimensionality");
-        }
         return component(2,1);
     } 
 
     double zz() const {
-        if (dim < 3) {
+        if (dim < 3)
             throw std::out_of_range("Insufficient dimensionality");
-        }
         return component(2,2);
     }
 
     void setxx(double val) { values[0] = val; }
     void setxy(double val) { values[1] = val; }
     void setxz(double val) { 
-        if (dim < 3) {
+        if (dim < 3)
             throw std::out_of_range("Insufficient dimensionality");
-        }
         values[3] = val; 
     }
     void setyx(double val) { values[dim+0] = val; }
     void setyy(double val) { values[dim+1] = val; }
     void setyz(double val) {
-        if (dim < 3) {
+        if (dim < 3)
             throw std::out_of_range("Insufficient dimensionality");
-        } 
         values[dim+2] = val; 
     }
     void setzx(double val) {
-        if (dim < 3) {
+        if (dim < 3)
             throw std::out_of_range("Insufficient dimensionality");
-        } 
         values[2*dim] = val; 
     }
     void setzy(double val) {
-        if (dim < 3) {
+        if (dim < 3)
             throw std::out_of_range("Insufficient dimensionality");
-        } 
         values[2*dim+1] = val; 
     }
     void setzz(double val) {
-        if (dim < 3) {
+        if (dim < 3)
             throw std::out_of_range("Insufficient dimensionality");
-        } 
         values[2*dim+2] = val; 
     }
 
@@ -236,10 +222,8 @@ public:
             }
             result += "\n";
         }
-
         return result;
-    }
-    
+    }    
 
 private:
     double component(int i,int j) const { return values[i*dim+j]; }
