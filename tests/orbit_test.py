@@ -11,11 +11,11 @@ class dumpState:
 if __name__ == "__main__":
     myNodeList = NodeList(1)
 
-    constants = PhysicalConstants(6.378e+6, 5.972e+24, 1.0, 1.0, 1.0) #earth units
-    #constants = MKS()
-
-
-
+    constants = PhysicalConstants(6.378e+6,     # earth mass in kg
+                                  5.972e+24,    # earth radius in m
+                                  1.0,          # s
+                                  1.0, 
+                                  1.0) 
     loc = Vector2d(0, 0)
 
     sourceGrav = PointSourceGravity2d(nodeList=myNodeList,
@@ -38,8 +38,9 @@ if __name__ == "__main__":
 
     print("G =",constants.G)
     controller.Step(100000)
-    #myNodeList.getFieldVector2d("position")[0].x,myNodeList.getFieldVector2d("position")[0].y
 
+    # now plot the orbit
+    
     import matplotlib.pyplot as plt
 
     x_values, y_values = zip(*dump.dump)
