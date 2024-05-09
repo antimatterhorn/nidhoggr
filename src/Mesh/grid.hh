@@ -96,7 +96,7 @@ public:
     }
 
     std::vector<int> getNeighboringCells(int idx) const {
-        std::array<int, dim> coords = indexToCoordinates(idx);
+        std::array<int, 3> coords = indexToCoordinates(idx);
         std::vector<int> neighbors;
 
         // Check left neighbor
@@ -142,8 +142,8 @@ public:
         return neighbors;
     }
 
-    std::array<int, dim> indexToCoordinates(int idx) const {
-        std::array<int, dim> coords;
+    std::array<int, 3> indexToCoordinates(int idx) const {
+        std::array<int, 3> coords;
         coords.fill(0);
         if constexpr (dim == 3) {
             coords[2] = idx / (nx * ny); // Compute k

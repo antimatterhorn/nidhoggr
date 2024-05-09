@@ -27,12 +27,13 @@ public:
     EvaluateDerivatives(const Field<double>* initialState, Field<double>& deriv, const double t) override{  
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
-
+        
         for (int i=0; i<numNodes; ++i) {
             std::vector<int> neighbors = grid->getNeighboringCells(i);
             double laplace2 = -4*initialState->getValue(i);
-            for (int idx : neighbors)
+            for (auto idx : neighbors) {
                 laplace2 += initialState->getValue(idx);
+            }                
             laplace2 = laplace2/pow(grid->dx,2.0);
             deriv.setValue(i,laplace2);
         }
