@@ -14,7 +14,11 @@ public:
         grid(grid) {
 
         int numNodes = nodeList->size();
+        if (nodeList->getField<double>("phi") == nullptr)
+            nodeList->insertField<double>("phi");
 
+        Field<double>* phi = nodeList->getField<double>("phi");
+        this->derivFields.push_back(phi);
     }
 
     ~WaveEquation() {}
