@@ -70,9 +70,9 @@ public:
         else if constexpr (dim==2)
             result = values[0]*values[3] - values[1]*values[2];
         else if constexpr (dim==3)
-            result = component(0,0) * (component(1,1) * component(2,2) - component(1,2) * component(2,1)) -
-                        component(0,1) * (component(1,0) * component(2,2) - component(1,2) * component(2,0)) +
-                        component(0,2) * (component(1,0) * component(2,1) - component(1,1) * component(2,0));
+            result = xx() * (yy() * zz() - yz() * zy()) -
+                     xy() * (yx() * zz() - yz() * zx()) +
+                     xz() * (yx() * zy() - yy() * zx());
         return result;
     }
 
@@ -137,63 +137,54 @@ public:
     }
 
     double xx() const {
-        int idx = 0*dim+0;
-        return values[idx];
+        return component(0,0);
     }
 
     double xy() const {
-        int idx = 0*dim+1;
-        return values[idx];
+        return component(0,1);
     }
 
     double xz() const {
         if (dim < 3) {
             throw std::out_of_range("Insufficient dimensionality");
         }
-        int idx = 0*dim+2;
-        return values[idx];
+        return component(0,2);
     }
 
     double yx() const {
-        int idx = 1*dim+0;
-        return values[idx];
+        return component(1,0);
     }
 
     double yy() const {
-        int idx = 1*dim+1;
-        return values[idx];
+        return component(1,1);
     }
 
     double yz() const {
         if (dim < 3) {
             throw std::out_of_range("Insufficient dimensionality");
         }
-        int idx = 1*dim+2;
-        return values[idx];
+        return component(1,2);
     }
 
     double zx() const {
         if (dim < 3) {
             throw std::out_of_range("Insufficient dimensionality");
         }
-        int idx = 2*dim+0;
-        return values[idx];
+        return component(2,0);
     }
 
     double zy() const {
         if (dim < 3) {
             throw std::out_of_range("Insufficient dimensionality");
         }
-        int idx = 2*dim+1;
-        return values[idx];
+        return component(2,1);
     } 
 
     double zz() const {
         if (dim < 3) {
             throw std::out_of_range("Insufficient dimensionality");
         }
-        int idx = 2*dim+2;
-        return values[idx];
+        return component(2,2);
     }
 
     void setxx(double val) { values[0] = val; }
