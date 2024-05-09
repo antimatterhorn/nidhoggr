@@ -9,8 +9,9 @@ if __name__ == "__main__":
     print("a*b =",vec1*vec2)
     print("axb =",vec1.cross(vec2))
     print("a+b =",vec1+vec2)
-    print("a*2 =",vec2*2.0)
-    print("2*a =",2.0*vec2)
-    print("|a| =",vec2.magnitude)
+    print("a*2 =",vec1*2.0)
+    print("2*a =",2.0*vec1)
+    print("|a| =",vec1.magnitude)
+    print("a.norm =",vec1.normal())
 
     import LinearAlgebra as lin

@@ -44,6 +44,8 @@ class Vector:
     @PYB11pyname("cross")
     def crossProduct(self):
         return
+    def normal(self):
+        return
 
     x = PYB11property("double", getter="x", setter="setX", doc="The x coordinate.")
     y = PYB11property("double", getter="y", setter="setY", doc="The y coordinate.")

@@ -220,6 +220,15 @@ public:
         return std::sqrt(mag2());
     }
 
+    Vector<dim>
+    normal() const {
+        Vector<dim> result;
+        double mag = this->magnitude();
+        for (int i=0; i<dim; ++i)
+            result[i] = values[i]/mag;
+        return result;
+    }
+
     static const unsigned 
     numElements = dim;
 
