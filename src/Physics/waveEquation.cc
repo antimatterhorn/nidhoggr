@@ -1,15 +1,15 @@
-//include "physics.hh"
-//include "../Mesh/grid.hh"
-//include <iostream>
+#include "physics.hh"
+#include "../Mesh/grid.hh"
+#include <iostream>
 
 template <int dim>
 class WaveEquation : public Physics<dim> {
 protected:
-    Mesh::Grid<dim> grid;
+    Mesh::Grid<dim>* grid;
 public:
     WaveEquation() {}
 
-    WaveEquation(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<dim>& grid) : 
+    WaveEquation(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<dim>* grid) : 
         Physics<dim>(nodeList,constants),
         grid(grid) {
 
@@ -18,6 +18,21 @@ public:
     }
 
     ~WaveEquation() {}
+
+    virtual void
+    EvaluateDerivatives(const Field<double>* initialState, Field<double>& deriv, const double t) override{  
+        NodeList* nodeList = this->nodeList;
+        int numNodes = nodeList->size();
+
+        for (int i=0; i<numNodes; ++i) {
+            std::vector<int> neighbors = grid->getNeighboringCells(i);
+            double laplace2 = -4*initialState->getValue(i);
+            for (int idx : neighbors)
+                laplace2 += initialState->getValue(idx);
+            laplace2 = laplace2/pow(grid->dx,2.0);
+            deriv.setValue(i,laplace2);
+        }
+    }
 
 // d^2 phi / dt^2 = c^2 del^2 phi
 

@@ -13,12 +13,15 @@ private:
     int nx; // Number of grid cells in x-direction
     int ny; // Number of grid cells in y-direction
     int nz; // Number of grid cells in z-direction
+
+
+    
+public:
+
     double dx; // Grid spacing in x-direction
     double dy; // Grid spacing in y-direction
     double dz; // Grid spacing in z-direction
 
-    
-public:
     Field<Lin::Vector<dim>> positions;
     
     // Constructor for 1D grid
@@ -68,13 +71,13 @@ public:
     }
 
     int
-    index(int i) { return i; }
+    index(int i) const { return i; }
 
     int
-    index(int i, int j) { return j * nx + i; }
+    index(int i, int j) const { return j * nx + i; }
 
     int
-    index(int i, int j, int k) { return (k * ny + j) * nx + i; }
+    index(int i, int j, int k) const { return (k * ny + j) * nx + i; }
 
     int getnx() const { return nx; }
     int getny() const { return ny; }
@@ -90,6 +93,65 @@ public:
     Lin::Vector<dim> 
     getPosition(int id){
         return positions[id];
+    }
+
+    std::vector<int> getNeighboringCells(int idx) const {
+        std::array<int, dim> coords = indexToCoordinates(idx);
+        std::vector<int> neighbors;
+
+        // Check left neighbor
+        if (coords[0] > 0) {
+            int leftIdx = index(coords[0] - 1, coords[1], coords[2]);
+            neighbors.push_back(leftIdx);
+        }
+
+        // Check right neighbor
+        if (coords[0] < nx - 1) {
+            int rightIdx = index(coords[0] + 1, coords[1], coords[2]);
+            neighbors.push_back(rightIdx);
+        }
+
+        // Check up neighbor
+        if (coords[1] > 0) {
+            int upIdx = index(coords[0], coords[1] - 1, coords[2]);
+            neighbors.push_back(upIdx);
+        }
+
+        // Check down neighbor
+        if (coords[1] < ny - 1) {
+            int downIdx = index(coords[0], coords[1] + 1, coords[2]);
+            neighbors.push_back(downIdx);
+        }
+
+        // Check front neighbor (for 3D grid)
+        if constexpr (dim == 3) {
+            if (coords[2] > 0) {
+                int frontIdx = index(coords[0], coords[1], coords[2] - 1);
+                neighbors.push_back(frontIdx);
+            }
+        }
+
+        // Check back neighbor (for 3D grid)
+        if constexpr (dim == 3) {
+            if (coords[2] < nz - 1) {
+                int backIdx = index(coords[0], coords[1], coords[2] + 1);
+                neighbors.push_back(backIdx);
+            }
+        }
+
+        return neighbors;
+    }
+
+    std::array<int, dim> indexToCoordinates(int idx) const {
+        std::array<int, dim> coords;
+        coords.fill(0);
+        if constexpr (dim == 3) {
+            coords[2] = idx / (nx * ny); // Compute k
+            idx -= coords[2] * nx * ny;
+        }
+        coords[1] = idx / nx; // Compute j
+        coords[0] = idx % nx; // Compute i
+        return coords;
     }
 };
 }
