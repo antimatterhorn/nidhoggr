@@ -22,7 +22,6 @@ public:
         for (int i = 0; i < dim*dim; ++i) {
             values[i] = 0.0;
         }
-        assignComponents();
     }
 
     // Constructor with initializer list
@@ -33,7 +32,6 @@ public:
         
         // Copy values from initializer list to array
         std::copy(init.begin(), init.end(), values.begin());
-        assignComponents();
     }
 
     // Methods
@@ -43,7 +41,6 @@ public:
         for (int i = 0; i < dim*dim; ++i) {
             result.values[i] = values[i] + other.values[i];
         }
-        result.assignComponents();
         return result;
     }
 
@@ -53,7 +50,6 @@ public:
         for (int i = 0; i < dim*dim; ++i) {
             result.values[i] = values[i] - other.values[i];
         }
-        result.assignComponents();
         return result;
     }
 
@@ -63,7 +59,6 @@ public:
         for (int i = 0; i < dim*dim; ++i) {
             result.values[i] = values[i] * scalar;
         }
-        result.assignComponents();
         return result;
     }
 
@@ -75,9 +70,9 @@ public:
         else if constexpr (dim==2)
             result = values[0]*values[3] - values[1]*values[2];
         else if constexpr (dim==3)
-            result = components[0][0] * (components[1][1] * components[2][2] - components[1][2] * components[2][1]) -
-                        components[0][1] * (components[1][0] * components[2][2] - components[1][2] * components[2][0]) +
-                        components[0][2] * (components[1][0] * components[2][1] - components[1][1] * components[2][0]);
+            result = component(0,0) * (component(1,1) * component(2,2) - component(1,2) * component(2,1)) -
+                        component(0,1) * (component(1,0) * component(2,2) - component(1,2) * component(2,0)) +
+                        component(0,2) * (component(1,0) * component(2,1) - component(1,1) * component(2,0));
         return result;
     }
 
@@ -142,54 +137,98 @@ public:
     }
 
     double xx() const {
-        return components[0][0];
+        int idx = 0*dim+0;
+        return values[idx];
     }
 
     double xy() const {
-        return components[0][1];
+        int idx = 0*dim+1;
+        return values[idx];
     }
 
     double xz() const {
         if (dim < 3) {
             throw std::out_of_range("Insufficient dimensionality");
         }
-        return components[0][2];
+        int idx = 0*dim+2;
+        return values[idx];
     }
 
     double yx() const {
-        return components[1][0];
+        int idx = 1*dim+0;
+        return values[idx];
     }
 
     double yy() const {
-        return components[1][1];
+        int idx = 1*dim+1;
+        return values[idx];
     }
 
     double yz() const {
         if (dim < 3) {
             throw std::out_of_range("Insufficient dimensionality");
         }
-        return components[1][2];
+        int idx = 1*dim+2;
+        return values[idx];
     }
 
     double zx() const {
         if (dim < 3) {
             throw std::out_of_range("Insufficient dimensionality");
         }
-        return components[2][0];
+        int idx = 2*dim+0;
+        return values[idx];
     }
 
     double zy() const {
         if (dim < 3) {
             throw std::out_of_range("Insufficient dimensionality");
         }
-        return components[2][1];
+        int idx = 2*dim+1;
+        return values[idx];
     } 
 
     double zz() const {
         if (dim < 3) {
             throw std::out_of_range("Insufficient dimensionality");
         }
-        return components[2][2];
+        int idx = 2*dim+2;
+        return values[idx];
+    }
+
+    void setxx(double val) { values[0] = val; }
+    void setxy(double val) { values[1] = val; }
+    void setxz(double val) { 
+        if (dim < 3) {
+            throw std::out_of_range("Insufficient dimensionality");
+        }
+        values[3] = val; 
+    }
+    void setyx(double val) { values[dim+0] = val; }
+    void setyy(double val) { values[dim+1] = val; }
+    void setyz(double val) {
+        if (dim < 3) {
+            throw std::out_of_range("Insufficient dimensionality");
+        } 
+        values[dim+2] = val; 
+    }
+    void setzx(double val) {
+        if (dim < 3) {
+            throw std::out_of_range("Insufficient dimensionality");
+        } 
+        values[2*dim] = val; 
+    }
+    void setzy(double val) {
+        if (dim < 3) {
+            throw std::out_of_range("Insufficient dimensionality");
+        } 
+        values[2*dim+1] = val; 
+    }
+    void setzz(double val) {
+        if (dim < 3) {
+            throw std::out_of_range("Insufficient dimensionality");
+        } 
+        values[2*dim+2] = val; 
     }
 
     std::string 
@@ -199,7 +238,7 @@ public:
         for (int i = 0; i < dim; ++i) {
             result += "  ";
             for (int j = 0; j < dim; ++j) {
-                result += std::to_string(components[i][j]);
+                result += std::to_string(values[i*dim+j]);
                 if (j < dim - 1) {
                     result += ", ";
                 }
@@ -209,19 +248,10 @@ public:
 
         return result;
     }
+    
 
 private:
-    std::array<std::array<double, dim>, dim> components;
-
-    void 
-    assignComponents()
-    {
-        for (int i = 0; i < dim; ++i) {
-            for (int j = 0; j < dim; ++j) {
-                components[i][j] = values[i * dim + j];
-            }
-        }
-    }
+    double component(int i,int j) const { return values[i*dim+j]; }
 };
 
 using Tensor1D = Tensor<1>;

@@ -34,17 +34,17 @@ class Tensor:
     def __repr__(self):
         return
 
-    xx = PYB11property("double", getter="xx", doc="The xx tensor component.")
-    xy = PYB11property("double", getter="xy", doc="The xy tensor component.")
-    xz = PYB11property("double", getter="xz", doc="The xz tensor component.")
+    xx = PYB11property("double", getter="xx", setter="setxx", doc="The xx tensor component.")
+    xy = PYB11property("double", getter="xy", setter="setxy", doc="The xy tensor component.")
+    xz = PYB11property("double", getter="xz", setter="setxz", doc="The xz tensor component.")
 
-    yx = PYB11property("double", getter="yx", doc="The yx tensor component.")
-    yy = PYB11property("double", getter="yy", doc="The yy tensor component.")
-    yz = PYB11property("double", getter="yz", doc="The yz tensor component.")
+    yx = PYB11property("double", getter="yx", setter="setyx", doc="The yx tensor component.")
+    yy = PYB11property("double", getter="yy", setter="setyy", doc="The yy tensor component.")
+    yz = PYB11property("double", getter="yz", setter="setyz", doc="The yz tensor component.")
 
-    zx = PYB11property("double", getter="zx", doc="The zx tensor component.")
-    zy = PYB11property("double", getter="zy", doc="The zy tensor component.")
-    zz = PYB11property("double", getter="zz", doc="The zz tensor component.")
+    zx = PYB11property("double", getter="zx", setter="setzx", doc="The zx tensor component.")
+    zy = PYB11property("double", getter="zy", setter="setzy", doc="The zy tensor component.")
+    zz = PYB11property("double", getter="zz", setter="setzz", doc="The zz tensor component.")
 
     determinant = PYB11property("double", getter="determinant", doc="The determinant of the tensor.")
 
