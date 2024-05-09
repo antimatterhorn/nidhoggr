@@ -8,7 +8,8 @@ for dir in ["Math",
             "Physics",
             "EOS",
             "Type",
-            "Integrator"]:
+            "Integrator",
+            "Utilities"]:
     sys.path.append(buildir+dir)
 
 from Mesh import *
@@ -20,6 +21,7 @@ from EOS import *
 from PhysicalConstants import *
 from Units import *
 from Integrator import *
+from Controller import *
 
 print("                               ")
 print("     _   _ _                  ")

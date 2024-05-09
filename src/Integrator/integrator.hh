@@ -18,13 +18,19 @@ class Integrator {
 protected:
     Physics<dim>* physics;
     double time;
+    unsigned int cycle;
+    double dt, dtmin;
 public:
-    Integrator (Physics<dim>* physics) : physics(physics) {}
+    Integrator (Physics<dim>* physics, double dtmin) : physics(physics),
+        dt(dtmin),
+        dtmin(dtmin){
+        cycle = 0;
+    }
 
     ~Integrator() {}
 
     virtual void
-    Step(double dt) {
+    Step() {
         for (FieldBase* field : physics->derivFields) {
             if (typeid(*field) == typeid(Field<double>)) {
                 Field<double>* doubleField = dynamic_cast<Field<double>*>(field);
@@ -42,6 +48,7 @@ public:
             }
         }
         time += dt;
+        cycle+=1;
     }
 
     virtual
@@ -63,6 +70,8 @@ public:
     }
 
     virtual double const Time() { return time;}
+
+    virtual unsigned int Cycle() { return cycle; }
 };
 
 #endif 

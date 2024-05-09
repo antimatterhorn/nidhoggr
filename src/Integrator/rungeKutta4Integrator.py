@@ -4,9 +4,10 @@ from integrator import *
 @PYB11template("dim")
 class RungeKutta4Integrator(Integrator):
     def pyinit(self,
-               physics="Physics<%(dim)s>*"):
+               physics="Physics<%(dim)s>*",
+               dtmin="double"):
         return
-    def Step(self,dt="double"):
+    def Step(self):
         return
     
 RungeKutta4Integrator1d = PYB11TemplateClass(RungeKutta4Integrator,

@@ -3,13 +3,16 @@
 template <int dim>
 class RungeKutta4Integrator : public Integrator<dim> {
 protected:
+    double dt,dtmin;
 public:
-    RungeKutta4Integrator(Physics<dim>* physics) : Integrator<dim>(physics) {}
+    RungeKutta4Integrator(Physics<dim>* physics, double dtmin) : Integrator<dim>(physics,dtmin),
+        dt(dtmin),
+        dtmin(dtmin) {}
 
     ~RungeKutta4Integrator() {}
 
     virtual void
-    Step(double dt) override {
+    Step() override {
         Physics<dim>* physics = this->physics;
         double time = this->time;
         
@@ -47,6 +50,7 @@ public:
             }
         }
         this->time += dt;
+        this->cycle += 1;
     }
 
     virtual

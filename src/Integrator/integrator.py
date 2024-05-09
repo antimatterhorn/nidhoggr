@@ -3,11 +3,14 @@ from PYB11Generator import *
 @PYB11template("dim")
 class Integrator:
     def pyinit(self,
-               physics="Physics<%(dim)s>*"):
+               physics="Physics<%(dim)s>*",
+               dtmin="double"):
         return
-    def Step(self,dt="double"):
+    def Step(self):
         return
     def Time(self):
+        return
+    def Cycle(self):
         return
     
 Integrator1d = PYB11TemplateClass(Integrator,

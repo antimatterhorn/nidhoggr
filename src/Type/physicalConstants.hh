@@ -52,6 +52,7 @@ public:
         mUnitTsec(unitTsec),
         mUnitTeK(unitTeK),
         mUnitCcou(unitCcou) {
+            std::cout << "constants constructed" << std::endl;
     }
 
 
