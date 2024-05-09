@@ -17,8 +17,10 @@ private:
     double dy; // Grid spacing in y-direction
     double dz; // Grid spacing in z-direction
 
-    Field<Lin::Vector<dim>> positions;
+    
 public:
+    Field<Lin::Vector<dim>> positions;
+    
     // Constructor for 1D grid
     Grid(int num_cells_x, double spacing_x) 
         : nx(num_cells_x), ny(1), nz(1), dx(spacing_x), dy(0.0), dz(0.0) {
