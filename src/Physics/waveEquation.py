@@ -8,6 +8,9 @@ class WaveEquation(Physics):
                constants="PhysicalConstants&",
                grid="Mesh::Grid<%(dim)s>*"):
         return
+    @PYB11cppname("getCell")
+    def getCell2d(self,i="int",j="int"):
+        return
     # @PYB11virtual
     # def UpdateDerivatives(self,dt="const double"):
     #     return "void"

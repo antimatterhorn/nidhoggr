@@ -39,6 +39,15 @@ public:
         }
     }
 
+    double
+    getCell(int i,int j) {
+        int idx = grid->index(i,j,0);
+        NodeList* nodeList = this->nodeList;
+        Field<double>* phi = nodeList->getField<double>("phi");
+        return phi->getValue(idx);
+    }
+
+
 // d^2 phi / dt^2 = c^2 del^2 phi
 
 // IIRC, which solution you get all comes down to initial conditions

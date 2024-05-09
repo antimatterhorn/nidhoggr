@@ -32,6 +32,7 @@ class Field(FieldBase):
     def __getitem__(self):
         return
 
+    # @PYB11cppname("setValue")
     # @PYB11implementation("[](Field<FieldType>& self, int i, const %(Value)s v) { const int n = self.size(); if (i >= n) throw py::index_error(); self[(i %% n + n) %% n] = v; }")
     # def __setitem__(self):
     #     "Set a value"
@@ -44,6 +45,9 @@ class Field(FieldBase):
     @PYB11implementation("[](Field<FieldType>& self, int i) { const int n = self.size(); if (i >= n) throw py::index_error(); return &self[(i %% n + n) %% n]; }")
     def __call__(self):
         "Index into a Field"
+        return
+
+    def setValue(self,i="int",val="%(T)s"):
         return
 
 

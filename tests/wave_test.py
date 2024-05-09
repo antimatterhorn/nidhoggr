@@ -1,4 +1,5 @@
 from nidhoggr import *
+from Animation import *
 
 class dumpState:
     def __init__(self,nodeList,workCycle=1):
@@ -21,16 +22,27 @@ if __name__ == "__main__":
     
     grid = Grid2d(nx,ny,1,1)
 
+
+
+
+
     print("grid %dx%d"%(nx,ny))
     print(grid)
     waveEqn = WaveEquation2d(nodeList=myNodeList,
                                       constants=constants,
                                       grid=grid)
+
+    
+
     print(waveEqn)
     integrator = Integrator2d(physics=waveEqn,
                                          dtmin=0.1)
     print(integrator)
 
+
+    phi = myNodeList.getFieldDouble("phi")
+    print(phi)
+    phi.setValue(5050,10)
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
@@ -38,5 +50,8 @@ if __name__ == "__main__":
     # periodicWork = [dump]
 
     controller = Controller(integrator=integrator,statStep=1000)
+    controller.Step()
 
-    controller.Step(1)
+    bounds = (nx,ny)
+    update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,stepper=controller.Step)
+    AnimateGrid2d(bounds,update_method)
