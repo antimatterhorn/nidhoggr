@@ -12,6 +12,7 @@ for dir in ["Math",
             "Utilities"]:
     sys.path.append(buildir+dir)
 
+from CodeVersion import *
 from Mesh import *
 from DataBase import *
 from LinearAlgebra import *
@@ -23,10 +24,3 @@ from Units import *
 from Integrator import *
 from Controller import *
 
-print("                               ")
-print("     _   _ _                  ")
-print(" ___|_|_| | |_ ___ ___ ___ ___")
-print("|   | | . |   | . | . | . |  _|")
-print("|_|_|_|___|_|_|___|_  |_  |_|  ")
-print("      v0.4.0      |___|___|    ")
-print("\n")

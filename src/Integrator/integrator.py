@@ -13,6 +13,8 @@ class Integrator:
     def Cycle(self):
         return
     
+    dt = PYB11property("double", getter="Dt", doc="timestep")
+    
 Integrator1d = PYB11TemplateClass(Integrator,
                               template_parameters = ("1"),
                               cppname = "Integrator<1>",

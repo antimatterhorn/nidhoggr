@@ -1,5 +1,12 @@
 from nidhoggr import *
 
+class dumpState:
+    def __init__(self,nodeList,workCycle=1):
+        self.nodeList = nodeList
+        self.cycle = workCycle
+    def __call__(self):
+        print(self.nodeList.getFieldVector2d("position")[0].x,self.nodeList.getFieldVector2d("position")[0].y)
+
 if __name__ == "__main__":
     myNodeList = NodeList(15)
 
@@ -10,14 +17,22 @@ if __name__ == "__main__":
 
     loc = Vector2d(2, 0)
 
-    sourceGrav = PointSourceGravity2d(nodeList=myNodeList,constants=constants,pointSourceLocation=loc,pointSourceMass=5)
-    integrator = RungeKutta4Integrator2d(sourceGrav,dtmin=0.01)
+    sourceGrav = PointSourceGravity2d(nodeList=myNodeList,
+                                      constants=constants,
+                                      pointSourceLocation=loc,
+                                      pointSourceMass=5)
+    integrator = RungeKutta4Integrator2d(physics=sourceGrav,
+                                         dtmin=0.01)
   
     velocity = myNodeList.getFieldVector2d("velocity")
     velocity[0].y = -8.686e-4
 
-    controller = Controller(integrator)
+    dump = dumpState(myNodeList,workCycle=10)
+
+    periodicWork = [dump]
+
+    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=100)
 
     print("G =",constants.G)
-    controller.Step(10)
-    
+    controller.Step(100)
+    #myNodeList.getFieldVector2d("position")[0].x,myNodeList.getFieldVector2d("position")[0].y

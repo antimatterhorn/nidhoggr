@@ -72,6 +72,8 @@ public:
     virtual double const Time() { return time;}
 
     virtual unsigned int Cycle() { return cycle; }
+
+    virtual double const Dt() { return dt; }
 };
 
 #endif 
