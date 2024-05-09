@@ -28,6 +28,7 @@ if __name__ == "__main__":
     pos = myNodeList.getFieldVector2d("position")[0]
     pos.x = -2.0
 
+    v0 = -8.686e-4
     velocity = myNodeList.getFieldVector2d("velocity")
     velocity[0].y = -8.686e-4
 
@@ -42,11 +43,36 @@ if __name__ == "__main__":
     # now plot the orbit
     
     import matplotlib.pyplot as plt
+    import numpy as np
+    from math import sqrt,atan2,cos
 
     x_values, y_values = zip(*dump.dump)
 
     plt.plot(x_values, y_values, 'o')  
     plt.plot(loc.x,loc.y,"o",color="red")
+
+    r0 = 2.0
+    t0 = atan2(0,-2)
+    e = 1-(r0*(v0/2)**2/constants.G) # earth mass = 1 here
+    a = r0/(1-e*cos(t0))
+
+    def theta(t):
+        return t0 + t/r0;
+
+    def r(t):
+        return a*(1.0-e**2)/(1.0+e*cos(theta(t)))
+
+
+    theta_vec = np.vectorize(theta)
+    r_vec = np.vectorize(r)
+    # Generate an array of time values
+    t_values = np.linspace(0, 100, 1000)  # Example: time from 0 to 10 with 100 points
+
+    # Calculate x(t) and y(t) for each time value
+    xs = r_vec(t_values) * np.cos(theta_vec(t_values))
+    ys = r_vec(t_values) * np.sin(theta_vec(t_values))
+
+    plt.plot(xs,ys)
 
     plt.xlabel('x [R_E]')
     plt.ylabel('y [R_E]')
