@@ -24,3 +24,7 @@ if __name__ == "__main__":
     print("T1+T2 =",m1+m2)
     print("T2*2 = ",m2*2.0)
     print("||T2|| =",m2.determinant)
+
+    vec1 = Vector3d(1.0,2.0,3.0)
+    print("v1 =",vec1)
+    print("T1*v1=",m1.vecMul(vec1))

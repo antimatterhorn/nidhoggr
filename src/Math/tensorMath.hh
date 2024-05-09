@@ -7,6 +7,7 @@
 #include <array>
 #include <cmath>
 #include <algorithm>
+#include "vectorMath.hh"
 
 namespace Lin {
 template <int dim>
@@ -94,6 +95,23 @@ public:
     Tensor<dim> 
     operator*(const double other) const {
         return scalarProduct(other);
+    }
+
+    Vector<dim> 
+    vecMul(const Vector<dim> other) const {
+        Vector<dim> result = Vector<dim>();
+        if (dim>1){
+            std::vector<Vector<dim>> rows(dim,Vector<dim>());
+            for(int i=0;i<dim;++i)
+                for(int j=0;j<dim;++j)
+                    rows[i][j] = values[i*dim+j];
+            for(int i=0;i<dim;++i)
+                result[i] = rows[i]*other;
+        }
+        else {
+            result[0] = values[0]*other[0];
+        }
+        return result;
     }
 
     Tensor<dim> 

@@ -25,6 +25,8 @@ class Tensor:
     @PYB11pycppname("__mul__")
     def __mul__f(self,rhs="double()"):
         return 
+    def vecMul(self,other="Lin::Vector<%(dim)s>"):
+        return 
     @PYB11pycppname("__rmul__")
     def __rmul__f(self,rhs="double()"):
         return 
