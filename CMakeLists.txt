@@ -21,12 +21,3 @@ add_subdirectory(src/EOS)
 add_subdirectory(src/State)
 add_subdirectory(src/Utilities)
 
-# Find OpenMP package
-find_package(OpenMP)
-
-if(OpenMP_CXX_FOUND)
-    # Add OpenMP flags to the compiler
-    target_compile_options(Physics PUBLIC ${OpenMP_CXX_FLAGS})
-    # Optionally, link with OpenMP library if needed
-    # target_link_libraries(your_target_name PUBLIC OpenMP::OpenMP_CXX)
-endif()

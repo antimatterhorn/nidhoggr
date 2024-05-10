@@ -5,8 +5,8 @@ from nidhoggr import *
 from RPS import *
 from Animation import *
 
-x = 200
-y = 200
+x = 150
+y = 150
 grid = Grid2d(x, y,1,1)
 print("%i x %i grid"%(x,y))
 rps = RockPaperScissors(grid=grid,A=0.8,D=0.4)

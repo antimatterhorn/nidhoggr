@@ -8,9 +8,11 @@ class oscillate:
         self.cycle = workCycle
         self.phi = myNodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
-        if (time < 10):
-            val = 5*(cos(time/4))**2
+        if (time < 50):
+            val = 5*(cos(time/10))**2
             self.phi.setValue(5050,max(val,0))
+            self.phi.setValue(2050,max(val,0))
+            self.phi.setValue(8050,max(val,0))
         
 
 if __name__ == "__main__":
@@ -40,7 +42,7 @@ if __name__ == "__main__":
 
     print(waveEqn)
     integrator = Integrator2d(physics=waveEqn,
-                                         dtmin=0.1)
+                                         dtmin=0.25)
     print(integrator)
 
 

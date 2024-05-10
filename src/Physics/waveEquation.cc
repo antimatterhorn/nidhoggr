@@ -28,6 +28,7 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
         
+        #pragma omp parallel for
         for (int i=0; i<numNodes; ++i) {
             std::vector<int> neighbors = grid->getNeighboringCells(i);
             double laplace2 = -4*initialState->getValue(i);
