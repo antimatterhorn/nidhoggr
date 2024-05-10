@@ -6,7 +6,8 @@ class WaveEquation(Physics):
     def pyinit(self,
                nodeList="NodeList*",
                constants="PhysicalConstants&",
-               grid="Mesh::Grid<%(dim)s>*"):
+               grid="Mesh::Grid<%(dim)s>*",
+               C="double"):
         return
     @PYB11cppname("getCell")
     def getCell2d(self,i="int",j="int"):

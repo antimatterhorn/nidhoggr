@@ -6,12 +6,13 @@ template <int dim>
 class WaveEquation : public Physics<dim> {
 protected:
     Mesh::Grid<dim>* grid;
+    double C;
 public:
     WaveEquation() {}
 
-    WaveEquation(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<dim>* grid) : 
+    WaveEquation(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<dim>* grid, double C) : 
         Physics<dim>(nodeList,constants),
-        grid(grid) {
+        grid(grid), C(C) {
 
         int numNodes = nodeList->size();
         if (nodeList->getField<double>("phi") == nullptr)
@@ -36,7 +37,7 @@ public:
                 laplace2 += initialState->getValue(idx);
             }                
             laplace2 = laplace2/pow(grid->dx,2.0);
-            deriv.setValue(i,laplace2);
+            deriv.setValue(i,laplace2*C*C);
         }
     }
 
