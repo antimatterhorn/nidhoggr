@@ -1,13 +1,17 @@
 from nidhoggr import *
 from Animation import *
+from math import sin,cos
 
-class dumpState:
+class oscillate:
     def __init__(self,nodeList,workCycle=1):
         self.nodeList = nodeList
         self.cycle = workCycle
-        self.dump = []
-    def __call__(self):
-        self.dump.append((self.nodeList.getFieldVector2d("position")[0].x,self.nodeList.getFieldVector2d("position")[0].y))
+        self.phi = myNodeList.getFieldDouble("phi")
+    def __call__(self,cycle,time,dt):
+        if (time < 10):
+            val = 5*(cos(time/4))**2
+            self.phi.setValue(5050,max(val,0))
+        
 
 if __name__ == "__main__":
     myNodeList = NodeList(100*100)
@@ -42,15 +46,14 @@ if __name__ == "__main__":
 
     phi = myNodeList.getFieldDouble("phi")
     print(phi)
-    phi.setValue(5050,10)
+
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
-    # dump = dumpState(myNodeList,workCycle=1000)
-    # periodicWork = [dump]
+    osc = oscillate(myNodeList,workCycle=1)
+    periodicWork = [osc]
 
-    controller = Controller(integrator=integrator,statStep=1000)
-    controller.Step()
+    controller = Controller(integrator=integrator,statStep=1000,periodicWork=periodicWork)
 
     bounds = (nx,ny)
     update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,stepper=controller.Step)

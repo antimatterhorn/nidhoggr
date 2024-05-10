@@ -8,11 +8,14 @@ class Controller:
     def Step(self,nsteps=1):
         for i in range(nsteps):
             self.integrator.Step()
+            cycle = self.integrator.Cycle()
+            time = self.integrator.Time()
+            dt = self.integrator.dt
             if self.integrator.Cycle() % self.statStep == 0:
-                print("Cycle: %04d"%self.integrator.Cycle(),
-                    " Time: %03.3e"%self.integrator.Time(),
-                    " dt: %03.3e"%self.integrator.dt)
+                print("Cycle: %04d"%cycle,
+                    " Time: %03.3e"%time,
+                    " dt: %03.3e"%dt)
             if len(self.periodicWork) > 0:
                 for work in self.periodicWork:
-                    if self.integrator.Cycle() % work.cycle == 0:
-                        work()
+                    if cycle % work.cycle == 0:
+                        work(cycle,time,dt)

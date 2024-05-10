@@ -5,7 +5,7 @@ class dumpState:
         self.nodeList = nodeList
         self.cycle = workCycle
         self.dump = []
-    def __call__(self):
+    def __call__(self,cycle,time,dt):
         self.dump.append((self.nodeList.getFieldVector2d("position")[0].x,self.nodeList.getFieldVector2d("position")[0].y))
 
 if __name__ == "__main__":
