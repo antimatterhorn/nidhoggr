@@ -1,12 +1,19 @@
 from nidhoggr import *
 
 class dumpState:
-    def __init__(self,nodeList,workCycle=1):
+    def __init__(self,nodeList,workCycle=1,G=1):
         self.nodeList = nodeList
         self.cycle = workCycle
         self.dump = []
+        self.energy = []
+        self.G = G
     def __call__(self,cycle,time,dt):
+        v2 = self.nodeList.getFieldVector2d("velocity")[0].mag2
+        ke = 0.5*v2
+        r = self.nodeList.getFieldVector2d("position")[0].magnitude
+        pe = self.G/r
         self.dump.append((self.nodeList.getFieldVector2d("position")[0].x,self.nodeList.getFieldVector2d("position")[0].y))
+        self.energy.append((time,ke-pe))
 
 if __name__ == "__main__":
     myNodeList = NodeList(1)
@@ -21,24 +28,24 @@ if __name__ == "__main__":
     sourceGrav = PointSourceGravity2d(nodeList=myNodeList,
                                       constants=constants,
                                       pointSourceLocation=loc,
-                                      pointSourceMass=5)
+                                      pointSourceMass=1)
     integrator = RungeKutta4Integrator2d(physics=sourceGrav,
-                                         dtmin=0.1)
+                                         dtmin=0.01)
   
     pos = myNodeList.getFieldVector2d("position")[0]
     pos.x = -2.0
 
-    v0 = -8.686e-4
+    v0 = -0.8*8.7298e-4
     velocity = myNodeList.getFieldVector2d("velocity")
-    velocity[0].y = -8.686e-4
+    velocity[0].y = v0
 
-    dump = dumpState(myNodeList,workCycle=1000)
+    dump = dumpState(myNodeList,workCycle=10000,G=constants.G)
     periodicWork = [dump]
 
-    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=1000)
+    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=10000)
 
     print("G =",constants.G)
-    controller.Step(100000)
+    controller.Step(1600000)
 
     # now plot the orbit
     
@@ -53,7 +60,7 @@ if __name__ == "__main__":
 
     r0 = 2.0
     t0 = atan2(0,-2)
-    e = 1-(r0*(v0/2)**2/constants.G) # earth mass = 1 here
+    e = 1-(r0*(v0)**2/constants.G) # earth mass = 1 here
     a = r0/(1-e*cos(t0))
 
     def theta(t):
@@ -78,5 +85,13 @@ if __name__ == "__main__":
     plt.ylabel('y [R_E]')
     plt.title('Plot of (x, y)')
 
+    plt.grid(True)
+    plt.show()
+
+    x_values, y_values = zip(*dump.energy)
+    plt.plot(x_values, y_values)
+    plt.title('Total Energy')
+    plt.xlabel('time [s]')
+    plt.ylabel('Specific Energy')
     plt.grid(True)
     plt.show()

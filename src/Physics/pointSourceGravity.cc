@@ -35,13 +35,13 @@ public:
 
         Field<Lin::Vector<dim>>* acceleration = nodeList->getField<Lin::Vector<dim>>("acceleration");
         Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
-        for (int i=0; i<numNodes ; ++i) {
-            Lin::Vector<dim> pos = position->getValue(i);
-            double r = (pointSourceLocation - pos).magnitude();
-            Lin::Vector<dim> rDir = (pointSourceLocation - pos)*(1.0/r);
-            acceleration->setValue(i,pointSourceMass*constants.G()/(r*r)*rDir);
-        }
+
         if(initialState->getNameString() == "position") {
+            for (int i=0; i<numNodes ; ++i) {
+                Lin::Vector<dim> pos = position->getValue(i);
+                Lin::Vector<dim> r = (pointSourceLocation - pos);
+                acceleration->setValue(i,pointSourceMass*constants.G()/(r.mag2())*r.normal());
+            }
             Field<Lin::Vector<dim>> *velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
             Field<Lin::Vector<dim>> dxdt;
             dxdt = *velocity + (*acceleration)*t;
