@@ -36,7 +36,7 @@ if __name__ == "__main__":
     print(grid)
     waveEqn = WaveEquation2d(nodeList=myNodeList,
                                       constants=constants,
-                                      grid=grid,C=1.0)
+                                      grid=grid,C=3.0)
 
     
 

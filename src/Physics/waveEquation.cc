@@ -17,7 +17,11 @@ public:
         int numNodes = nodeList->size();
         if (nodeList->getField<double>("phi") == nullptr)
             nodeList->insertField<double>("phi");
+        if (nodeList->getField<double>("xi") == nullptr)
+            nodeList->insertField<double>("xi");
 
+        Field<double>* xi = nodeList->getField<double>("xi");
+        this->derivFields.push_back(xi);
         Field<double>* phi = nodeList->getField<double>("phi");
         this->derivFields.push_back(phi);
     }
@@ -29,15 +33,22 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
         
-        #pragma omp parallel for
-        for (int i=0; i<numNodes; ++i) {
-            std::vector<int> neighbors = grid->getNeighboringCells(i);
-            double laplace2 = -4*initialState->getValue(i);
-            for (auto idx : neighbors) {
-                laplace2 += initialState->getValue(idx);
-            }                
-            laplace2 = laplace2/pow(grid->dx,2.0);
-            deriv.setValue(i,laplace2*C*C);
+        Field<double>* xi = nodeList->getField<double>("xi");
+        Field<double>* phi = nodeList->getField<double>("phi");
+        if(initialState->getNameString() == "xi") {
+            #pragma omp parallel for
+            for (int i=0; i<numNodes; ++i) {
+                std::vector<int> neighbors = grid->getNeighboringCells(i);
+                double laplace2 = -4*phi->getValue(i);
+                for (auto idx : neighbors) {
+                    laplace2 += phi->getValue(idx);
+                }                
+                laplace2 = laplace2/pow(grid->dx,2.0);
+                deriv.setValue(i,laplace2*C*C);
+            }
+        }
+        else if(initialState->getNameString() == "phi") { 
+            deriv.copyValues(xi);
         }
     }
 
