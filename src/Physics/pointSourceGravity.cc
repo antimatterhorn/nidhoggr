@@ -37,6 +37,7 @@ public:
         Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
 
         if(initialState->getNameString() == "position") {
+            #pragma omp parllel for
             for (int i=0; i<numNodes ; ++i) {
                 Lin::Vector<dim> pos = position->getValue(i);
                 Lin::Vector<dim> r = (pointSourceLocation - pos);

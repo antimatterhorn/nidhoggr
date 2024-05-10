@@ -55,9 +55,6 @@ public:
             std::cout << "constants constructed" << std::endl;
     }
 
-
-    
-    
     // The fundamental independent quantities.
     double unitLengthMeters() const { return mUnitLm; }
     double unitMassKg() const { return mUnitMkg; }
