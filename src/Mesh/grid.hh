@@ -153,6 +153,93 @@ public:
         coords[0] = idx % nx; // Compute i
         return coords;
     }
+
+    std::vector<int>
+    leftMost() {
+        std::vector<int> boundaryIndices;
+        if constexpr (dim == 1)
+            boundaryIndices.push_back(getPosition(0));
+        else if constexpr (dim == 2) {
+            for (int j = 0; j < ny; ++j)
+                boundaryIndices.push_back(index(0, j));
+        }
+        else if constexpr (dim == 3) {
+            for (int j = 0; j < ny; ++j)
+                for (int k = 0; k < nz; ++k)
+                    boundaryIndices.push_back(index(0, j, k));
+        }
+        return boundaryIndices;
+    }
+
+    std::vector<int>
+    rightMost() {
+        std::vector<int> boundaryIndices;
+        if constexpr (dim == 1)
+            boundaryIndices.push_back(getPosition(size() - 1));
+        else if constexpr (dim == 2) {
+            for (int j = 0; j < ny; ++j)
+                boundaryIndices.push_back(index(nx - 1, j));
+        }
+        else if constexpr (dim == 3) {
+            for (int j = 0; j < ny; ++j)
+                for (int k = 0; k < nz; ++k)
+                    boundaryIndices.push_back(index(nx - 1, j, k));
+        }
+        return boundaryIndices;
+    }
+
+    std::vector<int>
+    topMost() {
+        std::vector<int> boundaryIndices;
+        if constexpr (dim == 2) {
+            for (int i = 0; i < nx; ++i)
+                boundaryIndices.push_back(index(i, 0));
+        }
+        else if constexpr (dim == 3) {
+            for (int i = 0; i < nx; ++i)
+                for (int k = 0; k < nz; ++k)
+                    boundaryIndices.push_back(index(i, 0, k));
+        }
+        return boundaryIndices;
+    }
+
+    std::vector<int>
+    bottomMost() {
+        std::vector<int> boundaryIndices;
+        if constexpr (dim == 2) {
+            for (int i = 0; i < nx; ++i)
+                boundaryIndices.push_back(index(i, ny - 1));
+        }
+        else if constexpr (dim == 3) {
+            for (int i = 0; i < nx; ++i)
+                for (int k = 0; k < nz; ++k)
+                    boundaryIndices.push_back(index(i, ny - 1, k));
+        }
+        return boundaryIndices;
+    }
+
+    std::vector<int>
+    frontMost() {
+        std::vector<int> boundaryIndices;
+        if constexpr (dim == 3) {
+            for (int i = 0; i < nx; ++i)
+                for (int j = 0; j < ny; ++j)
+                    boundaryIndices.push_back(index(i, j, 0));
+        }
+        return boundaryIndices;
+    }
+
+    std::vector<int>
+    backMost() {  // hindmost?
+        std::vector<int> boundaryIndices;
+        if constexpr (dim == 3) {
+            for (int i = 0; i < nx; ++i)
+                for (int j = 0; j < ny; ++j)
+                    boundaryIndices.push_back(index(i, j, nz - 1));
+        }
+        return boundaryIndices;
+    }
+
 };
 }
 

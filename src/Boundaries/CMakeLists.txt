@@ -1,1 +1,1 @@
-PYB11Generator_add_module(GridBoundaries)
+PYB11Generator_add_module(Boundaries)

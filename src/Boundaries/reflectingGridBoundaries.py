@@ -3,5 +3,5 @@ from gridBoundaries import *
 
 @PYB11template("dim")
 class ReflectingGridBoundaries(GridBoundaries):
-    def pyinit(self):
+    def pyinit(self,grid="Mesh::Grid<%(dim)s>*",physics="Physics<%(dim)s>*"):
         return

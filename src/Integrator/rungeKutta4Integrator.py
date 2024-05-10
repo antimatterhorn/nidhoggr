@@ -5,7 +5,8 @@ from integrator import *
 class RungeKutta4Integrator(Integrator):
     def pyinit(self,
                physics="Physics<%(dim)s>*",
-               dtmin="double"):
+               dtmin="double",
+               boundaries=("std::vector<Boundaries<%(dim)s>*>","std::vector<Boundaries<%(dim)s>*>()")):
         return
     def Step(self):
         return

@@ -7,8 +7,8 @@ class ReflectingGridBoundaries : public GridBoundaries<dim> {
 protected:
 
 public:
-    ReflectingGridBoundaries(Mesh::Grid<dim>* grid) : 
-        GridBoundaries<dim>(grid) {}
+    ReflectingGridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics) : 
+        GridBoundaries<dim>(grid,physics) {}
     
     virtual ~ReflectingGridBoundaries() {}
 

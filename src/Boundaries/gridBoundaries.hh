@@ -3,19 +3,20 @@
 
 #include <vector>
 #include "../Mesh/grid.hh"
+#include "../Physics/physics.hh"
+#include "boundaries.hh"
 
 // Base class for Grid Boundaries
 template <int dim>
-class GridBoundaries {
+class GridBoundaries : public Boundaries<dim> {
 protected:
     Mesh::Grid<dim>* grid;
 public:
-    GridBoundaries(Mesh::Grid<dim>* grid) : grid(grid) {}
+    GridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics) : 
+        Boundaries<dim>(physics),
+        grid(grid) {}
     
     virtual ~GridBoundaries() {}
-
-    virtual void
-    ApplyBoundaries() {}
 
 };
 

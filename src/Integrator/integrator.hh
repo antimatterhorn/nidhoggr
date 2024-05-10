@@ -8,7 +8,7 @@
 #include "../DataBase/field.hh"
 #include "../Math/vectorMath.hh"
 #include "../State/state.hh"
-#include "../Physics/physics.hh"
+#include "../Boundaries/boundaries.hh"
 
 template <int dim>
 class Physics; // forward declaration
@@ -17,11 +17,13 @@ template <int dim>
 class Integrator {
 protected:
     Physics<dim>* physics;
-    double time;
+    std::vector<Boundaries<dim>*> boundaries;
     unsigned int cycle;
-    double dt, dtmin;
+    double time, dt, dtmin;
 public:
-    Integrator (Physics<dim>* physics, double dtmin) : physics(physics),
+    Integrator (Physics<dim>* physics, double dtmin, std::vector<Boundaries<dim>*> boundaries) : 
+        physics(physics),
+        boundaries(boundaries),
         dt(dtmin),
         dtmin(dtmin){
         cycle = 0;

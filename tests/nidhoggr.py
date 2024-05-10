@@ -25,5 +25,5 @@ from Units import *
 from Integrator import *
 from Controller import *
 from CommandLineArgs import *
-from GridBoundaries import *
+from Boundaries import *
 

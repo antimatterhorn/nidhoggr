@@ -1,7 +1,7 @@
 from PYB11Generator import *
-from boundaries import *
+from gridBoundaries import *
 
 @PYB11template("dim")
-class GridBoundaries(Boundaries):
+class PeriodicGridBoundaries(GridBoundaries):
     def pyinit(self,grid="Mesh::Grid<%(dim)s>*",physics="Physics<%(dim)s>*"):
         return
