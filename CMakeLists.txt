@@ -20,4 +20,4 @@ add_subdirectory(src/Mesh)
 add_subdirectory(src/EOS)
 add_subdirectory(src/State)
 add_subdirectory(src/Utilities)
-
+add_subdirectory(src/Boundaries)

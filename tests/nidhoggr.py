@@ -9,7 +9,8 @@ for dir in ["Math",
             "EOS",
             "Type",
             "Integrator",
-            "Utilities"]:
+            "Utilities",
+            "Boundaries"]:
     sys.path.append(buildir+dir)
 
 from CodeVersion import *
@@ -24,4 +25,5 @@ from Units import *
 from Integrator import *
 from Controller import *
 from CommandLineArgs import *
+from GridBoundaries import *
 
