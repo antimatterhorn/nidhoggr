@@ -64,7 +64,7 @@ if __name__ == "__main__":
     a = r0/(1-e*cos(t0))
 
     def theta(t):
-        return t0 + t/r0;
+        return t0 + t/r0
 
     def r(t):
         return a*(1.0-e**2)/(1.0+e*cos(theta(t)))
