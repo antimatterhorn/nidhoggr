@@ -15,6 +15,7 @@ class dumpState:
         self.dump.append((self.nodeList.getFieldVector2d("position")[0].x,self.nodeList.getFieldVector2d("position")[0].y))
         self.energy.append((time,ke-pe))
 
+
 if __name__ == "__main__":
     myNodeList = NodeList(1)
 
@@ -30,7 +31,7 @@ if __name__ == "__main__":
                                       pointSourceLocation=loc,
                                       pointSourceMass=1)
     integrator = RungeKutta4Integrator2d(physics=sourceGrav,
-                                         dtmin=0.01)
+                                         dtmin=0.05)
   
     pos = myNodeList.getFieldVector2d("position")[0]
     pos.x = -2.0
@@ -45,7 +46,7 @@ if __name__ == "__main__":
     controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=10000)
 
     print("G =",constants.G)
-    controller.Step(1600000)
+    controller.Step(800000)
 
     # now plot the orbit
     
