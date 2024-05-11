@@ -16,7 +16,7 @@ class oscillate:
       
 
 if __name__ == "__main__":
-    animate = False
+    animate = True
     myNodeList = NodeList(100*100)
 
     constants = PhysicalConstants(6.378e+6,     # earth mass in kg
@@ -59,13 +59,10 @@ if __name__ == "__main__":
                             statStep=10,
                             periodicWork=periodicWork)
 
-    if(animate):
-        title = MakeTitle(controller,"time","time")
+    title = MakeTitle(controller,"time","time")
 
-        bounds = (nx,ny)
-        update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,
-                                                stepper=controller.Step,
-                                                title=title)
-        AnimateGrid2d(bounds,update_method)
-    else:
-        controller.Step(800000)
+    bounds = (nx,ny)
+    update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,
+                                            stepper=controller.Step,
+                                            title=title)
+    AnimateGrid2d(bounds,update_method)

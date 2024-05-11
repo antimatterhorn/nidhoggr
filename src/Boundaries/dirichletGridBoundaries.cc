@@ -38,25 +38,25 @@ public:
                 Field<double>* doubleField = dynamic_cast<Field<double>*>(field);
                 if (doubleField) {
                     #pragma omp parallel for
-                    for (int i = 0; i<numNodes; ++i)
-                        for (int j=0; j<ids.size();++j)
-                            if(ids[j] == i)
-                                doubleField->setValue(i,0);
+                    for (int j=0; j<ids.size();++j){
+                        int i = ids[j];
+                        doubleField->setValue(i,0);
+                    }
+                }
 /*
 This is not a safe way to do this. For one thing, when you eventually parallelize all these routines
 it is not guaranteed that "i" is the correct id. You should eventually find a way to implement an id
 lookup from the field->nodeList->getField("id")[i] or some such. But at the moment, I'm not sure how
 to do that without getting into a circular dependence hell with the fields and nodeLists. Database??
 */
-                }
             } else if (typeid(*field) == typeid(Field<Lin::Vector<dim>>)) {
                 Field<Lin::Vector<dim>>* vectorField = dynamic_cast<Field<Lin::Vector<dim>>*>(field);
                 if (vectorField) {
                     #pragma omp parallel for
-                    for (int i = 0; i<numNodes; ++i)
-                        for (int j=0; j<ids.size();++j)
-                            if(ids[j] == i)
-                                vectorField->setValue(i,Lin::Vector<dim>());
+                        for (int j=0; j<ids.size();++j) {
+                            int i = ids[j];
+                            vectorField->setValue(i,Lin::Vector<dim>());
+                        }
                 }
             }
         }
