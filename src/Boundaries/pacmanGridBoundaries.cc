@@ -3,14 +3,14 @@
 
 // Base class for Grid Boundaries
 template <int dim>
-class PeriodicGridBoundaries : public GridBoundaries<dim> {
+class PacmanGridBoundaries : public GridBoundaries<dim> {
 protected:
 
 public:
-    PeriodicGridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics) : 
+    PacmanGridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics) : 
         GridBoundaries<dim>(grid,physics) {}
     
-    virtual ~PeriodicGridBoundaries() {}
+    virtual ~PacmanGridBoundaries() {}
 
     virtual void
     ApplyBoundaries() override {
