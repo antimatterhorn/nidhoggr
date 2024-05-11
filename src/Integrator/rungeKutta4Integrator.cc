@@ -50,6 +50,11 @@ public:
                 }
             }
         }
+        std::vector<Boundaries<dim>*> boundaries = this->boundaries;
+        if(boundaries.size() > 0)
+            for(Boundaries<dim>* bounds : boundaries)
+                bounds->ApplyBoundaries();
+
         this->time += dt;
         this->cycle += 1;
     }

@@ -49,6 +49,10 @@ public:
                 }
             }
         }
+        if(boundaries.size() > 0)
+            for(Boundaries<dim>* bounds : boundaries)
+                bounds->ApplyBoundaries();
+
         time += dt;
         cycle+=1;
     }

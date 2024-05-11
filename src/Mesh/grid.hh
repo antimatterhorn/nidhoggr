@@ -158,7 +158,7 @@ public:
     leftMost() {
         std::vector<int> boundaryIndices;
         if constexpr (dim == 1)
-            boundaryIndices.push_back(getPosition(0));
+            boundaryIndices.push_back(index(0));
         else if constexpr (dim == 2) {
             for (int j = 0; j < ny; ++j)
                 boundaryIndices.push_back(index(0, j));
@@ -175,7 +175,7 @@ public:
     rightMost() {
         std::vector<int> boundaryIndices;
         if constexpr (dim == 1)
-            boundaryIndices.push_back(getPosition(size() - 1));
+            boundaryIndices.push_back(index(size() - 1));
         else if constexpr (dim == 2) {
             for (int j = 0; j < ny; ++j)
                 boundaryIndices.push_back(index(nx - 1, j));

@@ -11,8 +11,8 @@ class oscillate:
         if (time < 200):
             val = 5*(cos(time/10))
             self.phi.setValue(5050,-val)
-            self.phi.setValue(2050,val)
-            self.phi.setValue(8050,val)
+            self.phi.setValue(2025,val)
+            self.phi.setValue(8075,val)
         
 
 if __name__ == "__main__":
@@ -41,10 +41,14 @@ if __name__ == "__main__":
     
 
     print(waveEqn)
-    integrator = Integrator2d(physics=waveEqn,
-                                         dtmin=0.1)
-    print(integrator)
 
+    pm = PacmanGridBoundaries2d(grid=grid,physics=waveEqn)
+    print(pm)
+    bounds = [pm]
+
+    integrator = Integrator2d(physics=waveEqn,
+                                dtmin=0.1,boundaries=bounds)
+    print(integrator)
 
     phi = myNodeList.getFieldDouble("phi")
     print(phi)

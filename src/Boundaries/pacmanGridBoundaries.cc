@@ -35,7 +35,7 @@ public:
                     }
                     else if constexpr (dim == 3) {
                         std::vector<int> frontIds = grid->frontMost();
-                        std::vector<int> backIds = grid->backtMost();
+                        std::vector<int> backIds = grid->backMost();
                         Field<double> front = Field<double>("front",frontIds.size());
                         Field<double> back = Field<double>("back",backIds.size());
                         SwapFieldData(doubleField,front,back,frontIds,backIds);
@@ -59,7 +59,7 @@ public:
                     }
                     else if constexpr (dim == 3) {
                         std::vector<int> frontIds = grid->frontMost();
-                        std::vector<int> backIds = grid->backtMost();
+                        std::vector<int> backIds = grid->backMost();
                         Field<Lin::Vector<dim>> front = Field<Lin::Vector<dim>>("front",frontIds.size());
                         Field<Lin::Vector<dim>> back = Field<Lin::Vector<dim>>("back",backIds.size());
                         SwapFieldData(vectorField,front,back,frontIds,backIds);
