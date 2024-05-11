@@ -13,16 +13,13 @@ private:
     int nx; // Number of grid cells in x-direction
     int ny; // Number of grid cells in y-direction
     int nz; // Number of grid cells in z-direction
-
-
-    
+ 
 public:
-
     double dx; // Grid spacing in x-direction
     double dy; // Grid spacing in y-direction
     double dz; // Grid spacing in z-direction
 
-    Field<Lin::Vector<dim>> positions;
+    Field<Lin::Vector<dim>> gridPositions;
     
     // Constructor for 1D grid
     Grid(int num_cells_x, double spacing_x) 
@@ -47,17 +44,17 @@ public:
 
     void 
     initializeGrid() {
-        positions = Field<Lin::Vector<dim>>("position");
+        gridPositions = Field<Lin::Vector<dim>>("gridPosition");
 
         // Compute and store the position of each cell center
         for (int k = 0; k < nz; ++k) {
             for (int j = 0; j < ny; ++j) {
                 for (int i = 0; i < nx; ++i) {
-                    Lin::Vector<dim> position;
+                    Lin::Vector<dim> gridPosition;
                     for (int d = 0; d < dim; ++d) {
-                        position.values[d] = (d == 0 ? i * dx + 0.5 * dx : (d == 1 ? j * dy + 0.5 * dy : k * dz + 0.5 * dz));
+                        gridPosition.values[d] = (d == 0 ? i * dx + 0.5 * dx : (d == 1 ? j * dy + 0.5 * dy : k * dz + 0.5 * dz));
                     }
-                    positions.addValue(position);   
+                    gridPositions.addValue(gridPosition);   
                 }
             }
         }
@@ -65,8 +62,8 @@ public:
 
     void 
     setOrigin(Lin::Vector<dim> origin) {
-        for (int i = 0; i < positions.getSize(); ++i) {
-            positions[i] -= origin; // this is very not correct
+        for (int i = 0; i < gridPositions.getSize(); ++i) {
+            gridPositions[i] -= origin; // this is very not correct
         }
     }
 
@@ -85,15 +82,13 @@ public:
     int size_x() const { return nx; }
     int size_y() const { return ny; }
     int size_z() const { return nz; }
-    int size() const { return positions.size(); }
+    int size() const { return gridPositions.size(); }
     double getdx() const { return dx; }
     double getdy() const { return dy; }
     double getdz() const { return dz; }
 
     Lin::Vector<dim> 
-    getPosition(int id){
-        return positions[id];
-    }
+    getPosition(int id){ return gridPositions[id]; }
 
     std::vector<int> getNeighboringCells(int idx) const {
         std::array<int, 3> coords = indexToCoordinates(idx);
