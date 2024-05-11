@@ -5,6 +5,9 @@ class Controller:
         self.integrator = integrator
         self.periodicWork = periodicWork
         self.statStep = statStep # use this to override how frequently we print to the screen
+        self.cycle = 0
+        self.time = 0
+        self.dt = 0
     def Step(self,nsteps=1):
         for i in range(nsteps):
             self.integrator.Step()
@@ -19,3 +22,6 @@ class Controller:
                 for work in self.periodicWork:
                     if cycle % work.cycle == 0:
                         work(cycle,time,dt)
+            self.time = self.integrator.Time()
+            self.cycle = self.integrator.Cycle()
+            self.dt = self.integrator.dt

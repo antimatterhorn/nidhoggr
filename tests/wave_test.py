@@ -12,7 +12,8 @@ class oscillate:
         self.phi.setValue(5050,-val)
         self.phi.setValue(2025,val)
         self.phi.setValue(8075,val)
-        
+
+      
 
 if __name__ == "__main__":
     myNodeList = NodeList(100*100)
@@ -51,6 +52,8 @@ if __name__ == "__main__":
 
     controller = Controller(integrator=integrator,statStep=1000,periodicWork=periodicWork)
 
+    title = MakeTitle(controller,"time","time")
+
     bounds = (nx,ny)
-    update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,stepper=controller.Step)
+    update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,stepper=controller.Step,title=title)
     AnimateGrid2d(bounds,update_method)
