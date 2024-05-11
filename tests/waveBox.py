@@ -16,9 +16,6 @@ class oscillate:
       
 
 if __name__ == "__main__":
-    animate = True
-    myNodeList = NodeList(100*100)
-
     constants = PhysicalConstants(6.378e+6,     # earth mass in kg
                                   5.972e+24,    # earth radius in m
                                   1.0,          # s
@@ -26,6 +23,8 @@ if __name__ == "__main__":
                                   1.0) 
     nx = 100
     ny = 100
+
+    myNodeList = NodeList(nx*ny)
     
     grid = Grid2d(nx,ny,1,1)
     print("grid %dx%d"%(nx,ny))
@@ -40,8 +39,9 @@ if __name__ == "__main__":
     pm = PacmanGridBoundaries2d(grid=grid,physics=waveEqn)
     print(pm)
     box = DirichletGridBoundaries2d(grid=grid,physics=waveEqn)
-    box.addBox(Vector2d(5,5),Vector2d(10,80))
-    box.addBox(Vector2d(30,80),Vector2d(60,95))
+    box.addBox(Vector2d(5,5),Vector2d(80,15))
+    box.addBox(Vector2d(80,30),Vector2d(95,60))
+    box.removeBox(Vector2d(40,0),Vector2d(60,15))
     pbounds = [pm,box]
 
     integrator = Integrator2d(physics=waveEqn,

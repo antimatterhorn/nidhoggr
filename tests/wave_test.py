@@ -16,7 +16,7 @@ class oscillate:
       
 
 if __name__ == "__main__":
-    myNodeList = NodeList(100*100)
+    
 
     constants = PhysicalConstants(6.378e+6,     # earth mass in kg
                                   5.972e+24,    # earth radius in m
@@ -25,6 +25,8 @@ if __name__ == "__main__":
                                   1.0) 
     nx = 100
     ny = 100
+
+    myNodeList = NodeList(nx*ny)
     
     grid = Grid2d(nx,ny,1,1)
     print("grid %dx%d"%(nx,ny))

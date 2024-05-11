@@ -7,6 +7,8 @@ class DirichletGridBoundaries(GridBoundaries):
         return
     def addBox(self,p1="Lin::Vector<%(dim)s>",p2="Lin::Vector<%(dim)s>"):
         return
+    def removeBox(self,p1="Lin::Vector<%(dim)s>",p2="Lin::Vector<%(dim)s>"):
+        return
     
 DirichletGridBoundaries1d = PYB11TemplateClass(DirichletGridBoundaries,
                               template_parameters = ("1"),
