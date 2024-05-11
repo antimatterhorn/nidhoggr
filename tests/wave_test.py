@@ -8,11 +8,10 @@ class oscillate:
         self.cycle = workCycle
         self.phi = myNodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
-        if (time < 200):
-            val = 5*(cos(time/10))
-            self.phi.setValue(5050,-val)
-            self.phi.setValue(2025,val)
-            self.phi.setValue(8075,val)
+        val = 5*(cos(time))
+        self.phi.setValue(5050,-val)
+        self.phi.setValue(2025,val)
+        self.phi.setValue(8075,val)
         
 
 if __name__ == "__main__":
@@ -27,31 +26,22 @@ if __name__ == "__main__":
     ny = 100
     
     grid = Grid2d(nx,ny,1,1)
-
-
-
-
-
     print("grid %dx%d"%(nx,ny))
     print(grid)
+
     waveEqn = WaveEquation2d(nodeList=myNodeList,
                                       constants=constants,
-                                      grid=grid,C=3.0)
-
-    
+                                      grid=grid,C=1.0)
 
     print(waveEqn)
 
     pm = PacmanGridBoundaries2d(grid=grid,physics=waveEqn)
     print(pm)
-    bounds = [pm]
+    pbounds = [pm]
 
     integrator = Integrator2d(physics=waveEqn,
-                                dtmin=0.1,boundaries=bounds)
+                                dtmin=0.1,boundaries=pbounds)
     print(integrator)
-
-    phi = myNodeList.getFieldDouble("phi")
-    print(phi)
 
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
