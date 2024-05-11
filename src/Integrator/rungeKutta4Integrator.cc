@@ -3,12 +3,10 @@
 template <int dim>
 class RungeKutta4Integrator : public Integrator<dim> {
 protected:
-    double dt,dtmin;
+
 public:
     RungeKutta4Integrator(Physics<dim>* physics, double dtmin, std::vector<Boundaries<dim>*> boundaries) : 
-        Integrator<dim>(physics,dtmin,boundaries),
-        dt(dtmin),
-        dtmin(dtmin) {}
+        Integrator<dim>(physics,dtmin,boundaries) {}
 
     ~RungeKutta4Integrator() {}
 
@@ -16,7 +14,7 @@ public:
     Step() override {
         Physics<dim>* physics = this->physics;
         double time = this->time;
-        
+        double dt = this->dt;
         for (FieldBase* field : physics->derivFields) {
             if (typeid(*field) == typeid(Field<double>)) {
                 Field<double>* doubleField = dynamic_cast<Field<double>*>(field);
@@ -57,6 +55,9 @@ public:
 
         this->time += dt;
         this->cycle += 1;
+
+        double newdt = physics->EstimateTimestep();
+        this->dt = std::max(newdt,this->dtmin);
     }
 
     virtual

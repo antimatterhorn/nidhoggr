@@ -31,7 +31,7 @@ if __name__ == "__main__":
                                       pointSourceLocation=loc,
                                       pointSourceMass=1)
     integrator = RungeKutta4Integrator2d(physics=sourceGrav,
-                                         dtmin=0.05)
+                                         dtmin=1e-3)
   
     pos = myNodeList.getFieldVector2d("position")[0]
     pos.x = -2.0
@@ -40,13 +40,13 @@ if __name__ == "__main__":
     velocity = myNodeList.getFieldVector2d("velocity")
     velocity[0].y = v0
 
-    dump = dumpState(myNodeList,workCycle=10000,G=constants.G)
+    dump = dumpState(myNodeList,workCycle=1000,G=constants.G)
     periodicWork = [dump]
 
-    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=10000)
+    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=1000)
 
     print("G =",constants.G)
-    controller.Step(800000)
+    controller.Step(80000)
 
     # now plot the orbit
     

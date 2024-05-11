@@ -55,6 +55,9 @@ public:
 
         time += dt;
         cycle+=1;
+        
+        double newdt = physics->EstimateTimestep();
+        dt = std::max(newdt,dtmin);
     }
 
     virtual

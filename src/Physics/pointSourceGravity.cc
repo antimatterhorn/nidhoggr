@@ -6,6 +6,7 @@ class PointSourceGravity : public Physics<dim> {
 protected:
     Lin::Vector<dim> pointSourceLocation;
     double pointSourceMass;
+    double dtmin;
 public:
     PointSourceGravity() {}
 
@@ -33,17 +34,23 @@ public:
         PhysicalConstants constants = this->constants;
         int numNodes = nodeList->size();
 
-        Field<Lin::Vector<dim>>* acceleration = nodeList->getField<Lin::Vector<dim>>("acceleration");
-        Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
+        Field<Lin::Vector<dim>>* acceleration   = nodeList->getField<Lin::Vector<dim>>("acceleration");
+        Field<Lin::Vector<dim>>* position       = nodeList->getField<Lin::Vector<dim>>("position");
+        Field<Lin::Vector<dim>>* velocity       = nodeList->getField<Lin::Vector<dim>>("velocity");
 
         if(initialState->getNameString() == "position") {
+            dtmin = 1e+30;
             #pragma omp parllel for
             for (int i=0; i<numNodes ; ++i) {
                 Lin::Vector<dim> pos = position->getValue(i);
                 Lin::Vector<dim> r = (pointSourceLocation - pos);
-                acceleration->setValue(i,pointSourceMass*constants.G()/(r.mag2())*r.normal());
+                Lin::Vector<dim> a = pointSourceMass*constants.G()/(r.mag2())*r.normal();
+                acceleration->setValue(i,a);
+                double amag = a.mag2();
+                double vmag = velocity->getValue(i).mag2();
+                dtmin = std::min(dtmin,vmag/amag);
             }
-            Field<Lin::Vector<dim>> *velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
+            
             Field<Lin::Vector<dim>> dxdt;
             dxdt = *velocity + (*acceleration)*t;
             deriv.copyValues(dxdt);
@@ -52,5 +59,13 @@ public:
             deriv.copyValues(acceleration);
         }
         
+    }
+        // Method to estimate a suitable timestep based on the dynamics of the system
+    virtual double 
+    EstimateTimestep() const override {     
+        double timestepCoefficient = 1e-4; // Adjust as needed
+        double timestep = timestepCoefficient * sqrt(dtmin);
+
+        return timestep;
     }
 };
