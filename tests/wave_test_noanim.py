@@ -52,13 +52,7 @@ if __name__ == "__main__":
     periodicWork = [osc]
 
     controller = Controller(integrator=integrator,
-                            statStep=1000,
+                            statStep=10,
                             periodicWork=periodicWork)
 
-    title = MakeTitle(controller,"time","time")
-
-    bounds = (nx,ny)
-    update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,
-                                            stepper=controller.Step,
-                                            title=title)
-    AnimateGrid2d(bounds,update_method)
+    controller.Step(800000)
