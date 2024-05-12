@@ -43,7 +43,18 @@ if __name__ == "__main__":
     dump = dumpState(myNodeList,workCycle=1000,G=constants.G)
     periodicWork = [dump]
 
-    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=1000)
+    import numpy as np
+    from math import atan2,cos
+
+    r0 = 2.0
+    t0 = atan2(0,-2)
+    e = 1-(r0*(v0)**2/constants.G) # earth mass = 1 here
+    a = r0/(1-e*cos(t0))
+
+    torbit = 2 * np.pi * np.sqrt(a**3 / (constants.G * 1))
+
+
+    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=1000,tstop=torbit)
 
     print("G =",constants.G)
     controller.Step(80000)
@@ -51,18 +62,14 @@ if __name__ == "__main__":
     # now plot the orbit
     
     import matplotlib.pyplot as plt
-    import numpy as np
-    from math import sqrt,atan2,cos
+
 
     x_values, y_values = zip(*dump.dump)
 
     plt.plot(x_values, y_values, 'o')  
     plt.plot(loc.x,loc.y,"o",color="red")
 
-    r0 = 2.0
-    t0 = atan2(0,-2)
-    e = 1-(r0*(v0)**2/constants.G) # earth mass = 1 here
-    a = r0/(1-e*cos(t0))
+ # earth mass = 1 here
 
     def theta(t):
         return t0 + t/r0

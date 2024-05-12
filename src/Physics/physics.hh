@@ -43,6 +43,9 @@ public:
 
     virtual double 
     EstimateTimestep() const { return 0; }
+
+    virtual NodeList*
+    getNodeList() const { return nodeList; }
 };
 
 #endif //PHYSICS_HH

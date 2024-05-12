@@ -1,13 +1,14 @@
 from Integrator import *
 
 class Controller:
-    def __init__(self,integrator,periodicWork=[],statStep=1):
+    def __init__(self,integrator,periodicWork=[],statStep=1,tstop=None):
         self.integrator = integrator
         self.periodicWork = periodicWork
         self.statStep = statStep # use this to override how frequently we print to the screen
         self.cycle = 0
         self.time = 0
         self.dt = 0
+        self.tstop = tstop
     def Step(self,nsteps=1):
         for i in range(nsteps):
             self.integrator.Step()
@@ -25,3 +26,5 @@ class Controller:
             self.time = self.integrator.Time()
             self.cycle = self.integrator.Cycle()
             self.dt = self.integrator.dt
+            if(self.tstop and self.time >=self.tstop):
+                break
