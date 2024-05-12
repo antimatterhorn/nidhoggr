@@ -36,11 +36,11 @@ if __name__ == "__main__":
     pos = myNodeList.getFieldVector2d("position")[0]
     pos.x = -2.0
 
-    v0 = -0.8*8.7298e-4
+    v0 = -0.4*8.7298e-4
     velocity = myNodeList.getFieldVector2d("velocity")
     velocity[0].y = v0
 
-    dump = dumpState(myNodeList,workCycle=1000,G=constants.G)
+    dump = dumpState(myNodeList,workCycle=2000,G=constants.G)
     periodicWork = [dump]
 
     import numpy as np
@@ -54,10 +54,10 @@ if __name__ == "__main__":
     torbit = 2 * np.pi * np.sqrt(a**3 / (constants.G * 1))
 
 
-    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=1000,tstop=torbit)
+    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=10000,tstop=2*torbit)
 
     print("G =",constants.G)
-    controller.Step(80000)
+    controller.Step(800000)
 
     # now plot the orbit
     
@@ -69,8 +69,6 @@ if __name__ == "__main__":
     plt.plot(x_values, y_values, 'o')  
     plt.plot(loc.x,loc.y,"o",color="red")
 
- # earth mass = 1 here
-
     def theta(t):
         return t0 + t/r0
 
@@ -80,8 +78,8 @@ if __name__ == "__main__":
 
     theta_vec = np.vectorize(theta)
     r_vec = np.vectorize(r)
-    # Generate an array of time values
-    t_values = np.linspace(0, 100, 1000)  # Example: time from 0 to 10 with 100 points
+    # Generate an array of thetas
+    t_values = np.linspace(0, 4*np.pi, 100) 
 
     # Calculate x(t) and y(t) for each time value
     xs = r_vec(t_values) * np.cos(theta_vec(t_values))

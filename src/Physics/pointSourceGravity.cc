@@ -35,14 +35,13 @@ public:
         int numNodes = nodeList->size();
 
         Field<Lin::Vector<dim>>* acceleration   = nodeList->getField<Lin::Vector<dim>>("acceleration");
-        Field<Lin::Vector<dim>>* position       = nodeList->getField<Lin::Vector<dim>>("position");
         Field<Lin::Vector<dim>>* velocity       = nodeList->getField<Lin::Vector<dim>>("velocity");
 
         if(initialState->getNameString() == "position") {
             dtmin = 1e+30;
             #pragma omp parllel for
             for (int i=0; i<numNodes ; ++i) {
-                Lin::Vector<dim> pos = position->getValue(i);
+                Lin::Vector<dim> pos = initialState->getValue(i);
                 Lin::Vector<dim> r = (pointSourceLocation - pos);
                 Lin::Vector<dim> a = pointSourceMass*constants.G()/(r.mag2())*r.normal();
                 acceleration->setValue(i,a);
