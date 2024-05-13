@@ -20,16 +20,6 @@ public:
         for(int i=0;i<grid->size();i++)
             if(!grid->onBoundary(i))
                 insideIds.push_back(i);
-
-        /*
-        The grid neighbors list is in this order:
-        right
-        left
-        up
-        down
-        front
-        back
-        */
     }
 
     ~HydroHLL() {}
@@ -41,31 +31,16 @@ public:
             nodeList->insertField<UType<dim>>("HLLU");
     }
 
-    
     virtual void
-    EvaluateDerivatives(const Field<UType<dim>>* initialState, Field<UType<dim>>& deriv, const double t) override{  
+    PreStepInitialize() override {
         NodeList* nodeList = this->nodeList;
-        int numNodes = nodeList->size();
 
-        Field<double>* density = nodeList->getField<double>("density");
-        Field<double>* pressure = nodeList->getField<double>("pressure");
-        Field<double>* energy = nodeList->getField<double>("specificInternalEnergy");
-        Field<double>* soundSpeed = nodeList->getField<double>("soundSpeed");
-        Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
+        Field<double>* density              = nodeList->getField<double>("density");
+        Field<double>* pressure             = nodeList->getField<double>("pressure");
+        Field<double>* energy               = nodeList->getField<double>("specificInternalEnergy");
+        Field<Lin::Vector<dim>>* velocity   = nodeList->getField<Lin::Vector<dim>>("velocity");
+        Field<UType<dim>>* HLLU             = nodeList->getField<UType<dim>>("HLLU");
 
-        Field<UType<dim>> HLLU = Field<UType<dim>>("copyHLLU",initialState->size());
-        Field<Lin::Vector<dim>> F0 = Field<Lin::Vector<dim>>("f0",initialState->size());
-        Field<Lin::Vector<dim>> F1 = Field<Lin::Vector<dim>>("f1",initialState->size());
-        Field<Lin::Vector<dim>> F2 = Field<Lin::Vector<dim>>("f2",initialState->size());
-
-        std::vector<Field<Lin::Vector<dim>>*> F;
-        F.push_back(&F0);
-        F.push_back(&F1);
-        F.push_back(&F2);
-
-        Field<Lin::Vector<dim>> ep = Field<Lin::Vector<dim>>("ep",initialState->size());
-        Field<Lin::Vector<dim>> em = Field<Lin::Vector<dim>>("em",initialState->size());
-        HLLU.copyValues(initialState);
         for (int j=0; j<insideIds.size(); ++j) {
             int i = insideIds[j];
             
@@ -78,6 +53,37 @@ public:
 
             Lin::Vector<dim> uv = rho*velocity->getValue(i);
             UType<dim> uu = UType<dim>(rho,uv,rho*etot);
+            HLLU->setValue(i,uu);
+        }
+    }
+
+    virtual void
+    EvaluateDerivatives(const Field<UType<dim>>* initialState, Field<UType<dim>>& deriv, const double t) override{  
+        NodeList* nodeList = this->nodeList;
+        int numNodes = nodeList->size();
+
+        Field<UType<dim>> HLLU = Field<UType<dim>>("copyHLLU",initialState->size());
+        Field<Lin::Vector<dim>> F0 = Field<Lin::Vector<dim>>("f0",initialState->size());
+        Field<Lin::Vector<dim>> F1 = Field<Lin::Vector<dim>>("f1",initialState->size());
+        Field<Lin::Vector<dim>> F2 = Field<Lin::Vector<dim>>("f2",initialState->size());
+
+        Field<double>* pressure             = nodeList->getField<double>("pressure");
+        Field<double>* soundSpeed           = nodeList->getField<double>("soundSpeed");
+        Field<Lin::Vector<dim>>* velocity   = nodeList->getField<Lin::Vector<dim>>("velocity");
+
+        std::vector<Field<Lin::Vector<dim>>*> F;
+        F.push_back(&F0);
+        F.push_back(&F1);
+        F.push_back(&F2);
+
+        Field<Lin::Vector<dim>> ep = Field<Lin::Vector<dim>>("ep",initialState->size());
+        Field<Lin::Vector<dim>> em = Field<Lin::Vector<dim>>("em",initialState->size());
+        HLLU.copyValues(initialState);
+        for (int j=0; j<insideIds.size(); ++j) {
+            int i = insideIds[j];
+            double Pr = pressure->getValue(i);
+
+            UType<dim> uu = HLLU.getValue(i);
 
             Lin::Vector<dim> cs = Lin::Vector<dim>();
             F0.setValue(i,uu.getU1());
@@ -98,74 +104,28 @@ public:
             int i = insideIds[j];
             std::vector<int> nbrs = grid->getNeighboringCells(i);
             
-            std::array<double, 3> FluxP = getFlux<0>(i,nbrs[0],initialState, ep, em, F);
-            std::array<double, 3> FluxM = getFlux<0>(nbrs[1],i,initialState, ep, em, F);
-            std::array<double, 3> Lvx;
-            for (int k=0; k<3; ++k)
-                Lvx[k] = (FluxM[k] - FluxP[k])/grid->dx;
-            if constexpr (dim > 1) {
-                FluxP = getFlux<1>(i,nbrs[2],initialState, ep, em, F);
-                FluxM = getFlux<1>(nbrs[3],i,initialState, ep, em, F);
-                std::array<double, 3> Lvy;
-                for (int k=0; k<3; ++k)
-                    Lvy[k] = (FluxM[k] - FluxP[k])/grid->dy;
-            }
-            if constexpr (dim > 2) {
-                FluxP = getFlux<2>(i,nbrs[4],initialState, ep, em, F);
-                FluxM = getFlux<2>(nbrs[5],i,initialState, ep, em, F);
-                std::array<double, 3> Lvz;
-                for (int k=0; k<3; ++k)
-                    Lvz[k] = (FluxM[k] - FluxP[k])/grid->dz;
-            }
+            std::array<double, 3> FluxP, FluxM; 
+            std::array<Lin::Vector<dim>, 3> Lv; 
             
+            for (int k=0; k<dim; ++k) {
+                FluxP = getFlux(k,i,nbrs[2*k],initialState, ep, em, F);
+                FluxM = getFlux(k,nbrs[2*k+1],i,initialState, ep, em, F);
+                for (int s=0; s<3; ++s)
+                    Lv[s][k] = (FluxM[s] - FluxP[s])/grid->spacing(k);
+            } 
+            // now i need to decide how to handle the different axes for Lv[0] and Lv[2]
+            double Lv0,Lv2;
+            for (int k=0; k<dim; ++k) {
+                Lv0+=Lv[0][k];
+                Lv2+=Lv[2][k];
+            }
+            UType<dim> Lvi = UType<dim>(Lv0,Lv[1],Lv2);   
+            deriv.setValue(i,Lvi);    
         }
-        /*
-        solve Fi+1/2
-        so L = i and R = i+1
-        then L=i-1 and R=i
-
-        for i in range(1,nzones-1):
-        # solve Fi+1/2
-        # so L = i and R = i-1
-        epR = 0.5*(zones[i+1].ep + zones[i].ep)
-        epL = zones[i].ep
-        emR = 0.5*(zones[i+1].em + zones[i].em)
-        emL = zones[i].em
-
-        ap = max(epL,epR,0)
-        am = max(-emL,-emR,0)
-
-        for j in range(3):
-            fL[j] = zones[i].f[j]
-            fR[j] = 0.5*(zones[i+1].f[j] + fL[j])
-            uL[j] = zones[i].u[j]
-            uR[j] = 0.5*(zones[i+1].u[j] + uL[j])
-            flp[j] = (ap*fL[j] + am*fR[j] - ap*am*(uR[j]-uL[j]))/(ap+am)
-        # solve Fi-1/2
-        # so L = i-1 and R = i
-        epR = epL
-        emR = emL
-        epL = 0.5*(zones[i-1].ep + epR)
-        emL = 0.5*(zones[i-1].em + emR)
-
-        ap = max(epL,epR,0)
-        am = max(-emL,-emR,0)
-
-        for j in range(3):
-            fR[j] = fL[j]
-            uR[j] = uL[j]
-            fL[j] = 0.5*(zones[i-1].f[j] + fR[j])
-            uL[j] = 0.5*(zones[i-1].u[j] + uR[j])
-            flm[j] = (ap*fL[j] + am*fR[j] - ap*am*(uR[j]-uL[j]))/(ap+am)
-            Lv[j] = (flm[j] - flp[j])
-            uZones[i].u[j] += dt*Lv[j]/dx
-        */
     }
 
-
-    template<int axis>
     std::array<double, 3>
-    getFlux(int i, int j, 
+    getFlux(int axis, int i, int j, 
         const Field<UType<dim>>* initialState, Field<Lin::Vector<dim>>& ep, Field<Lin::Vector<dim>>& em, std::vector<Field<Lin::Vector<dim>>*>& F) {
             double epR,epL,emR,emL,ap,am;
             epR = 0.5*(ep.getValue(j)[axis]+ep.getValue(i)[axis]);

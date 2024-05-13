@@ -32,6 +32,9 @@ public:
     EvaluateDerivatives(const Field<UType<dim>>* initialState, Field<UType<dim>>& deriv, const double t) {  }
 
     virtual void
+    PreStepInitialize() {};
+
+    virtual void
     FinalizeStep() {};
 
     virtual void
