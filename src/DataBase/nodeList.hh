@@ -7,6 +7,7 @@
 #include "field.hh"
 #include "../Type/name.hh"
 #include "../Math/vectorMath.hh"
+#include "../Type/uType.hh"
 
 class NodeList {
 private:
