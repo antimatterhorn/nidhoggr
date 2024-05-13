@@ -53,6 +53,8 @@ public:
             for(Boundaries<dim>* bounds : boundaries)
                 bounds->ApplyBoundaries();
 
+        physics->FinalizeStep();
+
         this->time += dt;
         this->cycle += 1;
 

@@ -13,12 +13,8 @@ public:
     HydroHLL(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<dim>* grid) : 
         Hydro<dim>(nodeList,constants){
         VerifyHLLFields(nodeList);
-        
-        // this->derivFields.push_back(nodeList->getField<double>("density"));
-        // this->derivFields.push_back(nodeList->getField<Lin::Vector<dim>>("velocity"));
-        // this->derivFields.push_back(nodeList->getField<double>("specificInternalEnergy"));
+
         this->derivFields.push_back(nodeList->getField<std::array<double, 3>>("HLLU"));
-        this->derivFields.push_back(nodeList->getField<std::array<double, 3>>("HLLF"));
 
         for(int i=0;i<grid->size();i++)
             if(!grid->onBoundary(i))
@@ -84,6 +80,9 @@ public:
             Lv[j] = (flm[j] - flp[j])
             uZones[i].u[j] += dt*Lv[j]/dx
         
+        thisZone.etot = e + 0.5*v**2
+        thisZone.htot = thisZone.etot + Pr/rho
+
         */
     }
 
@@ -92,14 +91,14 @@ public:
     virtual void
     VerifyHLLFields(NodeList* nodeList) {
         int numNodes = nodeList->size();
-        if (nodeList->getField<std::array<double, 3>>("HLLU") == nullptr)
-            nodeList->insertField<std::array<double, 3>>("HLLU");
-        if (nodeList->getField<std::array<double, 3>>("HLLF") == nullptr)
-            nodeList->insertField<std::array<double, 3>>("HLLF");
+        if (nodeList->getField<std::array<double, 5>>("HLLU") == nullptr)
+            nodeList->insertField<std::array<double, 5>>("HLLU");
+        if (nodeList->getField<std::array<double, 5>>("HLLF") == nullptr)
+            nodeList->insertField<std::array<double, 5>>("HLLF");
     }
 
     virtual void
-    EvaluateDerivatives(const Field<std::array<double, 3>>* initialState, Field<std::array<double, 3>>& deriv, const double t) override{  
+    EvaluateDerivatives(const Field<std::array<double, 5>>* initialState, Field<std::array<double, 5>>& deriv, const double t) override{  
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 
@@ -107,21 +106,36 @@ public:
         Field<double>* pressure = nodeList->getField<double>("pressure");
         Field<double>* energy = nodeList->getField<double>("specificInternalEnergy");
         Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-        Field<std::array<double, 3>>* HLLU = nodeList->getField<std::array<double, 3>>("HLLU");
-        Field<std::array<double, 3>>* HLLF = nodeList->getField<std::array<double, 3>>("HLLF");
+        Field<std::array<double, 5>>* HLLU = nodeList->getField<std::array<double, 5>>("HLLU");
+        Field<std::array<double, 5>>* HLLF = nodeList->getField<std::array<double, 5>>("HLLF");
         for (int j=0; j<insideIds.size(); ++j) {
             int i = insideIds[j];
             
-            std::array<double, 3> ui;
-            ui[0] = density->getValue(i);
-            ui[1] = density->getValue(i) * velocity->getValue(i).x();
-            ui[2] = density->getValue(i) * energy->getValue(i);
+            double rho = density->getValue(i);
+            double v = velocity->getValue(i).magnitude();
+            double e = energy->getValue(i);
+            double Pr = pressure->getValue(i);
+            double etot = e+0.5*v*v;
+            double htot = e+Pr/rho;
+
+
+            std::array<double, 5> ui;
+            ui.fill(0);
+            ui[0] = rho;
+            ui[1] = rho * velocity->getValue(i).x();
+            ui[2] = rho * etot;
+            if constexpr (dim > 1)
+                ui[3] = rho * velocity->getValue(i).y();
+            if constexpr (dim > 2)
+                ui[4] = rho * velocity->getValue(i).z();
             HLLU->setValue(i,ui);
 
             // well shoot, this is only 1 way, and i need all three directions somehow
-            // one way might be to make HLLU 5 doubles with u[1] -> vx, u[4] -> vy, u[5] -> vz
+            // one way might be to make HLLU 5 doubles with u[1] -> vx, u[3] -> vy, u[4] -> vz
 
-            std::array<double, 3> fi;
+            // left-right first
+            std::array<double, 5> fi;
+            fi.fill(0);
             fi[0] = ui[1];
             fi[1] = ui[1]*ui[1]/ui[0] + pressure->getValue(i);
             fi[2] = ui[1]*(ui[2]+1)/ui[0];
@@ -133,6 +147,39 @@ public:
     EvaluateDerivatives(const Field<Lin::Vector<dim>>* initialState, Field<Lin::Vector<dim>>& deriv, const double t) override{  
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
+    }
+
+    virtual void
+    FinalizeStep() override {
+        // store u vals back to the state
+        // rho    = max(zones[i].u[0],rhofloor)
+        // v      = zones[i].u[1]/rho
+        // etot   = max(efloor,zones[i].u[2]/rho)
+        // e      = etot - 0.5*v**2
+        NodeList* nodeList = this->nodeList;
+
+        Field<double>* density = nodeList->getField<double>("density");
+        Field<double>* pressure = nodeList->getField<double>("pressure");
+        Field<double>* energy = nodeList->getField<double>("specificInternalEnergy");
+        Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
+        Field<std::array<double, 5>>* HLLU = nodeList->getField<std::array<double, 5>>("HLLU");
+        Field<std::array<double, 5>>* HLLF = nodeList->getField<std::array<double, 5>>("HLLF");
+        for (int j=0; j<insideIds.size(); ++j) {
+            int i = insideIds[j];
+            std::array<double, 5> ui = HLLU->getValue(i);
+            density->setValue(i,ui[0]);   // max this with rhofloor
+            energy->setValue(i,ui[2]/ui[0]);
+            double vx = ui[1]/ui[0];
+            double vy = ui[3]/ui[0];
+            double vz = ui[4]/ui[0];
+            if constexpr (dim == 1) 
+                velocity->setValue(i,Lin::Vector<dim>({vx}));
+            else if constexpr (dim == 2)
+                velocity->setValue(i,Lin::Vector<dim>({vx,vy}));
+            else if constexpr (dim == 3)
+                velocity->setValue(i,Lin::Vector<dim>({vx,vy,vz}));               
+        }
+
     }
 
 };
