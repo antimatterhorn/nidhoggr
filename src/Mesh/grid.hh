@@ -144,7 +144,8 @@ public:
             coords[2] = idx / (nx * ny); // Compute k
             idx -= coords[2] * nx * ny;
         }
-        coords[1] = idx / nx; // Compute j
+        if constexpr (dim > 1) 
+            coords[1] = idx / nx; // Compute j
         coords[0] = idx % nx; // Compute i
         return coords;
     }
@@ -233,6 +234,62 @@ public:
                     boundaryIndices.push_back(index(i, j, nz - 1));
         }
         return boundaryIndices;
+    }
+
+    bool
+    onBoundary(const int idx) {
+        bool inside = true;
+        
+        std::vector<int> lm = leftMost();
+        std::vector<int> rm = rightMost();
+        for (int i=0;i<lm.size();++i) {
+            if (lm[i]==idx) {
+                inside = false;
+                break;
+            }
+        }
+        for (int i=0;i<rm.size();++i) {
+            if (rm[i]==idx) {
+                inside = false;
+                break;
+            }
+        }
+
+        if (dim>1) {
+            std::vector<int> tm = topMost();
+            std::vector<int> bm = bottomMost();
+            for (int i=0;i<tm.size();++i) {
+                if (tm[i]==idx) {
+                    inside = false;
+                    break;
+                }
+            }
+            for (int i=0;i<bm.size();++i) {
+                if (bm[i]==idx) {
+                    inside = false;
+                    break;
+                }
+            } 
+        }
+
+        if (dim>2) {
+            std::vector<int> fm = frontMost();
+            std::vector<int> rm = backMost();
+            for (int i=0;i<fm.size();++i) {
+                if (fm[i]==idx) {
+                    inside = false;
+                    break;
+                }
+            }
+            for (int i=0;i<rm.size();++i) {
+                if (rm[i]==idx) {
+                    inside = false;
+                    break;
+                }
+            } 
+        }
+
+        return !inside;
     }
 
 };

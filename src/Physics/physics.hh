@@ -29,6 +29,9 @@ public:
     EvaluateDerivatives(const Field<Lin::Vector<dim>>* initialState, Field<Lin::Vector<dim>>& deriv, const double t) {  }
 
     virtual void
+    EvaluateDerivatives(const Field<std::array<double, 3>>* initialState, Field<std::array<double, 3>>& deriv, const double t) {  }
+
+    virtual void
     VerifyFields(NodeList* nodeList) {
         int numNodes = nodeList->size();
         if (nodeList->mass() == nullptr)
