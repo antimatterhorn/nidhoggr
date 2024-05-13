@@ -98,12 +98,26 @@ public:
             int i = insideIds[j];
             std::vector<int> nbrs = grid->getNeighboringCells(i);
             
-            std::array<double, 3> FluxP = getFluxLeftRight(i,nbrs[0],initialState, ep, em, F);
-            std::array<double, 3> FluxM = getFluxLeftRight(nbrs[1],i,initialState, ep, em, F);
-            std::array<double, 3> Lv;
+            std::array<double, 3> FluxP = getFlux<0>(i,nbrs[0],initialState, ep, em, F);
+            std::array<double, 3> FluxM = getFlux<0>(nbrs[1],i,initialState, ep, em, F);
+            std::array<double, 3> Lvx;
             for (int k=0; k<3; ++k)
-                Lv[k] = FluxM[k] - FluxP[k];
-            UType<dim> dui = UType<dim>();
+                Lvx[k] = (FluxM[k] - FluxP[k])/grid->dx;
+            if constexpr (dim > 1) {
+                FluxP = getFlux<1>(i,nbrs[2],initialState, ep, em, F);
+                FluxM = getFlux<1>(nbrs[3],i,initialState, ep, em, F);
+                std::array<double, 3> Lvy;
+                for (int k=0; k<3; ++k)
+                    Lvy[k] = (FluxM[k] - FluxP[k])/grid->dy;
+            }
+            if constexpr (dim > 2) {
+                FluxP = getFlux<2>(i,nbrs[4],initialState, ep, em, F);
+                FluxM = getFlux<2>(nbrs[5],i,initialState, ep, em, F);
+                std::array<double, 3> Lvz;
+                for (int k=0; k<3; ++k)
+                    Lvz[k] = (FluxM[k] - FluxP[k])/grid->dz;
+            }
+            
         }
         /*
         solve Fi+1/2
@@ -149,13 +163,14 @@ public:
     }
 
 
+    template<int axis>
     std::array<double, 3>
-    getFluxLeftRight(int i, int j, 
+    getFlux(int i, int j, 
         const Field<UType<dim>>* initialState, Field<Lin::Vector<dim>>& ep, Field<Lin::Vector<dim>>& em, std::vector<Field<Lin::Vector<dim>>*>& F) {
             double epR,epL,emR,emL,ap,am;
-            epR = 0.5*(ep.getValue(j).x()+ep.getValue(i).x());
+            epR = 0.5*(ep.getValue(j)[axis]+ep.getValue(i)[axis]);
             epL = ep.getValue(i).x();
-            emR = 0.5*(em.getValue(j).x()+em.getValue(i).x());
+            emR = 0.5*(em.getValue(j)[axis]+em.getValue(i)[axis]);
             emL = em.getValue(i).x();
 
             ap = std::max(std::max(epL,epR),0.0);
@@ -170,11 +185,11 @@ public:
             UL.setU2(initialState->getValue(i).getU2());
             UR.setU2(0.5*(UL.getU2()+initialState->getValue(j).getU2()));
             for (int k=0; k<3; ++k) {
-                FL[k] = F[k]->getValue(i).x();
-                FR[k] = 0.5*(F[k]->getValue(i).x()+F[k]->getValue(j).x());
+                FL[k] = F[k]->getValue(i)[axis];
+                FR[k] = 0.5*(F[k]->getValue(i)[axis]+F[k]->getValue(j)[axis]);
             }
             Flux[0] = (ap*FL[0] + am*FR[0] - ap*am*(UR.getU0()-UL.getU0()))/(ap+am); 
-            Flux[1] = (ap*FL[1] + am*FR[1] - ap*am*(UR.getU1()-UL.getU1()).x())/(ap+am); 
+            Flux[1] = (ap*FL[1] + am*FR[1] - ap*am*(UR.getU1()-UL.getU1())[axis])/(ap+am); 
             Flux[2] = (ap*FL[2] + am*FR[2] - ap*am*(UR.getU2()-UL.getU2()))/(ap+am);
 
             return Flux;
