@@ -34,6 +34,8 @@ public:
 
     virtual void
     Step() {
+        physics->PreStepInitialize();
+        
         for (FieldBase* field : physics->derivFields) {
             if (typeid(*field) == typeid(Field<double>)) {
                 Field<double>* doubleField = dynamic_cast<Field<double>*>(field);

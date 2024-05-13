@@ -45,6 +45,12 @@ public:
         return result;
     }
 
+    void
+    fill(const double other) {
+        for (int i=0;i<dim;++i)
+            values[i] = other;
+    }
+
     Vector<dim> 
     sub(const Vector<dim>& other) const {
         Vector<dim> result;

@@ -87,6 +87,16 @@ public:
     double getdy() const { return dy; }
     double getdz() const { return dz; }
 
+    double spacing(int axis) const {
+        if (axis==0)
+            return dx;
+        else if (axis==1)
+            return dy;
+        else if (axis==2)
+            return dz;
+        return 1;
+    }
+    
     Lin::Vector<dim> 
     getPosition(int id){ return gridPositions[id]; }
 

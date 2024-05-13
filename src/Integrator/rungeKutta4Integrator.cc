@@ -13,6 +13,9 @@ public:
     virtual void
     Step() override {
         Physics<dim>* physics = this->physics;
+
+        physics->PreStepInitialize();
+        
         double time = this->time;
         double dt = this->dt;
         for (FieldBase* field : physics->derivFields) {
