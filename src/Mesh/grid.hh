@@ -94,16 +94,16 @@ public:
         std::array<int, 3> coords = indexToCoordinates(idx);
         std::vector<int> neighbors;
 
-        // Check left neighbor
-        if (coords[0] > 0) {
-            int leftIdx = index(coords[0] - 1, coords[1], coords[2]);
-            neighbors.push_back(leftIdx);
-        }
-
         // Check right neighbor
         if (coords[0] < nx - 1) {
             int rightIdx = index(coords[0] + 1, coords[1], coords[2]);
             neighbors.push_back(rightIdx);
+        }
+
+        // Check left neighbor
+        if (coords[0] > 0) {
+            int leftIdx = index(coords[0] - 1, coords[1], coords[2]);
+            neighbors.push_back(leftIdx);
         }
 
         // Check up neighbor

@@ -9,6 +9,7 @@
 #include "../Math/vectorMath.hh"
 #include "../State/state.hh"
 #include "../Boundaries/boundaries.hh"
+#include "../Type/uType.hh"
 
 template <int dim>
 class Physics; // forward declaration
@@ -47,6 +48,12 @@ public:
                     Field<Lin::Vector<dim>> DxDt = this->Derivative(vectorField,time,dt);
                     vectorField->copyValues(*vectorField + DxDt*dt);
                 }
+            } else if (typeid(*field) == typeid(Field<UType<dim>>)) {
+                Field<UType<dim>>* uField = dynamic_cast<Field<UType<dim>>*>(field);
+                if (uField) {
+                    Field<UType<dim>> DxDt = this->Derivative(uField,time,dt);
+                    uField->copyValues(*uField + DxDt*dt);
+                }
             }
         }
         if(boundaries.size() > 0)
@@ -62,7 +69,7 @@ public:
         dt = std::max(newdt,dtmin);
     }
 
-    virtual
+    virtual 
     Field<double> 
     Derivative(const Field<double>* initialState, 
                 double t, double dt) {
@@ -76,6 +83,15 @@ public:
     Derivative(const Field<Lin::Vector<dim>>* initialState, 
                 double t, double dt) {
         Field<Lin::Vector<dim>> deriv = Field<Lin::Vector<dim>>("deriv"+initialState->getNameString(),initialState->size());
+        physics->EvaluateDerivatives(initialState,deriv,dt);
+        return deriv;
+    }
+
+    virtual
+    Field<UType<dim>> 
+    Derivative(const Field<UType<dim>>* initialState, 
+                double t, double dt) {
+        Field<UType<dim>> deriv = Field<UType<dim>>("deriv"+initialState->getNameString(),initialState->size());
         physics->EvaluateDerivatives(initialState,deriv,dt);
         return deriv;
     }
