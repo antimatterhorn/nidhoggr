@@ -31,6 +31,10 @@ public:
         std::copy(init.begin(), init.end(), values.begin());
     }
 
+    Vector(std::array<double, dim> init) {
+        values = init; 
+    }
+
     // Methods
     Vector<dim> 
     add(const Vector<dim>& other) const {

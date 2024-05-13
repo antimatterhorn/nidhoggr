@@ -26,6 +26,8 @@ public:
             nodeList->insertField<double>("pressure");
         if (nodeList->getField<double>("specificInternalEnergy") == nullptr)
             nodeList->insertField<double>("specificInternalEnergy");
+        if (nodeList->getField<double>("soundSpeed") == nullptr)
+            nodeList->insertField<double>("soundSpeed");
     }
 };
 
