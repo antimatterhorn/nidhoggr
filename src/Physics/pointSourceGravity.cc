@@ -48,7 +48,7 @@ public:
         NodeList* dd = deriv->getNodeList();
         Field<Lin::Vector<dim>>* dxdt = dd->getField<Lin::Vector<dim>>("Dposition");  
         Field<Lin::Vector<dim>>* dvdt = dd->getField<Lin::Vector<dim>>("Dvelocity");
-
+        dtmin = 1e30;
         #pragma omp parllel for
         for (int i=0; i<numNodes ; ++i) {
             Lin::Vector<dim> pos = position->getValue(i);
