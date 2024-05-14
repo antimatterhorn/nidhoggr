@@ -7,11 +7,13 @@
 class State {
 private:
     std::vector<FieldBase*> fields;
-    std::vector<FieldBase> derivs;
     NodeList* nodeList;
+    NodeList derivs;
 public:
     State(NodeList* nodeList) : 
-        nodeList(nodeList) {};
+        nodeList(nodeList) {
+            derivs = NodeList(nodeList->size());
+        };
 
     ~State() {};
 
@@ -34,14 +36,22 @@ public:
         return nullptr; // Return nullptr if no matching field is found
     }
 
-
     template <typename T>
     Field<T>* 
     getField(const std::string& name) const {
         return getFieldByName<T>(Name(name));
     }
 
+    template <typename T>
+    void
+    insertDeriv(const std::string& name) {
+        derivs.insertField<T>(name);
+    }
 
+    template <typename T>
+    Field<T>* getDerivative(const std::string& name) {
+        return derivs.getField<T>(name);
+    }
 };
 
 #endif //STATE_HH
