@@ -6,36 +6,19 @@
 
 class State {
 private:   
-    NodeList* nodeList;
-    NodeList derivs;
+    std::vector<std::shared_ptr<FieldBase>> fields;
+    int numNodes;
 public:
-
-    std::vector<FieldBase*> fields;
-    std::vector<FieldBase*> dfields;
-    
-    State(NodeList* nodeList) : 
-        nodeList(nodeList) {
-            derivs = NodeList(nodeList->size());
-        };
-    
-    State(State* other) : nodeList(other->derivatives()){
-        for (FieldBase* field : other->dfields)
-            fields.push_back(field);
-    }
+    State(int numNodes) : 
+        numNodes(numNodes) { };
 
     ~State() {};
 
     template <typename T>
-    void
-    enrollField(Field<T>* field) {
-        fields.push_back(field);
-    }
-
-    template <typename T>
     Field<T>* getFieldByName(const Name& name) const {
-        for (FieldBase* field : fields) {
-            if (field->hasName() && field->getNameString() == name.name()) {
-                Field<T>* castedField = dynamic_cast<Field<T>*>(field);
+        for (const auto& fieldPtr : fields) {
+            if (fieldPtr->hasName() && fieldPtr->getNameString() == name.name()) {
+                Field<T>* castedField = dynamic_cast<Field<T>*>(fieldPtr.get());
                 if (castedField != nullptr) {
                     return castedField; // Return the field if found and correctly casted
                 }
@@ -44,29 +27,33 @@ public:
         return nullptr; // Return nullptr if no matching field is found
     }
 
+    void addField(const std::shared_ptr<FieldBase>& fieldPtr) {
+        fields.push_back(fieldPtr);
+    }
+
     template <typename T>
     Field<T>* 
     getField(const std::string& name) const {
         return getFieldByName<T>(Name(name));
     }
-
+    
     template <typename T>
-    void
-    insertDeriv(const std::string& name) {
-        derivs.insertField<T>(name);
-        dfields.push_back(this->getField<T>(name));
+    void insertField(const std::string& name) {
+        auto newField = std::make_shared<Field<T>>(name, this->size());
+        fields.push_back(newField); // Use make_shared for field creation
+        addField(newField); // Add pointer to the new field to _fields
     }
 
-    template <typename T>
-    Field<T>* getDerivative(const std::string& name) {
-        return derivs.getField<T>(name);
+    int
+    size() const { return numNodes; }
+
+    int
+    count() const { return fields.size(); }
+
+    State
+    operator*(const State& other) {
+        
     }
-
-    NodeList*
-    derivatives() { return &derivs; }
-
-    NodeList*
-    getNodeList() { return nodeList; }
 };
 
 #endif //STATE_HH

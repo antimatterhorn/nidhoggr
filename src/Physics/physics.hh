@@ -17,7 +17,7 @@ public:
     Physics(NodeList* nodeList, PhysicalConstants& constants) : 
         nodeList(nodeList), 
         constants(constants),
-        state(nodeList) {
+        state(nodeList->size()) {
         VerifyFields(nodeList);
     }
 

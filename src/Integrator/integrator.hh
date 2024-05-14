@@ -36,32 +36,32 @@ public:
     Step() {
         physics->PreStepInitialize();
 
-        State* state = physics->getState();
-        State derivs = State(state);
-        NodeList* dvNode = derivs.getNodeList();
-        // at this point i can do copies or whatever based on the integrator
-        physics->EvaluateDerivatives(state,&derivs,dt);
+        // State* state = physics->getState();
+        // State derivs = State(state);
+        // NodeList* dvNode = derivs.getNodeList();
+        // // at this point i can do copies or whatever based on the integrator
+        // physics->EvaluateDerivatives(state,&derivs,dt);
 
-        for (FieldBase* field : state->fields) {
-            if (typeid(*field) == typeid(Field<double>)) {
-                Field<double>* doubleField = dynamic_cast<Field<double>*>(field);
-                if (doubleField) {
-                    std::string name = doubleField->getNameString();
-                    name = "D" + name;
-                    Field<double>* DxDt = dvNode->getField<double>(name);
-                    doubleField->copyValues(*doubleField + *DxDt*dt);
-                    // this is forward euler integration
-                }
-            } else if (typeid(*field) == typeid(Field<Lin::Vector<dim>>)) {
-                Field<Lin::Vector<dim>>* vectorField = dynamic_cast<Field<Lin::Vector<dim>>*>(field);
-                if (vectorField) {
-                    std::string name = vectorField->getNameString();
-                    name = "D" + name;
-                    Field<Lin::Vector<dim>>* DxDt = dvNode->getField<Lin::Vector<dim>>(name);
-                    vectorField->copyValues(*vectorField + *DxDt*dt);
-                }
-            }
-        }
+        // for (FieldBase* field : state->fields) {
+        //     if (typeid(*field) == typeid(Field<double>)) {
+        //         Field<double>* doubleField = dynamic_cast<Field<double>*>(field);
+        //         if (doubleField) {
+        //             std::string name = doubleField->getNameString();
+        //             name = "D" + name;
+        //             Field<double>* DxDt = dvNode->getField<double>(name);
+        //             doubleField->copyValues(*doubleField + *DxDt*dt);
+        //             // this is forward euler integration
+        //         }
+        //     } else if (typeid(*field) == typeid(Field<Lin::Vector<dim>>)) {
+        //         Field<Lin::Vector<dim>>* vectorField = dynamic_cast<Field<Lin::Vector<dim>>*>(field);
+        //         if (vectorField) {
+        //             std::string name = vectorField->getNameString();
+        //             name = "D" + name;
+        //             Field<Lin::Vector<dim>>* DxDt = dvNode->getField<Lin::Vector<dim>>(name);
+        //             vectorField->copyValues(*vectorField + *DxDt*dt);
+        //         }
+        //     }
+        // }
 
         if(boundaries.size() > 0)
             for(Boundaries<dim>* bounds : boundaries)
