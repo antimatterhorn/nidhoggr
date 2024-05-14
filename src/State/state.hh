@@ -6,10 +6,12 @@
 
 class State {
 private:
-    std::vector<FieldBase*> fields;
+    
     NodeList* nodeList;
     NodeList derivs;
 public:
+    std::vector<FieldBase*> fields;
+    
     State(NodeList* nodeList) : 
         nodeList(nodeList) {
             derivs = NodeList(nodeList->size());
@@ -52,6 +54,9 @@ public:
     Field<T>* getDerivative(const std::string& name) {
         return derivs.getField<T>(name);
     }
+
+    NodeList*
+    derivatives() { return &derivs; }
 };
 
 #endif //STATE_HH

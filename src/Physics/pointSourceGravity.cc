@@ -10,7 +10,10 @@ protected:
 public:
     PointSourceGravity() {}
 
-    PointSourceGravity(NodeList* nodeList, PhysicalConstants& constants, Lin::Vector<dim>& pointSourceLocation, double pointSourceMass) : 
+    PointSourceGravity(NodeList* nodeList, 
+                        PhysicalConstants& constants, 
+                        Lin::Vector<dim>& pointSourceLocation, 
+                        double pointSourceMass) : 
         Physics<dim>(nodeList,constants),
         pointSourceLocation(pointSourceLocation),
         pointSourceMass(pointSourceMass) {
@@ -25,8 +28,8 @@ public:
         Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
         state.enrollField<Lin::Vector<dim>>(velocity);
 
-        state.insertDeriv<Lin::Vector<dim>>("d_position");
-        state.insertDeriv<Lin::Vector<dim>>("d_velocity");
+        state.insertDeriv<Lin::Vector<dim>>("Dposition");
+        state.insertDeriv<Lin::Vector<dim>>("Dvelocity");
     }
 
     ~PointSourceGravity() {}
@@ -41,9 +44,9 @@ public:
         Field<Lin::Vector<dim>>* position       = initialState->getField<Lin::Vector<dim>>("position");
         Field<Lin::Vector<dim>>* acceleration   = nodeList->getField<Lin::Vector<dim>>("acceleration");
         Field<Lin::Vector<dim>>* velocity       = initialState->getField<Lin::Vector<dim>>("velocity");
- 
-        Field<Lin::Vector<dim>>* dxdt           = initialState->getDerivative<Lin::Vector<dim>>("d_position");
-        Field<Lin::Vector<dim>>* dvdt           = initialState->getDerivative<Lin::Vector<dim>>("d_velocity");
+
+        Field<Lin::Vector<dim>>* dxdt = deriv.getField<Lin::Vector<dim>>("Dposition");  
+        Field<Lin::Vector<dim>>* dvdt = deriv.getField<Lin::Vector<dim>>("Dvelocity");
 
         #pragma omp parllel for
         for (int i=0; i<numNodes ; ++i) {
@@ -54,13 +57,12 @@ public:
             double amag = a.mag2();
             double vmag = velocity->getValue(i).mag2();
             dtmin = std::min(dtmin,vmag/amag);
+            dxdt->setValue(i,velocity->getValue(i)+t*(acceleration->getValue(i)));
+            dvdt->setValue(i,acceleration->getValue(i));
         }
-            
         
-        dxdt = *velocity + (*acceleration)*t;
-        
-        deriv.copyValues(dxdt);
-        deriv.copyValues(acceleration);
+        // deriv.copyValues(dxdt);
+        // deriv.copyValues(acceleration);
 
     }
         // Method to estimate a suitable timestep based on the dynamics of the system
