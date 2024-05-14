@@ -31,7 +31,7 @@ public:
 
     template <typename T>
     void 
-    addField(const Field<T>& fieldPtr) {
+    addField(const Field<T>* fieldPtr) {
         fields.push_back(fieldPtr);
     }
 
@@ -46,7 +46,6 @@ public:
     insertField(const std::string& name) {
         auto newField = std::make_shared<Field<T>>(name, this->size());
         fields.push_back(newField); // Use make_shared for field creation
-        addField(newField); // Add pointer to the new field to _fields
     }
 
     FieldBase* 

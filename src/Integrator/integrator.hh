@@ -41,10 +41,10 @@ public:
             if (field->hasName()) {
                 std::string fieldName = field->getNameString();
                 if (dynamic_cast<Field<double>*>(field) != nullptr) {
-                    derivatives.insertField<double>(fieldName);
+                    derivatives.template insertField<double>(fieldName);
                 } 
                 else if (dynamic_cast<Field<Lin::Vector<dim>>*>(field) != nullptr) {
-                    derivatives.insertField<Lin::Vector<dim>>(fieldName);
+                    derivatives.template insertField<Lin::Vector<dim>>(fieldName);
                 }
             }
         }
