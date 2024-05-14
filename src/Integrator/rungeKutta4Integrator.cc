@@ -16,6 +16,8 @@ public:
 
         physics->PreStepInitialize();
         
+
+        // doing it this way is problematic as all the fields are advanced independently!!!!
         double time = this->time;
         double dt = this->dt;
         for (FieldBase* field : physics->derivFields) {
