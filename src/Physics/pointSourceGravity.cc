@@ -23,10 +23,10 @@ public:
             nodeList->insertField<Lin::Vector<dim>>("acceleration");
         
         // Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
-        // State* state = &this->state;
-        // state->enrollField<Lin::Vector<dim>>(position);
+        // State<dim>* state = &this->state;
+        // state->addField<Lin::Vector<dim>>(position);
         // Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-        // state->enrollField<Lin::Vector<dim>>(velocity);
+        // state->addField<Lin::Vector<dim>>(velocity);
 
         // state->insertDeriv<Lin::Vector<dim>>("Dposition");
         // state->insertDeriv<Lin::Vector<dim>>("Dvelocity");
@@ -35,15 +35,15 @@ public:
     ~PointSourceGravity() {}
 
     virtual void
-    EvaluateDerivatives(const State* initialState, State* deriv, const double t) override {
+    EvaluateDerivatives(const State<dim>* initialState, State<dim>* deriv, const double t) override {
         //compute accelerations
         NodeList* nodeList = this->nodeList;
         PhysicalConstants constants = this->constants;
         int numNodes = nodeList->size();
 
-        Field<Lin::Vector<dim>>* position       = initialState->getField<Lin::Vector<dim>>("position");
+        Field<Lin::Vector<dim>>* position       = initialState->template getField<Lin::Vector<dim>>("position");
         Field<Lin::Vector<dim>>* acceleration   = nodeList->getField<Lin::Vector<dim>>("acceleration");
-        Field<Lin::Vector<dim>>* velocity       = initialState->getField<Lin::Vector<dim>>("velocity");
+        Field<Lin::Vector<dim>>* velocity       = initialState->template getField<Lin::Vector<dim>>("velocity");
 
         // NodeList* dd = deriv->getNodeList();
         // Field<Lin::Vector<dim>>* dxdt = dd->getField<Lin::Vector<dim>>("Dposition");  

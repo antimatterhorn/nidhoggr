@@ -4,6 +4,7 @@ project(Nidhoggr)
 set(CMAKE_CXX_STANDARD 17)  # Request C++17 standard
 set(CMAKE_CXX_STANDARD_REQUIRED ON)  # Enforce C++17 requirement (optional)
 
+message("CXX Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
 
 # Set the path to the pyb11 executable
 set(PYB11GENERATOR_ROOT_DIR ${CMAKE_SOURCE_DIR}/extern/PYB11Generator)

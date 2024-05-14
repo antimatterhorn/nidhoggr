@@ -104,6 +104,22 @@ public:
         return result; // Return the result
     }
 
+    Field<T>& operator+=(const Field<T>& other) {
+        if (this != &other) {
+            for (int i = 0; i < this->size(); ++i) {
+                this->setValue(i, this->getValue(i) + other.getValue(i)); // Perform element-wise addition
+            }
+        }
+        return *this;
+    }
+
+    Field<T>& operator*=(const double other) {
+        for (int i = 0; i < this->size(); ++i) {
+            this->setValue(i, this->getValue(i) * other); // Perform element-wise scalar multiplication
+        }
+        return *this;
+    }
+
     bool 
     hasName() const override {
         if(name.name().size() > 0)

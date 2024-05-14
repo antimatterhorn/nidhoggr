@@ -1,8 +1,6 @@
 #ifndef PHYSICS_HH
 #define PHYSICS_HH
 
-#include "../DataBase/nodeList.hh"
-#include "../DataBase/dataBase.hh"
 #include "../Math/vectorMath.hh"
 #include "../Type/physicalConstants.hh"
 #include "../State/state.hh"
@@ -12,7 +10,7 @@ class Physics {
 protected:
     NodeList* nodeList;
     PhysicalConstants& constants;
-    State state;
+    State<dim> state;
 public:
     Physics(NodeList* nodeList, PhysicalConstants& constants) : 
         nodeList(nodeList), 
@@ -24,7 +22,7 @@ public:
     virtual ~Physics() {}
 
     virtual void
-    EvaluateDerivatives(const State* initialState, State* deriv, const double t)  {  }
+    EvaluateDerivatives(const State<dim>* initialState, State<dim>* deriv, const double t)  {  }
 
     // virtual void
     // EvaluateDerivatives(const Field<Lin::Vector<dim>>* initialState, Field<Lin::Vector<dim>>& deriv, const double t) {  }
@@ -57,7 +55,7 @@ public:
     virtual NodeList*
     getNodeList() const { return nodeList; }
 
-    virtual State* 
+    virtual State<dim>* 
     getState() { return &state; }
 };
 
