@@ -2,28 +2,45 @@
 #define STATE_HH
 
 #include "../DataBase/nodeList.hh"
+#include "../Type/name.hh"
 
 class State {
 private:
-    FieldBase* field;
+    std::vector<FieldBase*> fields;
+    std::vector<FieldBase> derivs;
     NodeList* nodeList;
 public:
-    State(FieldBase* field, NodeList* nodeList) : 
-        field(field),
+    State(NodeList* nodeList) : 
         nodeList(nodeList) {};
 
     ~State() {};
 
     template <typename T>
     void
-    copyField() {
-        int numNodes = nodeList->size();
-        std::string name = field->getNameString();
-        if (nodeList->getField<T>("copy-of-"+name) == nullptr)
-            nodeList->insertField<T>("copy-of-"+name);
-        for (int i=0; i<numNodes; ++i)
-            nodeList->getField<T>("copy-of-"+name)->setValue(i,field[i]);
+    enrollField(Field<T>* field) {
+        fields.push_back(field);
     }
+
+    template <typename T>
+    Field<T>* getFieldByName(const Name& name) const {
+        for (FieldBase* field : fields) {
+            if (field->hasName() && field->getNameString() == name.name()) {
+                Field<T>* castedField = dynamic_cast<Field<T>*>(field);
+                if (castedField != nullptr) {
+                    return castedField; // Return the field if found and correctly casted
+                }
+            }
+        }
+        return nullptr; // Return nullptr if no matching field is found
+    }
+
+
+    template <typename T>
+    Field<T>* 
+    getField(const std::string& name) const {
+        return getFieldByName<T>(Name(name));
+    }
+
 
 };
 

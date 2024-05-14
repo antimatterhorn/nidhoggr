@@ -20,43 +20,52 @@ public:
             nodeList->insertField<Lin::Vector<dim>>("acceleration");
         
         Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
-        this->derivFields.push_back(position);
+        State state = this->state;
+        state.enrollField<Lin::Vector<dim>>(position);
         Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-        this->derivFields.push_back(velocity);
+        state.enrollField<Lin::Vector<dim>>(velocity);
     }
 
     ~PointSourceGravity() {}
 
     virtual void
-    EvaluateDerivatives(const Field<Lin::Vector<dim>>* initialState, Field<Lin::Vector<dim>>& deriv, const double t) override {
-        // compute accelerations
+    EvaluateDerivatives(const State* initialState, State& deriv, const double t) override {
+        //compute accelerations
         NodeList* nodeList = this->nodeList;
         PhysicalConstants constants = this->constants;
         int numNodes = nodeList->size();
 
+        Field<Lin::Vector<dim>>* position       = initialState->getField<Lin::Vector<dim>>("position");
         Field<Lin::Vector<dim>>* acceleration   = nodeList->getField<Lin::Vector<dim>>("acceleration");
-        Field<Lin::Vector<dim>>* velocity       = nodeList->getField<Lin::Vector<dim>>("velocity");
+        Field<Lin::Vector<dim>>* velocity       = initialState->getField<Lin::Vector<dim>>("velocity");
+ 
 
-        if(initialState->getNameString() == "position") {
-            dtmin = 1e+30;
-            #pragma omp parllel for
-            for (int i=0; i<numNodes ; ++i) {
-                Lin::Vector<dim> pos = initialState->getValue(i);
-                Lin::Vector<dim> r = (pointSourceLocation - pos);
-                Lin::Vector<dim> a = pointSourceMass*constants.G()/(r.mag2())*r.normal();
-                acceleration->setValue(i,a);
-                double amag = a.mag2();
-                double vmag = velocity->getValue(i).mag2();
-                dtmin = std::min(dtmin,vmag/amag);
-            }
+        #pragma omp parllel for
+        for (int i=0; i<numNodes ; ++i) {
+            Lin::Vector<dim> pos = position->getValue(i);
+        }
+
+
+        // if(initialState->getNameString() == "position") {
+        //     dtmin = 1e+30;
+        //     #pragma omp parllel for
+        //     for (int i=0; i<numNodes ; ++i) {
+        //         Lin::Vector<dim> pos = initialState->getValue(i);
+        //         Lin::Vector<dim> r = (pointSourceLocation - pos);
+        //         Lin::Vector<dim> a = pointSourceMass*constants.G()/(r.mag2())*r.normal();
+        //         acceleration->setValue(i,a);
+        //         double amag = a.mag2();
+        //         double vmag = velocity->getValue(i).mag2();
+        //         dtmin = std::min(dtmin,vmag/amag);
+        //     }
             
-            Field<Lin::Vector<dim>> dxdt;
-            dxdt = *velocity + (*acceleration)*t;
-            deriv.copyValues(dxdt);
-        }
-        else if(initialState->getNameString() == "velocity") {
-            deriv.copyValues(acceleration);
-        }
+        //     Field<Lin::Vector<dim>> dxdt;
+        //     dxdt = *velocity + (*acceleration)*t;
+        //     deriv.copyValues(dxdt);
+        // }
+        // else if(initialState->getNameString() == "velocity") {
+        //     deriv.copyValues(acceleration);
+        // }
         
     }
         // Method to estimate a suitable timestep based on the dynamics of the system

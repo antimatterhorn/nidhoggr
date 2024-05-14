@@ -58,7 +58,7 @@ public:
     }
 
     virtual void
-    EvaluateDerivatives(const Field<UType<dim>>* initialState, Field<UType<dim>>& deriv, const double t) override{  
+    EvaluateDerivatives(const State* initialState, State& deriv, const double t) override{  
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 

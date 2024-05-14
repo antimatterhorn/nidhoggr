@@ -5,31 +5,32 @@
 #include "../DataBase/dataBase.hh"
 #include "../Math/vectorMath.hh"
 #include "../Type/physicalConstants.hh"
+#include "../State/state.hh"
 
 template <int dim>
 class Physics {
 protected:
     NodeList* nodeList;
     PhysicalConstants& constants;
+    State state;
 public:
-    std::vector<FieldBase*> derivFields;
-    
     Physics(NodeList* nodeList, PhysicalConstants& constants) : 
         nodeList(nodeList), 
-        constants(constants) {
+        constants(constants),
+        state(nodeList) {
         VerifyFields(nodeList);
     }
 
     virtual ~Physics() {}
 
     virtual void
-    EvaluateDerivatives(const Field<double>* initialState, Field<double>& deriv, const double t)  {  }
+    EvaluateDerivatives(const State* initialState, State& deriv, const double t)  {  }
 
-    virtual void
-    EvaluateDerivatives(const Field<Lin::Vector<dim>>* initialState, Field<Lin::Vector<dim>>& deriv, const double t) {  }
+    // virtual void
+    // EvaluateDerivatives(const Field<Lin::Vector<dim>>* initialState, Field<Lin::Vector<dim>>& deriv, const double t) {  }
 
-    virtual void
-    EvaluateDerivatives(const Field<UType<dim>>* initialState, Field<UType<dim>>& deriv, const double t) {  }
+    // virtual void
+    // EvaluateDerivatives(const Field<UType<dim>>* initialState, Field<UType<dim>>& deriv, const double t) {  }
 
     virtual void
     PreStepInitialize() {};
@@ -55,6 +56,9 @@ public:
 
     virtual NodeList*
     getNodeList() const { return nodeList; }
+
+    virtual State* 
+    getState() { return &state; }
 };
 
 #endif //PHYSICS_HH
