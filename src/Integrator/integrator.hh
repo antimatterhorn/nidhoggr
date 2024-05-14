@@ -35,42 +35,20 @@ public:
     virtual void
     Step() {
         physics->PreStepInitialize();
-        
-        // for (FieldBase* field : physics->derivFields) {
-        //     if (typeid(*field) == typeid(Field<double>)) {
-        //         Field<double>* doubleField = dynamic_cast<Field<double>*>(field);
-        //         if (doubleField) {
-        //             Field<double> DxDt = this->Derivative(doubleField,time,dt);
-        //             doubleField->copyValues(*doubleField + DxDt*dt);
-        //             // this is forward euler integration
-        //         }
-        //     } else if (typeid(*field) == typeid(Field<Lin::Vector<dim>>)) {
-        //         Field<Lin::Vector<dim>>* vectorField = dynamic_cast<Field<Lin::Vector<dim>>*>(field);
-        //         if (vectorField) {
-        //             Field<Lin::Vector<dim>> DxDt = this->Derivative(vectorField,time,dt);
-        //             vectorField->copyValues(*vectorField + DxDt*dt);
-        //         }
-        //     } else if (typeid(*field) == typeid(Field<UType<dim>>)) {
-        //         Field<UType<dim>>* uField = dynamic_cast<Field<UType<dim>>*>(field);
-        //         if (uField) {
-        //             Field<UType<dim>> DxDt = this->Derivative(uField,time,dt);
-        //             uField->copyValues(*uField + DxDt*dt);
-        //         }
-        //     }
-        // }
 
         State* state = physics->getState();
-        State derivs = State(state->derivatives());
+        State derivs = State(state);
+        NodeList* dvNode = derivs.getNodeList();
         // at this point i can do copies or whatever based on the integrator
-        physics->EvaluateDerivatives(state,derivs,dt);
+        physics->EvaluateDerivatives(state,&derivs,dt);
 
         for (FieldBase* field : state->fields) {
             if (typeid(*field) == typeid(Field<double>)) {
                 Field<double>* doubleField = dynamic_cast<Field<double>*>(field);
                 if (doubleField) {
                     std::string name = doubleField->getNameString();
-                    name = "d_" + name;
-                    Field<double>* DxDt = derivs.getField<double>(name);
+                    name = "D" + name;
+                    Field<double>* DxDt = dvNode->getField<double>(name);
                     doubleField->copyValues(*doubleField + *DxDt*dt);
                     // this is forward euler integration
                 }
@@ -79,7 +57,7 @@ public:
                 if (vectorField) {
                     std::string name = vectorField->getNameString();
                     name = "D" + name;
-                    Field<Lin::Vector<dim>>* DxDt = derivs.getField<Lin::Vector<dim>>(name);
+                    Field<Lin::Vector<dim>>* DxDt = dvNode->getField<Lin::Vector<dim>>(name);
                     vectorField->copyValues(*vectorField + *DxDt*dt);
                 }
             }

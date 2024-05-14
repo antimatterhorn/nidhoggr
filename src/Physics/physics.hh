@@ -24,7 +24,7 @@ public:
     virtual ~Physics() {}
 
     virtual void
-    EvaluateDerivatives(const State* initialState, State& deriv, const double t)  {  }
+    EvaluateDerivatives(const State* initialState, State* deriv, const double t)  {  }
 
     // virtual void
     // EvaluateDerivatives(const Field<Lin::Vector<dim>>* initialState, Field<Lin::Vector<dim>>& deriv, const double t) {  }
@@ -33,7 +33,7 @@ public:
     // EvaluateDerivatives(const Field<UType<dim>>* initialState, Field<UType<dim>>& deriv, const double t) {  }
 
     virtual void
-    PreStepInitialize() {};
+    PreStepInitialize() { };
 
     virtual void
     FinalizeStep() {};

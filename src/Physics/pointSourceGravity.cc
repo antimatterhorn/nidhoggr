@@ -23,19 +23,19 @@ public:
             nodeList->insertField<Lin::Vector<dim>>("acceleration");
         
         Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
-        State state = this->state;
-        state.enrollField<Lin::Vector<dim>>(position);
+        State* state = &this->state;
+        state->enrollField<Lin::Vector<dim>>(position);
         Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-        state.enrollField<Lin::Vector<dim>>(velocity);
+        state->enrollField<Lin::Vector<dim>>(velocity);
 
-        state.insertDeriv<Lin::Vector<dim>>("Dposition");
-        state.insertDeriv<Lin::Vector<dim>>("Dvelocity");
+        state->insertDeriv<Lin::Vector<dim>>("Dposition");
+        state->insertDeriv<Lin::Vector<dim>>("Dvelocity");
     }
 
     ~PointSourceGravity() {}
 
     virtual void
-    EvaluateDerivatives(const State* initialState, State& deriv, const double t) override {
+    EvaluateDerivatives(const State* initialState, State* deriv, const double t) override {
         //compute accelerations
         NodeList* nodeList = this->nodeList;
         PhysicalConstants constants = this->constants;
@@ -45,8 +45,9 @@ public:
         Field<Lin::Vector<dim>>* acceleration   = nodeList->getField<Lin::Vector<dim>>("acceleration");
         Field<Lin::Vector<dim>>* velocity       = initialState->getField<Lin::Vector<dim>>("velocity");
 
-        Field<Lin::Vector<dim>>* dxdt = deriv.getField<Lin::Vector<dim>>("Dposition");  
-        Field<Lin::Vector<dim>>* dvdt = deriv.getField<Lin::Vector<dim>>("Dvelocity");
+        NodeList* dd = deriv->getNodeList();
+        Field<Lin::Vector<dim>>* dxdt = dd->getField<Lin::Vector<dim>>("Dposition");  
+        Field<Lin::Vector<dim>>* dvdt = dd->getField<Lin::Vector<dim>>("Dvelocity");
 
         #pragma omp parllel for
         for (int i=0; i<numNodes ; ++i) {

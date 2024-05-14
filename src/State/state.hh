@@ -5,17 +5,23 @@
 #include "../Type/name.hh"
 
 class State {
-private:
-    
+private:   
     NodeList* nodeList;
     NodeList derivs;
 public:
+
     std::vector<FieldBase*> fields;
+    std::vector<FieldBase*> dfields;
     
     State(NodeList* nodeList) : 
         nodeList(nodeList) {
             derivs = NodeList(nodeList->size());
         };
+    
+    State(State* other) : nodeList(other->derivatives()){
+        for (FieldBase* field : other->dfields)
+            fields.push_back(field);
+    }
 
     ~State() {};
 
@@ -48,6 +54,7 @@ public:
     void
     insertDeriv(const std::string& name) {
         derivs.insertField<T>(name);
+        dfields.push_back(this->getField<T>(name));
     }
 
     template <typename T>
@@ -57,6 +64,9 @@ public:
 
     NodeList*
     derivatives() { return &derivs; }
+
+    NodeList*
+    getNodeList() { return nodeList; }
 };
 
 #endif //STATE_HH

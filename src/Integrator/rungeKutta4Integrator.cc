@@ -18,7 +18,12 @@ public:
         
         double time = this->time;
         double dt = this->dt;
-        for (FieldBase* field : physics->derivFields) {
+
+        State* state = physics->getState();
+        State derivs = State(state);
+        NodeList* dvNode = derivs.getNodeList();
+
+        for (FieldBase* field : state->fields) {
             if (typeid(*field) == typeid(Field<double>)) {
                 Field<double>* doubleField = dynamic_cast<Field<double>*>(field);
                 if (doubleField) {
