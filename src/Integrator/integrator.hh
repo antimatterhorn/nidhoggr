@@ -35,21 +35,7 @@ public:
         State<dim>* state = physics->getState();
         State<dim> derivatives(state->size());
 
-        // Iterate through the fields in the state
-        for (int i = 0; i < state->count(); ++i) {
-            FieldBase* field = state->getFieldByIndex(i);
-            if (field->hasName()) {
-                std::string fieldName = field->getNameString();
-                if (dynamic_cast<Field<double>*>(field) != nullptr) {
-                    derivatives.template insertField<double>(fieldName);
-                } 
-                else if (dynamic_cast<Field<Lin::Vector<dim>>*>(field) != nullptr) {
-                    derivatives.template insertField<Lin::Vector<dim>>(fieldName);
-                }
-            }
-        }
-        Field<Lin::Vector<dim>>* position       = state->template getField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* dposition       = derivatives.template getField<Lin::Vector<dim>>("position");
+        derivatives.ghost(state);
 
         physics->EvaluateDerivatives(state,derivatives,dt);
         derivatives*=dt;

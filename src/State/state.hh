@@ -153,6 +153,23 @@ public:
         }
 
     }
+
+    void
+    ghost(const State* other) {
+        for (int i = 0; i < other->count(); ++i) {
+            FieldBase* field = other->getFieldByIndex(i);
+            if (field->hasName()) {
+                std::string fieldName = field->getNameString();
+                if (dynamic_cast<Field<double>*>(field) != nullptr) {
+                    insertField<double>(fieldName);
+                } 
+                else if (dynamic_cast<Field<Lin::Vector<dim>>*>(field) != nullptr) {
+                    insertField<Lin::Vector<dim>>(fieldName);
+                }
+            }
+        }
+
+    }
 };
 
 
