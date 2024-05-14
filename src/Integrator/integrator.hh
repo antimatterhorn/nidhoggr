@@ -48,12 +48,21 @@ public:
                 }
             }
         }
+        Field<Lin::Vector<dim>>* position       = state->template getField<Lin::Vector<dim>>("position");
+        Field<Lin::Vector<dim>>* dposition       = derivatives.template getField<Lin::Vector<dim>>("position");
+
+        physics->EvaluateDerivatives(state,derivatives,dt);
+        derivatives*=dt;
+
+        State<dim> newState(state->size());
+        newState.clone(state);
+        newState+=derivatives;
+
+        physics->FinalizeStep(&newState);
 
         if(boundaries.size() > 0)
             for(Boundaries<dim>* bounds : boundaries)
-                bounds->ApplyBoundaries();
-
-        physics->FinalizeStep();
+                bounds->ApplyBoundaries(); 
 
         time += dt;
         cycle+=1;

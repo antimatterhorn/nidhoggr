@@ -31,7 +31,7 @@ public:
 
     template <typename T>
     void 
-    addField(const Field<T>* fieldPtr) {
+    addField(const std::shared_ptr<Field<T>>& fieldPtr) {
         fields.push_back(fieldPtr);
     }
 
@@ -104,6 +104,54 @@ public:
         fields = rhs.fields;
         numNodes = rhs.numNodes;
         return *this;
+    }
+
+    State 
+    operator+(const State& other) const {
+        if (this->count() != other.count() || this->size() != other.size()) {
+            throw std::invalid_argument("Incompatible State objects for addition");
+        }
+
+        State<dim> result(this->size()); // Create a new State object with the same size
+
+        for (int i = 0; i < this->count(); ++i) {
+            FieldBase* field = this->getFieldByIndex(i); // Get the field at index i
+
+            if (auto* doubleField = dynamic_cast<Field<double>*>(field)) {
+                auto* otherDoubleField = dynamic_cast<const Field<double>*>(other.getFieldByIndex(i));
+                if (otherDoubleField) {
+                    *doubleField += *otherDoubleField; // Perform addition for double fields
+                }
+            } else if (auto* vectorField = dynamic_cast<Field<Lin::Vector<dim>>*>(field)) {
+                auto* otherVectorField = dynamic_cast<const Field<Lin::Vector<dim>>*>(other.getFieldByIndex(i));
+                if (otherVectorField) {
+                    *vectorField += *otherVectorField; // Perform addition for vector fields
+                }
+            }
+        }
+
+        return result;
+    }
+
+    void
+    clone(const State* other) {
+        for (int i = 0; i < other->count(); ++i) {
+            FieldBase* field = other->getFieldByIndex(i);
+            if (field->hasName()) {
+                std::string fieldName = field->getNameString();
+                if (dynamic_cast<Field<double>*>(field) != nullptr) {
+                    insertField<double>(fieldName);
+                    Field<double>* thisField = getField<double>(fieldName);
+                    thisField->copyValues(dynamic_cast<Field<double>*>(field));
+                } 
+                else if (dynamic_cast<Field<Lin::Vector<dim>>*>(field) != nullptr) {
+                    insertField<Lin::Vector<dim>>(fieldName);
+                    Field<Lin::Vector<dim>>* thisField = getField<Lin::Vector<dim>>(fieldName);
+                    thisField->copyValues(dynamic_cast<Field<Lin::Vector<dim>>*>(field));
+                }
+            }
+        }
+
     }
 };
 
