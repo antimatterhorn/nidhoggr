@@ -19,37 +19,41 @@ public:
             nodeList->insertField<double>("phi");
         if (nodeList->getField<double>("xi") == nullptr)
             nodeList->insertField<double>("xi");
-
+        
+        State<dim>* state = &this->state;
         Field<double>* xi = nodeList->getField<double>("xi");
-        this->derivFields.push_back(xi);
+        std::shared_ptr<Field<double>> xiSharedPtr(xi);
+        state->template addField<double>(xiSharedPtr);
         Field<double>* phi = nodeList->getField<double>("phi");
-        this->derivFields.push_back(phi);
+        std::shared_ptr<Field<double>> phiSharedPtr(phi);
+        state->template addField<double>(phiSharedPtr);
     }
 
     ~WaveEquation() {}
 
     virtual void
-    EvaluateDerivatives(const Field<double>* initialState, Field<double>& deriv, const double t) override{  
+    EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double t) override {  
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
         
-        Field<double>* xi = nodeList->getField<double>("xi");
-        Field<double>* phi = nodeList->getField<double>("phi");
-        if(initialState->getNameString() == "xi") {
-            #pragma omp parallel for
-            for (int i=0; i<numNodes; ++i) {
-                std::vector<int> neighbors = grid->getNeighboringCells(i);
-                double laplace2 = -4*phi->getValue(i);
-                for (auto idx : neighbors) {
-                    laplace2 += phi->getValue(idx);
-                }                
-                laplace2 = laplace2/pow(grid->dx,2.0);
-                deriv.setValue(i,laplace2*C*C);
-            }
+        Field<double>* xi = initialState->template getField<double>("xi");
+        Field<double>* phi = initialState->template getField<double>("phi");
+
+        Field<double>* dxi = deriv.template getField<double>("xi");
+        Field<double>* dphi = deriv.template getField<double>("phi");
+        
+        #pragma omp parallel for
+        for (int i=0; i<numNodes; ++i) {
+            std::vector<int> neighbors = grid->getNeighboringCells(i);
+            double laplace2 = -4*phi->getValue(i);
+            for (auto idx : neighbors) {
+                laplace2 += phi->getValue(idx);
+            }                
+            laplace2 = laplace2/pow(grid->dx,2.0);
+            dxi->setValue(i,laplace2*C*C);           
         }
-        else if(initialState->getNameString() == "phi") { 
-            deriv.copyValues(xi);
-        }
+
+        dphi->copyValues(xi);
     }
 
     double
@@ -58,6 +62,21 @@ public:
         NodeList* nodeList = this->nodeList;
         Field<double>* phi = nodeList->getField<double>("phi");
         return phi->getValue(idx);
+    }
+
+    virtual void
+    FinalizeStep(const State<dim>* finalState) override {
+        NodeList* nodeList = this->nodeList;
+        int numNodes = nodeList->size();
+
+        Field<double>* fxi = finalState->template getField<double>("xi");
+        Field<double>* fphi = finalState->template getField<double>("phi");
+
+        Field<double>* xi = nodeList->getField<double>("xi");
+        Field<double>* phi = nodeList->getField<double>("phi");
+
+        xi->copyValues(fxi);
+        phi->copyValues(fphi);
     }
 
 

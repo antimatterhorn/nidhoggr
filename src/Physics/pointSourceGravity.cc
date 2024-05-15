@@ -29,9 +29,6 @@ public:
         Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
         std::shared_ptr<Field<Lin::Vector<dim>>> velocitySharedPtr(velocity);
         state->template addField<Lin::Vector<dim>>(velocitySharedPtr);
-
-
-        Field<Lin::Vector<dim>>* sposition       = state->template getField<Lin::Vector<dim>>("position");
     }
 
     ~PointSourceGravity() {}
