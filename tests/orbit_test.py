@@ -30,11 +30,13 @@ if __name__ == "__main__":
                                       constants=constants,
                                       pointSourceLocation=loc,
                                       pointSourceMass=1)
-    integrator = RungeKutta4Integrator2d(physics=sourceGrav,
+    integrator = Integrator2d(physics=sourceGrav,
                                          dtmin=1e-3)
   
     pos = myNodeList.getFieldVector2d("position")[0]
     pos.x = -2.0
+
+    
 
     v0 = -0.4*8.7298e-4
     velocity = myNodeList.getFieldVector2d("velocity")
@@ -52,14 +54,13 @@ if __name__ == "__main__":
     a = r0/(1-e*cos(t0))
 
     torbit = 2 * np.pi * np.sqrt(a**3 / (constants.G * 1))
+    print(torbit)
 
-
-    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=10000,tstop=2*torbit)
+    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=1000,tstop=2*torbit)
 
     print("G =",constants.G)
-    controller.Step(800000)
-
-    # now plot the orbit
+    controller.Step(300000)
+    #now plot the orbit
     
     import matplotlib.pyplot as plt
 

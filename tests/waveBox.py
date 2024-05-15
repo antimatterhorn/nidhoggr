@@ -43,7 +43,7 @@ if __name__ == "__main__":
     pbounds = [pm,box]
 
     integrator = Integrator2d(physics=waveEqn,
-                              dtmin=0.1,
+                              dtmin=0.05,
                               boundaries=pbounds)
     print(integrator)
 

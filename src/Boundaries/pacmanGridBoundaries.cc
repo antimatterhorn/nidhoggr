@@ -16,7 +16,9 @@ public:
     ApplyBoundaries() override {
         Mesh::Grid<dim>* grid = this->grid;
         Physics<dim>* physics = this->physics;
-        for (FieldBase* field : physics->derivFields) {
+        State<dim>* state = physics->getState();
+        for (int i = 0; i < state->count(); ++i) {
+            FieldBase* field = state->getFieldByIndex(i); // Get the field at index i
             if (typeid(*field) == typeid(Field<double>)) {
                 Field<double>* doubleField = dynamic_cast<Field<double>*>(field);
                 if (doubleField) {
