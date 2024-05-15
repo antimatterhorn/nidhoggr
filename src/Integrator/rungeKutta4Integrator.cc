@@ -45,7 +45,7 @@ public:
         physics->EvaluateDerivatives(&interim,k4,dt);
 
         k2*=2.0;
-        k3*=3.0;
+        k3*=2.0;
         k1+=k2;
         k1+=k3;
         k1+=k4;

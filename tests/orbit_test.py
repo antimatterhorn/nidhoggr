@@ -30,7 +30,7 @@ if __name__ == "__main__":
                                       constants=constants,
                                       pointSourceLocation=loc,
                                       pointSourceMass=1)
-    integrator = RungeKutta4Integrator2d(physics=sourceGrav,
+    integrator = Integrator2d(physics=sourceGrav,
                                          dtmin=1e-3)
   
     pos = myNodeList.getFieldVector2d("position")[0]
