@@ -98,6 +98,16 @@ public:
         return *this;
     }
 
+    template <typename T>
+    State& operator*(const T& scalar) {
+        for (auto& fieldPtr : fields) {
+            if (auto* typedField = dynamic_cast<Field<T>*>(fieldPtr.get())) {
+                *typedField *= scalar;
+            }
+        }
+        return *this;
+    }
+
     // Overload the = assignment operator to copy the fields from another state
     State& 
     operator=(const State& rhs) {
@@ -135,6 +145,8 @@ public:
 
     void
     clone(const State* other) {
+        fields.clear(); 
+
         for (int i = 0; i < other->count(); ++i) {
             FieldBase* field = other->getFieldByIndex(i);
             if (field->hasName()) {
@@ -156,6 +168,8 @@ public:
 
     void
     ghost(const State* other) {
+        fields.clear(); 
+        
         for (int i = 0; i < other->count(); ++i) {
             FieldBase* field = other->getFieldByIndex(i);
             if (field->hasName()) {
