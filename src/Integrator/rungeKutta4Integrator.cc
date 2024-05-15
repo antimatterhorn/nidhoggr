@@ -21,33 +21,34 @@ public:
 
         State<dim>* state = physics->getState();
         State<dim> interim(state->size());
-        
         State<dim> k1(state->size());
-        k1.ghost(state);
-        physics->EvaluateDerivatives(state,k1,0);
-        interim.clone(state);
-        interim+=k1*(dt/2.0);
-
         State<dim> k2(state->size());
-        k2.clone(&interim);
+        State<dim> k3(state->size());
+        State<dim> k4(state->size());
+
+        k1.ghost(state);
+        k2.ghost(state);
+        k3.ghost(state);
+        k4.ghost(state);
+
+        physics->EvaluateDerivatives(state,k1,0);
+
+        interim.clone(state);
+        interim+=k1*(dt/2.0);  
         physics->EvaluateDerivatives(&interim,k2,dt/2.0);
+
         interim.clone(state);
         interim+=k2*(dt/2.0);
-
-        State<dim> k3(state->size());
-        k3.clone(&interim);
         physics->EvaluateDerivatives(&interim,k3,dt/2.0);
+
         interim.clone(state);
         interim+=k3*dt;
-
-        State<dim> k4(state->size());
-        k4.clone(&interim);
         physics->EvaluateDerivatives(&interim,k4,dt);
 
-        Field<Lin::Vector<dim>>* k1p = k1.template getField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* k2p = k2.template getField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* k3p = k3.template getField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* k4p = k4.template getField<Lin::Vector<dim>>("position");
+        Field<Lin::Vector<dim>>* k1p = k1.template getField<Lin::Vector<dim>>("velocity");
+        Field<Lin::Vector<dim>>* k2p = k2.template getField<Lin::Vector<dim>>("velocity");
+        Field<Lin::Vector<dim>>* k3p = k3.template getField<Lin::Vector<dim>>("velocity");
+        Field<Lin::Vector<dim>>* k4p = k4.template getField<Lin::Vector<dim>>("velocity");
         std::cout << k1p->getValue(0).y() << ", "  << k2p->getValue(0).y() << ", "  
                     << k3p->getValue(0).y() << ", "  << k4p->getValue(0).y()
                   << std::endl;
