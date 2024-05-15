@@ -59,7 +59,7 @@ if __name__ == "__main__":
     controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=1000,tstop=2*torbit)
 
     print("G =",constants.G)
-    controller.Step(300000)
+    controller.Step(1)
     #now plot the orbit
     
     import matplotlib.pyplot as plt

@@ -20,11 +20,11 @@ public:
         double dt = this->dt;
 
         State<dim>* state = physics->getState();
+        State<dim> interim(state->size());
+        
         State<dim> k1(state->size());
         k1.ghost(state);
         physics->EvaluateDerivatives(state,k1,0);
-
-        State<dim> interim(state->size());
         interim.clone(state);
         interim+=k1*(dt/2.0);
 
@@ -43,6 +43,14 @@ public:
         State<dim> k4(state->size());
         k4.clone(&interim);
         physics->EvaluateDerivatives(&interim,k4,dt);
+
+        Field<Lin::Vector<dim>>* k1p = k1.template getField<Lin::Vector<dim>>("position");
+        Field<Lin::Vector<dim>>* k2p = k2.template getField<Lin::Vector<dim>>("position");
+        Field<Lin::Vector<dim>>* k3p = k3.template getField<Lin::Vector<dim>>("position");
+        Field<Lin::Vector<dim>>* k4p = k4.template getField<Lin::Vector<dim>>("position");
+        std::cout << k1p->getValue(0).y() << ", "  << k2p->getValue(0).y() << ", "  
+                    << k3p->getValue(0).y() << ", "  << k4p->getValue(0).y()
+                  << std::endl;
 
         k2*=2.0;
         k3*=2.0;
