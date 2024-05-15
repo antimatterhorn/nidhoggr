@@ -36,13 +36,13 @@ public:
         State<dim> newState(state->size());
         newState.clone(state);
 
-        k1+=k2;
-        k1*=(0.5*dt);
+        
+        k1 += k2;
+        k1 *= 0.5*dt;
+
         newState += k1;
 
         physics->FinalizeStep(&newState);
-
-        std::cout << " " << std::endl;
 
         std::vector<Boundaries<dim>*> boundaries = this->boundaries;
         if(boundaries.size() > 0)

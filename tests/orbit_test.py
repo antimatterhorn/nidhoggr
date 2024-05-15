@@ -30,7 +30,7 @@ if __name__ == "__main__":
                                       constants=constants,
                                       pointSourceLocation=loc,
                                       pointSourceMass=1)
-    integrator = RungeKutta2Integrator2d(physics=sourceGrav,
+    integrator = RungeKutta4Integrator2d(physics=sourceGrav,
                                          dtmin=1e-3)
   
     pos = myNodeList.getFieldVector2d("position")[0]
@@ -59,7 +59,7 @@ if __name__ == "__main__":
     controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=1000,tstop=2*torbit)
 
     print("G =",constants.G)
-    controller.Step(2)
+    controller.Step(30000000)
     #now plot the orbit
     
     import matplotlib.pyplot as plt

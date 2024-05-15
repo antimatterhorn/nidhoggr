@@ -45,13 +45,13 @@ public:
         interim+=k3*dt;
         physics->EvaluateDerivatives(&interim,k4,dt);
 
-        Field<Lin::Vector<dim>>* k1p = k1.template getField<Lin::Vector<dim>>("velocity");
-        Field<Lin::Vector<dim>>* k2p = k2.template getField<Lin::Vector<dim>>("velocity");
-        Field<Lin::Vector<dim>>* k3p = k3.template getField<Lin::Vector<dim>>("velocity");
-        Field<Lin::Vector<dim>>* k4p = k4.template getField<Lin::Vector<dim>>("velocity");
-        std::cout << k1p->getValue(0).y() << ", "  << k2p->getValue(0).y() << ", "  
-                    << k3p->getValue(0).y() << ", "  << k4p->getValue(0).y()
-                  << std::endl;
+        // Field<Lin::Vector<dim>>* k1p = k1.template getField<Lin::Vector<dim>>("velocity");
+        // Field<Lin::Vector<dim>>* k2p = k2.template getField<Lin::Vector<dim>>("velocity");
+        // Field<Lin::Vector<dim>>* k3p = k3.template getField<Lin::Vector<dim>>("velocity");
+        // Field<Lin::Vector<dim>>* k4p = k4.template getField<Lin::Vector<dim>>("velocity");
+        // std::cout << k1p->getValue(0).y() << ", "  << k2p->getValue(0).y() << ", "  
+        //             << k3p->getValue(0).y() << ", "  << k4p->getValue(0).y()
+        //           << std::endl;
 
         k2*=2.0;
         k3*=2.0;

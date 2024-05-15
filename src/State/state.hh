@@ -66,6 +66,7 @@ public:
     operator+=(const State& other) {
         if (this != &other) {
             if (this->count() != other.count() || this->size() != other.size()) {
+                std::cout << this->count() << other.count() << this->size() << other.size() << std::endl;
                 throw std::invalid_argument("Incompatible State objects for addition");
             }
             for (const auto& fieldPtr : fields) {
@@ -98,11 +99,12 @@ public:
         return *this;
     }
 
-    template <typename T>
-    State& operator*(const T& scalar) {
+    State& operator*(const double& scalar) {
         for (auto& fieldPtr : fields) {
-            if (auto* typedField = dynamic_cast<Field<T>*>(fieldPtr.get())) {
-                *typedField *= scalar;
+            if (auto* doubleField = dynamic_cast<Field<double>*>(fieldPtr.get())) {
+                *doubleField *= scalar;
+            } else if (auto* vectorField = dynamic_cast<Field<Lin::Vector<dim>>*>(fieldPtr.get())) {
+                *vectorField *= scalar;
             }
         }
         return *this;
@@ -119,7 +121,20 @@ public:
     State 
     operator+(const State& other) const {
         if (this->count() != other.count() || this->size() != other.size()) {
+            std::cout << this->count() << other.count() << this->size() << other.size() << std::endl;
             throw std::invalid_argument("Incompatible State objects for addition");
+        }
+
+        for (int i = 0; i < this->count(); ++i) {
+            const auto& fieldPtr = this->getFieldByIndex(i);
+            const auto& otherFieldPtr = other.getFieldByIndex(i);
+            
+            if (fieldPtr->getNameString() != otherFieldPtr->getNameString()) {
+                throw std::invalid_argument("Incompatible State objects for addition: mismatched field names");
+            }
+            if (typeid(*fieldPtr) != typeid(*otherFieldPtr)) {
+                throw std::invalid_argument("Incompatible State objects for addition: mismatched field types");
+            }
         }
 
         State<dim> result(this->size()); // Create a new State object with the same size
