@@ -50,10 +50,9 @@ public:
                 laplace2 += phi->getValue(idx);
             }                
             laplace2 = laplace2/pow(grid->dx,2.0);
-            dxi->setValue(i,laplace2*C*C);           
+            dxi->setValue(i,laplace2*C*C); 
+            dphi->setValue(i,t*dxi->getValue(i)+xi->getValue(i));         
         }
-
-        dphi->copyValues(xi);
     }
 
     double
