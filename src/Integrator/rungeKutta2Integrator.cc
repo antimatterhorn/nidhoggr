@@ -40,7 +40,6 @@ public:
 
         State<dim> newState(state->size());
         newState.clone(state);
-
         
         k1 += k2;
         k1 *= 0.5*dt;
