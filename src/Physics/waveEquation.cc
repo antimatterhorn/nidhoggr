@@ -22,11 +22,11 @@ public:
         
         State<dim>* state = &this->state;
         Field<double>* xi = nodeList->getField<double>("xi");
-        std::shared_ptr<Field<double>> xiSharedPtr(xi);
-        state->template addField<double>(xiSharedPtr);
+        //std::shared_ptr<Field<double>> xiSharedPtr(xi);
+        state->template addField<double>(xi);
         Field<double>* phi = nodeList->getField<double>("phi");
-        std::shared_ptr<Field<double>> phiSharedPtr(phi);
-        state->template addField<double>(phiSharedPtr);
+        //std::shared_ptr<Field<double>> phiSharedPtr(phi);
+        state->template addField<double>(phi);
     }
 
     ~WaveEquation() {}

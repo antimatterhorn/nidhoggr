@@ -20,12 +20,12 @@ public:
             nodeList->getField<Lin::Vector<dim>>("acceleration")->setValue(i,gravityVector);
         
         Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
-        std::shared_ptr<Field<Lin::Vector<dim>>> positionSharedPtr(position);
+        //std::shared_ptr<Field<Lin::Vector<dim>>> positionSharedPtr(position);
         State<dim>* state = &this->state;        
-        state->template addField<Lin::Vector<dim>>(positionSharedPtr);
+        state->template addField<Lin::Vector<dim>>(position);
         Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-        std::shared_ptr<Field<Lin::Vector<dim>>> velocitySharedPtr(velocity);
-        state->template addField<Lin::Vector<dim>>(velocitySharedPtr);
+        //std::shared_ptr<Field<Lin::Vector<dim>>> velocitySharedPtr(velocity);
+        state->template addField<Lin::Vector<dim>>(velocity);
     }
 
     ~ConstantGravity() {}

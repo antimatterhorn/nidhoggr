@@ -30,9 +30,13 @@ public:
     }
 
     template <typename T>
-    void 
-    addField(const std::shared_ptr<Field<T>>& fieldPtr) {
-        fields.push_back(fieldPtr);
+    void addField(const Field<T>* fieldPtr) {
+        Name name = fieldPtr->getName();
+        std::shared_ptr<Field<T>> newField = std::make_shared<Field<T>>(name.name(), this->size());
+        for (int i = 0; i < numNodes; ++i) {
+            newField->setValue(i, fieldPtr->getValue(i));
+        }
+        fields.push_back(newField);
     }
 
     template <typename T>
@@ -54,6 +58,25 @@ public:
             return nullptr; // Return nullptr if index is out of range
         }
         return fields[index].get(); // Return the raw pointer to the field at index
+    }
+
+    void
+    updateFields(NodeList* nodeList) {
+        for (const auto& fieldPtr : fields) {
+            if (auto* doubleField = dynamic_cast<Field<double>*>(fieldPtr.get())) {
+                auto* otherDoubleField = dynamic_cast<const Field<double>*>(nodeList->getField<double>(doubleField->getNameString()));
+                if (otherDoubleField) {
+                    for(int i=0; i<numNodes; ++i)
+                        doubleField->setValue(i,otherDoubleField->getValue(i));
+                }
+            } else if (auto* vectorField = dynamic_cast<Field<Lin::Vector<dim>>*>(fieldPtr.get())) {
+                auto* otherVectorField = dynamic_cast<const Field<Lin::Vector<dim>>*>(nodeList->getField<Lin::Vector<dim>>(vectorField->getNameString()));
+                if (otherVectorField) {
+                    for(int i=0; i<numNodes; ++i)
+                        vectorField->setValue(i,otherVectorField->getValue(i));
+                }
+            }
+        }
     }
 
     int
