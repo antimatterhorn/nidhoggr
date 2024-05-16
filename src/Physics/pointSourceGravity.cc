@@ -60,14 +60,15 @@ public:
             Lin::Vector<dim> pos = position->getValue(i);
             Lin::Vector<dim> r = (pointSourceLocation - pos);
             Lin::Vector<dim> a = pointSourceMass*constants.G()/(r.mag2())*r.normal();
+            Lin::Vector<dim> v = velocity->getValue(i);
             acceleration->setValue(i,a);
             double amag = a.mag2();
-            double vmag = velocity->getValue(i).mag2();
+            double vmag = v.mag2();
             //std::cout << "dtmin " << dtmin << " amag " << amag << " vmag " << vmag << std::endl;
             dtmin = std::min(dtmin,vmag/amag);
             //std::cout << "dtmin " << dtmin << std::endl;
-            dxdt->setValue(i,velocity->getValue(i)+t*(acceleration->getValue(i)));
-            dvdt->setValue(i,acceleration->getValue(i));
+            dxdt->setValue(i,v+t*a);
+            dvdt->setValue(i,a);
         }
 
 
