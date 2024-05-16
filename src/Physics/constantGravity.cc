@@ -31,6 +31,13 @@ public:
     ~ConstantGravity() {}
 
     virtual void
+    PreStepInitialize() override {
+        State<dim> state = this->state;
+        NodeList* nodeList = this->nodeList;
+        state.updateFields(nodeList);
+    }
+
+    virtual void
     EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double t) override {
         NodeList* nodeList = this->nodeList;
         PhysicalConstants constants = this->constants;

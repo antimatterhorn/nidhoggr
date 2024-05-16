@@ -64,6 +64,6 @@ if __name__ == "__main__":
         update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,
                                                 stepper=controller.Step,
                                                 title=title)
-        AnimateGrid2d(bounds,update_method)
+        AnimateGrid2d(bounds,update_method,extremis=[-5,5])
     else:
         controller.Step(50000)

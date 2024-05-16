@@ -16,6 +16,11 @@ public:
 
         physics->PreStepInitialize();
 
+        std::vector<Boundaries<dim>*> boundaries = this->boundaries;
+        if(boundaries.size() > 0)
+            for(Boundaries<dim>* bounds : boundaries)
+                bounds->ApplyBoundaries(); 
+
         double time = this->time;
         double dt = this->dt;
 
@@ -65,8 +70,7 @@ public:
         newState += k1;
 
         physics->FinalizeStep(&newState);
-
-        std::vector<Boundaries<dim>*> boundaries = this->boundaries;
+     
         if(boundaries.size() > 0)
             for(Boundaries<dim>* bounds : boundaries)
                 bounds->ApplyBoundaries();

@@ -11,10 +11,7 @@ if __name__ == "__main__":
     print("G =",constants.G)
     eos = IdealGasEOS(5.0/3.0,constants)
     print("gamma =",eos.gamma)
-    #state = State(myNodeList,eos)
 
-    db = DataBase()
-    #db.EnrollNodeList(myNodeList,state)
 
     constantGravity = ConstantGravity2d(myNodeList,constants,Vector2d(0,-9.8))
     integrator = RungeKutta4Integrator2d(constantGravity,dtmin=1e-3)

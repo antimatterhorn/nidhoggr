@@ -32,6 +32,10 @@ public:
     Step() {
         physics->PreStepInitialize();
 
+        if(boundaries.size() > 0)
+            for(Boundaries<dim>* bounds : boundaries)
+                bounds->ApplyBoundaries(); 
+
         State<dim>* state = physics->getState();
         State<dim> derivatives(state->size());
 

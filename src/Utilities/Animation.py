@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
 import numpy as np
 
-def AnimateGrid2d(bounds, update_method, threeColors=False, frames=100, interval=50, scale=1):
+def AnimateGrid2d(bounds, update_method, threeColors=False, frames=100, interval=50, scale=1, extremis=None, cmap='winter'):
     if (threeColors):
         fig, ax = plt.subplots()
 
@@ -49,7 +49,11 @@ def AnimateGrid2d(bounds, update_method, threeColors=False, frames=100, interval
                         maxi = rgb_grid[i,j]
                 max_values.append(maxi)
             # Plot the grid
-            ax_top.imshow(rgb_grid, origin='lower', extent=[0, x*scale, 0, y*scale], cmap='viridis', interpolation='nearest')
+            if (extremis):
+                ax_top.imshow(rgb_grid, origin='lower', extent=[0, x*scale, 0, y*scale], cmap=cmap, interpolation='nearest', 
+                        vmin=extremis[0], vmax=extremis[1])
+            else:
+                ax_top.imshow(rgb_grid, origin='lower', extent=[0, x*scale, 0, y*scale], cmap=cmap, interpolation='nearest')
             ax_bottom.plot(range(x), max_values, color='blue')
             ax_bottom.set_xlim(0, x)
             ax_bottom.set_ylim(min(max_values)*1.1, max(max_values) * 1.1)
