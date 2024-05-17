@@ -85,14 +85,20 @@ public:
     FinalizeStep(const State<dim>* finalState) override {
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
+        State<dim> state = this->state;
 
         Field<Lin::Vector<dim>>* fposition       = finalState->template getField<Lin::Vector<dim>>("position");
         Field<Lin::Vector<dim>>* fvelocity       = finalState->template getField<Lin::Vector<dim>>("velocity");
+
+        Field<Lin::Vector<dim>>* sposition       = state.template getField<Lin::Vector<dim>>("position");
+        Field<Lin::Vector<dim>>* svelocity       = state.template getField<Lin::Vector<dim>>("velocity");
 
         Field<Lin::Vector<dim>>* position       = nodeList->template getField<Lin::Vector<dim>>("position");
         Field<Lin::Vector<dim>>* velocity       = nodeList->template getField<Lin::Vector<dim>>("velocity");
 
         position->copyValues(fposition);
         velocity->copyValues(fvelocity);
+        sposition->copyValues(fposition);
+        svelocity->copyValues(fvelocity);
     }
 };
