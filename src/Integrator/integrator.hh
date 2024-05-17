@@ -46,7 +46,8 @@ public:
         derivatives*=dt;
 
         State<dim> newState(state->size());
-        newState.clone(state);
+        newState.ghost(state);
+        newState+=*state;
         newState+=derivatives;
 
         physics->FinalizeStep(&newState);
