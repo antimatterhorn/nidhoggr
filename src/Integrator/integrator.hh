@@ -41,7 +41,8 @@ public:
 
         derivatives.ghost(state);
 
-        physics->EvaluateDerivatives(state,derivatives,time,dt);
+        physics->EvaluateDerivatives(state,derivatives,time,0);
+        // forward euler takes the derivative NOW and multiplies by dt
         derivatives*=dt;
 
         State<dim> newState(state->size());

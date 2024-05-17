@@ -12,7 +12,8 @@ class dumpState:
 if __name__ == "__main__":
     myNodeList = NodeList(1)
 
-    cycles = 100
+    cycles = 10
+    dtmin = 0.1
 
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
@@ -25,7 +26,7 @@ if __name__ == "__main__":
 
 
     constantGravity = SimplePhysics2d(myNodeList,constants)
-    integrator = RungeKutta2Integrator2d(constantGravity,dtmin=2)
+    integrator = Integrator2d(constantGravity,dtmin=dtmin)
 
     print(myNodeList.position())
     print("numNodes =",myNodeList.numNodes)
@@ -43,7 +44,7 @@ if __name__ == "__main__":
         return t**2
 
     theta_vec = np.vectorize(theta)
-    t_values = np.linspace(0, cycles*2, cycles*10)
+    t_values = np.linspace(0, cycles*dtmin, cycles*10)
 
     x_values, y_values = zip(*dump.dump)
 

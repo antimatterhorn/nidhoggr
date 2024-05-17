@@ -25,9 +25,7 @@ public:
 
     virtual void
     PreStepInitialize() override {
-        State<dim> state = this->state;
-        NodeList* nodeList = this->nodeList;
-        state.updateFields(nodeList);
+        // NodeList* nodeList = this->nodeList;
     }
 
     virtual void
@@ -49,12 +47,14 @@ public:
 
     virtual void
     FinalizeStep(const State<dim>* finalState) override {
+        State<dim> state = this->state;
         NodeList* nodeList = this->nodeList;
-        int numNodes = nodeList->size();
 
-        Field<double>* fy       = finalState->template getField<double>("y");
+        Field<double>* sy       = state.template getField<double>("y");
+        Field<double>* fy        = finalState->template getField<double>("y");
         Field<double>* y        = nodeList->template getField<double>("y");
 
+        sy->copyValues(fy);
         y->copyValues(fy);
     }
 };
