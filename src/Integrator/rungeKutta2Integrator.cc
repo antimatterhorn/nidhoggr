@@ -35,7 +35,8 @@ public:
         physics->EvaluateDerivatives(state,k1,time,0);
 
         interim.clone(state);
-        interim+=k1*dt;  
+        interim+=k1*dt; 
+
         physics->EvaluateDerivatives(&interim,k2,time,dt);
 
         State<dim> newState(state->size());

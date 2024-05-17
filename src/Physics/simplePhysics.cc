@@ -43,7 +43,7 @@ public:
 
         #pragma omp parllel for
         for (int i=0; i<numNodes ; ++i) {
-            dydt->setValue(i,2.0*time);
+            dydt->setValue(i,2.0*(time+dt));
         }
     }
 

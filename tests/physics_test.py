@@ -10,7 +10,9 @@ class dumpState:
         self.dump.append([time,y])
 
 if __name__ == "__main__":
-    myNodeList = NodeList(15)
+    myNodeList = NodeList(1)
+
+    cycles = 100
 
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
@@ -23,7 +25,7 @@ if __name__ == "__main__":
 
 
     constantGravity = SimplePhysics2d(myNodeList,constants)
-    integrator = Integrator2d(constantGravity,dtmin=1)
+    integrator = RungeKutta2Integrator2d(constantGravity,dtmin=1)
 
     print(myNodeList.position())
     print("numNodes =",myNodeList.numNodes)
@@ -32,7 +34,7 @@ if __name__ == "__main__":
     dump = dumpState(myNodeList,workCycle=1)
 
     controller = Controller(integrator=integrator,periodicWork=[dump],statStep=1)
-    controller.Step(30)
+    controller.Step(cycles)
     
     import matplotlib.pyplot as plt
     import numpy as np
@@ -41,7 +43,7 @@ if __name__ == "__main__":
         return t**2
 
     theta_vec = np.vectorize(theta)
-    t_values = np.linspace(0, 30, 100)
+    t_values = np.linspace(0, cycles, cycles*10)
 
     x_values, y_values = zip(*dump.dump)
 

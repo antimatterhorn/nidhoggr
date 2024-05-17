@@ -49,6 +49,7 @@ public:
 
         Field<Lin::Vector<dim>>* position       = initialState->template getField<Lin::Vector<dim>>("position");
         Field<Lin::Vector<dim>>* acceleration   = nodeList->getField<Lin::Vector<dim>>("acceleration");
+        // ^ this field is just for reference and isn't actually used to calculate anything
         Field<Lin::Vector<dim>>* velocity       = initialState->template getField<Lin::Vector<dim>>("velocity");
 
         Field<Lin::Vector<dim>>* dxdt           = deriv.template getField<Lin::Vector<dim>>("position");
@@ -64,9 +65,7 @@ public:
             acceleration->setValue(i,a);
             double amag = a.mag2();
             double vmag = v.mag2();
-            //std::cout << "dtmin " << dtmin << " amag " << amag << " vmag " << vmag << std::endl;
             dtmin = std::min(dtmin,vmag/amag);
-            //std::cout << "dtmin " << dtmin << std::endl;
             dxdt->setValue(i,v+dt*a);
             dvdt->setValue(i,a);
         }
