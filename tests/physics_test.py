@@ -25,7 +25,7 @@ if __name__ == "__main__":
 
 
     constantGravity = SimplePhysics2d(myNodeList,constants)
-    integrator = RungeKutta2Integrator2d(constantGravity,dtmin=1)
+    integrator = RungeKutta2Integrator2d(constantGravity,dtmin=2)
 
     print(myNodeList.position())
     print("numNodes =",myNodeList.numNodes)
@@ -43,7 +43,7 @@ if __name__ == "__main__":
         return t**2
 
     theta_vec = np.vectorize(theta)
-    t_values = np.linspace(0, cycles, cycles*10)
+    t_values = np.linspace(0, cycles*2, cycles*10)
 
     x_values, y_values = zip(*dump.dump)
 
