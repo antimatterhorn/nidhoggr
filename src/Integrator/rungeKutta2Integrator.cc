@@ -12,6 +12,13 @@ public:
 
     virtual void
     Step() override {
+        double dt = this->dt;
+        
+        this->time += this->dt;
+        this->cycle += 1;
+
+        double time = this->time;
+        
         Physics<dim>* physics = this->physics;
 
         physics->PreStepInitialize();
@@ -21,8 +28,7 @@ public:
             for(Boundaries<dim>* bounds : boundaries)
                 bounds->ApplyBoundaries(); 
 
-        double time = this->time;
-        double dt = this->dt;
+
 
         State<dim>* state = physics->getState();
         State<dim> interim(state->size());
@@ -41,7 +47,8 @@ public:
         physics->EvaluateDerivatives(&interim,k2,time,dt);
 
         State<dim> newState(state->size());
-        newState.clone(state);
+        newState.ghost(state);
+        newState+=*state;
         
         k1 += k2;
         k1 *= 0.5*dt;
@@ -53,9 +60,6 @@ public:
         if(boundaries.size() > 0)
             for(Boundaries<dim>* bounds : boundaries)
                 bounds->ApplyBoundaries();
-
-        this->time += dt;
-        this->cycle += 1;
 
         double newdt = physics->EstimateTimestep();
         this->dt = std::max(newdt,this->dtmin);

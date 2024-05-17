@@ -25,7 +25,13 @@ public:
 
     virtual void
     PreStepInitialize() override {
-        // NodeList* nodeList = this->nodeList;
+        State<dim> state = this->state;
+        NodeList* nodeList = this->nodeList;
+
+        Field<double>* sy       = state.template getField<double>("y");
+        Field<double>* y        = nodeList->template getField<double>("y");
+
+        sy->copyValues(y);
     }
 
     virtual void

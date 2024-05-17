@@ -30,6 +30,9 @@ public:
 
     virtual void
     Step() {
+        time += dt;
+        cycle+=1;
+
         physics->PreStepInitialize();
 
         if(boundaries.size() > 0)
@@ -56,8 +59,7 @@ public:
             for(Boundaries<dim>* bounds : boundaries)
                 bounds->ApplyBoundaries(); 
 
-        time += dt;
-        cycle+=1;
+
         
         double newdt = physics->EstimateTimestep();
         dt = std::max(newdt,dtmin);
