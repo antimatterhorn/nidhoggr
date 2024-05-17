@@ -39,7 +39,7 @@ public:
     }
 
     virtual void
-    EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double t) override {  
+    EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt) override {  
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
         
@@ -58,7 +58,7 @@ public:
             }                
             laplace2 = laplace2/pow(grid->dx,2.0);
             dxi->setValue(i,laplace2*C*C); 
-            dphi->setValue(i,t*dxi->getValue(i)+xi->getValue(i));         
+            dphi->setValue(i,dt*dxi->getValue(i)+xi->getValue(i));         
         }
     }
 

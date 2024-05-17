@@ -36,19 +36,19 @@ public:
         k3.ghost(state);
         k4.ghost(state);
 
-        physics->EvaluateDerivatives(state,k1,0);
+        physics->EvaluateDerivatives(state,k1,time,0);
 
         interim.clone(state);
         interim+=k1*(dt/2.0);  
-        physics->EvaluateDerivatives(&interim,k2,dt/2.0);
+        physics->EvaluateDerivatives(&interim,k2,time,dt/2.0);
 
         interim.clone(state);
         interim+=k2*(dt/2.0);
-        physics->EvaluateDerivatives(&interim,k3,dt/2.0);
+        physics->EvaluateDerivatives(&interim,k3,time,dt/2.0);
 
         interim.clone(state);
         interim+=k3*dt;
-        physics->EvaluateDerivatives(&interim,k4,dt);
+        physics->EvaluateDerivatives(&interim,k4,time,dt);
 
         // Field<Lin::Vector<dim>>* k1p = k1.template getField<Lin::Vector<dim>>("velocity");
         // Field<Lin::Vector<dim>>* k2p = k2.template getField<Lin::Vector<dim>>("velocity");

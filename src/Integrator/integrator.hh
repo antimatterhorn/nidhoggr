@@ -41,7 +41,7 @@ public:
 
         derivatives.ghost(state);
 
-        physics->EvaluateDerivatives(state,derivatives,dt);
+        physics->EvaluateDerivatives(state,derivatives,time,dt);
         derivatives*=dt;
 
         State<dim> newState(state->size());

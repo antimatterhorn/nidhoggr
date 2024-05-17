@@ -38,7 +38,7 @@ public:
     }
 
     virtual void
-    EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double t) override {
+    EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt) override {
         NodeList* nodeList = this->nodeList;
         PhysicalConstants constants = this->constants;
         int numNodes = nodeList->size();
@@ -51,7 +51,7 @@ public:
         Field<Lin::Vector<dim>>* dvdt           = deriv.template getField<Lin::Vector<dim>>("velocity");
         
         dxdt->copyValues(velocity);
-        dxdt->operator+(*acceleration*t);
+        dxdt->operator+(*acceleration*dt);
         dvdt->copyValues(acceleration);
 
         dtmin = 1e30;

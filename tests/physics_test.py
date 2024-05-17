@@ -1,5 +1,14 @@
 from nidhoggr import *
 
+class dumpState:
+    def __init__(self,nodeList,workCycle=1):
+        self.nodeList = nodeList
+        self.cycle = workCycle
+        self.dump = []
+    def __call__(self,cycle,time,dt):
+        y = self.nodeList.getFieldDouble("y")[0]
+        self.dump.append([time,y])
+
 if __name__ == "__main__":
     myNodeList = NodeList(15)
 
@@ -13,16 +22,37 @@ if __name__ == "__main__":
     print("gamma =",eos.gamma)
 
 
-    constantGravity = ConstantGravity2d(myNodeList,constants,Vector2d(0,-9.8))
-    integrator = RungeKutta4Integrator2d(constantGravity,dtmin=1e-3)
-  
-    velocity = myNodeList.getFieldVector2d("velocity")
-    velocity[0].y = 10.0
+    constantGravity = SimplePhysics2d(myNodeList,constants)
+    integrator = Integrator2d(constantGravity,dtmin=1)
 
     print(myNodeList.position())
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
-    controller = Controller(integrator=integrator,periodicWork=[],statStep=1)
+    dump = dumpState(myNodeList,workCycle=1)
+
+    controller = Controller(integrator=integrator,periodicWork=[dump],statStep=1)
     controller.Step(30)
     
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    def theta(t):
+        return t**2
+
+    theta_vec = np.vectorize(theta)
+    t_values = np.linspace(0, 30, 100)
+
+    x_values, y_values = zip(*dump.dump)
+
+    xs = t_values
+    ys = theta_vec(t_values)
+
+    plt.plot(x_values, y_values, 'o')  
+    plt.plot(xs,ys)
+
+    plt.xlabel('t')
+    plt.ylabel('y')
+
+    plt.grid(True)
+    plt.show()

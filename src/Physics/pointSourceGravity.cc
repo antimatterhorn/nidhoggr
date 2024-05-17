@@ -41,7 +41,7 @@ public:
     }
 
     virtual void
-    EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double t) override {
+    EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt) override {
         //compute accelerations
         NodeList* nodeList = this->nodeList;
         PhysicalConstants constants = this->constants;
@@ -67,7 +67,7 @@ public:
             //std::cout << "dtmin " << dtmin << " amag " << amag << " vmag " << vmag << std::endl;
             dtmin = std::min(dtmin,vmag/amag);
             //std::cout << "dtmin " << dtmin << std::endl;
-            dxdt->setValue(i,v+t*a);
+            dxdt->setValue(i,v+dt*a);
             dvdt->setValue(i,a);
         }
 

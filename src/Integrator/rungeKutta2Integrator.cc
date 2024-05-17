@@ -32,11 +32,11 @@ public:
         k1.ghost(state);
         k2.ghost(state);
 
-        physics->EvaluateDerivatives(state,k1,0);
+        physics->EvaluateDerivatives(state,k1,time,0);
 
         interim.clone(state);
         interim+=k1*dt;  
-        physics->EvaluateDerivatives(&interim,k2,dt);
+        physics->EvaluateDerivatives(&interim,k2,time,dt);
 
         State<dim> newState(state->size());
         newState.clone(state);
