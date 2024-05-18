@@ -24,6 +24,7 @@ public:
         dt(dtmin),
         dtmin(dtmin){
         cycle = 0;
+        physics->ZeroTimeInitialize();
     }
 
     ~Integrator() {}

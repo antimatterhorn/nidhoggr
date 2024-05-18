@@ -22,6 +22,9 @@ public:
     virtual ~Physics() {}
 
     virtual void
+    ZeroTimeInitialize() {}
+
+    virtual void
     EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt)  {  }
 
     virtual void

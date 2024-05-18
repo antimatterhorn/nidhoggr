@@ -33,6 +33,27 @@ public:
     ~HydroHLL() {}
 
     virtual void
+    ZeroTimeInitialize() override {
+        NodeList* nodeList = this->nodeList;
+        Field<Lin::Vector<dim>>* v  = nodeList->template getField<Lin::Vector<dim>>("v");
+        Field<double>* rho          = nodeList->template getField<double>("density");
+        Field<double>* u            = nodeList->template getField<double>("specificThermalEnergy");
+        Field<double> ke("kineticEnergy",nodeList->size());
+
+        Field<Lin::Vector<dim>>* u1 = nodeList->template getField<Lin::Vector<dim>>("u1");
+        Field<double>* u0           = nodeList->template getField<double>("u0");
+        Field<double>* u2           = nodeList->template getField<double>("u2");
+
+        u0->copyValues(rho);
+
+        for(int i=0;i<nodeList->size();++i){
+            u1->setValue(i,rho->getValue(i)*v->getValue(i));
+            ke.setValue(i,0.5*v->getValue(i).mag2());
+            u2->setValue(i,rho->getValue(i)*(ke.getValue(i)+u->getValue(i)));
+        }
+    }
+
+    virtual void
     VerifyHLLFields(NodeList* nodeList) {
         if (nodeList->getField<double>("u0") == nullptr)
             nodeList->insertField<double>("u0");
@@ -157,7 +178,6 @@ public:
         Field<Lin::Vector<dim>>* v  = nodeList->template getField<Lin::Vector<dim>>("v");
         Field<double>* rho          = nodeList->template getField<double>("density");
         Field<double>* u            = nodeList->template getField<double>("specificThermalEnergy");
-        Field<double> ke("kineticEnergy",nodeList->size());
 
         for(int i=0;i<nodeList->size();++i){
             double u0i              = u0->getValue(i);
