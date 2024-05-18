@@ -38,7 +38,6 @@ public:
         Field<Lin::Vector<dim>>* v  = nodeList->template getField<Lin::Vector<dim>>("v");
         Field<double>* rho          = nodeList->template getField<double>("density");
         Field<double>* u            = nodeList->template getField<double>("specificThermalEnergy");
-        Field<double> ke("kineticEnergy",nodeList->size());
 
         Field<Lin::Vector<dim>>* u1 = nodeList->template getField<Lin::Vector<dim>>("u1");
         Field<double>* u0           = nodeList->template getField<double>("u0");
@@ -48,8 +47,7 @@ public:
 
         for(int i=0;i<nodeList->size();++i){
             u1->setValue(i,rho->getValue(i)*v->getValue(i));
-            ke.setValue(i,0.5*v->getValue(i).mag2());
-            u2->setValue(i,rho->getValue(i)*(ke.getValue(i)+u->getValue(i)));
+            u2->setValue(i,rho->getValue(i)*(0.5*v->getValue(i).mag2() + u->getValue(i)));
         }
     }
 
