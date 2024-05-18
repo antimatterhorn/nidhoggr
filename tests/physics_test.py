@@ -13,7 +13,7 @@ if __name__ == "__main__":
     myNodeList = NodeList(1)
 
     cycles = 10
-    dtmin = 0.1
+    dtmin = 2
 
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
 
     constantGravity = SimplePhysics2d(myNodeList,constants)
-    integrator = RungeKutta2Integrator2d(constantGravity,dtmin=dtmin)
+    integrator = RungeKutta4Integrator2d(constantGravity,dtmin=dtmin)
 
     print(myNodeList.position())
     print("numNodes =",myNodeList.numNodes)

@@ -44,7 +44,7 @@ public:
 
         Field<double>* y        = initialState->template getField<double>("y");
         Field<double>* dydt     = deriv.template getField<double>("y");
-
+        
         #pragma omp parllel for
         for (int i=0; i<numNodes ; ++i) {
             dydt->setValue(i,2.0*(time+dt));

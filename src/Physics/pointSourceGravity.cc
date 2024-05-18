@@ -37,6 +37,7 @@ public:
     PreStepInitialize() override {
         State<dim> state = this->state;
         NodeList* nodeList = this->nodeList;
+
         state.updateFields(nodeList);
     }
 

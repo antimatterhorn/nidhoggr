@@ -81,6 +81,27 @@ public:
     int
     count() const { return fields.size(); }
 
+    void
+    addState(const State* other) {
+        if (this->count() != other->count() || this->size() != other->size()) {
+            std::cout << this->count() << other->count() << this->size() << other->size() << std::endl;
+            throw std::invalid_argument("Incompatible State objects for addition");
+        }
+        for (const auto& fieldPtr : fields) {
+            if (auto* doubleField = dynamic_cast<Field<double>*>(fieldPtr.get())) {
+                auto* otherDoubleField = dynamic_cast<const Field<double>*>(other->getField<double>(doubleField->getNameString()));
+                if (otherDoubleField) {
+                    *doubleField += *otherDoubleField;
+                }
+            } else if (auto* vectorField = dynamic_cast<Field<Lin::Vector<dim>>*>(fieldPtr.get())) {
+                auto* otherVectorField = dynamic_cast<const Field<Lin::Vector<dim>>*>(other->getField<Lin::Vector<dim>>(vectorField->getNameString()));
+                if (otherVectorField) {
+                    *vectorField += *otherVectorField;
+                }
+            }
+        }
+    }
+
     State& 
     operator+=(const State& other) {
         if (this != &other) {
@@ -118,15 +139,19 @@ public:
         return *this;
     }
 
-    State& operator*(const double& scalar) {
-        for (auto& fieldPtr : fields) {
-            if (auto* doubleField = dynamic_cast<Field<double>*>(fieldPtr.get())) {
+    State<dim> operator*(const double& scalar) const {
+        State<dim> newState(numNodes); // Create a new State with the same number of nodes
+        newState.clone(this); // Clone the fields from the current state to the new state
+        
+        for (int i = 0; i < newState.count(); ++i) {
+            FieldBase* fieldPtr = newState.getFieldByIndex(i);
+            if (auto* doubleField = dynamic_cast<Field<double>*>(fieldPtr)) {
                 *doubleField *= scalar;
-            } else if (auto* vectorField = dynamic_cast<Field<Lin::Vector<dim>>*>(fieldPtr.get())) {
+            } else if (auto* vectorField = dynamic_cast<Field<Lin::Vector<dim>>*>(fieldPtr)) {
                 *vectorField *= scalar;
             }
         }
-        return *this;
+        return newState;
     }
 
     // Overload the = assignment operator to copy the fields from another state
