@@ -150,39 +150,28 @@ public:
     FinalizeStep(const State<dim>* finalState) override {
         NodeList* nodeList = this->nodeList;
 
-        // Field<Lin::Vector<dim>>* v  = nodeList->template getField<Lin::Vector<dim>>("v");
-        // Field<double>* rho          = nodeList->template getField<double>("density");
-        // Field<double>* u            = nodeList->template getField<double>("specificThermalEnergy");
-        // Field<double> ke("kineticEnergy",nodeList->size());
+        Field<Lin::Vector<dim>>* u1 = finalState->template getField<Lin::Vector<dim>>("u1");
+        Field<double>* u0           = finalState->template getField<double>("u0");
+        Field<double>* u2           = finalState->template getField<double>("u2");
+        
+        Field<Lin::Vector<dim>>* v  = nodeList->template getField<Lin::Vector<dim>>("v");
+        Field<double>* rho          = nodeList->template getField<double>("density");
+        Field<double>* u            = nodeList->template getField<double>("specificThermalEnergy");
+        Field<double> ke("kineticEnergy",nodeList->size());
 
-        // Field<double>* pressure                 = nodeList->getField<double>("pressure");
-        // Field<double>* soundSpeed               = nodeList->getField<double>("soundSpeed");
+        for(int i=0;i<nodeList->size();++i){
+            double u0i              = u0->getValue(i);
+            Lin::Vector<dim> u1i    = u1->getValue(1);
+            double u2i              = u2->getValue(i);
+            rho->setValue(i,u0i);
+            v->setValue(i,u1i/u0i);
+            u->setValue(i,u2i/u0i - 0.5*v->getValue(i).mag2());
+        }
 
-        // // DO EOS LOOKUP FOR Pr and cs in finalize please
-
-        // u0->copyValues(rho);
-        // for(int i=0;i<nodeList->size();++i){
-        //     u1->setValue(i,rho->getValue(i)*v->getValue(i));
-        //     ke.setValue(i,0.5*v->getValue(i).mag2());
-        //     u2->setValue(i,rho->getValue(i)*(ke.getValue(i)+u->getValue(i)));
-        // }
-
-        // Field<double>* density = nodeList->getField<double>("density");
-        // Field<double>* pressure = nodeList->getField<double>("pressure");
-        // Field<double>* energy = nodeList->getField<double>("specificInternalEnergy");
-        // Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-        // Field<UType<dim>>* HLLU = nodeList->getField<UType<dim>>("HLLU");
-        // for (int j=0; j<insideIds.size(); ++j) {
-        //     int i = insideIds[j];
-        //     UType<dim> ui = HLLU->getValue(i);
-        //     double rho = ui.getU0();
-        //     Lin::Vector<dim> v = ui.getU1()/rho;
-        //     double e = ui.getU2()/ui.getU0() - 0.5*v.mag2();
-        //     density->setValue(i,rho);   // max this with rhofloor
-        //     energy->setValue(i,e);
-        //     velocity->setValue(i,v);             
-        // }
-
+        Field<double>* pressure                 = nodeList->getField<double>("pressure");
+        Field<double>* soundSpeed               = nodeList->getField<double>("soundSpeed");
+        // DO EOS LOOKUP FOR Pr and cs here!!!
+        EquationOfState* eos = this->eos;
     }
 
 };
