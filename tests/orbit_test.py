@@ -56,7 +56,7 @@ if __name__ == "__main__":
     torbit = 2 * np.pi * np.sqrt(a**3 / (constants.G * 1))
     print(torbit)
 
-    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=1000,tstop=1*torbit)
+    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=1000,tstop=2*torbit)
 
     print("G =",constants.G)
     controller.Step(30000000)

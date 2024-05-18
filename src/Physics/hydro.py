@@ -5,7 +5,8 @@ from physics import *
 class Hydro(Physics):
     def pyinit(self,
                nodeList="NodeList*",
-               constants="PhysicalConstants&"):
+               constants="PhysicalConstants&",
+               eos="EquationOfState*"):
         return
     # @PYB11virtual
     # def UpdateDerivatives(self,dt="const double"):

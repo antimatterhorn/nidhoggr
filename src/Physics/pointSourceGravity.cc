@@ -22,24 +22,14 @@ public:
         if (nodeList->getField<Lin::Vector<dim>>("acceleration") == nullptr)
             nodeList->insertField<Lin::Vector<dim>>("acceleration");
         
+        State<dim>* state = &this->state;
         Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
-        // std::shared_ptr<Field<Lin::Vector<dim>>> positionSharedPtr(position);
-        State<dim>* state = &this->state;        
         state->template addField<Lin::Vector<dim>>(position);
         Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-        //std::shared_ptr<Field<Lin::Vector<dim>>> velocitySharedPtr(velocity);
         state->template addField<Lin::Vector<dim>>(velocity);
     }
 
     ~PointSourceGravity() {}
-
-    virtual void
-    PreStepInitialize() override {
-        State<dim> state = this->state;
-        NodeList* nodeList = this->nodeList;
-
-        state.updateFields(nodeList);
-    }
 
     virtual void
     EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt) override {

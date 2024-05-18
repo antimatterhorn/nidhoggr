@@ -11,11 +11,19 @@ protected:
 public:
     HydroHLL() {}
 
-    HydroHLL(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<dim>* grid) : 
-        Hydro<dim>(nodeList,constants){
+    HydroHLL(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, Mesh::Grid<dim>* grid) : 
+        Hydro<dim>(nodeList,constants,eos){
         VerifyHLLFields(nodeList);
 
-        this->derivFields.push_back(nodeList->getField<UType<dim>>("HLLU"));
+        State<dim>* state = &this->state;
+
+        Field<Lin::Vector<dim>>* u1 = nodeList->getField<Lin::Vector<dim>>("u1");       
+        Field<double>* u0 = nodeList->getField<double>("u0");
+        Field<double>* u2 = nodeList->getField<double>("u2");
+
+        state->template addField<Lin::Vector<dim>>(u1);
+        state->template addField<double>(u0);
+        state->template addField<double>(u2);
 
         for(int i=0;i<grid->size();i++)
             if(!grid->onBoundary(i))
@@ -26,50 +34,31 @@ public:
 
     virtual void
     VerifyHLLFields(NodeList* nodeList) {
-        int numNodes = nodeList->size();
-        if (nodeList->getField<UType<dim>>("HLLU") == nullptr)
-            nodeList->insertField<UType<dim>>("HLLU");
+        if (nodeList->getField<double>("u0") == nullptr)
+            nodeList->insertField<double>("u0");
+        if (nodeList->getField<double>("u2") == nullptr)
+            nodeList->insertField<double>("u2");
+        if (nodeList->getField<Lin::Vector<dim>>("u1") == nullptr)
+            nodeList->insertField<Lin::Vector<dim>>("u1");
     }
 
     virtual void
-    PreStepInitialize() override {
-        NodeList* nodeList = this->nodeList;
-
-        Field<double>* density              = nodeList->getField<double>("density");
-        Field<double>* pressure             = nodeList->getField<double>("pressure");
-        Field<double>* energy               = nodeList->getField<double>("specificInternalEnergy");
-        Field<Lin::Vector<dim>>* velocity   = nodeList->getField<Lin::Vector<dim>>("velocity");
-        Field<UType<dim>>* HLLU             = nodeList->getField<UType<dim>>("HLLU");
-
-        for (int j=0; j<insideIds.size(); ++j) {
-            int i = insideIds[j];
-            
-            double rho = density->getValue(i);
-            double v = velocity->getValue(i).magnitude();
-            double e = energy->getValue(i);
-            double Pr = pressure->getValue(i);
-            double etot = e+0.5*v*v;
-            double htot = e+Pr/rho;
-
-            Lin::Vector<dim> uv = rho*velocity->getValue(i);
-            UType<dim> uu = UType<dim>(rho,uv,rho*etot);
-            HLLU->setValue(i,uu);
-        }
-    }
-
-    virtual void
-    EvaluateDerivatives(const State* initialState, State& deriv, const double t) override{  
+    EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt) override{  
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 
-        Field<UType<dim>> HLLU = Field<UType<dim>>("copyHLLU",initialState->size());
-        Field<Lin::Vector<dim>> F0 = Field<Lin::Vector<dim>>("f0",initialState->size());
-        Field<Lin::Vector<dim>> F1 = Field<Lin::Vector<dim>>("f1",initialState->size());
-        Field<Lin::Vector<dim>> F2 = Field<Lin::Vector<dim>>("f2",initialState->size());
+        Field<Lin::Vector<dim>> F0  = Field<Lin::Vector<dim>>("f0",initialState->size());
+        Field<Lin::Vector<dim>> F1  = Field<Lin::Vector<dim>>("f1",initialState->size());
+        Field<Lin::Vector<dim>> F2  = Field<Lin::Vector<dim>>("f2",initialState->size());
 
-        Field<double>* pressure             = nodeList->getField<double>("pressure");
-        Field<double>* soundSpeed           = nodeList->getField<double>("soundSpeed");
-        Field<Lin::Vector<dim>>* velocity   = nodeList->getField<Lin::Vector<dim>>("velocity");
+        Field<Lin::Vector<dim>>* u1 = initialState->template getField<Lin::Vector<dim>>("u1");
+        Field<double>* u0           = initialState->template getField<double>("u0");
+        Field<double>* u2           = initialState->template getField<double>("u2");
+
+        Field<double>* pressure                 = nodeList->getField<double>("pressure");
+        Field<double>* soundSpeed               = nodeList->getField<double>("soundSpeed");
+
+        // DO EOS LOOKUP FOR Pr and cs in finalize please
 
         std::vector<Field<Lin::Vector<dim>>*> F;
         F.push_back(&F0);
@@ -78,50 +67,52 @@ public:
 
         Field<Lin::Vector<dim>> ep = Field<Lin::Vector<dim>>("ep",initialState->size());
         Field<Lin::Vector<dim>> em = Field<Lin::Vector<dim>>("em",initialState->size());
-        HLLU.copyValues(initialState);
-        for (int j=0; j<insideIds.size(); ++j) {
-            int i = insideIds[j];
-            double Pr = pressure->getValue(i);
 
-            UType<dim> uu = HLLU.getValue(i);
+        
 
-            Lin::Vector<dim> cs = Lin::Vector<dim>();
-            F0.setValue(i,uu.getU1());
-            std::array<double, dim> ff1;
-            ff1.fill(0);
-            for(int k=0;k<dim;++k) {
-                ff1[k] = pow(uu.getU1().values[k],2)/uu.getU0() + Pr;
-                cs.values[k] = soundSpeed->getValue(i);
-            }
-            F1.setValue(i,ff1);
-            F2.setValue(i,uu.getU1()*(uu.getU2()+1.0)/uu.getU0());
+        // for (int j=0; j<insideIds.size(); ++j) {
+        //     int i = insideIds[j];
+        //     double Pr = pressure->getValue(i);
 
-            ep.setValue(i,velocity->getValue(i) + cs);
-            em.setValue(i,velocity->getValue(i) - cs);
-        }
+        //     UType<dim> uu = HLLU.getValue(i);
 
-        for (int j=0; j<insideIds.size(); ++j) {
-            int i = insideIds[j];
-            std::vector<int> nbrs = grid->getNeighboringCells(i);
+        //     Lin::Vector<dim> cs = Lin::Vector<dim>();
+        //     F0.setValue(i,uu.getU1());
+        //     std::array<double, dim> ff1;
+        //     ff1.fill(0);
+        //     for(int k=0;k<dim;++k) {
+        //         ff1[k] = pow(uu.getU1().values[k],2)/uu.getU0() + Pr;
+        //         cs.values[k] = soundSpeed->getValue(i);
+        //     }
+        //     F1.setValue(i,ff1);
+        //     F2.setValue(i,uu.getU1()*(uu.getU2()+1.0)/uu.getU0());
+
+        //     ep.setValue(i,velocity->getValue(i) + cs);
+        //     em.setValue(i,velocity->getValue(i) - cs);
+        // }
+
+        // for (int j=0; j<insideIds.size(); ++j) {
+        //     int i = insideIds[j];
+        //     std::vector<int> nbrs = grid->getNeighboringCells(i);
             
-            std::array<double, 3> FluxP, FluxM; 
-            std::array<Lin::Vector<dim>, 3> Lv; 
+        //     std::array<double, 3> FluxP, FluxM; 
+        //     std::array<Lin::Vector<dim>, 3> Lv; 
             
-            for (int k=0; k<dim; ++k) {
-                FluxP = getFlux(k,i,nbrs[2*k],initialState, ep, em, F);
-                FluxM = getFlux(k,nbrs[2*k+1],i,initialState, ep, em, F);
-                for (int s=0; s<3; ++s)
-                    Lv[s][k] = (FluxM[s] - FluxP[s])/grid->spacing(k);
-            } 
-            // now i need to decide how to handle the different axes for Lv[0] and Lv[2]
-            double Lv0,Lv2;
-            for (int k=0; k<dim; ++k) {
-                Lv0+=Lv[0][k];
-                Lv2+=Lv[2][k];
-            }
-            UType<dim> Lvi = UType<dim>(Lv0,Lv[1],Lv2);   
-            deriv.setValue(i,Lvi);    
-        }
+        //     for (int k=0; k<dim; ++k) {
+        //         FluxP = getFlux(k,i,nbrs[2*k],initialState, ep, em, F);
+        //         FluxM = getFlux(k,nbrs[2*k+1],i,initialState, ep, em, F);
+        //         for (int s=0; s<3; ++s)
+        //             Lv[s][k] = (FluxM[s] - FluxP[s])/grid->spacing(k);
+        //     } 
+        //     // now i need to decide how to handle the different axes for Lv[0] and Lv[2]
+        //     double Lv0,Lv2;
+        //     for (int k=0; k<dim; ++k) {
+        //         Lv0+=Lv[0][k];
+        //         Lv2+=Lv[2][k];
+        //     }
+        //     UType<dim> Lvi = UType<dim>(Lv0,Lv[1],Lv2);   
+        //     deriv.setValue(i,Lvi);    
+        // }
     }
 
     std::array<double, 3>
@@ -137,43 +128,60 @@ public:
             am = std::max(std::max(-emL,-emR),0.0); 
 
             std::array<double, 3> FL,FR,Flux;
-            UType<dim> UL,UR;
-            UL.setU0(initialState->getValue(i).getU0());
-            UR.setU0(0.5*(UL.getU0()+initialState->getValue(j).getU0()));
-            UL.setU1(initialState->getValue(i).getU1());
-            UR.setU1(0.5*(UL.getU1()+initialState->getValue(j).getU1()));
-            UL.setU2(initialState->getValue(i).getU2());
-            UR.setU2(0.5*(UL.getU2()+initialState->getValue(j).getU2()));
-            for (int k=0; k<3; ++k) {
-                FL[k] = F[k]->getValue(i)[axis];
-                FR[k] = 0.5*(F[k]->getValue(i)[axis]+F[k]->getValue(j)[axis]);
-            }
-            Flux[0] = (ap*FL[0] + am*FR[0] - ap*am*(UR.getU0()-UL.getU0()))/(ap+am); 
-            Flux[1] = (ap*FL[1] + am*FR[1] - ap*am*(UR.getU1()-UL.getU1())[axis])/(ap+am); 
-            Flux[2] = (ap*FL[2] + am*FR[2] - ap*am*(UR.getU2()-UL.getU2()))/(ap+am);
+            // UType<dim> UL,UR;
+            // UL.setU0(initialState->getValue(i).getU0());
+            // UR.setU0(0.5*(UL.getU0()+initialState->getValue(j).getU0()));
+            // UL.setU1(initialState->getValue(i).getU1());
+            // UR.setU1(0.5*(UL.getU1()+initialState->getValue(j).getU1()));
+            // UL.setU2(initialState->getValue(i).getU2());
+            // UR.setU2(0.5*(UL.getU2()+initialState->getValue(j).getU2()));
+            // for (int k=0; k<3; ++k) {
+            //     FL[k] = F[k]->getValue(i)[axis];
+            //     FR[k] = 0.5*(F[k]->getValue(i)[axis]+F[k]->getValue(j)[axis]);
+            // }
+            // Flux[0] = (ap*FL[0] + am*FR[0] - ap*am*(UR.getU0()-UL.getU0()))/(ap+am); 
+            // Flux[1] = (ap*FL[1] + am*FR[1] - ap*am*(UR.getU1()-UL.getU1())[axis])/(ap+am); 
+            // Flux[2] = (ap*FL[2] + am*FR[2] - ap*am*(UR.getU2()-UL.getU2()))/(ap+am);
 
             return Flux;
     }
 
     virtual void
-    FinalizeStep() override {
+    FinalizeStep(const State<dim>* finalState) override {
         NodeList* nodeList = this->nodeList;
 
-        Field<double>* density = nodeList->getField<double>("density");
-        Field<double>* pressure = nodeList->getField<double>("pressure");
-        Field<double>* energy = nodeList->getField<double>("specificInternalEnergy");
-        Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-        Field<UType<dim>>* HLLU = nodeList->getField<UType<dim>>("HLLU");
-        for (int j=0; j<insideIds.size(); ++j) {
-            int i = insideIds[j];
-            UType<dim> ui = HLLU->getValue(i);
-            double rho = ui.getU0();
-            Lin::Vector<dim> v = ui.getU1()/rho;
-            double e = ui.getU2()/ui.getU0() - 0.5*v.mag2();
-            density->setValue(i,rho);   // max this with rhofloor
-            energy->setValue(i,e);
-            velocity->setValue(i,v);             
-        }
+        // Field<Lin::Vector<dim>>* v  = nodeList->template getField<Lin::Vector<dim>>("v");
+        // Field<double>* rho          = nodeList->template getField<double>("density");
+        // Field<double>* u            = nodeList->template getField<double>("specificThermalEnergy");
+        // Field<double> ke("kineticEnergy",nodeList->size());
+
+        // Field<double>* pressure                 = nodeList->getField<double>("pressure");
+        // Field<double>* soundSpeed               = nodeList->getField<double>("soundSpeed");
+
+        // // DO EOS LOOKUP FOR Pr and cs in finalize please
+
+        // u0->copyValues(rho);
+        // for(int i=0;i<nodeList->size();++i){
+        //     u1->setValue(i,rho->getValue(i)*v->getValue(i));
+        //     ke.setValue(i,0.5*v->getValue(i).mag2());
+        //     u2->setValue(i,rho->getValue(i)*(ke.getValue(i)+u->getValue(i)));
+        // }
+
+        // Field<double>* density = nodeList->getField<double>("density");
+        // Field<double>* pressure = nodeList->getField<double>("pressure");
+        // Field<double>* energy = nodeList->getField<double>("specificInternalEnergy");
+        // Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
+        // Field<UType<dim>>* HLLU = nodeList->getField<UType<dim>>("HLLU");
+        // for (int j=0; j<insideIds.size(); ++j) {
+        //     int i = insideIds[j];
+        //     UType<dim> ui = HLLU->getValue(i);
+        //     double rho = ui.getU0();
+        //     Lin::Vector<dim> v = ui.getU1()/rho;
+        //     double e = ui.getU2()/ui.getU0() - 0.5*v.mag2();
+        //     density->setValue(i,rho);   // max this with rhofloor
+        //     energy->setValue(i,e);
+        //     velocity->setValue(i,v);             
+        // }
 
     }
 

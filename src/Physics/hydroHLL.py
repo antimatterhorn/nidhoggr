@@ -6,6 +6,7 @@ class HydroHLL(Hydro):
     def pyinit(self,
                nodeList="NodeList*",
                constants="PhysicalConstants&",
+               eos="EquationOfState*",
                grid="Mesh::Grid<%(dim)s>*"):
         return
 

@@ -2,15 +2,17 @@
 #define HYDRO_HH
 
 #include "physics.hh"
+#include "../EOS/equationOfState.hh"
 
 template <int dim>
 class Hydro : public Physics<dim> {
 protected:
+    EquationOfState* eos;
 public:
 
     Hydro() {}
 
-    Hydro(NodeList* nodeList, PhysicalConstants& constants) : 
+    Hydro(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos) : 
         Physics<dim>(nodeList,constants) {
         VerifyHydroFields(nodeList);
     }
@@ -19,7 +21,7 @@ public:
 
     virtual void
     VerifyHydroFields(NodeList* nodeList) {
-        int numNodes = nodeList->size();
+
         if (nodeList->getField<double>("density") == nullptr)
             nodeList->insertField<double>("density");
         if (nodeList->getField<double>("pressure") == nullptr)
