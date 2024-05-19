@@ -42,8 +42,8 @@ if __name__ == "__main__":
     box.removeBox(Vector2d(40,0),Vector2d(60,15))
     pbounds = [pm,box]
 
-    integrator = Integrator2d(physics=waveEqn,
-                              dtmin=0.1,
+    integrator = RungeKutta2Integrator2d(physics=waveEqn,
+                              dtmin=0.05,
                               boundaries=pbounds)
     print(integrator)
 

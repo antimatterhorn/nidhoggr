@@ -7,6 +7,7 @@ class WaveEquation : public Physics<dim> {
 protected:
     Mesh::Grid<dim>* grid;
     double C;
+    double dtmin;
 public:
     WaveEquation() {}
 
@@ -83,6 +84,13 @@ public:
 
         xi->copyValues(fxi);
         phi->copyValues(fphi);
+    }
+
+    virtual double 
+    EstimateTimestep() const override { 
+        double dx = grid->dx;
+        double cfl = 0.1;
+        return cfl/C*dx;
     }
 
 

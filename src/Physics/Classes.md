@@ -34,8 +34,8 @@ classDiagram
         +double A
         +double D
     }
-    Hydro <| -- HLLSolver
-    class HLLSolver{
+    Hydro <| -- HydroHLL
+    class HydroHLL{
         +Grid* grid
     }
 ```
