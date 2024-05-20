@@ -7,21 +7,21 @@ from PYB11Generator import *
 class EOSAbstractMethods:
     @PYB11const
     def setPressure(self,
-                    pressure = "Field<double>&",
-                    density = "const Field<double>&",
-                    internalEnergy = "const Field<double>&"):
+                    pressure = "Field<double>*",
+                    density = "const Field<double>*",
+                    internalEnergy = "const Field<double>*"):
         return "void"
     
     @PYB11const
     def setInternalEnergy(self,
-                    internalEnergy = "Field<double>&",
-                    density = "const Field<double>&",
-                    pressure = "const Field<double>&"):
+                    internalEnergy = "Field<double>*",
+                    density = "const Field<double>*",
+                    pressure = "const Field<double>*"):
         return "void"
     
     @PYB11const
     def setSoundSpeed(self,
-                    soundSpeed = "Field<double>&",
-                    density = "const Field<double>&",
-                    internalEnergy = "const Field<double>&"):
+                    soundSpeed = "Field<double>*",
+                    density = "const Field<double>*",
+                    internalEnergy = "const Field<double>*"):
         return "void"

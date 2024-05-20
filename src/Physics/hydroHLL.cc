@@ -208,8 +208,8 @@ public:
         Field<double>* soundSpeed               = nodeList->getField<double>("soundSpeed");
         // DO EOS LOOKUP FOR Pr and cs here!!!
         EquationOfState* eos = this->eos;
-        eos->setPressure(*pressure,*rho,*u);
-        eos->setSoundSpeed(*soundSpeed,*rho,*u);
+        eos->setPressure(pressure,rho,u);
+        eos->setSoundSpeed(soundSpeed,rho,u);
     }
 
 };
