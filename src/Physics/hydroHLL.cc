@@ -49,6 +49,8 @@ public:
             u1->setValue(i,rho->getValue(i)*v->getValue(i));
             u2->setValue(i,rho->getValue(i)*(0.5*v->getValue(i).mag2() + u->getValue(i)));
         }
+
+        EOSLookup();
     }
 
     virtual void
@@ -204,9 +206,18 @@ public:
             u->setValue(i,u2i/u0i - 0.5*v->getValue(i).mag2());
         }
 
+        EOSLookup();
+    }
+
+    virtual void
+    EOSLookup() {
+        NodeList* nodeList = this->nodeList;
+        Field<Lin::Vector<dim>>* v  = nodeList->template getField<Lin::Vector<dim>>("v");
+        Field<double>* rho          = nodeList->template getField<double>("density");
+        Field<double>* u            = nodeList->template getField<double>("specificInternalEnergy");
         Field<double>* pressure                 = nodeList->getField<double>("pressure");
         Field<double>* soundSpeed               = nodeList->getField<double>("soundSpeed");
-        // DO EOS LOOKUP FOR Pr and cs here!!!
+
         EquationOfState* eos = this->eos;
         eos->setPressure(pressure,rho,u);
         eos->setSoundSpeed(soundSpeed,rho,u);

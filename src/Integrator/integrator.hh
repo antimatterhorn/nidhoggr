@@ -24,13 +24,16 @@ public:
         dt(dtmin),
         dtmin(dtmin){
         cycle = 0;
-        physics->ZeroTimeInitialize();
     }
 
     ~Integrator() {}
 
     virtual void
     Step() {
+
+        if (cycle == 0)
+            physics->ZeroTimeInitialize();
+
         time += dt;
         cycle+=1;
 

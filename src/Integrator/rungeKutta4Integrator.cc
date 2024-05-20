@@ -14,6 +14,9 @@ public:
     Step() override {
         Physics<dim>* physics = this->physics;
 
+        if (this->cycle == 0)
+            physics->ZeroTimeInitialize();
+
         physics->PreStepInitialize();
 
         std::vector<Boundaries<dim>*> boundaries = this->boundaries;

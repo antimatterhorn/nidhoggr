@@ -12,13 +12,15 @@ public:
 
     virtual void
     Step() override {
-        double dt = this->dt;
+        Physics<dim>* physics = this->physics;
         
+        if (this->cycle == 0)
+            physics->ZeroTimeInitialize();
 
-
+        double dt = this->dt;
         double time = this->time;
         
-        Physics<dim>* physics = this->physics;
+        
 
         physics->PreStepInitialize();
 
