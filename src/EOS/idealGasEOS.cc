@@ -13,7 +13,8 @@ public:
     // Method to compute pressure given density and internal energy
     virtual void 
     setPressure(Field<double>& pressure, const Field<double>& density, const Field<double>& internalEnergy) const override {
-        //return (gamma - 1.0) * density * internalEnergy;
+        for(int i=0;i<pressure.size();++i)
+            pressure.setValue(i,(gamma - 1.0) * density.getValue(i) * internalEnergy.getValue(i));
     }
 
     // Method to compute internal energy given density and pressure
@@ -25,7 +26,8 @@ public:
     // Method to compute sound speed given density and pressure
     virtual void 
     setSoundSpeed(Field<double>& soundSpeed, const Field<double>& density, const Field<double>& internalEnergy) const override {
-        //return std::sqrt(gamma * pressure / density);
+        for(int i=0;i<soundSpeed.size();++i)
+            soundSpeed.setValue(i,std::sqrt(gamma * (gamma - 1.0) * density.getValue(i) * internalEnergy.getValue(i) / density.getValue(i)));
     }
 
     double 

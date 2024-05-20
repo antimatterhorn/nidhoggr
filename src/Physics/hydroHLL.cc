@@ -37,7 +37,7 @@ public:
         NodeList* nodeList = this->nodeList;
         Field<Lin::Vector<dim>>* v  = nodeList->template getField<Lin::Vector<dim>>("v");
         Field<double>* rho          = nodeList->template getField<double>("density");
-        Field<double>* u            = nodeList->template getField<double>("specificThermalEnergy");
+        Field<double>* u            = nodeList->template getField<double>("specificInternalEnergy");
 
         Field<Lin::Vector<dim>>* u1 = nodeList->template getField<Lin::Vector<dim>>("u1");
         Field<double>* u0           = nodeList->template getField<double>("u0");
@@ -111,10 +111,10 @@ public:
                 cs.values[k] = soundSpeed->getValue(i);
             }
             F1.setValue(i,ff1);
-            F2.setValue(i,u1i*(u2i+1.0)/u0i);
+            F2.setValue(i,vi*(u2i+1.0));
 
-            ep.setValue(i,velocity->getValue(i) + cs);
-            em.setValue(i,velocity->getValue(i) - cs);
+            ep.setValue(i,vi + cs);
+            em.setValue(i,vi - cs);
         }
 
         for (int h=0; h<insideIds.size(); ++h) {
@@ -129,7 +129,7 @@ public:
                 for (int s=0; s<3; ++s)
                     Lv[s][k] = (FluxM[s] - FluxP[s])/grid->spacing(k);
             }
-            // now i need to decide how to handle the different axes for Lv[0] and Lv[2]
+
             double Lv0,Lv2;
             for (int k=0; k<dim; ++k) {
                 Lv0+=Lv[0][k];
@@ -143,7 +143,9 @@ public:
 
     std::array<double, 3>
     getFlux(int axis, int i, int j, 
-        const Field<UType<dim>>* initialState, Field<Lin::Vector<dim>>& ep, Field<Lin::Vector<dim>>& em, std::vector<Field<Lin::Vector<dim>>*>& F) {
+        const State<dim>* initialState, 
+        Field<Lin::Vector<dim>>& ep, Field<Lin::Vector<dim>>& em, 
+        std::vector<Field<Lin::Vector<dim>>*>& F) {
             double epR,epL,emR,emL,ap,am;
             epR = 0.5*(ep.getValue(j)[axis]+ep.getValue(i)[axis]);
             epL = ep.getValue(i).x();
@@ -154,20 +156,29 @@ public:
             am = std::max(std::max(-emL,-emR),0.0); 
 
             std::array<double, 3> FL,FR,Flux;
-            // UType<dim> UL,UR;
-            // UL.setU0(initialState->getValue(i).getU0());
-            // UR.setU0(0.5*(UL.getU0()+initialState->getValue(j).getU0()));
-            // UL.setU1(initialState->getValue(i).getU1());
-            // UR.setU1(0.5*(UL.getU1()+initialState->getValue(j).getU1()));
-            // UL.setU2(initialState->getValue(i).getU2());
-            // UR.setU2(0.5*(UL.getU2()+initialState->getValue(j).getU2()));
-            // for (int k=0; k<3; ++k) {
-            //     FL[k] = F[k]->getValue(i)[axis];
-            //     FR[k] = 0.5*(F[k]->getValue(i)[axis]+F[k]->getValue(j)[axis]);
-            // }
-            // Flux[0] = (ap*FL[0] + am*FR[0] - ap*am*(UR.getU0()-UL.getU0()))/(ap+am); 
-            // Flux[1] = (ap*FL[1] + am*FR[1] - ap*am*(UR.getU1()-UL.getU1())[axis])/(ap+am); 
-            // Flux[2] = (ap*FL[2] + am*FR[2] - ap*am*(UR.getU2()-UL.getU2()))/(ap+am);
+
+            double u0L,u0R,u2L,u2R;
+            Lin::Vector<dim> u1L,u1R;
+
+            Field<Lin::Vector<dim>>* u1     = initialState->template getField<Lin::Vector<dim>>("u1");
+            Field<double>* u0               = initialState->template getField<double>("u0");
+            Field<double>* u2               = initialState->template getField<double>("u2");
+
+            u0L = u0->getValue(i);
+            u0R = 0.5*(u0->getValue(j) + u0->getValue(i));
+            u1L = u1->getValue(i);
+            u1R = 0.5*(u1->getValue(j) + u1->getValue(i));
+            u2L = u2->getValue(i);
+            u2R = 0.5*(u2->getValue(j) + u2->getValue(i));
+
+            for (int k=0; k<3; ++k) {
+                FL[k] = F[k]->getValue(i)[axis];
+                FR[k] = 0.5*(F[k]->getValue(i)[axis]+F[k]->getValue(j)[axis]);
+            }
+
+            Flux[0] = (ap*FL[0] + am*FR[0] - ap*am*(u0R-u0L))/(ap+am); 
+            Flux[1] = (ap*FL[1] + am*FR[1] - ap*am*(u1R-u1L)[axis])/(ap+am); 
+            Flux[2] = (ap*FL[2] + am*FR[2] - ap*am*(u2R-u2L))/(ap+am);
 
             return Flux;
     }
@@ -182,7 +193,7 @@ public:
         
         Field<Lin::Vector<dim>>* v  = nodeList->template getField<Lin::Vector<dim>>("v");
         Field<double>* rho          = nodeList->template getField<double>("density");
-        Field<double>* u            = nodeList->template getField<double>("specificThermalEnergy");
+        Field<double>* u            = nodeList->template getField<double>("specificInternalEnergy");
 
         for(int i=0;i<nodeList->size();++i){
             double u0i              = u0->getValue(i);
@@ -197,6 +208,8 @@ public:
         Field<double>* soundSpeed               = nodeList->getField<double>("soundSpeed");
         // DO EOS LOOKUP FOR Pr and cs here!!!
         EquationOfState* eos = this->eos;
+        eos->setPressure(*pressure,*rho,*u);
+        eos->setSoundSpeed(*soundSpeed,*rho,*u);
     }
 
 };
