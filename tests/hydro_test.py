@@ -32,7 +32,7 @@ if __name__ == "__main__":
     constants = MKS()
     print("G =",constants.G)
     eos = IdealGasEOS(5.0/3.0,constants)
-    print("gamma =",eos.gamma)
+    print(eos,"gamma =",eos.gamma)
 
 
     hydro = HydroHLL2d(myNodeList,constants,eos,myGrid)
@@ -41,6 +41,12 @@ if __name__ == "__main__":
     print(myNodeList.position())
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
+
+    density = myNodeList.getFieldDouble("density")
+    energy  = myNodeList.getFieldDouble("specificInternalEnergy")
+    for i in range (nx*ny):
+        density.setValue(i,1.0)
+        energy.setValue(i,1.0)
 
     # dump = dumpState(myNodeList,workCycle=1)
 

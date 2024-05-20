@@ -34,14 +34,16 @@ public:
 
     virtual void
     ZeroTimeInitialize() override {
+        std::cout << "in zero time" << std::endl;
+        
         NodeList* nodeList = this->nodeList;
-        Field<Lin::Vector<dim>>* v  = nodeList->template getField<Lin::Vector<dim>>("v");
-        Field<double>* rho          = nodeList->template getField<double>("density");
-        Field<double>* u            = nodeList->template getField<double>("specificInternalEnergy");
+        Field<Lin::Vector<dim>>* v  = nodeList->getField<Lin::Vector<dim>>("velocity");
+        Field<double>* rho          = nodeList->getField<double>("density");
+        Field<double>* u            = nodeList->getField<double>("specificInternalEnergy");
 
-        Field<Lin::Vector<dim>>* u1 = nodeList->template getField<Lin::Vector<dim>>("u1");
-        Field<double>* u0           = nodeList->template getField<double>("u0");
-        Field<double>* u2           = nodeList->template getField<double>("u2");
+        Field<Lin::Vector<dim>>* u1 = nodeList->getField<Lin::Vector<dim>>("u1");
+        Field<double>* u0           = nodeList->getField<double>("u0");
+        Field<double>* u2           = nodeList->getField<double>("u2");
 
         u0->copyValues(rho);
 
@@ -49,7 +51,7 @@ public:
             u1->setValue(i,rho->getValue(i)*v->getValue(i));
             u2->setValue(i,rho->getValue(i)*(0.5*v->getValue(i).mag2() + u->getValue(i)));
         }
-
+        std::cout << "about to EOS" << std::endl;
         EOSLookup();
     }
 
@@ -61,6 +63,11 @@ public:
             nodeList->insertField<double>("u2");
         if (nodeList->getField<Lin::Vector<dim>>("u1") == nullptr)
             nodeList->insertField<Lin::Vector<dim>>("u1");
+        if (nodeList->getField<Lin::Vector<dim>>("position") == nullptr)
+            nodeList->insertField<Lin::Vector<dim>>("position");
+        Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
+        for(int i=0;i<position->size();++i)
+            position->setValue(i,grid->getPosition(i));
     }
 
     virtual void
@@ -193,9 +200,9 @@ public:
         Field<double>* u0           = finalState->template getField<double>("u0");
         Field<double>* u2           = finalState->template getField<double>("u2");
         
-        Field<Lin::Vector<dim>>* v  = nodeList->template getField<Lin::Vector<dim>>("v");
-        Field<double>* rho          = nodeList->template getField<double>("density");
-        Field<double>* u            = nodeList->template getField<double>("specificInternalEnergy");
+        Field<Lin::Vector<dim>>* v  = nodeList->getField<Lin::Vector<dim>>("velocity");
+        Field<double>* rho          = nodeList->getField<double>("density");
+        Field<double>* u            = nodeList->getField<double>("specificInternalEnergy");
 
         for(int i=0;i<nodeList->size();++i){
             double u0i              = u0->getValue(i);
@@ -211,16 +218,23 @@ public:
 
     virtual void
     EOSLookup() {
+        std::cout << "in EOS lookup" << std::endl;
+        
         NodeList* nodeList = this->nodeList;
-        Field<Lin::Vector<dim>>* v  = nodeList->template getField<Lin::Vector<dim>>("v");
-        Field<double>* rho          = nodeList->template getField<double>("density");
-        Field<double>* u            = nodeList->template getField<double>("specificInternalEnergy");
-        Field<double>* pressure                 = nodeList->getField<double>("pressure");
-        Field<double>* soundSpeed               = nodeList->getField<double>("soundSpeed");
 
+        Field<double>* rho          = nodeList->getField<double>("density");
+        Field<double>* u            = nodeList->getField<double>("specificInternalEnergy");
+        Field<double>* pressure     = nodeList->getField<double>("pressure");
+        Field<double>* soundSpeed   = nodeList->getField<double>("soundSpeed");
+
+        std::cout << "EOS fields found" << std::endl;
         EquationOfState* eos = this->eos;
+        std::cout << "EOS found" << std::endl;
         eos->setPressure(pressure,rho,u);
+        std::cout << "EOS pressure found" << std::endl;
         eos->setSoundSpeed(soundSpeed,rho,u);
+
+        std::cout << "EOS done" << std::endl;
     }
 
 };

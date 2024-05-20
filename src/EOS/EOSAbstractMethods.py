@@ -8,20 +8,20 @@ class EOSAbstractMethods:
     @PYB11const
     def setPressure(self,
                     pressure = "Field<double>*",
-                    density = "const Field<double>*",
-                    internalEnergy = "const Field<double>*"):
+                    density = "Field<double>*",
+                    internalEnergy = "Field<double>*"):
         return "void"
     
     @PYB11const
     def setInternalEnergy(self,
                     internalEnergy = "Field<double>*",
-                    density = "const Field<double>*",
-                    pressure = "const Field<double>*"):
+                    density = "Field<double>*",
+                    pressure = "Field<double>*"):
         return "void"
     
     @PYB11const
     def setSoundSpeed(self,
                     soundSpeed = "Field<double>*",
-                    density = "const Field<double>*",
-                    internalEnergy = "const Field<double>*"):
+                    density = "Field<double>*",
+                    internalEnergy = "Field<double>*"):
         return "void"
