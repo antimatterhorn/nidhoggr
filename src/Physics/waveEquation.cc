@@ -14,8 +14,6 @@ public:
     WaveEquation(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<dim>* grid, double C) : 
         Physics<dim>(nodeList,constants),
         grid(grid), C(C) {
-
-        int numNodes = nodeList->size();
         if (nodeList->getField<double>("phi") == nullptr)
             nodeList->insertField<double>("phi");
         if (nodeList->getField<double>("xi") == nullptr)
@@ -23,10 +21,8 @@ public:
         
         State<dim>* state = &this->state;
         Field<double>* xi = nodeList->getField<double>("xi");
-        //std::shared_ptr<Field<double>> xiSharedPtr(xi);
         state->template addField<double>(xi);
         Field<double>* phi = nodeList->getField<double>("phi");
-        //std::shared_ptr<Field<double>> phiSharedPtr(phi);
         state->template addField<double>(phi);
     }
 
@@ -111,25 +107,5 @@ public:
 //           = 4 * phi_ij          + dx^2 del^2(phi_ij) + ... // assume dx=dy
 
 // del^2 phi_ij = (-4*phi_{i,j} + phi_{i+1,j} + phi_{i-1,j} phi_{i,j+1} + phi_{i,j-1})/dx^2
-
-// Time derivative gives us many (sigh, many many) options.  Does this
-// need to be implicit?  I dunno.  Let's start explicit and see what
-// the issues are.
-
-// split time derivative into two steps
-// d phi / dt = xi
-// d^2 phi / dt^2 = d xi / dt
-// d xi / dt = c^2 del^2 phi
-// evolve xi and then use xi to evolve phi
-
-// Let's go with forward Euler (omg yuck) for the first version!  Super
-// easy!
-
-// xi^{n+1}_i - xi^{n}_i = dt * c^2 * del^2 phi^n_ij
-// phi^{n+1}_i - phi^{n}_i = dt * xi^{n+1}_ij
-
-
-// boundary conditions... reflecting for all boundaries seems fine to start with.
-// We can put a forcing function in the middle to start.
 
 };

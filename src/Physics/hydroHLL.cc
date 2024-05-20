@@ -66,16 +66,20 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 
-        Field<Lin::Vector<dim>> F0  = Field<Lin::Vector<dim>>("f0",initialState->size());
-        Field<Lin::Vector<dim>> F1  = Field<Lin::Vector<dim>>("f1",initialState->size());
-        Field<Lin::Vector<dim>> F2  = Field<Lin::Vector<dim>>("f2",initialState->size());
+        Field<Lin::Vector<dim>> F0      = Field<Lin::Vector<dim>>("f0",initialState->size());
+        Field<Lin::Vector<dim>> F1      = Field<Lin::Vector<dim>>("f1",initialState->size());
+        Field<Lin::Vector<dim>> F2      = Field<Lin::Vector<dim>>("f2",initialState->size());
 
-        Field<Lin::Vector<dim>>* u1 = initialState->template getField<Lin::Vector<dim>>("u1");
-        Field<double>* u0           = initialState->template getField<double>("u0");
-        Field<double>* u2           = initialState->template getField<double>("u2");
+        Field<Lin::Vector<dim>>* u1     = initialState->template getField<Lin::Vector<dim>>("u1");
+        Field<double>* u0               = initialState->template getField<double>("u0");
+        Field<double>* u2               = initialState->template getField<double>("u2");
 
-        Field<double>* pressure                 = nodeList->getField<double>("pressure");
-        Field<double>* soundSpeed               = nodeList->getField<double>("soundSpeed");
+        Field<Lin::Vector<dim>>* du1    = deriv.template getField<Lin::Vector<dim>>("u1");
+        Field<double>* du0              = deriv.template getField<double>("u0");
+        Field<double>* du2              = deriv.template getField<double>("u2");
+
+        Field<double>* pressure         = nodeList->getField<double>("pressure");
+        Field<double>* soundSpeed       = nodeList->getField<double>("soundSpeed");
 
         // DO EOS LOOKUP FOR Pr and cs in finalize please
 
@@ -87,51 +91,54 @@ public:
         Field<Lin::Vector<dim>> ep = Field<Lin::Vector<dim>>("ep",initialState->size());
         Field<Lin::Vector<dim>> em = Field<Lin::Vector<dim>>("em",initialState->size());
 
-        
+        for (int h=0; h<insideIds.size(); ++h) {
+            int i = insideIds[h];
 
-        // for (int j=0; j<insideIds.size(); ++j) {
-        //     int i = insideIds[j];
-        //     double Pr = pressure->getValue(i);
-
-        //     UType<dim> uu = HLLU.getValue(i);
-
-        //     Lin::Vector<dim> cs = Lin::Vector<dim>();
-        //     F0.setValue(i,uu.getU1());
-        //     std::array<double, dim> ff1;
-        //     ff1.fill(0);
-        //     for(int k=0;k<dim;++k) {
-        //         ff1[k] = pow(uu.getU1().values[k],2)/uu.getU0() + Pr;
-        //         cs.values[k] = soundSpeed->getValue(i);
-        //     }
-        //     F1.setValue(i,ff1);
-        //     F2.setValue(i,uu.getU1()*(uu.getU2()+1.0)/uu.getU0());
-
-        //     ep.setValue(i,velocity->getValue(i) + cs);
-        //     em.setValue(i,velocity->getValue(i) - cs);
-        // }
-
-        // for (int j=0; j<insideIds.size(); ++j) {
-        //     int i = insideIds[j];
-        //     std::vector<int> nbrs = grid->getNeighboringCells(i);
+            Lin::Vector<dim> u1i    = u1->getValue(i);
+            double u0i              = u0->getValue(i);
+            double u2i              = u2->getValue(i);
             
-        //     std::array<double, 3> FluxP, FluxM; 
-        //     std::array<Lin::Vector<dim>, 3> Lv; 
+            double Pr               = pressure->getValue(i);
+            Lin::Vector<dim> cs     = Lin::Vector<dim>();
+            Lin::Vector<dim> vi     = u1i/u0i;
             
-        //     for (int k=0; k<dim; ++k) {
-        //         FluxP = getFlux(k,i,nbrs[2*k],initialState, ep, em, F);
-        //         FluxM = getFlux(k,nbrs[2*k+1],i,initialState, ep, em, F);
-        //         for (int s=0; s<3; ++s)
-        //             Lv[s][k] = (FluxM[s] - FluxP[s])/grid->spacing(k);
-        //     } 
-        //     // now i need to decide how to handle the different axes for Lv[0] and Lv[2]
-        //     double Lv0,Lv2;
-        //     for (int k=0; k<dim; ++k) {
-        //         Lv0+=Lv[0][k];
-        //         Lv2+=Lv[2][k];
-        //     }
-        //     UType<dim> Lvi = UType<dim>(Lv0,Lv[1],Lv2);   
-        //     deriv.setValue(i,Lvi);    
-        // }
+            F0.setValue(i,u1i);
+            
+            std::array<double, dim> ff1;
+            ff1.fill(0);
+            for(int k=0;k<dim;++k) {
+                ff1[k] = pow(u1i.values[k],2)/u0i + Pr;
+                cs.values[k] = soundSpeed->getValue(i);
+            }
+            F1.setValue(i,ff1);
+            F2.setValue(i,u1i*(u2i+1.0)/u0i);
+
+            ep.setValue(i,velocity->getValue(i) + cs);
+            em.setValue(i,velocity->getValue(i) - cs);
+        }
+
+        for (int h=0; h<insideIds.size(); ++h) {
+            int i = insideIds[h];
+            std::vector<int> nbrs = grid->getNeighboringCells(i);
+
+            std::array<double, 3> FluxP, FluxM; 
+            std::array<Lin::Vector<dim>, 3> Lv;
+            for (int k=0; k<dim; ++k) {
+                FluxP = getFlux(k,i,nbrs[2*k],initialState, ep, em, F);
+                FluxM = getFlux(k,nbrs[2*k+1],i,initialState, ep, em, F);
+                for (int s=0; s<3; ++s)
+                    Lv[s][k] = (FluxM[s] - FluxP[s])/grid->spacing(k);
+            }
+            // now i need to decide how to handle the different axes for Lv[0] and Lv[2]
+            double Lv0,Lv2;
+            for (int k=0; k<dim; ++k) {
+                Lv0+=Lv[0][k];
+                Lv2+=Lv[2][k];
+            }
+            du0->setValue(i,Lv0);
+            du1->setValue(i,Lv[1]);
+            du2->setValue(i,Lv2);
+        }
     }
 
     std::array<double, 3>
