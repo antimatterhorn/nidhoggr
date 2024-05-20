@@ -197,7 +197,7 @@ public:
 
         for(int i=0;i<nodeList->size();++i){
             double u0i              = u0->getValue(i);
-            Lin::Vector<dim> u1i    = u1->getValue(1);
+            Lin::Vector<dim> u1i    = u1->getValue(i);
             double u2i              = u2->getValue(i);
             rho->setValue(i,u0i);
             v->setValue(i,u1i/u0i);
