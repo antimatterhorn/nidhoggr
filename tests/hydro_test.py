@@ -1,4 +1,5 @@
 from nidhoggr import *
+from Animation import *
 
 # class dumpState:
 #     def __init__(self,nodeList,workCycle=1):
@@ -10,6 +11,8 @@ from nidhoggr import *
 #         self.dump.append([time,y])
 
 if __name__ == "__main__":
+    animate = True
+    
     nx = 10
     ny = 10
     dx = 0.1
@@ -23,7 +26,7 @@ if __name__ == "__main__":
     myNodeList = NodeList(nx*ny)
 
     cycles = 10
-    dtmin = 2
+    dtmin = 0.01
 
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
@@ -48,11 +51,22 @@ if __name__ == "__main__":
     for i in range (nx*ny):
         density.setValue(i,1.0)
         energy.setValue(i,1.0)
+        if (i==55):
+            energy.setValue(i,5.0)
 
     # dump = dumpState(myNodeList,workCycle=1)
 
     controller = Controller(integrator=integrator,periodicWork=[],statStep=1)
-    controller.Step(cycles)
+    if(animate):
+        title = MakeTitle(controller,"time","time")
+
+        bounds = (nx,ny)
+        update_method = AnimationUpdateMethod2d(call=hydro.getCell2d,
+                                                stepper=controller.Step,
+                                                title=title)
+        AnimateGrid2d(bounds,update_method,extremis=[-5,5])
+    else:
+        controller.Step(cycles)
     
     # import matplotlib.pyplot as plt
     # import numpy as np

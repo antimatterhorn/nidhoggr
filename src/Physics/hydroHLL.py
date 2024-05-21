@@ -9,6 +9,9 @@ class HydroHLL(Hydro):
                eos="EquationOfState*",
                grid="Mesh::Grid<%(dim)s>*"):
         return
+    @PYB11cppname("getCell")
+    def getCell2d(self,i="int",j="int"):
+        return
 
 
 HydroHLL1d = PYB11TemplateClass(HydroHLL,

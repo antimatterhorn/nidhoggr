@@ -230,4 +230,12 @@ public:
         eos->setSoundSpeed(soundSpeed,rho,u);
     }
 
+    double
+    getCell(int i,int j) {
+        int idx = grid->index(i,j,0);
+        NodeList* nodeList = this->nodeList;
+        Field<double>* pr = nodeList->getField<double>("pressure");
+        return pr->getValue(idx);
+    }
+
 };
