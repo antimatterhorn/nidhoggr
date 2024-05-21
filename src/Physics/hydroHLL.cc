@@ -57,10 +57,10 @@ public:
     VerifyHLLFields(NodeList* nodeList) {
         if (nodeList->getField<double>("u0") == nullptr)
             nodeList->insertField<double>("u0");
-        if (nodeList->getField<double>("u2") == nullptr)
-            nodeList->insertField<double>("u2");
         if (nodeList->getField<Lin::Vector<dim>>("u1") == nullptr)
             nodeList->insertField<Lin::Vector<dim>>("u1");
+        if (nodeList->getField<double>("u2") == nullptr)
+            nodeList->insertField<double>("u2");
         if (nodeList->getField<Lin::Vector<dim>>("position") == nullptr)
             nodeList->insertField<Lin::Vector<dim>>("position");
                 
