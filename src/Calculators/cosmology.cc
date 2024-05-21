@@ -1,8 +1,5 @@
 /*
-calculates the velocity required and earth time passed to travel to a distant
-place at relativistic speeds with some moving reference frame travel time.
-e.g. if it takes you 3 years travel time to travel 50lyr, what is your velocity
-and how much earth time has passed before you get there.
+calculates a cosmology for a given redshift and cosmological parameters
 */
 
 #include "../DataBase/field.hh"
