@@ -8,7 +8,7 @@ for dir in ["Math",
             "Physics",
             "EOS",
             "Type",
-            "Integrator",
+            "Integrators",
             "Utilities",
             "Boundaries",
             "Calculators"]:
@@ -23,7 +23,7 @@ from State import *
 from EOS import *
 from PhysicalConstants import *
 from Units import *
-from Integrator import *
+from Integrators import *
 from Controller import *
 from CommandLineArgs import *
 from Boundaries import *

@@ -1,4 +1,4 @@
-from Integrator import *
+from Integrators import *
 
 class Controller:
     def __init__(self,integrator,periodicWork=[],statStep=1,tstop=None):
