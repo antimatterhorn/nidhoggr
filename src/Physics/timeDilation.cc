@@ -30,6 +30,7 @@ public:
     TimeDilation(double travelTime, double distance) : 
         travelTime(travelTime), distance(distance) {
         velocity = 0.9; // initial guess
+        compute();
     }
 
     ~TimeDilation() {}
