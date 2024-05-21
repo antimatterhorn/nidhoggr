@@ -5,8 +5,7 @@ PYB11includes = ['"physics.hh"',
                 '"waveEquation.cc"',
                 '"hydro.hh"',
                 '"simplePhysics.cc"',
-                '"hydroHLL.cc"',
-                '"timeDilation.cc"']
+                '"hydroHLL.cc"']
 
 from physics import *
 from constantGravity import *
@@ -15,4 +14,3 @@ from waveEquation import *
 from hydro import *
 from simplePhysics import *
 from hydroHLL import *
-from timeDilation import *
