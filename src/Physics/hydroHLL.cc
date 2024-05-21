@@ -12,7 +12,8 @@ public:
     HydroHLL() {}
 
     HydroHLL(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, Mesh::Grid<dim>* grid) : 
-        Hydro<dim>(nodeList,constants,eos){
+        Hydro<dim>(nodeList,constants,eos), grid(grid){
+        std::cout << grid->size() << std::endl;
         VerifyHLLFields(nodeList);
 
         State<dim>* state = &this->state;
@@ -33,9 +34,7 @@ public:
     ~HydroHLL() {}
 
     virtual void
-    ZeroTimeInitialize() override {
-        std::cout << "in zero time" << std::endl;
-        
+    ZeroTimeInitialize() override {      
         NodeList* nodeList = this->nodeList;
         Field<Lin::Vector<dim>>* v  = nodeList->getField<Lin::Vector<dim>>("velocity");
         Field<double>* rho          = nodeList->getField<double>("density");
@@ -51,7 +50,6 @@ public:
             u1->setValue(i,rho->getValue(i)*v->getValue(i));
             u2->setValue(i,rho->getValue(i)*(0.5*v->getValue(i).mag2() + u->getValue(i)));
         }
-        std::cout << "about to EOS" << std::endl;
         EOSLookup();
     }
 
@@ -65,9 +63,11 @@ public:
             nodeList->insertField<Lin::Vector<dim>>("u1");
         if (nodeList->getField<Lin::Vector<dim>>("position") == nullptr)
             nodeList->insertField<Lin::Vector<dim>>("position");
+                
         Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
-        for(int i=0;i<position->size();++i)
+        for(int i=0;i<position->size();++i) {
             position->setValue(i,grid->getPosition(i));
+        }
     }
 
     virtual void
@@ -217,9 +217,7 @@ public:
     }
 
     virtual void
-    EOSLookup() {
-        std::cout << "in EOS lookup" << std::endl;
-        
+    EOSLookup() {        
         NodeList* nodeList = this->nodeList;
 
         Field<double>* rho          = nodeList->getField<double>("density");
@@ -227,14 +225,9 @@ public:
         Field<double>* pressure     = nodeList->getField<double>("pressure");
         Field<double>* soundSpeed   = nodeList->getField<double>("soundSpeed");
 
-        std::cout << "EOS fields found" << std::endl;
         EquationOfState* eos = this->eos;
-        std::cout << "EOS found" << std::endl;
         eos->setPressure(pressure,rho,u);
-        std::cout << "EOS pressure found" << std::endl;
         eos->setSoundSpeed(soundSpeed,rho,u);
-
-        std::cout << "EOS done" << std::endl;
     }
 
 };

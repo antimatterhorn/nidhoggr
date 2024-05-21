@@ -13,10 +13,7 @@ public:
 
     // Method to compute pressure given density and internal energy
     virtual void 
-    setPressure(Field<double>* pressure, Field<double>* density, Field<double>* internalEnergy) const override {
-        std::cout << "in pressure lookup" << std::endl;
-        std::cout << pressure->size() << density->size() << internalEnergy->size() << std::endl;
-        
+    setPressure(Field<double>* pressure, Field<double>* density, Field<double>* internalEnergy) const override {   
         for(int i=0;i<pressure->size();++i)
             pressure->setValue(i,(gamma - 1.0) * density->getValue(i) * internalEnergy->getValue(i));
     }

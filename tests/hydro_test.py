@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     myGrid = Grid2d(nx,ny,dx,dy)
 
-    
+    print("grid size:",myGrid.size())
     
     myNodeList = NodeList(nx*ny)
 
@@ -36,11 +36,12 @@ if __name__ == "__main__":
 
 
     hydro = HydroHLL2d(myNodeList,constants,eos,myGrid)
-    integrator = Integrator2d(hydro,dtmin=dtmin)
-
-    print(myNodeList.position())
+    
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
+    
+    integrator = Integrator2d(hydro,dtmin=dtmin)
+
 
     density = myNodeList.getFieldDouble("density")
     energy  = myNodeList.getFieldDouble("specificInternalEnergy")
