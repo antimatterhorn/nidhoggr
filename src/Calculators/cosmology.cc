@@ -24,22 +24,22 @@ public:
     
     Cosmology(double z, double omega_m, double lam, double h0) : 
         z(z), m(omega_m), l(lam), h(h0) {
-        at	= 1/(1+z);
-        r	= 0.0000824;
-        k	= 1.0-m-l-r;
-        n	= 20000;
-        a	= 0;
-        ai	= 0;
-        qa	= 0;
-        dx	= 1.0/(double)n;
-        t	= 0;
+        at  = 1/(1+z);
+        r   = 0.0000824;
+        k   = 1.0-m-l-r;
+        n   = 20000;
+        a   = 0;
+        ai  = 0;
+        qa  = 0;
+        dx  = 1.0/(double)n;
+        t   = 0;
         eset= 0;
-        dc	= 0;
-        dp	= 0;
-        da	= 0;
-        dl	= 0;
-        dtc	= 0;
-        dtl	= 0;
+        dc  = 0;
+        dp  = 0;
+        da  = 0;
+        dl  = 0;
+        dtc = 0;
+        dtl = 0;
         dtp = 0;
         dta = 0;
 
@@ -52,8 +52,8 @@ public:
     void
     compute() {
         while (ai < 1.0) {
-            a	= ai + (dx/2.0);
-            qa	= sqrt((m/a) + k + r*pow(a,-2.0) + l*a*a);
+            a = ai + (dx/2.0);
+            qa = sqrt((m/a) + k + r*pow(a,-2.0) + l*a*a);
             t  += (dx/qa);
             dc += ((1/(a*qa))*dx);
             dp += ((1/qa)*dx);
@@ -61,56 +61,56 @@ public:
             
             if ((a>at) && (eset==0))
             {
-                ageThen	= t*myr/h;
-                dtc		= dc;
-                dtp		= dp;
-                dtl		= dl;
-                dta		= da;
-                eset	= 1;
+                ageThen = t*myr/h;
+                dtc  = dc;
+                dtp  = dp;
+                dtl  = dl;
+                dta  = da;
+                eset = 1;
             }
         }
         
         if (fabs(k) < 0.05)
         {
-            da	= at * (dc-dtc);
+            da = at * (dc-dtc);
         } else if (k>0) {
-            da	= at * pow(k,-0.5)*0.5*(exp(sqrt(k)*(dc-dtc))-exp(-sqrt(k)*(dc-dtc)));
+            da = at * pow(k,-0.5)*0.5*(exp(sqrt(k)*(dc-dtc))-exp(-sqrt(k)*(dc-dtc)));
         } else {
-            da	= at * pow(-k,-0.5)*sin(sqrt(-k)*(dc-dtc));
+            da = at * pow(-k,-0.5)*sin(sqrt(-k)*(dc-dtc));
         }
         
         if (da<0) da = -da;
-        dl	= da * pow(at,-2.0);
+        dl = da * pow(at,-2.0);
         
         mh= myr/h;
 
-        t	= t*mh;
-        dc	= dc*mh;
-        dtc	= dtc*mh;
-        dp	= dp*mh;
+        t   = t*mh;
+        dc  = dc*mh;
+        dtc = dtc*mh;
+        dp  = dp*mh;
         dtp = dtp*mh;
-        da	= da*mh;
-        dl	= dl*mh;
+        da  = da*mh;
+        dl  = dl*mh;
         
-        ageNow					= t;									//Myr
-        radiusNow				= dc;									//Mly
-        angularDistanceNow		= da;									//Mly
-        luminosityDistanceNow	= dl;									//Mly
-        lightTravelDistanceNow	= dp - dtp;								//Mly
-        properDistanceNow		= dc - dtc;								//Mly
-        recessionSpeedNow		= (((dc-dtc)/3.26)*h)/300000.0;			//c
+        ageNow                  = t;                                    //Myr
+        radiusNow               = dc;                                   //Mly
+        angularDistanceNow      = da;                                   //Mly
+        luminosityDistanceNow   = dl;                                   //Mly
+        lightTravelDistanceNow  = dp - dtp;                             //Mly
+        properDistanceNow       = dc - dtc;                             //Mly
+        recessionSpeedNow       = (((dc-dtc)/3.26)*h)/300000.0;         //c
         
-        hpt	= (1/at)*h*sqrt((m*(1/at))+(r*(1/pow(at,2.0)))+k+l*pow(at,2.0));
+        hpt = (1/at)*h*sqrt((m*(1/at))+(r*(1/pow(at,2.0)))+k+l*pow(at,2.0));
         
-        hubbleParameterThen		= hpt;									//km/s/Mpc
-        omegaMatter				= m*pow(h,2.0)/(pow(hpt,2.0)*pow(at,3.0));
-        omegaLambda				= l*pow(h,2.0)/pow(hpt,2.0);
-        omegaRadiation			= r*pow(h,2.0)/(pow(hpt,2.0)*pow(at,4.0));
-        curvatureThen			= 1.0 - omegaMatter - omegaLambda - omegaRadiation;
+        hubbleParameterThen     = hpt;                                  //km/s/Mpc
+        omegaMatter             = m*pow(h,2.0)/(pow(hpt,2.0)*pow(at,3.0));
+        omegaLambda             = l*pow(h,2.0)/pow(hpt,2.0);
+        omegaRadiation          = r*pow(h,2.0)/(pow(hpt,2.0)*pow(at,4.0));
+        curvatureThen           = 1.0 - omegaMatter - omegaLambda - omegaRadiation;
         
-        radiusThen				= dtc;									//Mly
-        recessionSpeedThen		= (((dc-dtc)*at/3.26)*hpt)/300000.0;	//c
-        properDistanceThen		= (dc-dtc)*at;							//Mly
+        radiusThen              = dtc;                                  //Mly
+        recessionSpeedThen      = (((dc-dtc)*at/3.26)*hpt)/300000.0;    //c
+        properDistanceThen      = (dc-dtc)*at;                          //Mly
     }
     
     void
@@ -134,7 +134,7 @@ public:
         printf("H  = %3.4f\n",hpt);
         printf("Ωm = %3.4f\n",omegaMatter);
         printf("Ωr = %3.4f\n",omegaRadiation);
-        printf("Λ  = %3.4f\n",omegaLambda);	
+        printf("Λ  = %3.4f\n",omegaLambda); 
         printf("K  = %3.4f\n",curvatureThen);
         printf("Radius = %3.4f Mly\n",radiusThen);
         printf("Proper Distance = %3.4f Mly\n",properDistanceThen);
