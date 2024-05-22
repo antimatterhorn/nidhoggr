@@ -3,8 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include "../Type/name.hh"
-
 
 // Base class for all Field types
 class FieldBase {
@@ -25,127 +25,36 @@ private:
     Name name;
 
 public:
-    Field() {}
+    Field();
+    Field(const std::string& fieldName);
+    Field(const std::string& fieldName, unsigned int numElements);
 
-    Field(const std::string& fieldName)
-        : name(fieldName) {}
-    
-    Field(const std::string& fieldName, unsigned int numElements)
-        : name(fieldName) {
-        this->fill(numElements,T());
-    }
+    void addValue(const T& value);
+    unsigned int getSize() const override;
+    unsigned int size() const override;
+    const std::vector<T>& getValues() const;
+    const T& getValue(const unsigned int index) const;
+    void setValue(const unsigned int index, T val);
+    T& operator[](const unsigned int index);
+    const T& operator[](const unsigned int index) const;
 
-    void 
-    addValue(const T& value) {
-        values.push_back(value);
-    }
+    void copyValues(const Field<T>& other);
+    void copyValues(const Field<T>* other);
 
-    unsigned int 
-    getSize() const override { return values.size(); }
+    Field<T>& operator=(const Field<T>& other);
+    Field<T> operator+(const Field<T>& other) const;
+    Field<T> operator-(const Field<T>& other) const;
+    Field<T> operator*(const double other) const;
+    Field<T>& operator+=(const Field<T>& other);
+    Field<T>& operator*=(const double other);
 
-    unsigned int 
-    size() const override { return values.size(); }
+    bool hasName() const override;
+    Name getName() const override;
+    std::string getNameString() const override;
 
-    const std::vector<T>& 
-    getValues() const { return values; }
-
-    const T& 
-    getValue(const unsigned int index) const { return values[index]; }
-
-    void
-    setValue(const unsigned int index, T val) { values[index] = val; }
-
-    T& 
-    operator[](const unsigned int index) { return values[index]; }
-
-    const T& 
-    operator[](const unsigned int index) const { return values[index]; }
-
-    void
-    copyValues(const Field<T>& other) {
-        if (this!= &other) 
-            values = other.values;
-    }
-    void
-    copyValues(const Field<T>* other) {
-        values = other->values;
-    }
-
-    Field<T>& 
-    operator=(const Field<T>& other) {
-        if (this != &other) { // Avoid self-assignment
-            values = other.values;
-            name = other.name;
-        }
-        return *this;
-    }
-
-    Field<T> operator+(const Field<T>& other) const {
-        Field<T> result(*this); // Create a copy of the current object
-        for (int i = 0; i < this->size(); ++i) {
-            result.setValue(i, this->getValue(i) + other.getValue(i)); // Perform element-wise addition
-        }
-        return result; // Return the result
-    }
-
-    Field<T> operator-(const Field<T>& other) const {
-        Field<T> result(*this); // Create a copy of the current object
-        for (int i = 0; i < this->size(); ++i) {
-            result.setValue(i, this->getValue(i) - other.getValue(i)); // Perform element-wise addition
-        }
-        return result; // Return the result
-    }
-
-    Field<T> operator*(const double other) const {
-        Field<T> result(*this); // Create a copy of the current object
-        for (int i = 0; i < this->size(); ++i) {
-            result.setValue(i, this->getValue(i) * other); // Perform element-wise scalar multiplication
-        }
-        return result; // Return the result
-    }
-
-    Field<T>& operator+=(const Field<T>& other) {
-        if (this != &other) {
-            for (int i = 0; i < this->size(); ++i) {
-                this->setValue(i, this->getValue(i) + other.getValue(i)); // Perform element-wise addition
-            }
-        }
-        return *this;
-    }
-
-    Field<T>& operator*=(const double other) {
-        for (int i = 0; i < this->size(); ++i) {
-            this->setValue(i, this->getValue(i) * other); // Perform element-wise scalar multiplication
-        }
-        return *this;
-    }
-
-    bool 
-    hasName() const override {
-        if(name.name().size() > 0)
-            return true;
-        else
-            return false;
-    }
-
-    Name 
-    getName() const override {
-        return name;
-    }
-
-    std::string 
-    getNameString() const override {
-        return name.name();
-    }
-
-    void
-    fill(unsigned int n, T val) {
-        for(int i=0;i<n;i++)
-        {
-            this->addValue(val);
-        }
-    }
-
+    void fill(unsigned int n, T val);
 };
+
+#include "field.cc"
 
 #endif // FIELD_HH

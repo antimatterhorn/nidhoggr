@@ -17,63 +17,17 @@ protected:
     std::vector<Boundaries<dim>*> boundaries;
     unsigned int cycle;
     double time, dt, dtmin;
+
 public:
-    Integrator (Physics<dim>* physics, double dtmin, std::vector<Boundaries<dim>*> boundaries) : 
-        physics(physics),
-        boundaries(boundaries),
-        dt(dtmin),
-        dtmin(dtmin){
-        cycle = 0;
-    }
+    Integrator(Physics<dim>* physics, double dtmin, std::vector<Boundaries<dim>*> boundaries);
+    ~Integrator();
 
-    ~Integrator() {}
-
-    virtual void
-    Step() {
-
-        if (cycle == 0)
-            physics->ZeroTimeInitialize();
-
-        time += dt;
-        cycle+=1;
-
-        physics->PreStepInitialize();
-
-        if(boundaries.size() > 0)
-            for(Boundaries<dim>* bounds : boundaries)
-                bounds->ApplyBoundaries(); 
-
-        State<dim>* state = physics->getState();
-        State<dim> derivatives(state->size());
-
-        derivatives.ghost(state);
-
-        physics->EvaluateDerivatives(state,derivatives,time,0);
-        // forward euler takes the derivative NOW and multiplies by dt
-        derivatives*=dt;
-
-        State<dim> newState(state->size());
-        newState.ghost(state);
-        newState+=*state;
-        newState+=derivatives;
-
-        physics->FinalizeStep(&newState);
-
-        if(boundaries.size() > 0)
-            for(Boundaries<dim>* bounds : boundaries)
-                bounds->ApplyBoundaries(); 
-
-
-        
-        double newdt = physics->EstimateTimestep();
-        dt = std::max(newdt,dtmin);
-    }
-
-    virtual double const Time() { return time;}
-
-    virtual unsigned int Cycle() { return cycle; }
-
-    virtual double const Dt() { return dt; }
+    virtual void Step();
+    virtual double const Time();
+    virtual unsigned int Cycle();
+    virtual double const Dt();
 };
 
-#endif 
+#include "integrator.cc"
+
+#endif // INTEGRATOR_HH
