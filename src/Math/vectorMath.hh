@@ -1,4 +1,3 @@
-
 #ifndef VECTORMATH_HH
 #define VECTORMATH_HH
 
@@ -9,290 +8,73 @@
 #include <algorithm>
 
 namespace Lin {
+
 template <int dim>
 class Vector {
 public:
-    // Use std::array instead of std::vector
     std::array<double, dim> values;
 
-    // Constructors
-    Vector() {
-        // Initialize values array based on the dimension
-        for (int i = 0; i < dim; ++i) { values[i] = 0.0; }
-    }
+    Vector();
+    Vector(std::initializer_list<double> init);
+    Vector(std::array<double, dim> init);
 
-    // Constructor with initializer list
-    Vector(std::initializer_list<double> init) {
-        if (init.size() != dim) {
-            throw std::invalid_argument("Invalid number of arguments for Vector constructor");
-        }
-        
-        // Copy values from initializer list to array
-        std::copy(init.begin(), init.end(), values.begin());
-    }
-
-    Vector(std::array<double, dim> init) {
-        values = init; 
-    }
-
-    // Methods
-    Vector<dim> 
-    add(const Vector<dim>& other) const {
-        Vector<dim> result;
-        for (int i = 0; i < dim; ++i) {
-            result.values[i] = values[i] + other.values[i];
-        }
-        return result;
-    }
-
-    void
-    fill(const double other) {
-        for (int i=0;i<dim;++i)
-            values[i] = other;
-    }
-
-    Vector<dim> 
-    sub(const Vector<dim>& other) const {
-        Vector<dim> result;
-        for (int i = 0; i < dim; ++i) {
-            result.values[i] = values[i] - other.values[i];
-        }
-        return result;
-    }
-
-    double 
-    dotProduct(const Vector<dim>& other) const {
-        double result = 0.0;
-        for (int i = 0; i < dim; ++i) {
-            result += values[i] * other.values[i];
-        }
-        return result;
-    }
-
-    Vector<dim> 
-    scalarProduct(double scalar) const {
-        Vector<dim> result;
-        for (int i = 0; i < dim; ++i) {
-            result.values[i] = values[i] * scalar;
-        }
-        return result;
-    }
-
-    Vector<3> 
-    crossProduct(const Vector<3>& other) const {
+    Vector<dim> add(const Vector<dim>& other) const;
+    void fill(const double other);
+    Vector<dim> sub(const Vector<dim>& other) const;
+    double dotProduct(const Vector<dim>& other) const;
+    Vector<dim> scalarProduct(double scalar) const;
+        // Specialized crossProduct method for Vector<3>
+    Vector<3> crossProduct(const Vector<3>& other) const {
         Vector<3> result = {
             values[1] * other.values[2] - values[2] * other.values[1],
             values[2] * other.values[0] - values[0] * other.values[2],
             values[0] * other.values[1] - values[1] * other.values[0]
         };
         return result;
-    }
+    };
 
-    // Operators
-    Vector<dim> 
-    operator+(const Vector<dim>& other) const {
-        return add(other);
-    }
+    Vector<dim> operator+(const Vector<dim>& other) const;
+    Vector<dim> operator-(const Vector<dim>& other) const;
+    Vector<dim> operator*(const double other) const;
+    Vector<dim> operator-() const;
+    double operator*(const Vector<dim> other) const;
+    Vector<dim>& operator=(const Vector<dim>& other);
+    Vector<dim>& operator-=(const Vector<dim>& other);
+    Vector<dim>& operator+=(const Vector<dim>& other);
+    Vector<dim> operator/(const double other) const;
+    bool operator==(const Vector<dim> other) const;
+    bool operator!=(const Vector<dim> other) const;
+    const double& operator[](const unsigned int index) const;
+    double& operator[](const unsigned int index);
 
-    Vector<dim> 
-    operator-(const Vector<dim>& other) const {
-        return sub(other);
-    }
+    double x() const;
+    double y() const;
+    double z() const;
+    void setX(double val);
+    void setY(double val);
+    void setZ(double val);
 
-    Vector<dim> 
-    operator*(const double other) const {
-        return scalarProduct(other);
-    }
+    std::string toString() const;
+    double mag2() const;
+    double magnitude() const;
+    Vector<dim> normal() const;
 
-    Vector<dim> 
-    operator-() const {
-        return scalarProduct(-1.0);
-    }
-
-    double 
-    operator*(const Vector<dim> other) const {
-        return dotProduct(other);
-    }
-
-    Vector<dim>& 
-    operator=(const Vector<dim>& other) {
-        if (this != &other) { // Avoid self-assignment
-            for (unsigned int i = 0; i < 3; ++i) {
-                values[i] = other.values[i];
-            }
-        }
-        return *this;
-    }
-
-    Vector<dim>&
-    operator-=(const Vector<dim>& other) {
-        for (int i = 0; i < dim; ++i) {
-            values[i] -= other.values[i];
-        }
-        return *this;
-    }
-
-    Vector<dim>&
-    operator+=(const Vector<dim>& other) {
-        for (int i = 0; i < dim; ++i) {
-            values[i] += other.values[i];
-        }
-        return *this;
-    }
-
-    Vector<dim> 
-    operator/(const double other) const {
-        return scalarProduct(1.0/other);
-    }
-
-    bool 
-    operator==(const Vector<dim> other) const {
-        bool result = true;
-        for (int i = 0; i < dim; ++i) {
-            if(values[i] != other.values[i])
-                result = false;
-                break;
-        }
-        return result;
-    }
-
-    bool 
-    operator!=(const Vector<dim> other) const {
-        bool result = true;
-        for (int i = 0; i < dim; ++i) {
-            if(values[i] != other.values[i])
-                result = false;
-                break;
-        }
-        return !result;
-    }
-
-    const double&
-    operator[](const unsigned int index) const {
-        return values[index];
-    }
-
-    double&
-    operator[](const unsigned int index) {
-        return values[index];
-    }
-
-    // Getter methods for individual components
-    double x() const {
-        return values.size() > 0 ? values[0] : 0.0;
-    }
-
-    double y() const {
-        return values.size() > 1 ? values[1] : 0.0;
-    }
-
-    double z() const {
-        return values.size() > 2 ? values[2] : 0.0;
-    }
-
-    void setX(double val) {
-        values[0] = val;
-    }
-    void setY(double val) {
-        if (values.size() > 1)
-            values[1] = val;
-    }
-    void setZ(double val) {
-        if (values.size() > 2)
-            values[2] = val;
-    }
-
-
-    std::string 
-    toString() const {
-        std::string result = "(";
-        for (int i = 0; i < dim; ++i) {
-            if (i > 0) {
-                result += ", ";
-            }
-            result += std::to_string(values[i]);
-        }
-        result += ")";
-        return result;
-    }
-
-    double 
-    mag2() const {
-        double result = 0.0;
-        for (double value : values) {
-            result += value*value;
-        } 
-        return result;
-    }
-
-    double 
-    magnitude() const {
-        return std::sqrt(mag2());
-    }
-
-    Vector<dim>
-    normal() const {
-        Vector<dim> result;
-        double mag = this->magnitude();
-        for (int i=0; i<dim; ++i)
-            result[i] = values[i]/mag;
-        return result;
-    }
-
-    static const unsigned 
-    numElements = dim;
-
-private:
-
+    static const unsigned numElements = dim;
 };
 
-// Define commonly used types
 using Vector1D = Vector<1>;
 using Vector2D = Vector<2>;
 using Vector3D = Vector<3>;
 
-Vector2D quadCentroid(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3, const Vector2D& p4) {
-    return (p1+p2+p3+p4)/4.0;
-}
+Vector2D quadCentroid(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3, const Vector2D& p4);
+double triangleArea(const Lin::Vector2D& p1, const Lin::Vector2D& p2, const Lin::Vector2D& p3);
+double quadArea(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3, const Vector2D& p4);
 
-double 
-triangleArea(const Lin::Vector2D& p1, const Lin::Vector2D& p2, const Lin::Vector2D& p3) {
-    double a = (p1 - p2).magnitude();
-    double b = (p2 - p3).magnitude();
-    double c = (p3 - p1).magnitude();
-
-    double s = (a + b + c) / 2.0;
-    return std::sqrt(s * (s - a) * (s - b) * (s - c));
-}
-
-double 
-quadArea(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3, const Vector2D& p4) {
-    // Sort points in clockwise order
-    std::vector<const Vector2D*> sortedPoints = {&p1, &p2, &p3, &p4};
-    std::sort(sortedPoints.begin(), sortedPoints.end(), [](const Vector2D* a, const Vector2D* b) {
-        return std::atan2(a->values[1], a->values[0]) < std::atan2(b->values[1], b->values[0]);
-    });
-
-    // Find the lengths of both diagonals
-    Vector2D d1 = *sortedPoints[0] - *sortedPoints[2];
-    Vector2D d2 = *sortedPoints[1] - *sortedPoints[3];
-
-    // Choose the shortest diagonal to decompose the quad into two triangles
-    if (d1.magnitude() <= d2.magnitude()) {
-        // Calculate the area of the triangles formed by (p1, p2, p3) and (p1, p3, p4)
-        return triangleArea(*sortedPoints[0], *sortedPoints[1], *sortedPoints[2]) +
-            triangleArea(*sortedPoints[0], *sortedPoints[2], *sortedPoints[3]);
-    } else {
-        // Calculate the area of the triangles formed by (p1, p2, p4) and (p2, p3, p4)
-        return triangleArea(*sortedPoints[0], *sortedPoints[1], *sortedPoints[3]) +
-            triangleArea(*sortedPoints[1], *sortedPoints[2], *sortedPoints[3]);
-    }
-}
 template <int dim>
-Vector<dim> 
-operator*(const double other, const Vector<dim>& vec) {
-    return vec*other;
+Vector<dim> operator*(const double other, const Vector<dim>& vec);
+
 }
-}
+
+#include "vectorMath.cc"
 
 #endif // VECTORMATH_HH
