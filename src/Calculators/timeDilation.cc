@@ -5,7 +5,6 @@ e.g. if it takes you 3 years travel time to travel 50lyr, what is your velocity
 and how much earth time has passed before you get there.
 */
 
-#include "../DataBase/field.hh"
 #include <complex>
 
 class TimeDilation {

@@ -2,7 +2,6 @@
 calculates a cosmology for a given redshift and cosmological parameters
 */
 
-#include "../DataBase/field.hh"
 #include <complex>
 
 class Cosmology {

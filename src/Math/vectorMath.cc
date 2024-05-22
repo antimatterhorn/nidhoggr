@@ -258,4 +258,4 @@ double quadArea(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3, cons
 
 }
 
-#endif // VECTORMATH_TPP
+#endif // VECTORMATH_CC
