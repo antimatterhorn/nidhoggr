@@ -5,6 +5,7 @@ for dir in ["Math",
             "DataBase",
             "Mesh",
             "State",
+            "Trees",
             "Physics",
             "EOS",
             "Type",
@@ -28,3 +29,4 @@ from Controller import *
 from CommandLineArgs import *
 from Boundaries import *
 from Calculators import *
+from Trees import *
