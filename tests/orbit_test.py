@@ -36,7 +36,7 @@ if __name__ == "__main__":
     pos = myNodeList.getFieldVector2d("position")[0]
     pos.x = -2.0
 
-    
+    norbits = 4
 
     v0 = -0.4*8.7298e-4
     velocity = myNodeList.getFieldVector2d("velocity")
@@ -56,7 +56,7 @@ if __name__ == "__main__":
     torbit = 2 * np.pi * np.sqrt(a**3 / (constants.G * 1))
     print(torbit)
 
-    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=1000,tstop=2*torbit)
+    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=10000,tstop=norbits*torbit)
 
     print("G =",constants.G)
     controller.Step(30000000)
