@@ -1,6 +1,5 @@
 #include "hydro.hh"
 #include "../Mesh/grid.hh"
-#include "../Type/uType.hh"
 #include <iostream>
 
 template <int dim>
