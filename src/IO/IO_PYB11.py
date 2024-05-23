@@ -1,4 +1,4 @@
 from PYB11Generator import *
-PYB11includes = ['"siloMeshWriter.hh"']
+PYB11includes = ['"vtkMeshWriter.hh"']
 
-from siloMeshWriter import *
+from vtkMeshWriter import *

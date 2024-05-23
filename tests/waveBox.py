@@ -16,7 +16,7 @@ class oscillate:
       
 
 if __name__ == "__main__":
-    animate = True
+    animate = False
     
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
     nx = 100
@@ -40,7 +40,7 @@ if __name__ == "__main__":
     box.addBox(Vector2d(5,5),Vector2d(80,15))
     box.addBox(Vector2d(80,30),Vector2d(95,60))
     box.removeBox(Vector2d(40,0),Vector2d(60,15))
-    pbounds = [pm,box]
+    pbounds = [pm]
 
     integrator = RungeKutta2Integrator2d(physics=waveEqn,
                               dtmin=0.05,
@@ -66,4 +66,6 @@ if __name__ == "__main__":
                                                 title=title)
         AnimateGrid2d(bounds,update_method,extremis=[-5,5])
     else:
-        controller.Step(50000)
+        controller.Step(500)
+        meshWriter = VTKMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=["phi","xi"])
+        meshWriter.write("00.vtk")
