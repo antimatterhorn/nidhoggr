@@ -24,6 +24,8 @@ class Grid:
         return
     def size(self):
         return
+    def getNeighboringCells(self,idx="int"):
+        return "std::vector<int>"
     # @PYB11cppname("index")
     # def index1d(self,i="int"):
     #     return
@@ -32,6 +34,8 @@ class Grid:
     #     return
     def index(self,i="int",j=("int",0),k=("int",0)):
         return
+    def indexToCoordinates(self,idx="int"):
+        return "std::array<int, %(dim)s>"
 
     nx = PYB11property("int", getter="getnx", doc="The number of x coords.")
     ny = PYB11property("int", getter="getny", doc="The number of y coords.")

@@ -43,7 +43,8 @@ VTKMeshWriter<dim>::writePointCoordinates(std::ofstream& outFile) {
         for (int i = 0; i < dim; ++i) {
             outFile << pos[i] << " ";
         }
-        outFile << "0\n";  // Append 0 for the z-coordinate if dim < 3
+        if (dim < 3)
+            outFile << "0\n";  // Append 0 for the z-coordinate if dim < 3
     }
 }
 

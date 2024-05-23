@@ -23,6 +23,12 @@ class oscillate:
         # self.phi.setValue(5050,-val)
         # self.phi.setValue(2025,val)
         # self.phi.setValue(8075,val)
+class vtkdump:
+    def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
+        self.meshWriter = VTKMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=["phi","xi"])
+        self.cycle = dumpCycle
+    def __call__(self,cycle,time,dt):
+        self.meshWriter.write("%03d.vtk"%cycle)
 
       
 
@@ -58,8 +64,11 @@ if __name__ == "__main__":
     print("field names =",myNodeList.fieldNames)
 
     osc = oscillate(nodeList=myNodeList,grid=grid,cs=cs,width=nx,height=ny,workCycle=1)
-    periodicWork = [osc]
-
+    vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=100)
+    if (animate):
+        periodicWork = [osc]
+    else:
+        periodicWork = [osc,vtk]
     controller = Controller(integrator=integrator,
                             statStep=10,
                             periodicWork=periodicWork)
@@ -71,6 +80,6 @@ if __name__ == "__main__":
         update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,
                                                 stepper=controller.Step,
                                                 title=title)
-        AnimateGrid2d(bounds,update_method,extremis=[-1,1],cmap="viridis",save_as="test.mp4",frames=1000)
+        AnimateGrid2d(bounds,update_method,extremis=[-1,1],cmap="viridis",frames=1000)
     else:
-        controller.Step(50000)
+        controller.Step(1000)

@@ -23,7 +23,8 @@ namespace Mesh {
     }
 
     template <int dim>
-    void Grid<dim>::initializeGrid() {
+    void 
+    Grid<dim>::initializeGrid() {
         gridPositions = Field<Lin::Vector<dim>>("gridPosition");
 
         // Compute and store the position of each cell center
@@ -41,7 +42,8 @@ namespace Mesh {
     }
 
     template <int dim>
-    void Grid<dim>::setOrigin(Lin::Vector<dim> origin) {
+    void 
+    Grid<dim>::setOrigin(Lin::Vector<dim> origin) {
         for (int i = 0; i < gridPositions.getSize(); ++i) {
             gridPositions[i] -= origin;
         }
