@@ -47,7 +47,7 @@ if __name__ == "__main__":
     print(waveEqn)
 
     pm = PacmanGridBoundaries2d(grid=grid,physics=waveEqn)
-    pbounds = [pm]
+    pbounds = []
 
     integrator = RungeKutta2Integrator2d(physics=waveEqn,
                               dtmin=0.05,
@@ -71,6 +71,6 @@ if __name__ == "__main__":
         update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,
                                                 stepper=controller.Step,
                                                 title=title)
-        AnimateGrid2d(bounds,update_method,extremis=[-5,5])
+        AnimateGrid2d(bounds,update_method,extremis=[-1,1],cmap="gist_rainbow")
     else:
         controller.Step(50000)
