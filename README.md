@@ -11,6 +11,8 @@
 git pull
 git submodule update --init --recursive
 
+
+
 mkdir build
 
 Nidhoggr/
@@ -28,5 +30,9 @@ cmake ..
 make
 
 ```
+Requires libsilo-dev so "sudo apt-get install libsilo-dev"
+if you don't already have it.
+
+Hopefully you already have python somewhere...
 
 Consult the Classes.md files in src subdirectories for interface guides.
