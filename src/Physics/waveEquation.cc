@@ -61,7 +61,7 @@ public:
 
     double
     getCell(int i,int j) {
-        int idx = grid->index(i,j,0);
+        int idx = grid->index(j,i,0);
         NodeList* nodeList = this->nodeList;
         Field<double>* phi = nodeList->getField<double>("phi");
         return phi->getValue(idx);

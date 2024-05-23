@@ -30,8 +30,8 @@ if __name__ == "__main__":
     animate = True
     
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
-    nx = 200
-    ny = 200
+    nx = 500
+    ny = 500
     cs = 1.0
 
     myNodeList = NodeList(nx*ny)
@@ -71,6 +71,6 @@ if __name__ == "__main__":
         update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,
                                                 stepper=controller.Step,
                                                 title=title)
-        AnimateGrid2d(bounds,update_method,extremis=[-1,1],cmap="gist_rainbow")
+        AnimateGrid2d(bounds,update_method,extremis=[-1,1],cmap="viridis",save_as="test.mp4",frames=1000)
     else:
         controller.Step(50000)
