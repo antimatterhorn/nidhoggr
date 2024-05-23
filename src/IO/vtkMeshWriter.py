@@ -4,7 +4,7 @@ from PYB11Generator import *
 class VTKMeshWriter:
     def pyinit(self,
                baseName="std::string&",
-               nodeList="NodeList&",
+               nodeList="NodeList*",
                fieldNames="std::vector<std::string>&"):
         return
     def write(self,fileName="std::string&"):

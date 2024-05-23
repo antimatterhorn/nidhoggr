@@ -33,7 +33,7 @@ class vtkdump:
       
 
 if __name__ == "__main__":
-    animate = True
+    animate = False
     
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
     nx = 500

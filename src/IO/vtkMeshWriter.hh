@@ -10,13 +10,13 @@
 template <int dim>
 class VTKMeshWriter {
 public:
-    VTKMeshWriter(const std::string& baseName, const NodeList& nodeList, const std::vector<std::string>& fieldNames);
+    VTKMeshWriter(const std::string& baseName, const NodeList* nodeList, const std::vector<std::string>& fieldNames);
 
     void write(const std::string& fileName);
 
 private:
     std::string baseName;
-    const NodeList& nodeList;
+    const NodeList* nodeList;
     std::vector<std::string> fieldNames;
 
     void writeVTKHeader(std::ofstream& outFile);
