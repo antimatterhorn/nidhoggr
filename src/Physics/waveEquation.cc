@@ -19,6 +19,16 @@ public:
         if (nodeList->getField<double>("xi") == nullptr)
             nodeList->insertField<double>("xi");
         
+        /* 
+        This sets the nodeList positions field to whatever is inside Grid positions. This should ideally
+        happen with any physics package that uses a mesh, so this is a bit clunky to have here.
+        */
+        if (nodeList->getField<Lin::Vector<dim>>("position") == nullptr)
+            nodeList->insertField<Lin::Vector<dim>>("position");
+        Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
+        for (int i=0;i<nodeList->size();++i)
+            position->setValue(i,grid->getPosition(i));
+        
         State<dim>* state = &this->state;
         Field<double>* xi = nodeList->getField<double>("xi");
         state->template addField<double>(xi);

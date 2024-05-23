@@ -12,7 +12,8 @@ for dir in ["Math",
             "Integrators",
             "Utilities",
             "Boundaries",
-            "Calculators"]:
+            "Calculators",
+            "IO"]:
     sys.path.append(buildir+dir)
 
 from CodeVersion import *
@@ -30,3 +31,4 @@ from CommandLineArgs import *
 from Boundaries import *
 from Calculators import *
 from Trees import *
+#from IO import *

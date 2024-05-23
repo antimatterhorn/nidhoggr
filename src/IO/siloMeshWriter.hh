@@ -1,5 +1,5 @@
-#ifndef SILOWRITER_HH
-#define SILOWRITER_HH
+#ifndef SILOMESHWRITER_HH
+#define SILOMESHWRITER_HH
 
 #include <silo.h>
 #include <vector>
@@ -9,9 +9,9 @@
 #include "../Math/vectorMath.hh"
 
 template <int dim>
-class SiloWriter {
+class SiloMeshWriter {
 public:
-    SiloWriter(const std::string& baseName, const NodeList& nodeList, const std::vector<std::string>& fieldNames);
+    SiloMeshWriter(const std::string& baseName, const NodeList& nodeList, const std::vector<std::string>& fieldNames);
 
     void write(const std::string& fileName);
 
@@ -24,6 +24,6 @@ private:
     void writeFields(DBfile* dbfile);
 };
 
-#include "siloWriter.cc"
+#include "siloMeshWriter.cc"
 
 #endif // SILOWRITER_HH

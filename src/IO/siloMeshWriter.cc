@@ -1,15 +1,15 @@
-#ifndef SILOWRITER_CC
-#define SILOWRITER_CC
+#ifndef SILOMESHWRITER_CC
+#define SILOMESHWRITER_CC
 
-#include "siloWriter.hh"
+#include "siloMeshWriter.hh"
 
 template <int dim>
-SiloWriter<dim>::SiloWriter(const std::string& baseName, const NodeList& nodeList, const std::vector<std::string>& fieldNames)
+SiloMeshWriter<dim>::SiloMeshWriter(const std::string& baseName, const NodeList& nodeList, const std::vector<std::string>& fieldNames)
     : baseName(baseName), nodeList(nodeList), fieldNames(fieldNames) {}
 
 template <int dim>
 void 
-SiloWriter<dim>::write(const std::string& fileName) {
+SiloMeshWriter<dim>::write(const std::string& fileName) {
     std::string fullFileName = baseName + fileName;
     DBfile *dbfile = DBCreate(fullFileName.c_str(), DB_CLOBBER, DB_LOCAL, "Simulation data", DB_HDF5);
 
@@ -26,7 +26,7 @@ SiloWriter<dim>::write(const std::string& fileName) {
 
 template <int dim>
 void 
-SiloWriter<dim>::writePointMesh(DBfile* dbfile) {
+SiloMeshWriter<dim>::writePointMesh(DBfile* dbfile) {
     auto positions = nodeList.position<dim>();
     if (!positions) {
         std::cerr << "Position field is not available in the NodeList!" << std::endl;
@@ -39,7 +39,7 @@ SiloWriter<dim>::writePointMesh(DBfile* dbfile) {
     }
 
     for (unsigned int idx = 0; idx < nodeList.size(); ++idx) {
-        Lin::Vector<dim> pos = positions->value(idx);
+        Lin::Vector<dim> pos = positions->getValue(idx);
         for (int i = 0; i < dim; ++i) {
             coords[i][idx] = static_cast<float>(pos[i]);
         }
@@ -55,7 +55,7 @@ SiloWriter<dim>::writePointMesh(DBfile* dbfile) {
 
 template <int dim>
 void 
-SiloWriter<dim>::writeFields(DBfile* dbfile) {
+SiloMeshWriter<dim>::writeFields(DBfile* dbfile) {
     for (const auto& field_name : fieldNames) {
         if (field_name == "position") continue;  // Skip the position field
 
@@ -76,7 +76,7 @@ SiloWriter<dim>::writeFields(DBfile* dbfile) {
                 field_data[d].resize(nodeList.size());
             }
             for (unsigned int i = 0; i < field_vector->size(); ++i) {
-                Lin::Vector<dim> vec = field_vector->value(i);
+                Lin::Vector<dim> vec = field_vector->getValue(i);
                 for (int d = 0; d < dim; ++d) {
                     field_data[d][i] = static_cast<float>(vec[d]);
                 }
