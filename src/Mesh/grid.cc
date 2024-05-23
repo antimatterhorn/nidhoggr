@@ -47,73 +47,95 @@ namespace Mesh {
         }
     }
 
-    template <int dim>
-    int Grid<dim>::index(int i) const {
+    // Specialization for 1D
+    template <>
+    int Grid<1>::index(int i, int, int) const {
         return i;
     }
 
-    template <int dim>
-    int Grid<dim>::index(int i, int j) const {
+    // Specialization for 2D
+    template <>
+    int Grid<2>::index(int i, int j, int) const {
         return j * nx + i;
     }
 
-    template <int dim>
-    int Grid<dim>::index(int i, int j, int k) const {
+    // Specialization for 3D
+    template <>
+    int Grid<3>::index(int i, int j, int k) const {
         return (k * ny + j) * nx + i;
     }
 
+    // Generic template definition (if you need for other dimensions)
     template <int dim>
-    int Grid<dim>::getnx() const {
+    int Grid<dim>::index(int i, int j, int k) const {
+        // This is a generic case. You can define custom behavior or throw an error if needed.
+        static_assert(dim <= 3, "Only up to 3 dimensions are supported");
+        return -1; // Error value
+    }
+
+    template <int dim>
+    int 
+    Grid<dim>::getnx() const {
         return nx;
     }
 
     template <int dim>
-    int Grid<dim>::getny() const {
+    int 
+    Grid<dim>::getny() const {
         return ny;
     }
 
     template <int dim>
-    int Grid<dim>::getnz() const {
+    int 
+    Grid<dim>::getnz() const {
         return nz;
     }
 
     template <int dim>
-    int Grid<dim>::size_x() const {
+    int 
+    Grid<dim>::size_x() const {
         return nx;
     }
 
     template <int dim>
-    int Grid<dim>::size_y() const {
+    int 
+    Grid<dim>::size_y() const {
         return ny;
     }
 
     template <int dim>
-    int Grid<dim>::size_z() const {
+    int 
+    Grid<dim>::size_z() const {
         return nz;
     }
 
     template <int dim>
-    int Grid<dim>::size() const {
+    int 
+    Grid<dim>::size() const {
         return gridPositions.size();
     }
 
     template <int dim>
-    double Grid<dim>::getdx() const {
+    double 
+    Grid<dim>::getdx() const {
         return dx;
     }
 
     template <int dim>
-    double Grid<dim>::getdy() const {
+    double 
+    Grid<dim>::getdy() const {
         return dy;
     }
 
     template <int dim>
-    double Grid<dim>::getdz() const {
+    double 
+    Grid<dim>::getdz() const {
         return dz;
     }
 
     template <int dim>
-    double Grid<dim>::spacing(int axis) const {
+    double 
+    Grid<dim>::spacing(int axis) const {
         if (axis==0)
             return dx;
         else if (axis==1)
@@ -124,12 +146,14 @@ namespace Mesh {
     }
 
     template <int dim>
-    Lin::Vector<dim> Grid<dim>::getPosition(int id) {
+    Lin::Vector<dim> 
+    Grid<dim>::getPosition(int id) {
         return gridPositions[id];
     }
 
     template <int dim>
-    std::vector<int> Grid<dim>::getNeighboringCells(int idx) const {
+    std::vector<int> 
+    Grid<dim>::getNeighboringCells(int idx) const {
         std::array<int, 3> coords = indexToCoordinates(idx);
         std::vector<int> neighbors;
 
@@ -177,7 +201,8 @@ namespace Mesh {
     }
 
     template <int dim>
-    std::array<int, 3> Grid<dim>::indexToCoordinates(int idx) const {
+    std::array<int, 3> 
+    Grid<dim>::indexToCoordinates(int idx) const {
         std::array<int, 3> coords;
         coords.fill(0);
         if constexpr (dim == 3) {
@@ -191,7 +216,8 @@ namespace Mesh {
     }
 
     template <int dim>
-    std::vector<int> Grid<dim>::leftMost() {
+    std::vector<int> 
+    Grid<dim>::leftMost() {
         std::vector<int> boundaryIndices;
         if constexpr (dim == 1)
             boundaryIndices.push_back(index(0));
@@ -208,7 +234,8 @@ namespace Mesh {
     }
 
     template <int dim>
-    std::vector<int> Grid<dim>::rightMost() {
+    std::vector<int> 
+    Grid<dim>::rightMost() {
         std::vector<int> boundaryIndices;
         if constexpr (dim == 1)
             boundaryIndices.push_back(index(size() - 1));
@@ -225,7 +252,8 @@ namespace Mesh {
     }
 
     template <int dim>
-    std::vector<int> Grid<dim>::topMost() {
+    std::vector<int> 
+    Grid<dim>::topMost() {
         std::vector<int> boundaryIndices;
         if constexpr (dim == 2) {
             for (int i = 0; i < nx; ++i)
@@ -240,7 +268,8 @@ namespace Mesh {
     }
 
     template <int dim>
-    std::vector<int> Grid<dim>::bottomMost() {
+    std::vector<int> 
+    Grid<dim>::bottomMost() {
         std::vector<int> boundaryIndices;
         if constexpr (dim == 2) {
             for (int i = 0; i < nx; ++i)
@@ -255,7 +284,8 @@ namespace Mesh {
     }
 
     template <int dim>
-    std::vector<int> Grid<dim>::frontMost() {
+    std::vector<int> 
+    Grid<dim>::frontMost() {
         std::vector<int> boundaryIndices;
         if constexpr (dim == 3) {
             for (int i = 0; i < nx; ++i)
@@ -266,7 +296,8 @@ namespace Mesh {
     }
 
     template <int dim>
-    std::vector<int> Grid<dim>::backMost() {
+    std::vector<int> 
+    Grid<dim>::backMost() {
         std::vector<int> boundaryIndices;
         if constexpr (dim == 3) {
             for (int i = 0; i < nx; ++i)
@@ -277,7 +308,8 @@ namespace Mesh {
     }
 
     template <int dim>
-    bool Grid<dim>::onBoundary(const int idx) {
+    bool 
+    Grid<dim>::onBoundary(const int idx) {
         bool inside = true;
         
         std::vector<int> lm = leftMost();

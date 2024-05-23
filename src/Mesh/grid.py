@@ -24,6 +24,14 @@ class Grid:
         return
     def size(self):
         return
+    # @PYB11cppname("index")
+    # def index1d(self,i="int"):
+    #     return
+    # @PYB11cppname("index")
+    # def index2d(self,i="int",j="int"):
+    #     return
+    def index(self,i="int",j=("int",0),k=("int",0)):
+        return
 
     nx = PYB11property("int", getter="getnx", doc="The number of x coords.")
     ny = PYB11property("int", getter="getny", doc="The number of y coords.")

@@ -28,9 +28,7 @@ namespace Mesh {
         void initializeGrid();
         void setOrigin(Lin::Vector<dim> origin);
 
-        int index(int i) const;
-        int index(int i, int j) const;
-        int index(int i, int j, int k) const;
+        int index(int i, int j = 0, int k = 0) const;
 
         int getnx() const;
         int getny() const;
