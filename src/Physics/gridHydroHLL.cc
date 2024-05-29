@@ -3,14 +3,14 @@
 #include <iostream>
 
 template <int dim>
-class HydroHLL : public Hydro<dim> {
+class GridHydroHLL : public Hydro<dim> {
 protected:
     Mesh::Grid<dim>* grid;
     std::vector<int> insideIds;
 public:
-    HydroHLL() {}
+    GridHydroHLL() {}
 
-    HydroHLL(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, Mesh::Grid<dim>* grid) : 
+    GridHydroHLL(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, Mesh::Grid<dim>* grid) : 
         Hydro<dim>(nodeList,constants,eos), grid(grid){
         std::cout << grid->size() << std::endl;
         VerifyHLLFields(nodeList);
@@ -30,7 +30,7 @@ public:
                 insideIds.push_back(i);
     }
 
-    ~HydroHLL() {}
+    ~GridHydroHLL() {}
 
     virtual void
     ZeroTimeInitialize() override {      

@@ -2,7 +2,7 @@ from PYB11Generator import *
 from hydro import *
 
 @PYB11template("dim")
-class HydroHLL(Hydro):
+class GridHydro(Hydro):
     def pyinit(self,
                nodeList="NodeList*",
                constants="PhysicalConstants&",
@@ -14,18 +14,18 @@ class HydroHLL(Hydro):
         return
 
 
-HydroHLL1d = PYB11TemplateClass(HydroHLL,
+GridHydro1d = PYB11TemplateClass(GridHydro,
                               template_parameters = ("1"),
-                              cppname = "HydroHLL<1>",
-                              pyname = "HydroHLL1d",
+                              cppname = "GridHydro<1>",
+                              pyname = "GridHydro1d",
                               docext = " (1D).")
-HydroHLL2d = PYB11TemplateClass(HydroHLL,
+GridHydro2d = PYB11TemplateClass(GridHydro,
                               template_parameters = ("2"),
-                              cppname = "HydroHLL<2>",
-                              pyname = "HydroHLL2d",
+                              cppname = "GridHydro<2>",
+                              pyname = "GridHydro2d",
                               docext = " (2D).")
-HydroHLL3d = PYB11TemplateClass(HydroHLL,
+GridHydro3d = PYB11TemplateClass(GridHydro,
                               template_parameters = ("3"),
-                              cppname = "HydroHLL<3>",
-                              pyname = "HydroHLL3d",
+                              cppname = "GridHydro<3>",
+                              pyname = "GridHydro3d",
                               docext = " (3D).") 
