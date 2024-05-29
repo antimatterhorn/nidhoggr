@@ -3,30 +3,32 @@
 #include <iostream>
 
 template <int dim>
-class GridHydro : public Hydro<dim> {
+class EulerHydro : public Hydro<dim> {
 protected:
     Mesh::Grid<dim>* grid;
     std::vector<int> insideIds;
 public:
-    GridHydro() {}
+    EulerHydro() {}
 
-    GridHydro(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, Mesh::Grid<dim>* grid) : 
+    EulerHydro(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, Mesh::Grid<dim>* grid) : 
         Hydro<dim>(nodeList,constants,eos), grid(grid){
-        VerifyGridHydroFields(nodeList);
+        VerifyEulerHydroFields(nodeList);
 
         Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
         Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
+        Field<double>* u                  = nodeList->getField<double>("specificInternalEnergy");
 
         State<dim>* state = &this->state;
         state->template addField<Lin::Vector<dim>>(position);
         state->template addField<Lin::Vector<dim>>(velocity);
+        state->template addField<double>(u);
 
         for(int i=0;i<grid->size();i++)
             if(!grid->onBoundary(i))
                 insideIds.push_back(i);
     }
 
-    ~GridHydro() {}
+    ~EulerHydro() {}
 
     virtual void
     ZeroTimeInitialize() override {      
@@ -39,7 +41,7 @@ public:
     }
 
     virtual void
-    VerifyGridHydroFields(NodeList* nodeList) {
+    VerifyEulerHydroFields(NodeList* nodeList) {
         if (nodeList->getField<Lin::Vector<dim>>("position") == nullptr)
             nodeList->insertField<Lin::Vector<dim>>("position");
                 
@@ -51,16 +53,18 @@ public:
 
     virtual void
     EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt) override{  
-        // drhodt = - del dot rho*v
+        // drhodt = - rho * del dot v
         // dvdt = Forces - (del P) / rho
+        // dudt = -P/rho * del dot v
         
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 
-        Field<Lin::Vector<dim>>* position = initialState->template getField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* velocity = initialState->template getField<Lin::Vector<dim>>("velocity");
-        Field<double>* pressure         = nodeList->getField<double>("pressure");
-        Field<double>* soundSpeed       = nodeList->getField<double>("soundSpeed");
+        Field<Lin::Vector<dim>>* position   = initialState->template getField<Lin::Vector<dim>>("position");
+        Field<Lin::Vector<dim>>* velocity   = initialState->template getField<Lin::Vector<dim>>("velocity");
+        Field<double>* u                    = initialState->template getField<double>("u");
+        Field<double>* pressure             = nodeList->getField<double>("pressure");
+        Field<double>* soundSpeed           = nodeList->getField<double>("soundSpeed");
 
         for (int h=0; h<insideIds.size(); ++h) {
             int i = insideIds[h];
@@ -98,4 +102,10 @@ public:
         return pr->getValue(idx);
     }
 
+
+    virtual double 
+    EstimateTimestep() const override {
+        // dt = dh/vmax
+        return 0; 
+    }
 };

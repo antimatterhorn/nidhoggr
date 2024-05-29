@@ -5,7 +5,7 @@ PYB11includes = ['"physics.hh"',
                 '"waveEquation.cc"',
                 '"hydro.hh"',
                 '"simplePhysics.cc"',
-                '"gridHydro.cc"',
+                '"eulerHydro.cc"',
                 '"gridHydroHLL.cc"']
 
 from physics import *
@@ -14,5 +14,5 @@ from pointSourceGravity import *
 from waveEquation import *
 from hydro import *
 from simplePhysics import *
-from gridHydro import *
+from eulerHydro import *
 from gridHydroHLL import *
