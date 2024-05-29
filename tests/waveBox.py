@@ -3,24 +3,34 @@ from Animation import *
 from math import sin,cos
 
 class oscillate:
-    def __init__(self,nodeList,workCycle=1):
+    def __init__(self,nodeList,grid,width,height,workCycle=1):
         self.nodeList = nodeList
         self.cycle = workCycle
+        self.grid = grid
+        self.width = width
+        self.height = height
         self.phi = myNodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
-        val = 5*(cos(time))
-        self.phi.setValue(5050,-val)
-        self.phi.setValue(2025,val)
-        self.phi.setValue(8075,val)
+        a = 5*(cos(time))
+        i = int(self.width/2)
+        j = int(self.height/2)
+        idx = self.grid.index(i,j,0)
+        self.phi.setValue(idx,a)
 
+class vtkdump:
+    def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
+        self.meshWriter = VTKMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=["phi","xi"])
+        self.cycle = dumpCycle
+    def __call__(self,cycle,time,dt):
+        self.meshWriter.write("%03d.vtk"%cycle)
       
 
 if __name__ == "__main__":
     animate = False
-    
+    cycles = 2000
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
-    nx = 100
-    ny = 100
+    nx = 200
+    ny = 200
 
     myNodeList = NodeList(nx*ny)
     
@@ -37,10 +47,10 @@ if __name__ == "__main__":
     pm = PacmanGridBoundaries2d(grid=grid,physics=waveEqn)
     print(pm)
     box = DirichletGridBoundaries2d(grid=grid,physics=waveEqn)
-    box.addBox(Vector2d(5,5),Vector2d(80,15))
-    box.addBox(Vector2d(80,30),Vector2d(95,60))
-    box.removeBox(Vector2d(40,0),Vector2d(60,15))
-    pbounds = [pm]
+    box.addBox(Vector2d(int(nx/2)-15,int(ny/2)-15),Vector2d(int(nx/2)+15,int(ny/2)+15))
+    box.removeBox(Vector2d(int(nx/2)-14,int(ny/2)-14),Vector2d(int(nx/2)+14,int(ny/2)+14))
+    box.removeBox(Vector2d(0,int(ny/2)-5),Vector2d(int(nx/2)-5,int(ny/2)+5))
+    pbounds = [pm,box]
 
     integrator = RungeKutta2Integrator2d(physics=waveEqn,
                               dtmin=0.05,
@@ -50,8 +60,11 @@ if __name__ == "__main__":
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
-    osc = oscillate(myNodeList,workCycle=1)
+    osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
     periodicWork = [osc]
+    if (not animate):
+        vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=10)
+        periodicWork.append(vtk)
 
     controller = Controller(integrator=integrator,
                             statStep=10,
@@ -64,8 +77,6 @@ if __name__ == "__main__":
         update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,
                                                 stepper=controller.Step,
                                                 title=title)
-        AnimateGrid2d(bounds,update_method,extremis=[-5,5])
+        AnimateGrid2d(bounds,update_method,extremis=[-5,5],frames=cycles)
     else:
-        controller.Step(500)
-        meshWriter = VTKMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=["phi","xi"])
-        meshWriter.write("00.vtk")
+        controller.Step(cycles)
