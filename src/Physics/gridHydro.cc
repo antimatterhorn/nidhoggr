@@ -12,11 +12,14 @@ public:
 
     GridHydro(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, Mesh::Grid<dim>* grid) : 
         Hydro<dim>(nodeList,constants,eos), grid(grid){
-        std::cout << grid->size() << std::endl;
         VerifyGridHydroFields(nodeList);
 
-        State<dim>* state = &this->state;
+        Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
+        Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
 
+        State<dim>* state = &this->state;
+        state->template addField<Lin::Vector<dim>>(position);
+        state->template addField<Lin::Vector<dim>>(velocity);
 
         for(int i=0;i<grid->size();i++)
             if(!grid->onBoundary(i))
@@ -48,15 +51,21 @@ public:
 
     virtual void
     EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt) override{  
+        // drhodt = - del dot rho*v
+        // dvdt = Forces - (del P) / rho
+        
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 
-
+        Field<Lin::Vector<dim>>* position = initialState->template getField<Lin::Vector<dim>>("position");
+        Field<Lin::Vector<dim>>* velocity = initialState->template getField<Lin::Vector<dim>>("velocity");
         Field<double>* pressure         = nodeList->getField<double>("pressure");
         Field<double>* soundSpeed       = nodeList->getField<double>("soundSpeed");
 
-        Field<Lin::Vector<dim>> ep = Field<Lin::Vector<dim>>("ep",initialState->size());
-        Field<Lin::Vector<dim>> em = Field<Lin::Vector<dim>>("em",initialState->size());
+        for (int h=0; h<insideIds.size(); ++h) {
+            int i = insideIds[h];
+            std::vector<int> nbrs = grid->getNeighboringCells(i);
+        }
 
     }
 
