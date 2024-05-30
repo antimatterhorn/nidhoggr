@@ -51,8 +51,11 @@ if __name__ == "__main__":
     for i in range (nx*ny):
         density.setValue(i,1.0)
         energy.setValue(i,1.0)
-        if (i==55):
-            energy.setValue(i,5.0)
+
+    i = int(nx/2)
+    j = int(ny/2)
+    idx = myGrid.index(i,j,0)
+    energy.setValue(idx,15.0)
 
     # dump = dumpState(myNodeList,workCycle=1)
 

@@ -33,11 +33,11 @@ class vtkdump:
       
 
 if __name__ == "__main__":
-    animate = False
+    animate = True
     
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
-    nx = 500
-    ny = 500
+    nx = 100
+    ny = 100
     cs = 1.0
 
     myNodeList = NodeList(nx*ny)
