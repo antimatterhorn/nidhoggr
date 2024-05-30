@@ -43,7 +43,7 @@ if __name__ == "__main__":
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
     
-    integrator = Integrator2d(hydro,dtmin=dtmin)
+    integrator = RungeKutta4Integrator2d(hydro,dtmin=dtmin)
 
 
     density = myNodeList.getFieldDouble("density")
@@ -64,7 +64,7 @@ if __name__ == "__main__":
         update_method = AnimationUpdateMethod2d(call=hydro.getCell2d,
                                                 stepper=controller.Step,
                                                 title=title)
-        AnimateGrid2d(bounds,update_method,extremis=[-5,5])
+        AnimateGrid2d(bounds,update_method,extremis=[-5,5],cmap='viridis')
     else:
         controller.Step(cycles)
     

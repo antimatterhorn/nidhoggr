@@ -72,16 +72,38 @@ public:
             std::vector<int> nbrs = grid->getNeighboringCells(i);
 
             double delDotV;
+            double dvdx = velocity->getValue(nbrs[0])[0]-velocity->getValue(i)[0];
+            dvdx += velocity->getValue(i)[0] - velocity->getValue(nbrs[1])[0];
+            dvdx = dvdx*0.5/grid->dx;
+            delDotV = dvdx;
+
             Lin::Vector<dim> delP;
-            delDotV = 0.5*(velocity->getValue(nbrs[0])[0]-velocity->getValue(nbrs[1])[0])/grid->dx;
-            delP[0] = 0.5*(pressure->getValue(nbrs[0])-pressure->getValue(nbrs[1]))/grid->dx;
+            double dPdx = pressure->getValue(nbrs[0])-pressure->getValue(i);
+            dPdx += pressure->getValue(i)-pressure->getValue(nbrs[1]);
+            dPdx = dPdx*0.5/grid->dx;
+            delP[0] = dPdx;
+
             if (dim > 1) {
-                delDotV += 0.5*(velocity->getValue(nbrs[2])[1]-velocity->getValue(nbrs[3])[1])/grid->dy;
-                delP[1] = 0.5*(pressure->getValue(nbrs[2])-pressure->getValue(nbrs[3]))/grid->dy;
+                double dvdy = velocity->getValue(nbrs[2])[1]-velocity->getValue(i)[1];
+                dvdy += velocity->getValue(i)[1] - velocity->getValue(nbrs[3])[1];
+                dvdy = dvdy*0.5/grid->dy;
+                delDotV += dvdy;
+
+                double dPdy = pressure->getValue(nbrs[2])-pressure->getValue(i);
+                dPdy += pressure->getValue(i)-pressure->getValue(nbrs[3]);
+                dPdy = dPdy*0.5/grid->dy;
+                delP[1] = dPdy;
             }              
             if (dim > 2) {
-                delDotV += 0.5*(velocity->getValue(nbrs[4])[2]-velocity->getValue(nbrs[5])[2])/grid->dz;
-                delP[2] = 0.5*(pressure->getValue(nbrs[4])-pressure->getValue(nbrs[5]))/grid->dz;
+                double dvdz = velocity->getValue(nbrs[4])[2]-velocity->getValue(i)[2];
+                dvdz += velocity->getValue(i)[2] - velocity->getValue(nbrs[5])[1];
+                dvdz = dvdz*0.5/grid->dz;
+                delDotV += dvdz;
+                
+                double dPdz = pressure->getValue(nbrs[4])-pressure->getValue(i);
+                dPdz += pressure->getValue(i)-pressure->getValue(nbrs[5]);
+                dPdz = dPdz*0.5/grid->dz;
+                delP[2] = dPdz;
             }
             double P = pressure->getValue(i);
             double rho = density->getValue(i);
