@@ -34,8 +34,12 @@ classDiagram
         +double A
         +double D
     }
-    Hydro <| -- HydroHLL
-    class HydroHLL{
+    Hydro <| -- GridHydroHLL
+    class GridHydroHLL{
+        +Grid* grid
+    }
+    Hydro <| -- EulerHydro
+    class EulerHydro{
         +Grid* grid
     }
 ```
