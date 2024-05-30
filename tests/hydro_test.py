@@ -15,8 +15,8 @@ if __name__ == "__main__":
     
     nx = 10
     ny = 10
-    dx = 0.1
-    dy = 0.1
+    dx = 1
+    dy = 1
 
 
     myGrid = Grid2d(nx,ny,dx,dy)
@@ -66,7 +66,8 @@ if __name__ == "__main__":
         bounds = (nx,ny)
         update_method = AnimationUpdateMethod2d(call=hydro.getCell2d,
                                                 stepper=controller.Step,
-                                                title=title)
+                                                title=title,
+                                                fieldName="pressure")
         AnimateGrid2d(bounds,update_method,extremis=[-5,5],cmap='viridis')
     else:
         controller.Step(cycles)

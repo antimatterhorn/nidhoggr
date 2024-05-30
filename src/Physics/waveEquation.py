@@ -10,7 +10,7 @@ class WaveEquation(Physics):
                C="double"):
         return
     @PYB11cppname("getCell")
-    def getCell2d(self,i="int",j="int"):
+    def getCell2d(self,i="int",j="int",fieldName="std::string"):
         return
     # @PYB11virtual
     # def UpdateDerivatives(self,dt="const double"):

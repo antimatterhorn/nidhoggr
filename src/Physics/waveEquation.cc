@@ -70,10 +70,10 @@ public:
     }
 
     double
-    getCell(int i,int j) {
+    getCell(int i,int j, std::string fieldName="phi") {
         int idx = grid->index(j,i,0);
         NodeList* nodeList = this->nodeList;
-        Field<double>* phi = nodeList->getField<double>("phi");
+        Field<double>* phi = nodeList->getField<double>(fieldName);
         return phi->getValue(idx);
     }
 

@@ -10,7 +10,7 @@ class GridHydroHLL(Hydro):
                grid="Mesh::Grid<%(dim)s>*"):
         return
     @PYB11cppname("getCell")
-    def getCell2d(self,i="int",j="int"):
+    def getCell2d(self,i="int",j="int",fieldName="std::string"):
         return
 
 

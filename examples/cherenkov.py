@@ -79,7 +79,8 @@ if __name__ == "__main__":
         bounds = (nx,ny)
         update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,
                                                 stepper=controller.Step,
-                                                title=title)
+                                                title=title,
+                                                fieldName="phi")
         AnimateGrid2d(bounds,update_method,extremis=[-1,1],cmap="viridis",frames=1000)
     else:
         controller.Step(1000)

@@ -230,10 +230,10 @@ public:
     }
 
     double
-    getCell(int i,int j) {
+    getCell(int i,int j, std::string fieldName="pressure") {
         int idx = grid->index(i,j,0);
         NodeList* nodeList = this->nodeList;
-        Field<double>* pr = nodeList->getField<double>("pressure");
+        Field<double>* pr = nodeList->getField<double>(fieldName);
         return pr->getValue(idx);
     }
 

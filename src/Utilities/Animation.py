@@ -32,7 +32,7 @@ def AnimateGrid2d(bounds, update_method, threeColors=False, frames=100, interval
 
             for j in range(y * scale):
                 for i in range(x * scale):
-                    rgb_grid[i, j] = update_method.module_call(i % x, j % y)
+                    rgb_grid[i, j] = update_method(i % x, j % y)
             # Plot the grid
             ax.imshow(rgb_grid, origin='lower', extent=[0, x * scale, 0, y * scale], interpolation='nearest')
             ax.set_title(update_method.module_title())
@@ -54,7 +54,7 @@ def AnimateGrid2d(bounds, update_method, threeColors=False, frames=100, interval
             for j in range(y * scale):
                 maxi = 0
                 for i in range(x * scale):
-                    rgb_grid[i, j] = update_method.module_call(i % x, j % y)
+                    rgb_grid[i, j] = update_method(i % x, j % y)
                     if i == x * scale / 2:
                         maxi = rgb_grid[i, j]
                 max_values.append(maxi)
@@ -86,16 +86,17 @@ def AnimatePoints(points):
     plt.show()
 
 class AnimationUpdateMethod2d:
-    def __init__(self, call, stepper, title=None):
+    def __init__(self, call, stepper, title=None, fieldName="pressure"):
         self.module_call = call
         self.module_stepper = stepper
+        self.fieldName = fieldName
         if (title == None):
             self.module_title = DummyTitle()
         else:
             self.module_title = title
 
     def __call__(self, i, j):
-        return self.module_call(i, j)
+        return self.module_call(i, j,self.fieldName)
     
 class DummyTitle:
     def __init__(self):
