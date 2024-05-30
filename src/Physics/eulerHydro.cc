@@ -14,12 +14,12 @@ public:
         Hydro<dim>(nodeList,constants,eos), grid(grid){
         VerifyEulerHydroFields(nodeList);
 
-        Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
+        Field<double>* density            = nodeList->getField<double>("density");
         Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
         Field<double>* u                  = nodeList->getField<double>("specificInternalEnergy");
 
         State<dim>* state = &this->state;
-        state->template addField<Lin::Vector<dim>>(position);
+        state->template addField<double>(density);
         state->template addField<Lin::Vector<dim>>(velocity);
         state->template addField<double>(u);
 
@@ -55,20 +55,39 @@ public:
     EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt) override{  
         // drhodt = - rho * del dot v
         // dvdt = Forces - (del P) / rho
-        // dudt = -P/rho * del dot v
-        
+        // dudt = -P/rho * del dot v       
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 
-        Field<Lin::Vector<dim>>* position   = initialState->template getField<Lin::Vector<dim>>("position");
         Field<Lin::Vector<dim>>* velocity   = initialState->template getField<Lin::Vector<dim>>("velocity");
-        Field<double>* u                    = initialState->template getField<double>("u");
+        Field<double>* density              = initialState->template getField<double>("density");
+        Field<double>* drhodt               = deriv.template getField<double>("density");
+        Field<double>* dudt                 = deriv.template getField<double>("specificInternalEnergy");
+        Field<Lin::Vector<dim>>* dvdt       = deriv.template getField<Lin::Vector<dim>>("velocity");
         Field<double>* pressure             = nodeList->getField<double>("pressure");
         Field<double>* soundSpeed           = nodeList->getField<double>("soundSpeed");
 
         for (int h=0; h<insideIds.size(); ++h) {
             int i = insideIds[h];
             std::vector<int> nbrs = grid->getNeighboringCells(i);
+
+            double delDotV;
+            Lin::Vector<dim> delP;
+            delDotV = 0.5*(velocity->getValue(nbrs[0])[0]-velocity->getValue(nbrs[1])[0])/grid->dx;
+            delP[0] = 0.5*(pressure->getValue(nbrs[0])-pressure->getValue(nbrs[1]))/grid->dx;
+            if (dim > 1) {
+                delDotV += 0.5*(velocity->getValue(nbrs[2])[1]-velocity->getValue(nbrs[3])[1])/grid->dy;
+                delP[1] = 0.5*(pressure->getValue(nbrs[2])-pressure->getValue(nbrs[3]))/grid->dy;
+            }              
+            if (dim > 2) {
+                delDotV += 0.5*(velocity->getValue(nbrs[4])[2]-velocity->getValue(nbrs[5])[2])/grid->dz;
+                delP[2] = 0.5*(pressure->getValue(nbrs[4])-pressure->getValue(nbrs[5]))/grid->dz;
+            }
+            double P = pressure->getValue(i);
+            double rho = density->getValue(i);
+            drhodt->setValue(i,-rho*delDotV);
+            dvdt->setValue(i,-delP/rho);
+            dudt->setValue(i,-P/rho*delDotV);            
         }
 
     }
@@ -76,6 +95,18 @@ public:
     virtual void
     FinalizeStep(const State<dim>* finalState) override {
         NodeList* nodeList = this->nodeList;
+
+        Field<double>* fdensity                 = finalState->template getField<double>("density");
+        Field<Lin::Vector<dim>>* fvelocity      = finalState->template getField<Lin::Vector<dim>>("velocity");
+        Field<double>* fu                       = finalState->template getField<double>("specificInternalEnergy");
+
+        Field<double>* density                  = nodeList->getField<double>("density");
+        Field<Lin::Vector<dim>>* velocity       = nodeList->getField<Lin::Vector<dim>>("velocity");
+        Field<double>* u                        = nodeList->getField<double>("specificInternalEnergy");
+
+        density->copyValues(fdensity);
+        velocity->copyValues(fvelocity);
+        u->copyValues(fu);
 
         EOSLookup();
     }

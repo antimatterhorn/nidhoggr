@@ -38,7 +38,7 @@ if __name__ == "__main__":
     print(eos,"gamma =",eos.gamma)
 
 
-    hydro = HydroHLL2d(myNodeList,constants,eos,myGrid)
+    hydro = EulerHydro2d(myNodeList,constants,eos,myGrid)
     
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
