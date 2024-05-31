@@ -7,25 +7,27 @@ protected:
     Lin::Vector<dim> gravityVector;
     double dtmin;
 public:
+    using Vector = Lin::Vector<dim>;
+    using VectorField = Field<Vector>;
+    using ScalarField = Field<double>;
+
     ConstantGravity() {}
 
-    ConstantGravity(NodeList* nodeList, PhysicalConstants& constants, Lin::Vector<dim>& gravityVector) : 
+    ConstantGravity(NodeList* nodeList, PhysicalConstants& constants, Vector& gravityVector) : 
         Physics<dim>(nodeList,constants),
         gravityVector(gravityVector) {
 
         int numNodes = nodeList->size();
-        if (nodeList->getField<Lin::Vector<dim>>("acceleration") == nullptr)
-            nodeList->insertField<Lin::Vector<dim>>("acceleration");
+        if (nodeList->getField<Vector>("acceleration") == nullptr)
+            nodeList->insertField<Vector>("acceleration");
         for (int i=0; i<numNodes; ++i)
-            nodeList->getField<Lin::Vector<dim>>("acceleration")->setValue(i,gravityVector);
+            nodeList->getField<Vector>("acceleration")->setValue(i,gravityVector);
         
-        Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
-        //std::shared_ptr<Field<Lin::Vector<dim>>> positionSharedPtr(position);
+        VectorField* position = nodeList->getField<Vector>("position");
         State<dim>* state = &this->state;        
-        state->template addField<Lin::Vector<dim>>(position);
-        Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-        //std::shared_ptr<Field<Lin::Vector<dim>>> velocitySharedPtr(velocity);
-        state->template addField<Lin::Vector<dim>>(velocity);
+        state->template addField<Vector>(position);
+        VectorField* velocity = nodeList->getField<Vector>("velocity");
+        state->template addField<Vector>(velocity);
     }
 
     ~ConstantGravity() {}
@@ -43,12 +45,12 @@ public:
         PhysicalConstants constants = this->constants;
         int numNodes = nodeList->size();
 
-        Field<Lin::Vector<dim>>* position       = initialState->template getField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* acceleration   = nodeList->getField<Lin::Vector<dim>>("acceleration");
-        Field<Lin::Vector<dim>>* velocity       = initialState->template getField<Lin::Vector<dim>>("velocity");
+        VectorField* position       = initialState->template getField<Vector>("position");
+        VectorField* acceleration   = nodeList->getField<Vector>("acceleration");
+        VectorField* velocity       = initialState->template getField<Vector>("velocity");
 
-        Field<Lin::Vector<dim>>* dxdt           = deriv.template getField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* dvdt           = deriv.template getField<Lin::Vector<dim>>("velocity");
+        VectorField* dxdt           = deriv.template getField<Vector>("position");
+        VectorField* dvdt           = deriv.template getField<Vector>("velocity");
         
         dxdt->copyValues(velocity);
         dxdt->operator+(*acceleration*dt);
@@ -77,11 +79,11 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 
-        Field<Lin::Vector<dim>>* fposition       = finalState->template getField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* fvelocity       = finalState->template getField<Lin::Vector<dim>>("velocity");
+        VectorField* fposition       = finalState->template getField<Vector>("position");
+        VectorField* fvelocity       = finalState->template getField<Vector>("velocity");
 
-        Field<Lin::Vector<dim>>* position       = nodeList->template getField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* velocity       = nodeList->template getField<Lin::Vector<dim>>("velocity");
+        VectorField* position       = nodeList->template getField<Vector>("position");
+        VectorField* velocity       = nodeList->template getField<Vector>("velocity");
 
         position->copyValues(fposition);
         velocity->copyValues(fvelocity);

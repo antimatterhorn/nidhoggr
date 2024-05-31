@@ -6,6 +6,10 @@ class SimplePhysics : public Physics<dim> {
 protected:
 
 public:
+    using Vector = Lin::Vector<dim>;
+    using VectorField = Field<Vector>;
+    using ScalarField = Field<double>;
+    
     SimplePhysics() {}
 
     SimplePhysics(NodeList* nodeList, 
@@ -16,7 +20,7 @@ public:
         if (nodeList->getField<double>("y") == nullptr)
             nodeList->insertField<double>("y");
         
-        Field<double>* y = nodeList->getField<double>("y");
+        ScalarField* y = nodeList->getField<double>("y");
         State<dim>* state = &this->state;        
         state->template addField<double>(y);
     }
@@ -28,8 +32,8 @@ public:
         State<dim> state = this->state;
         NodeList* nodeList = this->nodeList;
 
-        Field<double>* sy       = state.template getField<double>("y");
-        Field<double>* y        = nodeList->template getField<double>("y");
+        ScalarField* sy       = state.template getField<double>("y");
+        ScalarField* y        = nodeList->template getField<double>("y");
 
         sy->copyValues(y);
     }
@@ -42,8 +46,8 @@ public:
         PhysicalConstants constants = this->constants;
         int numNodes = nodeList->size();
 
-        Field<double>* y        = initialState->template getField<double>("y");
-        Field<double>* dydt     = deriv.template getField<double>("y");
+        ScalarField* y        = initialState->template getField<double>("y");
+        ScalarField* dydt     = deriv.template getField<double>("y");
         
         #pragma omp parllel for
         for (int i=0; i<numNodes ; ++i) {
@@ -56,9 +60,9 @@ public:
         State<dim> state = this->state;
         NodeList* nodeList = this->nodeList;
 
-        Field<double>* sy       = state.template getField<double>("y");
-        Field<double>* fy        = finalState->template getField<double>("y");
-        Field<double>* y        = nodeList->template getField<double>("y");
+        ScalarField* sy       = state.template getField<double>("y");
+        ScalarField* fy       = finalState->template getField<double>("y");
+        ScalarField* y        = nodeList->template getField<double>("y");
 
         sy->copyValues(fy);
         y->copyValues(fy);

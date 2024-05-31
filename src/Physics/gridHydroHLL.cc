@@ -8,6 +8,10 @@ protected:
     Mesh::Grid<dim>* grid;
     std::vector<int> insideIds;
 public:
+    using Vector = Lin::Vector<dim>;
+    using VectorField = Field<Vector>;
+    using ScalarField = Field<double>;
+    
     GridHydroHLL() {}
 
     GridHydroHLL(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, Mesh::Grid<dim>* grid) : 
@@ -17,13 +21,13 @@ public:
 
         State<dim>* state = &this->state;
 
-        Field<Lin::Vector<dim>>* u1 = nodeList->getField<Lin::Vector<dim>>("u1");       
-        Field<double>* u0 = nodeList->getField<double>("u0");
-        Field<double>* u2 = nodeList->getField<double>("u2");
+        VectorField* v  = nodeList->getField<Vector>("velocity");
+        ScalarField* rho          = nodeList->getField<double>("density");
+        ScalarField* u            = nodeList->getField<double>("specificInternalEnergy");
 
-        state->template addField<Lin::Vector<dim>>(u1);
-        state->template addField<double>(u0);
-        state->template addField<double>(u2);
+        state->template addField<Vector>(v);
+        state->template addField<double>(rho);
+        state->template addField<double>(u);
 
         for (int i = 0; i < grid->size(); i++) {
             if (!grid->onBoundary(i))
@@ -34,37 +38,16 @@ public:
     ~GridHydroHLL() {}
 
     virtual void 
-    ZeroTimeInitialize() override {      
-        NodeList* nodeList = this->nodeList;
-        Field<Lin::Vector<dim>>* v  = nodeList->getField<Lin::Vector<dim>>("velocity");
-        Field<double>* rho          = nodeList->getField<double>("density");
-        Field<double>* u            = nodeList->getField<double>("specificInternalEnergy");
-
-        Field<Lin::Vector<dim>>* u1 = nodeList->getField<Lin::Vector<dim>>("u1");
-        Field<double>* u0           = nodeList->getField<double>("u0");
-        Field<double>* u2           = nodeList->getField<double>("u2");
-
-        u0->copyValues(rho);
-
-        for (int i = 0; i < nodeList->size(); ++i) {
-            u1->setValue(i, rho->getValue(i) * v->getValue(i));
-            u2->setValue(i, rho->getValue(i) * (0.5 * v->getValue(i).mag2() + u->getValue(i)));
-        }
+    ZeroTimeInitialize() override {
         EOSLookup();
     }
 
     virtual void 
     VerifyHLLFields(NodeList* nodeList) {
-        if (nodeList->getField<double>("u0") == nullptr)
-            nodeList->insertField<double>("u0");
-        if (nodeList->getField<Lin::Vector<dim>>("u1") == nullptr)
-            nodeList->insertField<Lin::Vector<dim>>("u1");
-        if (nodeList->getField<double>("u2") == nullptr)
-            nodeList->insertField<double>("u2");
-        if (nodeList->getField<Lin::Vector<dim>>("position") == nullptr)
-            nodeList->insertField<Lin::Vector<dim>>("position");
+        if (nodeList->getField<Vector>("position") == nullptr)
+            nodeList->insertField<Vector>("position");
                 
-        Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
+        VectorField* position = nodeList->getField<Vector>("position");
         for (int i = 0; i < position->size(); ++i) {
             position->setValue(i, grid->getPosition(i));
         }
@@ -75,80 +58,41 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 
-        Field<Lin::Vector<dim>> F0("f0", initialState->size());
-        Field<Lin::Vector<dim>> F1("f1", initialState->size());
-        Field<Lin::Vector<dim>> F2("f2", initialState->size());
+        VectorField F0("f0", initialState->size());
+        VectorField F1("f1", initialState->size());
+        VectorField F2("f2", initialState->size());
 
-        Field<Lin::Vector<dim>>* u1 = initialState->template getField<Lin::Vector<dim>>("u1");
-        Field<double>* u0 = initialState->template getField<double>("u0");
-        Field<double>* u2 = initialState->template getField<double>("u2");
+        VectorField u1("u1", initialState->size());
+        ScalarField u0("u0", initialState->size());
+        ScalarField u2("u2", initialState->size());
 
-        Field<Lin::Vector<dim>>* du1 = deriv.template getField<Lin::Vector<dim>>("u1");
-        Field<double>* du0 = deriv.template getField<double>("u0");
-        Field<double>* du2 = deriv.template getField<double>("u2");
+        VectorField* v   = initialState->template getField<Vector>("velocity");
+        ScalarField* rho = initialState->template getField<double>("density");
+        ScalarField* u   = initialState->template getField<double>("specificInternalEnergy");
 
-        Field<double>* pressure = nodeList->getField<double>("pressure");
-        Field<double>* soundSpeed = nodeList->getField<double>("soundSpeed");
+        VectorField* dvdt = deriv.template getField<Vector>("velocity");
+        ScalarField* drdt = deriv.template getField<double>("density");
+        ScalarField* dudt = deriv.template getField<double>("specificInternalEnergy");
 
-        std::vector<Field<Lin::Vector<dim>>*> F = {&F0, &F1, &F2};
+        ScalarField* pressure   = nodeList->getField<double>("pressure");
+        ScalarField* soundSpeed = nodeList->getField<double>("soundSpeed");
 
-        Field<Lin::Vector<dim>> ep("ep", initialState->size());
-        Field<Lin::Vector<dim>> em("em", initialState->size());
+        std::vector<VectorField*> F = {&F0, &F1, &F2};
 
-        for (int h = 0; h < insideIds.size(); ++h) {
-            int i = insideIds[h];
-
-            Lin::Vector<dim> u1i = u1->getValue(i);
-            double u0i = u0->getValue(i);
-            double u2i = u2->getValue(i);
-            
-            double Pr = pressure->getValue(i);
-            Lin::Vector<dim> cs;
-            Lin::Vector<dim> vi = u1i / u0i;
-            
-            F0.setValue(i, u1i);
-            
-            std::array<double, dim> ff1;
-            ff1.fill(0);
-            for (int k = 0; k < dim; ++k) {
-                ff1[k] = pow(u1i.values[k], 2) / u0i + Pr;
-                cs.values[k] = soundSpeed->getValue(i);
-            }
-            F1.setValue(i, ff1);
-            F2.setValue(i, vi * (u2i + 1.0));
-
-            ep.setValue(i, vi + cs);
-            em.setValue(i, vi - cs);
-        }
+        VectorField ep("ep", initialState->size());
+        VectorField em("em", initialState->size());
 
         for (int h = 0; h < insideIds.size(); ++h) {
             int i = insideIds[h];
-            std::vector<int> nbrs = grid->getNeighboringCells(i);
 
-            std::array<double, 3> FluxP, FluxM; 
-            std::array<Lin::Vector<dim>, 3> Lv;
-            for (int k = 0; k < dim; ++k) {
-                FluxP = getFlux(k, i, nbrs[2 * k], initialState, ep, em, F);
-                FluxM = getFlux(k, nbrs[2 * k + 1], i, initialState, ep, em, F);
-                for (int s = 0; s < 3; ++s)
-                    Lv[s][k] = (FluxM[s] - FluxP[s]) / grid->spacing(k);
-            }
-
-            double Lv0 = 0, Lv2 = 0;
-            for (int k = 0; k < dim; ++k) {
-                Lv0 += Lv[0][k];
-                Lv2 += Lv[2][k];
-            }
-            du0->setValue(i, Lv0);
-            du1->setValue(i, Lv[1]);
-            du2->setValue(i, Lv2);
         }
+
     }
 
     std::array<double, 3> 
     getFlux(int axis, int i, int j, const State<dim>* initialState, 
-        Field<Lin::Vector<dim>>& ep, Field<Lin::Vector<dim>>& em, 
-        std::vector<Field<Lin::Vector<dim>>*>& F) {
+        VectorField& ep, VectorField& em, 
+        std::vector<VectorField*>& F) {
         double epR, epL, emR, emL, ap, am;
         epR = 0.5 * (ep.getValue(j)[axis] + ep.getValue(i)[axis]);
         epL = ep.getValue(i)[axis];
@@ -161,9 +105,9 @@ public:
         std::array<double, 3> FL, FR, Flux;
 
         double u0L, u0R, u2L, u2R;
-        Lin::Vector<dim> u1L, u1R;
+        Vector u1L, u1R;
 
-        Field<Lin::Vector<dim>>* u1 = initialState->template getField<Lin::Vector<dim>>("u1");
+        VectorField* u1 = initialState->template getField<Vector>("u1");
         Field<double>* u0 = initialState->template getField<double>("u0");
         Field<double>* u2 = initialState->template getField<double>("u2");
 
@@ -190,23 +134,6 @@ public:
     FinalizeStep(const State<dim>* finalState) override {
         NodeList* nodeList = this->nodeList;
 
-        Field<Lin::Vector<dim>>* u1 = finalState->template getField<Lin::Vector<dim>>("u1");
-        Field<double>* u0 = finalState->template getField<double>("u0");
-        Field<double>* u2 = finalState->template getField<double>("u2");
-        
-        Field<Lin::Vector<dim>>* v = nodeList->getField<Lin::Vector<dim>>("velocity");
-        Field<double>* rho = nodeList->getField<double>("density");
-        Field<double>* u = nodeList->getField<double>("specificInternalEnergy");
-
-        for (int i = 0; i < nodeList->size(); ++i) {
-            double u0i = u0->getValue(i);
-            Lin::Vector<dim> u1i = u1->getValue(i);
-            double u2i = u2->getValue(i);
-            rho->setValue(i, u0i);
-            v->setValue(i, u1i / u0i);
-            u->setValue(i, u2i / u0i - 0.5 * v->getValue(i).mag2());
-        }
-
         EOSLookup();
     }
 
@@ -214,10 +141,10 @@ public:
     EOSLookup() {        
         NodeList* nodeList = this->nodeList;
 
-        Field<double>* rho = nodeList->getField<double>("density");
-        Field<double>* u = nodeList->getField<double>("specificInternalEnergy");
-        Field<double>* pressure = nodeList->getField<double>("pressure");
-        Field<double>* soundSpeed = nodeList->getField<double>("soundSpeed");
+        ScalarField* rho = nodeList->getField<double>("density");
+        ScalarField* u = nodeList->getField<double>("specificInternalEnergy");
+        ScalarField* pressure = nodeList->getField<double>("pressure");
+        ScalarField* soundSpeed = nodeList->getField<double>("soundSpeed");
 
         EquationOfState* eos = this->eos;
         eos->setPressure(pressure, rho, u);
@@ -228,7 +155,7 @@ public:
     getCell(int i, int j, std::string fieldName = "pressure") {
         int idx = grid->index(i, j, 0);
         NodeList* nodeList = this->nodeList;
-        Field<double>* pr = nodeList->getField<double>(fieldName);
+        ScalarField* pr = nodeList->getField<double>(fieldName);
         return pr->getValue(idx);
     }
 };

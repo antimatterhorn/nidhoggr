@@ -8,25 +8,29 @@ protected:
     double pointSourceMass;
     double dtmin;
 public:
+    using Vector = Lin::Vector<dim>;
+    using VectorField = Field<Vector>;
+    using ScalarField = Field<double>;
+
     PointSourceGravity() {}
 
     PointSourceGravity(NodeList* nodeList, 
                         PhysicalConstants& constants, 
-                        Lin::Vector<dim>& pointSourceLocation, 
+                        Vector& pointSourceLocation, 
                         double pointSourceMass) : 
         Physics<dim>(nodeList,constants),
         pointSourceLocation(pointSourceLocation),
         pointSourceMass(pointSourceMass) {
 
         int numNodes = nodeList->size();
-        if (nodeList->getField<Lin::Vector<dim>>("acceleration") == nullptr)
-            nodeList->insertField<Lin::Vector<dim>>("acceleration");
+        if (nodeList->getField<Vector>("acceleration") == nullptr)
+            nodeList->insertField<Vector>("acceleration");
         
         State<dim>* state = &this->state;
-        Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
-        state->template addField<Lin::Vector<dim>>(position);
-        Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-        state->template addField<Lin::Vector<dim>>(velocity);
+        VectorField* position = nodeList->getField<Vector>("position");
+        state->template addField<Vector>(position);
+        VectorField* velocity = nodeList->getField<Vector>("velocity");
+        state->template addField<Vector>(velocity);
     }
 
     ~PointSourceGravity() {}
@@ -38,21 +42,21 @@ public:
         PhysicalConstants constants = this->constants;
         int numNodes = nodeList->size();
 
-        Field<Lin::Vector<dim>>* position       = initialState->template getField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* acceleration   = nodeList->getField<Lin::Vector<dim>>("acceleration");
+        VectorField* position       = initialState->template getField<Vector>("position");
+        VectorField* acceleration   = nodeList->getField<Vector>("acceleration");
         // ^ this field is just for reference and isn't actually used to calculate anything
-        Field<Lin::Vector<dim>>* velocity       = initialState->template getField<Lin::Vector<dim>>("velocity");
+        VectorField* velocity       = initialState->template getField<Vector>("velocity");
 
-        Field<Lin::Vector<dim>>* dxdt           = deriv.template getField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* dvdt           = deriv.template getField<Lin::Vector<dim>>("velocity");
+        VectorField* dxdt           = deriv.template getField<Vector>("position");
+        VectorField* dvdt           = deriv.template getField<Vector>("velocity");
 
         dtmin = 1e30;
         #pragma omp parllel for
         for (int i=0; i<numNodes ; ++i) {
-            Lin::Vector<dim> pos = position->getValue(i);
-            Lin::Vector<dim> r = (pointSourceLocation - pos);
-            Lin::Vector<dim> a = pointSourceMass*constants.G()/(r.mag2())*r.normal();
-            Lin::Vector<dim> v = velocity->getValue(i);
+            Vector pos = position->getValue(i);
+            Vector r = (pointSourceLocation - pos);
+            Vector a = pointSourceMass*constants.G()/(r.mag2())*r.normal();
+            Vector v = velocity->getValue(i);
             acceleration->setValue(i,a);
             double amag = a.mag2();
             double vmag = v.mag2();
@@ -78,14 +82,14 @@ public:
         int numNodes = nodeList->size();
         State<dim> state = this->state;
 
-        Field<Lin::Vector<dim>>* fposition       = finalState->template getField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* fvelocity       = finalState->template getField<Lin::Vector<dim>>("velocity");
+        VectorField* fposition       = finalState->template getField<Vector>("position");
+        VectorField* fvelocity       = finalState->template getField<Vector>("velocity");
 
-        Field<Lin::Vector<dim>>* sposition       = state.template getField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* svelocity       = state.template getField<Lin::Vector<dim>>("velocity");
+        VectorField* sposition       = state.template getField<Vector>("position");
+        VectorField* svelocity       = state.template getField<Vector>("velocity");
 
-        Field<Lin::Vector<dim>>* position       = nodeList->template getField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* velocity       = nodeList->template getField<Lin::Vector<dim>>("velocity");
+        VectorField* position       = nodeList->template getField<Vector>("position");
+        VectorField* velocity       = nodeList->template getField<Vector>("velocity");
 
         position->copyValues(fposition);
         velocity->copyValues(fvelocity);

@@ -9,6 +9,10 @@ protected:
     double C;
     double dtmin;
 public:
+    using Vector = Lin::Vector<dim>;
+    using VectorField = Field<Vector>;
+    using ScalarField = Field<double>;
+    
     WaveEquation() {}
 
     WaveEquation(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<dim>* grid, double C) : 
@@ -23,16 +27,16 @@ public:
         This sets the nodeList positions field to whatever is inside Grid positions. This should ideally
         happen with any physics package that uses a mesh, so this is a bit clunky to have here.
         */
-        if (nodeList->getField<Lin::Vector<dim>>("position") == nullptr)
-            nodeList->insertField<Lin::Vector<dim>>("position");
-        Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
+        if (nodeList->getField<Vector>("position") == nullptr)
+            nodeList->insertField<Vector>("position");
+        VectorField* position = nodeList->getField<Vector>("position");
         for (int i=0;i<nodeList->size();++i)
             position->setValue(i,grid->getPosition(i));
         
         State<dim>* state = &this->state;
-        Field<double>* xi = nodeList->getField<double>("xi");
+        ScalarField* xi = nodeList->getField<double>("xi");
         state->template addField<double>(xi);
-        Field<double>* phi = nodeList->getField<double>("phi");
+        ScalarField* phi = nodeList->getField<double>("phi");
         state->template addField<double>(phi);
     }
 
@@ -50,11 +54,11 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
         
-        Field<double>* xi = initialState->template getField<double>("xi");
-        Field<double>* phi = initialState->template getField<double>("phi");
+        ScalarField* xi = initialState->template getField<double>("xi");
+        ScalarField* phi = initialState->template getField<double>("phi");
 
-        Field<double>* dxi = deriv.template getField<double>("xi");
-        Field<double>* dphi = deriv.template getField<double>("phi");
+        ScalarField* dxi = deriv.template getField<double>("xi");
+        ScalarField* dphi = deriv.template getField<double>("phi");
         
         #pragma omp parallel for
         for (int i=0; i<numNodes; ++i) {
@@ -73,7 +77,7 @@ public:
     getCell(int i,int j, std::string fieldName="phi") {
         int idx = grid->index(j,i,0);
         NodeList* nodeList = this->nodeList;
-        Field<double>* phi = nodeList->getField<double>(fieldName);
+        ScalarField* phi = nodeList->getField<double>(fieldName);
         return phi->getValue(idx);
     }
 
@@ -82,11 +86,11 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 
-        Field<double>* fxi = finalState->template getField<double>("xi");
-        Field<double>* fphi = finalState->template getField<double>("phi");
+        ScalarField* fxi = finalState->template getField<double>("xi");
+        ScalarField* fphi = finalState->template getField<double>("phi");
 
-        Field<double>* xi = nodeList->getField<double>("xi");
-        Field<double>* phi = nodeList->getField<double>("phi");
+        ScalarField* xi = nodeList->getField<double>("xi");
+        ScalarField* phi = nodeList->getField<double>("phi");
 
         xi->copyValues(fxi);
         phi->copyValues(fphi);
