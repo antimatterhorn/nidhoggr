@@ -71,6 +71,7 @@ public:
 
             double delDotV = 0.0;
             Lin::Vector<dim> delP = Lin::Vector<dim>();
+            Lin::Vector<dim> vDelv = Lin::Vector<dim>();
 
             // Compute divergence of velocity
             for (int d = 0; d < dim; ++d) {
@@ -78,6 +79,7 @@ public:
                             (velocity->getValue(i)[d] - velocity->getValue(nbrs[2 * d + 1])[d]);
                 dvdx = dvdx * 0.5 / grid->spacing(d);
                 delDotV += dvdx;
+                vDelv[d] = velocity->getValue(i)[d]*dvdx;
 
                 // Compute pressure gradient
                 double dPdx = (pressure->getValue(nbrs[2 * d]) - pressure->getValue(i)) +
@@ -93,7 +95,7 @@ public:
             double P = pressure->getValue(i);
             double rho = density->getValue(i);
             drhodt->setValue(i, -rho * delDotV);
-            dvdt->setValue(i, -delP / rho);
+            dvdt->setValue(i, -delP / rho - vDelv);
             dudt->setValue(i, -P / rho * delDotV);
         }
     }

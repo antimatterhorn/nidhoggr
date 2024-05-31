@@ -34,12 +34,12 @@ if __name__ == "__main__":
     print(eos,"gamma =",eos.gamma)
 
 
-    hydro = EulerHydro1d(myNodeList,constants,eos,myGrid)
+    hydro = GridHydroHLL1d(myNodeList,constants,eos,myGrid)
     
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
     
-    integrator = Integrator1d(hydro,dtmin=dtmin)
+    integrator = RungeKutta2Integrator1d(hydro,dtmin=dtmin)
 
 
     density = myNodeList.getFieldDouble("density")
