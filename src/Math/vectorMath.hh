@@ -59,6 +59,8 @@ public:
     double magnitude() const;
     Vector<dim> normal() const;
 
+    static Vector<dim> one();
+
     static const unsigned numElements = dim;
 };
 
