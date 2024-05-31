@@ -57,7 +57,7 @@ if __name__ == "__main__":
         print(pressure[i])
 
     controller = Controller(integrator=integrator,periodicWork=[],statStep=1)
-    for j in range(10):
+    for j in range(60):
         
         controller.Step(1)
 

@@ -13,8 +13,8 @@ from Animation import *
 if __name__ == "__main__":
     animate = True
     
-    nx = 10
-    ny = 10
+    nx = 20
+    ny = 20
     dx = 1
     dy = 1
 
