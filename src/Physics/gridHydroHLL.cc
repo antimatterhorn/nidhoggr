@@ -58,85 +58,117 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 
-        VectorField F0("f0", initialState->size());
-        VectorField F1("f1", initialState->size());
-        VectorField F2("f2", initialState->size());
+        ScalarField F0("f0", initialState->size());
+        ScalarField F1("f1", initialState->size());
+        ScalarField F2("f2", initialState->size());
+        ScalarField F3("f3", initialState->size());
+        ScalarField F4("f4", initialState->size());
 
-        ScalarField u0("u0", initialState->size());
-        VectorField u1("u1", initialState->size());
-        ScalarField u2("u2", initialState->size());
+        ScalarField U0("u0", initialState->size());
+        ScalarField U1("u1", initialState->size());
+        ScalarField U2("u2", initialState->size());
+        ScalarField U3("u3", initialState->size());
+        ScalarField U4("u4", initialState->size());
+
+        VectorField ep("ep", initialState->size());
+        VectorField em("em", initialState->size());
+
+        /*
+            rho             rho*vx
+            rho*vx          rho*vx^2 + P
+        U = rho*vy      F = rho*vx*vy
+            rho*vz          rho*vx*vz
+            E               vx*(E+P)
+        */
 
         VectorField* v   = initialState->template getField<Vector>("velocity");
         ScalarField* rho = initialState->template getField<double>("density");
-        ScalarField* u   = initialState->template getField<double>("specificInternalEnergy");
+        ScalarField* en  = initialState->template getField<double>("specificInternalEnergy");
 
-        u0.copyValues(rho);
+        ScalarField* pressure   = nodeList->getField<double>("pressure");
+        ScalarField* soundSpeed = nodeList->getField<double>("soundSpeed");
+
+        std::vector<ScalarField*> U = {&U0, &U1, &U2, &U3, &U4};
+        std::vector<ScalarField*> F = {&F0, &F1, &F2, &F3, &F4};
+
+        for (int i = 0; i<numNodes; ++i) {
+            double den = rho->getValue(i);
+            double Pr = pressure->getValue(i);
+            Vector vel = v->getValue(i);
+            double ui = en->getValue(i);
+            Vector cs = soundSpeed->getValue(i)*Vector::one();
+            double E = ui+0.5*vel.mag2();
+
+            U0.setValue(i,den);
+            U1.setValue(i,den*vel.x());
+            U2.setValue(i,den*vel.y()); // vel.y() returns 0 if dim == 1
+            U3.setValue(i,den*vel.z());
+            U4.setValue(i,E);
+
+            ep.setValue(i, vel + cs);
+            em.setValue(i, vel - cs);
+
+            F0.setValue(i,den*vel.x());
+            F1.setValue(i,den*vel.x()*vel.x() + Pr);
+            F2.setValue(i,den*vel.x()*vel.y());
+            F3.setValue(i,den*vel.x()*vel.z());
+            F4.setValue(i,vel.x()*(E + Pr));
+        }
 
         VectorField* dvdt = deriv.template getField<Vector>("velocity");
         ScalarField* drdt = deriv.template getField<double>("density");
         ScalarField* dudt = deriv.template getField<double>("specificInternalEnergy");
 
-        ScalarField* pressure   = nodeList->getField<double>("pressure");
-        ScalarField* soundSpeed = nodeList->getField<double>("soundSpeed");
-
-        std::vector<VectorField*> F = {&F0, &F1, &F2};
-
-        VectorField ep("ep", initialState->size());
-        VectorField em("em", initialState->size());
-
-        for (int h = 0; h < insideIds.size(); ++h) {
-            int i = insideIds[h];
-
-            double Pr = pressure->getValue(i);
-            double den = rho->getValue(i);
-            Vector vi = v->getValue(i);
-            double e = u->getValue(i) + 0.5*vi.mag2();         // u + 1/2 v^2
-            Vector cs = Vector::one()*soundSpeed->getValue(i);
-
-            u1.setValue(i,den*vi);
-            u2.setValue(i,den*e);
-
-            F0.setValue(i,den*vi);                             // rho*v
-            F1.setValue(i,Vector::one()*(den*vi.mag2()+Pr));   // rho*v^2 + Pr
-            F2.setValue(i,vi*(den*e+1));                       // v*(rho*e+1)
-
-            ep.setValue(i, vi + cs);
-            em.setValue(i, vi - cs);
-        }
-
-        for (int h = 0; h < insideIds.size(); ++h) {
-            int i = insideIds[h];
+        for (int i = 0; i < numNodes; ++i) {
             std::vector<int> nbrs = grid->getNeighboringCells(i);
+            
+            std::array<double, 5> FluxP, FluxM, Lv={0,0,0,0,0}; 
+            std::array<Vector, 5> Lvv;
 
-            std::array<double, 3> FluxP, FluxM; 
-            std::array<Vector, 3> Lv;
             for (int k = 0; k < dim; ++k) {
-                FluxP = getFlux(k, i, nbrs[2 * k], u0,u1,u2, ep, em, F);
-                FluxM = getFlux(k, nbrs[2 * k + 1], i, u0,u1,u2, ep, em, F);
-                for (int s = 0; s < 3; ++s)
-                    Lv[s][k] = (FluxM[s] - FluxP[s]) / grid->spacing(k);
+                FluxP = getFlux(k, i, nbrs[2 * k], U, ep, em, F);
+                FluxM = getFlux(k, nbrs[2 * k + 1], i, U, ep, em, F);
+                for (int s = 0; s < 5; ++s) {
+                    Lvv[s][k] = (FluxM[s] - FluxP[s]) / grid->spacing(k);
+                    Lv[s] += Lvv[s][k];
+                }
             }
-
-            double Lv0 = 0, Lv2 = 0;
-            for (int k = 0; k < dim; ++k) {
-                Lv0 += Lv[0][k];
-                Lv2 += Lv[2][k];
-            }
-            Vector vi = v->getValue(i);
-            double den = rho->getValue(i);
-            double ui = u->getValue(i);
-
-            drdt->setValue(i, Lv0);
-            dvdt->setValue(i, (Lv[1]-vi*Lv0)/den);   // (Lv1 - v*drdt)/rho
-            dudt->setValue(i, (Lv2 - ui*Lv0 - 0.5*vi.mag2()*Lv0 - den*vi*dvdt->getValue(i)));  // (Lv2 - u*drdt - 0.5v*v*drdt - rho*v*dvdt)/rho
         }
+
+        // for (int h = 0; h < insideIds.size(); ++h) {
+        //     int i = insideIds[h];
+        //     std::vector<int> nbrs = grid->getNeighboringCells(i);
+
+        //     std::array<double, 3> FluxP, FluxM; 
+        //     std::array<Vector, 3> Lv;
+        //     for (int k = 0; k < dim; ++k) {
+        //         FluxP = getFlux(k, i, nbrs[2 * k], U0,U1,U2, ep, em, F);
+        //         FluxM = getFlux(k, nbrs[2 * k + 1], i, U0,U1,U2, ep, em, F);
+        //         for (int s = 0; s < 3; ++s)
+        //             Lv[s][k] = (FluxM[s] - FluxP[s]) / grid->spacing(k);
+        //     }
+
+        //     double Lv0 = 0, Lv2 = 0;
+        //     for (int k = 0; k < dim; ++k) {
+        //         Lv0 += Lv[0][k];
+        //         Lv2 += Lv[2][k];
+        //     }
+        //     Vector vi = v->getValue(i);
+        //     double den = rho->getValue(i);
+        //     double ui = u->getValue(i);
+
+
+        //     drdt->setValue(i, Lv0);
+        //     dvdt->setValue(i, (Lv[1]-vi*Lv0)/den);   // (Lv1 - v*drdt)/rho
+        //     dudt->setValue(i, (Lv2 - ui*Lv0 - 0.5*vi.mag2()*Lv0 - den*vi*dvdt->getValue(i)));  // (Lv2 - u*drdt - 0.5v*v*drdt - rho*v*dvdt)/rho
+        // }
 
     }
 
-    std::array<double, 3> 
-    getFlux(int axis, int i, int j, ScalarField& u0, VectorField& u1, ScalarField& u2, 
+    std::array<double, 5> 
+    getFlux(int axis, int i, int j, std::vector<ScalarField*>& U, 
         VectorField& ep, VectorField& em, 
-        std::vector<VectorField*>& F) {
+        std::vector<ScalarField*>& F) {
         double epR, epL, emR, emL, ap, am;
         epR = 0.5 * (ep.getValue(j)[axis] + ep.getValue(i)[axis]);
         epL = ep.getValue(i)[axis];
@@ -146,26 +178,17 @@ public:
         ap = std::max({epL, epR, 0.0});
         am = std::max({-emL, -emR, 0.0}); 
 
-        std::array<double, 3> FL, FR, Flux;
+        std::array<double, 5> FL, FR, Flux;
+        std::array<double, 5> UL, UR;
 
-        double u0L, u0R, u2L, u2R;
-        Vector u1L, u1R;
+        for (int k = 0; k < 5; ++k) {
+            UL[k] = U[k]->getValue(i);
+            UR[k] = 0.5*(U[k]->getValue(i) + U[k]->getValue(j));
+            FL[k] = F[k]->getValue(i);
+            FR[k] = 0.5 * (F[k]->getValue(i) + F[k]->getValue(j));
 
-        u0L = u0.getValue(i);
-        u0R = 0.5 * (u0.getValue(j) + u0.getValue(i));
-        u1L = u1.getValue(i);
-        u1R = 0.5 * (u1.getValue(j) + u1.getValue(i));
-        u2L = u2.getValue(i);
-        u2R = 0.5 * (u2.getValue(j) + u2.getValue(i));
-
-        for (int k = 0; k < 3; ++k) {
-            FL[k] = F[k]->getValue(i)[axis];
-            FR[k] = 0.5 * (F[k]->getValue(i)[axis] + F[k]->getValue(j)[axis]);
+            Flux[k] = (ap * FL[k] + am * FR[k] - ap * am * (UR[k] - UL[k])) / (ap + am); 
         }
-
-        Flux[0] = (ap * FL[0] + am * FR[0] - ap * am * (u0R - u0L)) / (ap + am); 
-        Flux[1] = (ap * FL[1] + am * FR[1] - ap * am * (u1R - u1L)[axis]) / (ap + am); 
-        Flux[2] = (ap * FL[2] + am * FR[2] - ap * am * (u2R - u2L)) / (ap + am);
 
         return Flux;
     }
