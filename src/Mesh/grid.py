@@ -36,6 +36,8 @@ class Grid:
         return
     def indexToCoordinates(self,idx="int"):
         return "std::array<int, %(dim)s>"
+    def assignPositions(self,nodeList="NodeList*"):
+        return
 
     nx = PYB11property("int", getter="getnx", doc="The number of x coords.")
     ny = PYB11property("int", getter="getny", doc="The number of y coords.")

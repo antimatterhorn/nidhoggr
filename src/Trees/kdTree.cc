@@ -5,10 +5,10 @@
 #include <algorithm>
 
 template <int dim>
-KDTree<dim>::KDTree(const std::vector<Lin::Vector<dim>>& points) : points(points) {
+KDTree<dim>::KDTree(Field<Lin::Vector<dim>>* points) : points(points) {
     std::vector<Node> nodes;
-    for (size_t i = 0; i < points.size(); ++i) {
-        nodes.emplace_back(points[i], i);
+    for (size_t i = 0; i < points->size(); ++i) {
+        nodes.emplace_back(points->getValue(i), i);
     }
     root = buildTree(nodes, 0);
 }

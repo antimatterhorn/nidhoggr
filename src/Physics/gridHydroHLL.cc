@@ -21,7 +21,7 @@ public:
 
         State<dim>* state = &this->state;
 
-        VectorField* v  = nodeList->getField<Vector>("velocity");
+        VectorField* v            = nodeList->getField<Vector>("velocity");
         ScalarField* rho          = nodeList->getField<double>("density");
         ScalarField* u            = nodeList->getField<double>("specificInternalEnergy");
 

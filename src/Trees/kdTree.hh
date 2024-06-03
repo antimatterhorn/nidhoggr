@@ -4,11 +4,12 @@
 #include <vector>
 #include <cmath>
 #include "../Math/vectorMath.hh"
+#include "../DataBase/field.hh"
 
 template <int dim>
 class KDTree {
 public:
-    KDTree(const std::vector<Lin::Vector<dim>>& points);
+    KDTree(Field<Lin::Vector<dim>>* points);
 
     std::vector<int> findNearestNeighbors(const Lin::Vector<dim>& point, double radius) const;
 
@@ -25,7 +26,7 @@ private:
     void searchNeighbors(Node* node, const Lin::Vector<dim>& point, double radius, int depth, std::vector<int>& result) const;
 
     Node* root;
-    std::vector<Lin::Vector<dim>> points;
+    Field<Lin::Vector<dim>>* points;
 };
 
 #include "kdTree.cc"

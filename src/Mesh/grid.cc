@@ -365,6 +365,20 @@ namespace Mesh {
 
         return !inside;
     }
+
+    template <int dim>
+    void
+    Grid<dim>::assignPositions(NodeList* nodeList) {
+        using Vector = Lin::Vector<dim>;
+        using VectorField = Field<Vector>;
+        if (nodeList->getField<Vector>("position") == nullptr)
+            nodeList->insertField<Vector>("position");
+                
+        VectorField* position = nodeList->getField<Vector>("position");
+        for (int i = 0; i < position->size(); ++i) {
+            position->setValue(i, this->getPosition(i));
+        }
+    }
 }
 
 

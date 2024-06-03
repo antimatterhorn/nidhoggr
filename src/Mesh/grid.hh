@@ -5,6 +5,7 @@
 #include <string>
 #include "../Math/vectorMath.hh"
 #include "../DataBase/field.hh"
+#include "../DataBase/nodeList.hh"
 
 namespace Mesh {
     template <int dim>
@@ -52,6 +53,8 @@ namespace Mesh {
         std::vector<int> frontMost();
         std::vector<int> backMost();
         bool onBoundary(const int idx);
+
+        void assignPositions(NodeList* nodeList);
     };
 }
 
