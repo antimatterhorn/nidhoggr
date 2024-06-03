@@ -111,13 +111,14 @@ public:
             F0.setValue(i,den*vel.x());
             F1.setValue(i,den*vel.x()*vel.x() + Pr);
             F2.setValue(i,den*vel.x()*vel.y());
+            printf("vx = %3.4f, vy = %3.4f, den = %3.4f, F2 = %3.4f\n",vel.x(),vel.y(),den,den*vel.x()*vel.y());
             F3.setValue(i,den*vel.x()*vel.z());
             F4.setValue(i,vel.x()*(E + Pr));
         }
 
-        VectorField* dvdt = deriv.template getField<Vector>("velocity");
-        ScalarField* drdt = deriv.template getField<double>("density");
-        ScalarField* dudt = deriv.template getField<double>("specificInternalEnergy");
+        VectorField* DvDt = deriv.template getField<Vector>("velocity");
+        ScalarField* DrDt = deriv.template getField<double>("density");
+        ScalarField* DuDt = deriv.template getField<double>("specificInternalEnergy");
 
         for (int i = 0; i < numNodes; ++i) {
             std::vector<int> nbrs = grid->getNeighboringCells(i);
@@ -130,9 +131,35 @@ public:
                 FluxM = getFlux(k, nbrs[2 * k + 1], i, U, ep, em, F);
                 for (int s = 0; s < 5; ++s) {
                     Lvv[s][k] = (FluxM[s] - FluxP[s]) / grid->spacing(k);
-                    Lv[s] += Lvv[s][k];
+                    Lv[s] += Lvv[s][k]; // i guess? i dunno if it's just a sum here, but it seems like it ought to be
                 }
             }
+
+            DrDt->setValue(i, Lv[0]);
+            
+            Vector vi = v->getValue(i);
+            double vx = vi.x();
+            double vy = vi.y();
+            double vz = vi.z();
+            double den = rho->getValue(i);
+            double Pr = pressure->getValue(i);
+         
+            double dvxdt, dvydt, dvzdt;
+            dvxdt = (Lv[1]-vx*Lv[0])/den;
+            dvydt = (Lv[2]-vy*Lv[0])/den;  // this can never work!!!
+            dvzdt = (Lv[3]-vz*Lv[0])/den;
+
+            printf("L1 = %3.4f, L2 = %3.4f\n",Lv[1],Lv[2]);
+            Vector dvdt = Vector();
+            dvdt[0] = dvxdt;
+            if (dim>1)
+                dvdt[1] = dvydt;
+            if (dim>2)
+                dvdt[2] = dvzdt;
+            DvDt->setValue(i,dvdt);
+
+            DuDt->setValue(i,Lv[4]-(vx*dvxdt + vy*dvydt + vz*dvzdt));
+
         }
 
         // for (int h = 0; h < insideIds.size(); ++h) {

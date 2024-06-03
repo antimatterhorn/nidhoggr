@@ -11,10 +11,10 @@ from Animation import *
 #         self.dump.append([time,y])
 
 if __name__ == "__main__":
-    animate = True
+    animate = False
     
-    nx = 20
-    ny = 20
+    nx = 10
+    ny = 10
     dx = 1
     dy = 1
 
@@ -25,7 +25,7 @@ if __name__ == "__main__":
     
     myNodeList = NodeList(nx*ny)
 
-    cycles = 10
+    cycles = 2
     dtmin = 0.01
 
     print("numNodes =",myNodeList.numNodes)
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
     
-    integrator = RungeKutta4Integrator2d(hydro,dtmin=dtmin)
+    integrator = Integrator2d(hydro,dtmin=dtmin)
 
 
     density = myNodeList.getFieldDouble("density")
