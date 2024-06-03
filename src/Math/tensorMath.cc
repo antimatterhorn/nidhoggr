@@ -219,6 +219,21 @@ void Tensor<dim>::setzz(double val) {
 }
 
 template <int dim>
+Tensor<dim> Tensor<dim>::one() {
+    Tensor<dim> result = Tensor<dim>();
+    for (int i = 0; i < dim; ++i) {
+        result.values[i*dim + i] = 1.0;
+    }
+    return result;
+}
+
+template <int dim>
+Tensor<dim> Tensor<dim>::zero() {
+    Tensor<dim> result = Tensor<dim>();
+    return result;
+}
+
+template <int dim>
 std::string Tensor<dim>::toString() const {
     std::string result = "Tensor " + std::to_string(dim) + "x" + std::to_string(dim) + ":\n";
     for (int i = 0; i < dim; ++i) {

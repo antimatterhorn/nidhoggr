@@ -50,6 +50,9 @@ public:
     void setzy(double val);
     void setzz(double val);
 
+    static Tensor<dim> one();
+    static Tensor<dim> zero();
+
     std::string toString() const;
 
 private:
