@@ -11,5 +11,5 @@ class RockPaperScissors:
         return
     def step(self,nsteps="unsigned int"):
         return
-    def getCell(self,i="int",j="int"):
+    def getCell(self,i="int",j="int",fieldName="std::string"):
         return

@@ -106,7 +106,7 @@ public:
     }
 
     std::array<double, 3>
-    getCell(int i, int j) {
+    getCell(int i, int j, std::string fieldName = "doesntmatter") {
         int idx = grid.index(i,j);
         return xx[idx];
     }
