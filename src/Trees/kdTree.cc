@@ -43,7 +43,8 @@ void KDTree<dim>::searchNeighbors(Node* node, const Lin::Vector<dim>& point, dou
     int axis = depth % dim;
     double dist = (node->point - point).magnitude();
 
-    if (dist <= radius) {
+    // Exclude the identical point from the results
+    if (dist <= radius && node->point != point) {
         result.push_back(node->index);
     }
 

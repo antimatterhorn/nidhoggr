@@ -16,5 +16,7 @@ tree = KDTree2d(positions)
 
 point = positions[int(nx/2*ny/2)]
 nbrs = tree.findNearestNeighbors(point,0.11)
-print(point,int(nx/2*ny/2),nbrs)
+print(point,"is point %d"%int(nx/2*ny/2),"has neighbors",nbrs)
+for i in range(len(nbrs)):
+    print(positions[nbrs[i]])
 
