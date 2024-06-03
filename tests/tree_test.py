@@ -16,9 +16,12 @@ positions = nodeList.getFieldVector3d("position")
 
 tree = KDTree3d(positions)
 
-point = positions[int(nx/2*ny/2*nz/2)]
+idx = int(nx/2*ny/2*nz/2)
+
+point = positions[idx]
 nbrs = tree.findNearestNeighbors(point,1.1*dx)
-print(point,"is point %d"%int(nx/2*ny/2*nz/2),"has neighbors",nbrs)
+print("%d\t"%idx,point)
+print("neighbors:",nbrs,"\n")
 for i in range(len(nbrs)):
-    print(positions[nbrs[i]])
+    print("%d\t"%nbrs[i],positions[nbrs[i]])
 
