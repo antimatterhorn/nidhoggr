@@ -44,13 +44,7 @@ public:
 
     virtual void 
     VerifyHLLFields(NodeList* nodeList) {
-        if (nodeList->getField<Vector>("position") == nullptr)
-            nodeList->insertField<Vector>("position");
-                
-        VectorField* position = nodeList->getField<Vector>("position");
-        for (int i = 0; i < position->size(); ++i) {
-            position->setValue(i, grid->getPosition(i));
-        }
+        grid->assignPositions(nodeList);
     }
 
     virtual void 

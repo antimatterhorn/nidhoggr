@@ -13,7 +13,7 @@ class oscillate:
         self.phi = myNodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
         a = 5*(cos(time/0.5))
-        v = min(max(0.01*time*self.cs,0.5*self.cs),2.0*self.cs)
+        v = min(max(0.02*time*self.cs,0.75*self.cs),2.0*self.cs)
         posx = v*time
         if posx <= self.width:
             i = int(posx)

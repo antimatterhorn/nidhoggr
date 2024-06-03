@@ -27,11 +27,7 @@ public:
         This sets the nodeList positions field to whatever is inside Grid positions. This should ideally
         happen with any physics package that uses a mesh, so this is a bit clunky to have here.
         */
-        if (nodeList->getField<Vector>("position") == nullptr)
-            nodeList->insertField<Vector>("position");
-        VectorField* position = nodeList->getField<Vector>("position");
-        for (int i=0;i<nodeList->size();++i)
-            position->setValue(i,grid->getPosition(i));
+        grid->assignPositions(nodeList);
         
         State<dim>* state = &this->state;
         ScalarField* xi = nodeList->getField<double>("xi");
