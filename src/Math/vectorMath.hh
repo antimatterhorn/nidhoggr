@@ -60,6 +60,7 @@ public:
     Vector<dim> normal() const;
 
     static Vector<dim> one();
+    static Vector<dim> zero();
 
     static const unsigned numElements = dim;
 };

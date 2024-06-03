@@ -230,6 +230,15 @@ Vector<dim> Vector<dim>::one() {
 }
 
 template <int dim>
+Vector<dim> Vector<dim>::zero() {
+    Vector<dim> result;
+    for (int i = 0; i < dim; ++i) {
+        result.values[i] = 0.0;
+    }
+    return result;
+}
+
+template <int dim>
 Vector<dim> operator*(const double other, const Vector<dim>& vec) {
     return vec * other;
 }
