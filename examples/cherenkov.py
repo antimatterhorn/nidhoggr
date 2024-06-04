@@ -52,10 +52,12 @@ if __name__ == "__main__":
 
     print(waveEqn)
 
+    packages = [waveEqn]
+
     pm = PacmanGridBoundaries2d(grid=grid,physics=waveEqn)
     pbounds = []
 
-    integrator = RungeKutta2Integrator2d(physics=waveEqn,
+    integrator = RungeKutta2Integrator2d(packages=packages,
                               dtmin=0.05,
                               boundaries=pbounds)
     print(integrator)

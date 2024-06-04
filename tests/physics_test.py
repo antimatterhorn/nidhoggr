@@ -26,7 +26,8 @@ if __name__ == "__main__":
 
 
     constantGravity = SimplePhysics2d(myNodeList,constants)
-    integrator = RungeKutta4Integrator2d(constantGravity,dtmin=dtmin)
+    packages = [constantGravity]
+    integrator = RungeKutta4Integrator2d(packages=packages,dtmin=dtmin)
 
     print(myNodeList.position())
     print("numNodes =",myNodeList.numNodes)

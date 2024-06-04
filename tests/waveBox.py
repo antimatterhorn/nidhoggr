@@ -44,6 +44,8 @@ if __name__ == "__main__":
 
     print(waveEqn)
 
+    packages = [waveEqn]
+
     pm = PacmanGridBoundaries2d(grid=grid,physics=waveEqn)
     print(pm)
     box = DirichletGridBoundaries2d(grid=grid,physics=waveEqn)
@@ -52,7 +54,7 @@ if __name__ == "__main__":
     box.removeBox(Vector2d(0,int(ny/2)-5),Vector2d(int(nx/2)-5,int(ny/2)+5))
     pbounds = [pm,box]
 
-    integrator = RungeKutta2Integrator2d(physics=waveEqn,
+    integrator = RungeKutta2Integrator2d(packages=packages,
                               dtmin=0.05,
                               boundaries=pbounds)
     print(integrator)
