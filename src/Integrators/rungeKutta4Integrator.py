@@ -4,7 +4,7 @@ from integrator import *
 @PYB11template("dim")
 class RungeKutta4Integrator(Integrator):
     def pyinit(self,
-               physics="Physics<%(dim)s>*",
+               packages="std::vector<Physics<%(dim)s>*>",
                dtmin="double",
                boundaries=("std::vector<Boundaries<%(dim)s>*>","std::vector<Boundaries<%(dim)s>*>()")):
         return

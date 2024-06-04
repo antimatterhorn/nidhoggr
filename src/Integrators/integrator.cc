@@ -4,8 +4,8 @@
 #include "integrator.hh"
 
 template <int dim>
-Integrator<dim>::Integrator(Physics<dim>* physics, double dtmin, std::vector<Boundaries<dim>*> boundaries)
-    : physics(physics), boundaries(boundaries), dt(dtmin), dtmin(dtmin), cycle(0), time(0.0) {}
+Integrator<dim>::Integrator(std::vector<Physics<dim>*> packages, double dtmin, std::vector<Boundaries<dim>*> boundaries)
+    : packages(packages), boundaries(boundaries), dt(dtmin), dtmin(dtmin), cycle(0), time(0.0) {}
 
 template <int dim>
 Integrator<dim>::~Integrator() {}
@@ -13,13 +13,15 @@ Integrator<dim>::~Integrator() {}
 template <int dim>
 void Integrator<dim>::Step() {
     if (cycle == 0) {
-        physics->ZeroTimeInitialize();
+        for (Physics<dim>* physics : packages)
+            physics->ZeroTimeInitialize();
     }
 
     time += dt;
     cycle += 1;
 
-    physics->PreStepInitialize();
+    for (Physics<dim>* physics : packages)
+        physics->PreStepInitialize();
 
     if (!boundaries.empty()) {
         for (Boundaries<dim>* bounds : boundaries) {
@@ -27,19 +29,22 @@ void Integrator<dim>::Step() {
         }
     }
 
-    State<dim>* state = physics->getState();
-    State<dim> derivatives(state->size());
 
-    derivatives.ghost(state);
-    physics->EvaluateDerivatives(state, derivatives, time, 0);
-    derivatives *= dt;
+    for (Physics<dim>* physics : packages) {
+        State<dim>* state = physics->getState();
+        State<dim> derivatives(state->size());
+        derivatives.ghost(state);
 
-    State<dim> newState(state->size());
-    newState.ghost(state);
-    newState += *state;
-    newState += derivatives;
+        physics->EvaluateDerivatives(state, derivatives, time, 0);
 
-    physics->FinalizeStep(&newState);
+        derivatives *= dt;
+        State<dim> newState(state->size());
+        newState.ghost(state);
+        newState += *state;
+        newState += derivatives;
+
+        physics->FinalizeStep(&newState);
+    }
 
     if (!boundaries.empty()) {
         for (Boundaries<dim>* bounds : boundaries) {
@@ -47,8 +52,13 @@ void Integrator<dim>::Step() {
         }
     }
 
-    double newdt = physics->EstimateTimestep();
-    dt = std::max(newdt, dtmin);
+    double olddt = 1e30;
+    for (Physics<dim>* physics : packages) {
+        double newdt = physics->EstimateTimestep();
+        newdt = std::min(newdt,olddt);
+        dt = std::max(newdt, dtmin);
+        olddt = newdt;
+    }
 }
 
 template <int dim>

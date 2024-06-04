@@ -39,7 +39,7 @@ if __name__ == "__main__":
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
     
-    integrator = RungeKutta2Integrator1d(hydro,dtmin=dtmin)
+    integrator = RungeKutta2Integrator1d([hydro],dtmin=dtmin)
 
 
     density = myNodeList.getFieldDouble("density")

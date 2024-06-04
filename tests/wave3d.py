@@ -43,11 +43,13 @@ if __name__ == "__main__":
 
     print(waveEqn)
 
+    packages = [waveEqn]
+
     pm = PacmanGridBoundaries3d(grid=grid,physics=waveEqn)
     print(pm)
     pbounds = [pm]
 
-    integrator = RungeKutta2Integrator3d(physics=waveEqn,
+    integrator = RungeKutta2Integrator3d(packages=packages,
                               dtmin=0.05,
                               boundaries=pbounds)
     print(integrator)

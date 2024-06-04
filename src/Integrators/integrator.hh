@@ -13,13 +13,13 @@ class Physics; // forward declaration
 template <int dim>
 class Integrator {
 protected:
-    Physics<dim>* physics;
+    std::vector<Physics<dim>*> packages;
     std::vector<Boundaries<dim>*> boundaries;
     unsigned int cycle;
     double time, dt, dtmin;
 
 public:
-    Integrator(Physics<dim>* physics, double dtmin, std::vector<Boundaries<dim>*> boundaries);
+    Integrator(std::vector<Physics<dim>*> packages, double dtmin, std::vector<Boundaries<dim>*> boundaries);
     ~Integrator();
 
     virtual void Step();
