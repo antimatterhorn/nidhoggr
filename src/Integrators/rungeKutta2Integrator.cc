@@ -19,8 +19,6 @@ public:
 
         double dt = this->dt;
         double time = this->time;
-        
-        
 
         physics->PreStepInitialize();
 

@@ -16,6 +16,7 @@ git submodule update --init --recursive
 mkdir build
 
 Nidhoggr/
+|-- exmaples/
 |-- src/
 |   |-- Math/
 |   |   |-- vectorMath.cc
@@ -30,8 +31,6 @@ cmake ..
 make
 
 ```
-Requires libsilo-dev so "sudo apt-get install libsilo-dev"
-if you don't already have it.
 
 Hopefully you already have python somewhere...
 
