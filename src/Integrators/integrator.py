@@ -3,7 +3,7 @@ from PYB11Generator import *
 @PYB11template("dim")
 class Integrator:
     def pyinit(self,
-               physics="Physics<%(dim)s>*",
+               packages="std::vector<Physics<%(dim)s>*>",
                dtmin="double",
                boundaries=("std::vector<Boundaries<%(dim)s>*>","std::vector<Boundaries<%(dim)s>*>()")):
         return
