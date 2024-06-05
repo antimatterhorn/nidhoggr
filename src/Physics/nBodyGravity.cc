@@ -59,7 +59,7 @@ public:
             for (int j=0; j<numNodes; ++j)
             {
                 if (j!=i) {
-                    rij = position->getValue(i) - position->getValue(j);
+                    rij = position->getValue(j) - position->getValue(i);
                     double mj = mass->getValue(j);
                     a += constants.G()*mj/(rij.mag2()+plummerLength)*rij.normal();
                 }
