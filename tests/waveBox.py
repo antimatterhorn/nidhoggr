@@ -22,7 +22,7 @@ class vtkdump:
         self.meshWriter = HDF5MeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=["phi","xi"])
         self.cycle = dumpCycle
     def __call__(self,cycle,time,dt):
-        self.meshWriter.write("%03d.vtk"%cycle)
+        self.meshWriter.write("%03d.h5"%cycle)
       
 
 if __name__ == "__main__":

@@ -3,10 +3,9 @@
 
 #include <vector>
 #include <string>
-#include <iostream>
+#include <H5Cpp.h>
 #include "../DataBase/nodeList.hh"
 #include "../Math/vectorMath.hh"
-#include "H5Cpp.h"
 
 template <int dim>
 class HDF5MeshWriter {
@@ -20,7 +19,7 @@ private:
     const NodeList* nodeList;
     std::vector<std::string> fieldNames;
 
-    void writePointData(H5::Group& group);
+    void writeCellCenterData(H5::H5File& file);
 };
 
 #include "hdf5MeshWriter.cc"

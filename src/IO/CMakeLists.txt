@@ -7,4 +7,4 @@ PYB11Generator_add_module(IO)
 include_directories(${HDF5_INCLUDE_DIRS})
 
 # Link the hdf5_lib library to the IO target
-target_link_libraries(IO PRIVATE hdf5_lib)
+target_link_libraries(IO PRIVATE hdf5_c_lib hdf5_cpp_lib)
