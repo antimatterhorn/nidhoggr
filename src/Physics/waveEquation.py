@@ -12,9 +12,6 @@ class WaveEquation(Physics):
     @PYB11cppname("getCell")
     def getCell2d(self,i="int",j="int",fieldName="std::string"):
         return
-    # @PYB11virtual
-    # def UpdateDerivatives(self,dt="const double"):
-    #     return "void"
 
 WaveEquation1d = PYB11TemplateClass(WaveEquation,
                               template_parameters = ("1"),

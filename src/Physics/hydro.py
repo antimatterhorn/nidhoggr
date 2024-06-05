@@ -8,9 +8,6 @@ class Hydro(Physics):
                constants="PhysicalConstants&",
                eos="EquationOfState*"):
         return
-    # @PYB11virtual
-    # def UpdateDerivatives(self,dt="const double"):
-    #     return "void"
 
 Hydro1d = PYB11TemplateClass(Hydro,
                               template_parameters = ("1"),

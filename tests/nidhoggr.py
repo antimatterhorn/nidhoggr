@@ -13,7 +13,8 @@ for dir in ["Math",
             "Utilities",
             "Boundaries",
             "Calculators",
-            "IO"]:
+            "IO",
+            "Generation"]:
     sys.path.append(buildir+dir)
 
 from CodeVersion import *

@@ -8,15 +8,6 @@ class Grid:
         return
     def pyinit3(self,nx="int",ny="int",nz="int",sx="double",sy="double",sz="double"):
         return
-    # @PYB11pyname("state")
-    # def getState(self,id="int"):
-    #     return
-    # @PYB11pyname("position")
-    # def getPosition(self,id="int"):
-    #     return
-    # @PYB11pyname("positions")
-    # def getPositions(self):
-    #     return
     @PYB11pyname("position")
     def getPosition(self,id="int"):
         return
@@ -26,12 +17,6 @@ class Grid:
         return
     def getNeighboringCells(self,idx="int"):
         return "std::vector<int>"
-    # @PYB11cppname("index")
-    # def index1d(self,i="int"):
-    #     return
-    # @PYB11cppname("index")
-    # def index2d(self,i="int",j="int"):
-    #     return
     def index(self,i="int",j=("int",0),k=("int",0)):
         return
     def indexToCoordinates(self,idx="int"):

@@ -9,9 +9,6 @@ class PointSourceGravity(Physics):
                pointSourceLocation="Lin::Vector<%(dim)s>&",
                pointSourceMass="double"):
         return
-    # @PYB11virtual
-    # def UpdateDerivatives(self,dt="const double"):
-    #     return "void"
 
 PointSourceGravity1d = PYB11TemplateClass(PointSourceGravity,
                               template_parameters = ("1"),

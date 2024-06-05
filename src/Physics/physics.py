@@ -6,10 +6,6 @@ class Physics:
                nodeList="NodeList*",
                constants="PhysicalConstants&"):
         return
-    # @PYB11pure_virtual
-    # def UpdateDerivatives(self,dt="const double"):
-    #     return "void"
-    
     
 Physics1d = PYB11TemplateClass(Physics,
                               template_parameters = ("1"),
