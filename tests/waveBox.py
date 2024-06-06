@@ -19,10 +19,10 @@ class oscillate:
 
 class vtkdump:
     def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
-        self.meshWriter = VTKMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=["phi","xi"])
+        self.meshWriter = SiloMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=["phi","xi"])
         self.cycle = dumpCycle
     def __call__(self,cycle,time,dt):
-        self.meshWriter.write("%03d.vtk"%cycle)
+        self.meshWriter.write("%03d.silo"%cycle)
       
 
 if __name__ == "__main__":

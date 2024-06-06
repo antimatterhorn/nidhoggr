@@ -11,7 +11,7 @@ template <int dim>
 void 
 SiloMeshWriter<dim>::write(const std::string& fileName) {
     std::string fullFileName = baseName + fileName;
-    DBfile *dbfile = DBCreate(fullFileName.c_str(), DB_CLOBBER, DB_LOCAL, "Simulation data", DB_HDF5);
+    DBfile *dbfile = DBCreate(fullFileName.c_str(), DB_CLOBBER, DB_LOCAL, "Simulation data", DB_PDB);
 
     if (!dbfile) {
         std::cerr << "Error creating Silo file!" << std::endl;
