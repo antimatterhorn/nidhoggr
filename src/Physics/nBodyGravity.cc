@@ -13,16 +13,16 @@ public:
 
     NBodyGravity() {}
 
-    NBodyGravity(NodeList* nodeList, PhysicalConstants& constants, double plummerLength) : 
+    NBodyGravity(NodeList* nodeList, PhysicalConstants& constants, double plummerLength) :
         Physics<dim>(nodeList,constants),
         plummerLength(plummerLength) {
 
         int numNodes = nodeList->size();
         if (nodeList->getField<Vector>("acceleration") == nullptr)
             nodeList->insertField<Vector>("acceleration");
-        
+
         VectorField* position = nodeList->getField<Vector>("position");
-        State<dim>* state = &this->state;        
+        State<dim>* state = &this->state;
         state->template addField<Vector>(position);
         VectorField* velocity = nodeList->getField<Vector>("velocity");
         state->template addField<Vector>(velocity);
@@ -52,7 +52,7 @@ public:
         VectorField* dvdt           = deriv.template getField<Vector>("velocity");
 
         dtmin = 1e30;
-        #pragma omp parllel for
+        #pragma omp parallel for
         for (int i=0; i<numNodes ; ++i) {
             Vector a = Vector::zero();
             Vector rij = Vector();
@@ -71,11 +71,11 @@ public:
             dtmin = std::min(dtmin,vmag/amag);
             dxdt->setValue(i,v+dt*a);
             dvdt->setValue(i,a);
-        } 
+        }
     }
 
-    virtual double 
-    EstimateTimestep() const override {     
+    virtual double
+    EstimateTimestep() const override {
         double timestepCoefficient = 1e-4; // Adjust as needed
         double timestep = timestepCoefficient * sqrt(dtmin);
 
