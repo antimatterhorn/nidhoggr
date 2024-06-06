@@ -25,19 +25,19 @@ class oscillate:
         # self.phi.setValue(8075,val)
 class vtkdump:
     def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
-        self.meshWriter = VTKMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=["phi","xi"])
+        self.meshWriter = SiloMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=["phi","xi"])
         self.cycle = dumpCycle
     def __call__(self,cycle,time,dt):
-        self.meshWriter.write("%03d.vtk"%cycle)
+        self.meshWriter.write("%03d.silo"%cycle)
 
       
 
 if __name__ == "__main__":
-    animate = True
+    animate = False
     
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
-    nx = 100
-    ny = 100
+    nx = 500
+    ny = 500
     cs = 1.0
 
     myNodeList = NodeList(nx*ny)
@@ -58,7 +58,7 @@ if __name__ == "__main__":
     pbounds = []
 
     integrator = RungeKutta2Integrator2d(packages=packages,
-                              dtmin=0.05,
+                              dtmin=0.01,
                               boundaries=pbounds)
     print(integrator)
 
@@ -85,4 +85,4 @@ if __name__ == "__main__":
                                                 fieldName="phi")
         AnimateGrid2d(bounds,update_method,extremis=[-1,1],cmap="viridis",frames=1000)
     else:
-        controller.Step(1000)
+        controller.Step(5000)

@@ -1,5 +1,8 @@
 # nidhoggr
 
+![Cherenkov Radiation](examples/cherenkov.png)
+
+
 ```
                                
      _   _ _                  
