@@ -21,6 +21,7 @@ private:
     const double StefanBoltzmannMKS = 5.670374419e-8;   // W/m^2/K^4
     const double PlanckMKS = 6.62607015e-34;            // J*s
     const double EpsilonZeroMKS = 8.85418782e-12;       // C^2*s^2/kg/m^3
+    const double EGravMKS =  9.81;                      // m/s/s
 
     // Dependent variables.
     double UnitEnergyJ;
@@ -77,6 +78,7 @@ public:
     double planckConstant() const { return PlanckMKS * mUnitTsec / (mUnitMkg * mUnitLm * mUnitLm); }
     double unitEnergyJ() const { return mUnitMkg * pow(mUnitLm / mUnitTsec, 2.0); }
     double epsilonZero() const { return EpsilonZeroMKS * pow(mUnitLm, 3.0) * mUnitMkg / (pow(mUnitTsec, 2.0) * pow(mUnitCcou, 2.0)); }
+    double ESurfaceGrav() const { return EGravMKS / (mUnitLm / pow(mUnitTsec,2.0)); }
 
 };
 
