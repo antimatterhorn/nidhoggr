@@ -79,7 +79,7 @@ Field<T>& Field<T>::operator=(const Field<T>& other) {
 template <typename T>
 Field<T> Field<T>::operator+(const Field<T>& other) const {
     Field<T> result(*this); // Create a copy of the current object
-    for (int i = 0; i < this->size(); ++i) {
+    for (unsigned int i = 0; i < this->size(); ++i) {
         result.setValue(i, this->getValue(i) + other.getValue(i)); // Perform element-wise addition
     }
     return result; // Return the result
@@ -97,7 +97,7 @@ Field<T> Field<T>::operator-(const Field<T>& other) const {
 template <typename T>
 Field<T> Field<T>::operator*(const double other) const {
     Field<T> result(*this); // Create a copy of the current object
-    for (int i = 0; i < this->size(); ++i) {
+    for (unsigned int i = 0; i < this->size(); ++i) {
         result.setValue(i, this->getValue(i) * other); // Perform element-wise scalar multiplication
     }
     return result; // Return the result

@@ -9,6 +9,16 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -fPIC")
 
 message("CXX Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
 
+# Add compiler flags to suppress signed-unsigned comparison warnings
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    add_compile_options(-Wno-sign-compare)
+elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    add_compile_options(/wd4018)
+endif()
+
+# Find and enable OpenMP
+find_package(OpenMP REQUIRED)
+
 # Set the path to the pyb11 executable
 set(PYB11GENERATOR_ROOT_DIR ${CMAKE_SOURCE_DIR}/extern/PYB11Generator)
 include(${PYB11GENERATOR_ROOT_DIR}/cmake/PYB11Generator.cmake)
