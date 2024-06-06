@@ -6,7 +6,7 @@
  ___|_|_| | |_ ___ ___ ___ ___
 |   | | . |   | . | . | . |  _|
 |_|_|_|___|_|_|___|_  |_  |_|  
-      v0.7.0      |___|___|    
+      v0.7.2      |___|___|    
 
 git pull
 git submodule update --init --recursive
@@ -33,5 +33,6 @@ make
 ```
 
 Hopefully you already have python somewhere...
+You may need to pip3 install PYB11Generator
 
 Consult the Classes.md files in src subdirectories for interface guides.
