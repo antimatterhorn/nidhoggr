@@ -14,10 +14,10 @@ public:
 
     PointSourceGravity() {}
 
-    PointSourceGravity(NodeList* nodeList, 
-                        PhysicalConstants& constants, 
-                        Vector& pointSourceLocation, 
-                        double pointSourceMass) : 
+    PointSourceGravity(NodeList* nodeList,
+                        PhysicalConstants& constants,
+                        Vector& pointSourceLocation,
+                        double pointSourceMass) :
         Physics<dim>(nodeList,constants),
         pointSourceLocation(pointSourceLocation),
         pointSourceMass(pointSourceMass) {
@@ -25,7 +25,7 @@ public:
         int numNodes = nodeList->size();
         if (nodeList->getField<Vector>("acceleration") == nullptr)
             nodeList->insertField<Vector>("acceleration");
-        
+
         State<dim>* state = &this->state;
         VectorField* position = nodeList->getField<Vector>("position");
         state->template addField<Vector>(position);
@@ -51,7 +51,7 @@ public:
         VectorField* dvdt           = deriv.template getField<Vector>("velocity");
 
         dtmin = 1e30;
-        #pragma omp parllel for
+        #pragma omp parallel for
         for (int i=0; i<numNodes ; ++i) {
             Vector pos = position->getValue(i);
             Vector r = (pointSourceLocation - pos);
@@ -68,8 +68,8 @@ public:
 
     }
 
-    virtual double 
-    EstimateTimestep() const override {     
+    virtual double
+    EstimateTimestep() const override {
         double timestepCoefficient = 1e-4; // Adjust as needed
         double timestep = timestepCoefficient * sqrt(dtmin);
 

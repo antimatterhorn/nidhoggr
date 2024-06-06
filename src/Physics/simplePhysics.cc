@@ -9,19 +9,19 @@ public:
     using Vector = Lin::Vector<dim>;
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
-    
+
     SimplePhysics() {}
 
-    SimplePhysics(NodeList* nodeList, 
-                        PhysicalConstants& constants) : 
+    SimplePhysics(NodeList* nodeList,
+                        PhysicalConstants& constants) :
         Physics<dim>(nodeList,constants) {
 
         int numNodes = nodeList->size();
         if (nodeList->getField<double>("y") == nullptr)
             nodeList->insertField<double>("y");
-        
+
         ScalarField* y = nodeList->getField<double>("y");
-        State<dim>* state = &this->state;        
+        State<dim>* state = &this->state;
         state->template addField<double>(y);
     }
 
@@ -41,15 +41,15 @@ public:
     virtual void
     EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt) override {
         // extremely simple ode, y(t) = t^2  -> y'=2*t
-        
+
         NodeList* nodeList = this->nodeList;
         PhysicalConstants constants = this->constants;
         int numNodes = nodeList->size();
 
         ScalarField* y        = initialState->template getField<double>("y");
         ScalarField* dydt     = deriv.template getField<double>("y");
-        
-        #pragma omp parllel for
+
+        #pragma omp parallel for
         for (int i=0; i<numNodes ; ++i) {
             dydt->setValue(i,2.0*(time+dt));
         }

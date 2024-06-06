@@ -13,7 +13,7 @@ public:
 
     ConstantGravity() {}
 
-    ConstantGravity(NodeList* nodeList, PhysicalConstants& constants, Vector& gravityVector) : 
+    ConstantGravity(NodeList* nodeList, PhysicalConstants& constants, Vector& gravityVector) :
         Physics<dim>(nodeList,constants),
         gravityVector(gravityVector) {
 
@@ -22,9 +22,9 @@ public:
             nodeList->insertField<Vector>("acceleration");
         for (int i=0; i<numNodes; ++i)
             nodeList->getField<Vector>("acceleration")->setValue(i,gravityVector);
-        
+
         VectorField* position = nodeList->getField<Vector>("position");
-        State<dim>* state = &this->state;        
+        State<dim>* state = &this->state;
         state->template addField<Vector>(position);
         VectorField* velocity = nodeList->getField<Vector>("velocity");
         state->template addField<Vector>(velocity);
@@ -51,23 +51,23 @@ public:
 
         VectorField* dxdt           = deriv.template getField<Vector>("position");
         VectorField* dvdt           = deriv.template getField<Vector>("velocity");
-        
+
         dxdt->copyValues(velocity);
         dxdt->operator+(*acceleration*dt);
         dvdt->copyValues(acceleration);
 
         dtmin = 1e30;
-        #pragma omp parllel for
+        #pragma omp parallel for
         for (int i=0; i<numNodes ; ++i) {
             double amag = acceleration->getValue(i).mag2();
             double vmag = velocity->getValue(i).mag2();
             dtmin = std::min(dtmin,vmag/amag);
         }
-        
+
     }
 
-    virtual double 
-    EstimateTimestep() const override {     
+    virtual double
+    EstimateTimestep() const override {
         double timestepCoefficient = 1e-4; // Adjust as needed
         double timestep = timestepCoefficient * sqrt(dtmin);
 
