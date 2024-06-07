@@ -15,6 +15,7 @@ namespace Mesh {
         int ny; // Number of grid cells in y-direction
         int nz; // Number of grid cells in z-direction
 
+        std::vector<std::shared_ptr<FieldBase>> _extraFields;
     public:
         double dx; // Grid spacing in x-direction
         double dy; // Grid spacing in y-direction
@@ -55,6 +56,12 @@ namespace Mesh {
         bool onBoundary(const int idx);
 
         void assignPositions(NodeList* nodeList);
+
+        template <typename T>
+        void insertField(const std::string& name);
+
+        template <typename T>
+        Field<T>* getField(const std::string& name);
     };
 }
 

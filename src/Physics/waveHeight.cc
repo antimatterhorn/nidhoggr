@@ -5,16 +5,16 @@
 class WaveHeight : public Physics<2> {
 protected:
     Mesh::Grid<2>* grid;
-    double C;
     double dtmin;
+    double g;
 public:
     using Vector = Lin::Vector<2>;
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
 
-    WaveHeight(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<2>* grid, double C) : 
+    WaveHeight(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<2>* grid) : 
         Physics<2>(nodeList,constants),
-        grid(grid), C(C) {
+        grid(grid), g(constants.ESurfaceGrav()) {
         if (nodeList->getField<double>("phi") == nullptr)
             nodeList->insertField<double>("phi");
         if (nodeList->getField<double>("xi") == nullptr)
@@ -31,6 +31,11 @@ public:
         state->template addField<double>(xi);
         ScalarField* phi = nodeList->getField<double>("phi");
         state->template addField<double>(phi);
+
+        /* 
+        Now the grid should hold the depth Field, not the nodeList
+        */
+       grid->insertField<double>("depth");
     }
 
     ~WaveHeight() {}
@@ -47,22 +52,42 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
         
-        ScalarField* xi = initialState->template getField<double>("xi");
-        ScalarField* phi = initialState->template getField<double>("phi");
+        ScalarField* xi     = initialState->template getField<double>("xi");
+        ScalarField* phi    = initialState->template getField<double>("phi");
 
-        ScalarField* dxi = deriv.template getField<double>("xi");
-        ScalarField* dphi = deriv.template getField<double>("phi");
+        ScalarField* dxi    = deriv.template getField<double>("xi");
+        ScalarField* dphi   = deriv.template getField<double>("phi");
+
+        ScalarField* h      = grid->template getField<double>("depth");
         
         #pragma omp parallel for
-        for (int i=0; i<numNodes; ++i) {
+        for (int i = 0; i < grid->size(); ++i) {
             std::vector<int> neighbors = grid->getNeighboringCells(i);
-            double laplace2 = -4*phi->getValue(i);
-            for (auto idx : neighbors) {
-                laplace2 += phi->getValue(idx);
-            }                
-            laplace2 = laplace2/pow(grid->dx,2.0);
-            dxi->setValue(i,laplace2*C*C); 
-            dphi->setValue(i,dt*dxi->getValue(i)+xi->getValue(i));         
+            double dx = grid->getdx();
+            double dy = grid->getdy();
+
+            double nablaPhi = 0.0;
+            double nablaH   = 0.0;
+
+            int rightNeighbor = neighbors[0];
+            int leftNeighbor = neighbors[1];
+            double firstDerivativeX = (phi->getValue(rightNeighbor) - phi->getValue(leftNeighbor)) / (2 * dx);
+            nablaPhi += firstDerivativeX * firstDerivativeX;
+            firstDerivativeX = (h->getValue(rightNeighbor) - h->getValue(leftNeighbor)) / (2 * dx);
+            nablaH += firstDerivativeX * firstDerivativeX;
+
+            int downNeighbor = neighbors[2];
+            int upNeighbor = neighbors[3];
+            double firstDerivativeY = (phi->getValue(upNeighbor) - phi->getValue(downNeighbor)) / (2 * dy);
+            nablaPhi += firstDerivativeY * firstDerivativeY;
+            firstDerivativeY = (h->getValue(upNeighbor) - h->getValue(downNeighbor)) / (2 * dy);
+            nablaH += firstDerivativeY * firstDerivativeY;
+
+            nablaPhi = sqrt(nablaPhi);
+            nablaH   = sqrt(nablaH);
+
+            dxi->setValue(i,g*(phi->getValue(i)*nablaH + h->getValue(i)*nablaPhi)); 
+            dphi->setValue(i,dt*dxi->getValue(i) + xi->getValue(i)); 
         }
     }
 
@@ -90,28 +115,11 @@ public:
 
     virtual double 
     EstimateTimestep() const override { 
-        double dx = grid->dx;
-        double cfl = 0.1;
-        return cfl/C*dx;
+        return 1;
     }
 
 
-// d^2 phi / dt^2 = c^2 del^2 phi
-
-// IIRC, which solution you get all comes down to initial conditions
-// and boundary conditions.
-
-// RHS is second spatial derivative.  Easy.  From Taylor,
-// phi_{i+1,j} = phi_ij + dx * phi,x_ij + dx^2/2 phi,,x_ij + ... // where ,,x means d^2/dx^2
-// phi_{i-1,j} = phi_ij - dx * phi,x_ij + dx^2/2 phi,,x_ij + ...
-// phi_{i,j+1} = phi_ij + dy * phi,y_ij + dy^2/2 phi,,y_ij + ... // where ,,y means d^2/dy^2
-// phi_{i,j-1} = phi_ij - dy * phi,y_ij + dy^2/2 phi,,y_ij + ...
-// --------- = -----------------------------------
-//           = 4 * phi_ij          + 2 * dx^2/2 phi,,x_ij + 2 * dy^2/2 phi,,y_ij + ...
-//           = 4 * phi_ij          + dx^2 phi,,x_ij + dy^2 phi,,y_ij + ...
-//           = 4 * phi_ij          + dx^2 (phi,,x_ij + phi,,y_ij) + ... // assume dx=dy
-//           = 4 * phi_ij          + dx^2 del^2(phi_ij) + ... // assume dx=dy
-
-// del^2 phi_ij = (-4*phi_{i,j} + phi_{i+1,j} + phi_{i-1,j} phi_{i,j+1} + phi_{i,j-1})/dx^2
+// d^2 phi / dt^2 = g*del (h*phi)
+//                = g*(phi*del h + h*del phi)
 
 };

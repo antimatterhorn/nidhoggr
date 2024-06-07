@@ -379,6 +379,25 @@ namespace Mesh {
             position->setValue(i, this->getPosition(i));
         }
     }
+
+    template <int dim>
+    template <typename T>
+    void Grid<dim>::insertField(const std::string& name) {
+        auto newField = std::make_shared<Field<T>>(name, this->size());
+        _extraFields.push_back(newField);
+    }
+
+    template <int dim>
+    template <typename T>
+    Field<T>* Grid<dim>::getField(const std::string& name) {
+        for (const auto& field : _extraFields) {
+            auto specificField = std::dynamic_pointer_cast<Field<T>>(field);
+            if (specificField && specificField->getName() == name) {
+                return specificField.get();
+            }
+        }
+        return nullptr;
+    }
 }
 
 
