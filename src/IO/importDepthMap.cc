@@ -80,6 +80,22 @@ ImportDepthMap::populateDepthField(Mesh::Grid<2>* grid) {
             int y1 = std::max(0, std::min(static_cast<int>(std::floor(y)), mapHeight - 1));
             int y2 = std::max(0, std::min(static_cast<int>(std::ceil(y)), mapHeight - 1));
 
+            // Ensure x1 != x2 and y1 != y2 for interpolation
+            if (x1 == x2) {
+                if (x1 > 0) {
+                    x1--;
+                } else if (x2 < mapWidth - 1) {
+                    x2++;
+                }
+            }
+            if (y1 == y2) {
+                if (y1 > 0) {
+                    y1--;
+                } else if (y2 < mapHeight - 1) {
+                    y2++;
+                }
+            }
+
             double q11 = depthMap[y1][x1];
             double q12 = depthMap[y2][x1];
             double q21 = depthMap[y1][x2];

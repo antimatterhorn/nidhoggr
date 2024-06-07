@@ -10,8 +10,6 @@ protected:
     EquationOfState* eos;
 public:
 
-    Hydro() {}
-
     Hydro(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos) : 
         Physics<dim>(nodeList,constants), eos(eos) {
         VerifyHydroFields(nodeList);

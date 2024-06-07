@@ -11,8 +11,6 @@ public:
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
 
-    NBodyGravity() {}
-
     NBodyGravity(NodeList* nodeList, PhysicalConstants& constants, double plummerLength) :
         Physics<dim>(nodeList,constants),
         plummerLength(plummerLength) {

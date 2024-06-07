@@ -27,10 +27,10 @@ class vtkdump:
 
 if __name__ == "__main__":
     animate = False
-    cycles = 100
+    cycles = 2
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
-    nx = 200
-    ny = 200
+    nx = 20
+    ny = 20
 
     myNodeList = NodeList(nx*ny)
     
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     box.removeBox(Vector2d(0,int(ny/2)-5),Vector2d(int(nx/2)-5,int(ny/2)+5))
     pbounds = [pm,box]
 
-    integrator = RungeKutta2Integrator2d(packages=packages,
+    integrator = Integrator2d(packages=packages,
                               dtmin=0.05,
                               boundaries=pbounds)
     print(integrator)

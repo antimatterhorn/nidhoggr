@@ -11,8 +11,6 @@ public:
     using Vector = Lin::Vector<dim>;
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
-    
-    GridHydroHLL() {}
 
     GridHydroHLL(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, Mesh::Grid<dim>* grid) : 
         Hydro<dim>(nodeList, constants, eos), grid(grid) {

@@ -12,8 +12,6 @@ public:
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
 
-    PointSourceGravity() {}
-
     PointSourceGravity(NodeList* nodeList,
                         PhysicalConstants& constants,
                         Vector& pointSourceLocation,

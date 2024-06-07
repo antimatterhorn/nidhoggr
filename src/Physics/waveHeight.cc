@@ -45,7 +45,6 @@ public:
         ScalarField* depth = grid->template getField<double>("depth");
         ScalarField* nodeDepth = nodeList->getField<double>("depth");
         nodeDepth->copyValues(depth);
-        //printf("%f %f %f",depth->getValue(0),nodeDepth->getValue(0),depth->getValue(50));
     }
 
     ~WaveHeight() {}
@@ -65,8 +64,8 @@ public:
         ScalarField* xi     = initialState->template getField<double>("xi");
         ScalarField* phi    = initialState->template getField<double>("phi");
 
-        ScalarField* dxi    = deriv.template getField<double>("xi");
-        ScalarField* dphi   = deriv.template getField<double>("phi");
+        ScalarField* DxiDt  = deriv.template getField<double>("xi");
+        ScalarField* DphiDt = deriv.template getField<double>("phi");
 
         ScalarField* h      = grid->template getField<double>("depth");
         
@@ -78,11 +77,18 @@ public:
 
             double nablaPhi = 0.0;
             double nablaH   = 0.0;
+            double phii     = phi->getValue(i);
+            double hi       = h->getValue(i);
+            double xii      = xi->getValue(i);
 
             int rightNeighbor = neighbors[0];
             int leftNeighbor = neighbors[1];
             double firstDerivativeX = (phi->getValue(rightNeighbor) - phi->getValue(leftNeighbor)) / (2 * dx);
             nablaPhi += firstDerivativeX * firstDerivativeX;
+            if (nablaPhi !=0 )
+            {
+                printf("%f, %03d %d %d: phii=%04.4f phiL=%f phiR=%f nablaPhi=%f\n",g,i,leftNeighbor,rightNeighbor,phii,phi->getValue(leftNeighbor),phi->getValue(rightNeighbor),nablaPhi);
+            }
             firstDerivativeX = (h->getValue(rightNeighbor) - h->getValue(leftNeighbor)) / (2 * dx);
             nablaH += firstDerivativeX * firstDerivativeX;
 
@@ -96,8 +102,15 @@ public:
             nablaPhi = sqrt(nablaPhi);
             nablaH   = sqrt(nablaH);
 
-            dxi->setValue(i,g*(phi->getValue(i)*nablaH + h->getValue(i)*nablaPhi)); 
-            dphi->setValue(i,dt*dxi->getValue(i) + xi->getValue(i)); 
+            double dxidti = g*(phii*nablaH + hi*nablaPhi);
+            double dphidti = dt*dxidti + xii;
+
+            if (dxidti != 0 || dphidti != 0) {
+                
+            }
+
+            DxiDt->setValue(i,dxidti); 
+            DphiDt->setValue(i,dphidti); 
         }
     }
 
@@ -121,6 +134,14 @@ public:
 
         xi->copyValues(fxi);
         phi->copyValues(fphi);
+
+        for (int i=0; i<nodeList->size(); ++i) {
+            double xii = xi->getValue(i);
+            double phii = phi->getValue(i);
+            if (xii!=0 || phii!=0) {
+                printf("%d %f %f\n",i,phii,xii);
+            }
+        }
     }
 
     virtual double 

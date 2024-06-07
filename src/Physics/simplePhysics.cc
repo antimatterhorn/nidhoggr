@@ -10,8 +10,6 @@ public:
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
 
-    SimplePhysics() {}
-
     SimplePhysics(NodeList* nodeList,
                         PhysicalConstants& constants) :
         Physics<dim>(nodeList,constants) {

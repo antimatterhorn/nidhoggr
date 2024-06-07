@@ -11,8 +11,6 @@ public:
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
 
-    ConstantGravity() {}
-
     ConstantGravity(NodeList* nodeList, PhysicalConstants& constants, Vector& gravityVector) :
         Physics<dim>(nodeList,constants),
         gravityVector(gravityVector) {

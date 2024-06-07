@@ -12,8 +12,6 @@ public:
     using Vector = Lin::Vector<dim>;
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
-    
-    WaveEquation() {}
 
     WaveEquation(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<dim>* grid, double C) : 
         Physics<dim>(nodeList,constants),
@@ -53,8 +51,8 @@ public:
         ScalarField* xi = initialState->template getField<double>("xi");
         ScalarField* phi = initialState->template getField<double>("phi");
 
-        ScalarField* dxi = deriv.template getField<double>("xi");
-        ScalarField* dphi = deriv.template getField<double>("phi");
+        ScalarField* DxiDt = deriv.template getField<double>("xi");
+        ScalarField* DphiDt = deriv.template getField<double>("phi");
         
         #pragma omp parallel for
         for (int i=0; i<numNodes; ++i) {
@@ -64,8 +62,8 @@ public:
                 laplace2 += phi->getValue(idx);
             }                
             laplace2 = laplace2/pow(grid->dx,2.0);
-            dxi->setValue(i,laplace2*C*C); 
-            dphi->setValue(i,dt*dxi->getValue(i)+xi->getValue(i));         
+            DxiDt->setValue(i,laplace2*C*C); 
+            DphiDt->setValue(i,dt*DxiDt->getValue(i)+xi->getValue(i));         
         }
     }
 
