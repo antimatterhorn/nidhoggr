@@ -19,7 +19,7 @@ class oscillate:
 
 class vtkdump:
     def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
-        self.meshWriter = SiloMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=["phi","xi"])
+        self.meshWriter = SiloMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=["phi","depth"])
         self.cycle = dumpCycle
     def __call__(self,cycle,time,dt):
         self.meshWriter.write("%03d.silo"%cycle)
@@ -27,7 +27,7 @@ class vtkdump:
 
 if __name__ == "__main__":
     animate = False
-    cycles = 2000
+    cycles = 100
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
     nx = 200
     ny = 200
@@ -40,7 +40,8 @@ if __name__ == "__main__":
 
     waveEqn = WaveHeight(nodeList=myNodeList,
                              constants=constants,
-                             grid=grid)
+                             grid=grid,
+                             depthMap="output.asc")
 
     print(waveEqn)
 

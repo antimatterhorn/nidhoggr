@@ -1,5 +1,6 @@
 #include "physics.hh"
 #include "../Mesh/grid.hh"
+#include "../IO/importDepthMap.hh"
 #include <iostream>
 
 class WaveHeight : public Physics<2> {
@@ -12,14 +13,15 @@ public:
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
 
-    WaveHeight(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<2>* grid) : 
+    WaveHeight(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<2>* grid, std::string& depthMap) : 
         Physics<2>(nodeList,constants),
         grid(grid), g(constants.ESurfaceGrav()) {
         if (nodeList->getField<double>("phi") == nullptr)
             nodeList->insertField<double>("phi");
         if (nodeList->getField<double>("xi") == nullptr)
             nodeList->insertField<double>("xi");
-        
+        if (nodeList->getField<double>("depth") == nullptr)
+            nodeList->insertField<double>("depth");
         /* 
         This sets the nodeList positions field to whatever is inside Grid positions. This should ideally
         happen with any physics package that uses a mesh, so this is a bit clunky to have here.
@@ -36,7 +38,14 @@ public:
         Now the grid should hold the depth Field, not the nodeList, and the depth map should be passed
         into this field. 
         */
-       grid->insertField<double>("depth");
+        grid->insertField<double>("depth");
+        ImportDepthMap map(depthMap);
+        map.populateDepthField(grid);
+
+        ScalarField* depth = grid->template getField<double>("depth");
+        ScalarField* nodeDepth = nodeList->getField<double>("depth");
+        nodeDepth->copyValues(depth);
+        //printf("%f %f %f",depth->getValue(0),nodeDepth->getValue(0),depth->getValue(50));
     }
 
     ~WaveHeight() {}
