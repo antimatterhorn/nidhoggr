@@ -33,7 +33,8 @@ public:
         state->template addField<double>(phi);
 
         /* 
-        Now the grid should hold the depth Field, not the nodeList
+        Now the grid should hold the depth Field, not the nodeList, and the depth map should be passed
+        into this field. 
         */
        grid->insertField<double>("depth");
     }
@@ -121,5 +122,6 @@ public:
 
 // d^2 phi / dt^2 = g*del (h*phi)
 //                = g*(phi*del h + h*del phi)
+// xi = d phi / dt
 
 };

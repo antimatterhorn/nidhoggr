@@ -19,18 +19,18 @@ class oscillate:
 
 class vtkdump:
     def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
-        self.meshWriter = SiloMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=["phi","xi"])
+        self.meshWriter = SiloMeshWriter2d(baseName="waveBox",nodeList=myNodeList,fieldNames=["phi","xi"])
         self.cycle = dumpCycle
     def __call__(self,cycle,time,dt):
-        self.meshWriter.write("%03d.silo"%cycle)
+        self.meshWriter.write("-cycle=%03d.silo"%(cycle))
       
 
 if __name__ == "__main__":
     animate = False
-    cycles = 2000
+    cycles = 20000
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
-    nx = 200
-    ny = 200
+    nx = 500
+    ny = 500
 
     myNodeList = NodeList(nx*ny)
     
@@ -49,9 +49,9 @@ if __name__ == "__main__":
     pm = PacmanGridBoundaries2d(grid=grid,physics=waveEqn)
     print(pm)
     box = DirichletGridBoundaries2d(grid=grid,physics=waveEqn)
-    box.addBox(Vector2d(int(nx/2)-15,int(ny/2)-15),Vector2d(int(nx/2)+15,int(ny/2)+15))
-    box.removeBox(Vector2d(int(nx/2)-14,int(ny/2)-14),Vector2d(int(nx/2)+14,int(ny/2)+14))
-    box.removeBox(Vector2d(0,int(ny/2)-5),Vector2d(int(nx/2)-5,int(ny/2)+5))
+    box.addBox(Vector2d(int(nx/5),int(ny/5)),Vector2d(int(4*nx/5),int(4*ny/5)))
+    box.removeBox(Vector2d(int(nx/5)+5,int(ny/5)+5),Vector2d(int(4*nx/5)-5,int(4*ny/5)-5))
+    box.removeBox(Vector2d(0,int(ny/2)-5),Vector2d(nx,int(ny/2)+5))
     pbounds = [pm,box]
 
     integrator = RungeKutta2Integrator2d(packages=packages,
@@ -65,11 +65,11 @@ if __name__ == "__main__":
     osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
     periodicWork = [osc]
     if (not animate):
-        vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=10)
+        vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=50)
         periodicWork.append(vtk)
 
     controller = Controller(integrator=integrator,
-                            statStep=10,
+                            statStep=100,
                             periodicWork=periodicWork)
 
     if(animate):
