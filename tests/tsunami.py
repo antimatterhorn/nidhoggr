@@ -23,6 +23,17 @@ class vtkdump:
         self.cycle = dumpCycle
     def __call__(self,cycle,time,dt):
         self.meshWriter.write("%03d.silo"%cycle)
+
+class debug:
+    def __init__(self,nodeList,debugCycle=1):
+        self.nodeList = nodeList
+        self.cycle = debugCycle
+    def __call__(self,cycle,time,dt):
+        phi = self.nodeList.getFieldDouble("phi")
+        xi = self.nodeList.getFieldDouble("xi")
+        for i in range(self.nodeList.numNodes):
+            if phi[i] != 0 or xi[i] != 0:
+                print(cycle,i,phi[i],xi[i])
       
 
 if __name__ == "__main__":
@@ -47,17 +58,10 @@ if __name__ == "__main__":
 
     packages = [waveEqn]
 
-    pm = PacmanGridBoundaries2d(grid=grid,physics=waveEqn)
-    print(pm)
-    box = DirichletGridBoundaries2d(grid=grid,physics=waveEqn)
-    box.addBox(Vector2d(int(nx/2)-15,int(ny/2)-15),Vector2d(int(nx/2)+15,int(ny/2)+15))
-    box.removeBox(Vector2d(int(nx/2)-14,int(ny/2)-14),Vector2d(int(nx/2)+14,int(ny/2)+14))
-    box.removeBox(Vector2d(0,int(ny/2)-5),Vector2d(int(nx/2)-5,int(ny/2)+5))
-    pbounds = [pm,box]
 
     integrator = Integrator2d(packages=packages,
                               dtmin=0.05,
-                              boundaries=pbounds)
+                              boundaries=[])
     print(integrator)
 
     print("numNodes =",myNodeList.numNodes)
@@ -70,7 +74,7 @@ if __name__ == "__main__":
         periodicWork.append(vtk)
 
     controller = Controller(integrator=integrator,
-                            statStep=10,
+                            statStep=1,
                             periodicWork=periodicWork)
 
     if(animate):

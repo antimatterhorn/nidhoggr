@@ -54,6 +54,22 @@ public:
         State<2> state = this->state;
         NodeList* nodeList = this->nodeList;
         state.updateFields(nodeList);
+
+        ScalarField* xi = nodeList->getField<double>("xi");
+        ScalarField* phi = nodeList->getField<double>("phi");
+
+        ScalarField* sxi = state.getField<double>("xi");
+        ScalarField* sphi = state.getField<double>("phi");
+
+        for (int i=0; i<nodeList->size(); ++i) {
+            double xii = xi->getValue(i);
+            double phii = phi->getValue(i);
+            double sxii = sxi->getValue(i);
+            double sphii = sphi->getValue(i);
+            if (i==210) {
+                printf("in prestep %d %f %f %f %f\n",i,phii,xii,sphii,sxii);
+            }
+        }
     }
 
     virtual void
@@ -85,9 +101,9 @@ public:
             int leftNeighbor = neighbors[1];
             double firstDerivativeX = (phi->getValue(rightNeighbor) - phi->getValue(leftNeighbor)) / (2 * dx);
             nablaPhi += firstDerivativeX * firstDerivativeX;
-            if (nablaPhi !=0 )
+            if (i==210)
             {
-                printf("%f, %03d %d %d: phii=%04.4f phiL=%f phiR=%f nablaPhi=%f\n",g,i,leftNeighbor,rightNeighbor,phii,phi->getValue(leftNeighbor),phi->getValue(rightNeighbor),nablaPhi);
+                printf("in eval %f, %03d %d %d: phii=%04.4f phiL=%f phiR=%f nablaPhi=%f\n",g,i,leftNeighbor,rightNeighbor,phii,phi->getValue(leftNeighbor),phi->getValue(rightNeighbor),nablaPhi);
             }
             firstDerivativeX = (h->getValue(rightNeighbor) - h->getValue(leftNeighbor)) / (2 * dx);
             nablaH += firstDerivativeX * firstDerivativeX;
@@ -104,10 +120,6 @@ public:
 
             double dxidti = g*(phii*nablaH + hi*nablaPhi);
             double dphidti = dt*dxidti + xii;
-
-            if (dxidti != 0 || dphidti != 0) {
-                
-            }
 
             DxiDt->setValue(i,dxidti); 
             DphiDt->setValue(i,dphidti); 
@@ -138,15 +150,17 @@ public:
         for (int i=0; i<nodeList->size(); ++i) {
             double xii = xi->getValue(i);
             double phii = phi->getValue(i);
-            if (xii!=0 || phii!=0) {
-                printf("%d %f %f\n",i,phii,xii);
+            double fxii = fxi->getValue(i);
+            double fphii = fphi->getValue(i);
+            if (i==210) {
+                printf("in final %d %f %f %f %f\n",i,phii,xii,fphii,fxii);
             }
         }
     }
 
     virtual double 
     EstimateTimestep() const override { 
-        return 1;
+        return 0;
     }
 
 
