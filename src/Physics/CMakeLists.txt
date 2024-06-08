@@ -1,4 +1,3 @@
-PYB11Generator_add_module(RPS)
 PYB11Generator_add_module(Physics)
 
 # Find OpenMP package
