@@ -38,7 +38,7 @@ class debug:
       
 
 if __name__ == "__main__":
-    cycles = 50000
+    cycles = 10000
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
     nx = 500
     ny = 500

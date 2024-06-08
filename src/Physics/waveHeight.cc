@@ -23,10 +23,7 @@ public:
             nodeList->insertField<double>("xi");
         if (nodeList->getField<double>("depth") == nullptr)
             nodeList->insertField<double>("depth");
-        /* 
-        This sets the nodeList positions field to whatever is inside Grid positions. This should ideally
-        happen with any physics package that uses a mesh, so this is a bit clunky to have here.
-        */
+
         grid->assignPositions(nodeList);
         
         State<2>* state = &this->state;
@@ -35,16 +32,12 @@ public:
         ScalarField* phi = nodeList->getField<double>("phi");
         state->template addField<double>(phi);
 
-        /* 
-        Now the grid should hold the depth Field, not the nodeList, and the depth map should be passed
-        into this field. 
-        */
         grid->insertField<double>("depth");
         ImportDepthMap map(depthMap);
         map.populateDepthField(grid);
 
-        ScalarField* depth = grid->template getField<double>("depth");
-        ScalarField* nodeDepth = nodeList->getField<double>("depth");
+        ScalarField* depth      = grid->template getField<double>("depth");
+        ScalarField* nodeDepth  = nodeList->getField<double>("depth");
         nodeDepth->copyValues(depth);
     }
 
@@ -52,23 +45,23 @@ public:
 
     virtual void
     PreStepInitialize() override {
-        State<2> state = this->state;
-        NodeList* nodeList = this->nodeList;
+        State<2> state      = this->state;
+        NodeList* nodeList  = this->nodeList;
         state.updateFields(nodeList);
     }
 
     virtual void
     EvaluateDerivatives(const State<2>* initialState, State<2>& deriv, const double time, const double dt) override {  
-        NodeList* nodeList = this->nodeList;
-        int numNodes = nodeList->size();
+        NodeList* nodeList  = this->nodeList;
+        int numNodes        = nodeList->size();
         
-        ScalarField* xi = initialState->template getField<double>("xi");
-        ScalarField* phi = initialState->template getField<double>("phi");
+        ScalarField* xi     = initialState->template getField<double>("xi");
+        ScalarField* phi    = initialState->template getField<double>("phi");
 
-        ScalarField* DxiDt = deriv.template getField<double>("xi");
+        ScalarField* DxiDt  = deriv.template getField<double>("xi");
         ScalarField* DphiDt = deriv.template getField<double>("phi");
 
-        ScalarField* h     = nodeList->getField<double>("depth");
+        ScalarField* h      = nodeList->getField<double>("depth");
         
         maxC = 0;
         #pragma omp parallel for reduction(max:maxC)
@@ -90,21 +83,21 @@ public:
 
     double
     getCell(int i,int j, std::string fieldName="phi") {
-        int idx = grid->index(j,i,0);
-        NodeList* nodeList = this->nodeList;
-        ScalarField* phi = nodeList->getField<double>(fieldName);
+        int idx             = grid->index(j,i,0);
+        NodeList* nodeList  = this->nodeList;
+        ScalarField* phi    = nodeList->getField<double>(fieldName);
         return phi->getValue(idx);
     }
 
     virtual void
     FinalizeStep(const State<2>* finalState) override {
-        NodeList* nodeList = this->nodeList;
+        NodeList* nodeList  = this->nodeList;
 
-        ScalarField* fxi = finalState->template getField<double>("xi");
-        ScalarField* fphi = finalState->template getField<double>("phi");
+        ScalarField* fxi    = finalState->template getField<double>("xi");
+        ScalarField* fphi   = finalState->template getField<double>("phi");
 
-        ScalarField* xi = nodeList->getField<double>("xi");
-        ScalarField* phi = nodeList->getField<double>("phi");
+        ScalarField* xi     = nodeList->getField<double>("xi");
+        ScalarField* phi    = nodeList->getField<double>("phi");
 
         xi->copyValues(fxi);
         phi->copyValues(fphi);
@@ -116,10 +109,4 @@ public:
         double cfl = 0.1;
         return cfl/maxC*dx;
     }
-
-
-// d^2 phi / dt^2 = g*del (h*phi)
-//                = g*(phi*del h + h*del phi)
-// xi = d phi / dt
-
 };
