@@ -32,7 +32,7 @@ classDiagram
     }
     class WaveHeight{
         +Grid* grid
-        +double soundSpeed
+        +string depthMap
     }
     class RockPaperScissors{
         +Grid* grid
