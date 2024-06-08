@@ -5,6 +5,7 @@ classDiagram
     Physics <|-- PointSourceGravity
     Physics <|-- ConstantGravity
     Physics <|-- WaveEquation
+    Physics <|-- WaveHeight
     Physics : +NodeList* nodeList
     Physics : +PhysicalConstants& constants
     Physics : VerifyFields(NodeList* nodeList)
@@ -26,6 +27,10 @@ classDiagram
         
     }
     class WaveEquation{
+        +Grid* grid
+        +double soundSpeed
+    }
+    class WaveHeight{
         +Grid* grid
         +double soundSpeed
     }
