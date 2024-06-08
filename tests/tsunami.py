@@ -11,16 +11,16 @@ class oscillate:
         self.height = height
         self.phi = myNodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
-        if (cycle==1):
-            a = -10
-            i = int(self.width/4)
-            j = int(3*self.height/4)
+        if (time<(3.14159/12)):
+            a = -40*(cos(time*6))
+            i = int(2*self.width/5)
+            j = int(self.height/2)
             idx = self.grid.index(i,j,0)
             self.phi.setValue(idx,a)
 
 class vtkdump:
     def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
-        self.meshWriter = SiloMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=["phi","depth"])
+        self.meshWriter = SiloMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=fieldNames)
         self.cycle = dumpCycle
     def __call__(self,cycle,time,dt):
         self.meshWriter.write("%03d.silo"%cycle)
@@ -38,11 +38,10 @@ class debug:
       
 
 if __name__ == "__main__":
-    animate = False
-    cycles = 20000
+    cycles = 50000
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
-    nx = 800
-    ny = 800
+    nx = 500
+    ny = 500
 
     myNodeList = NodeList(nx*ny)
     
@@ -60,8 +59,8 @@ if __name__ == "__main__":
     packages = [waveEqn]
 
 
-    integrator = Integrator2d(packages=packages,
-                              dtmin=0.05,
+    integrator = RungeKutta2Integrator2d(packages=packages,
+                              dtmin=0.0001,
                               boundaries=[])
     print(integrator)
 
@@ -70,22 +69,11 @@ if __name__ == "__main__":
 
     osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
     periodicWork = [osc]
-    if (not animate):
-        vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=100)
-        periodicWork.append(vtk)
+    vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","depth"],dumpCycle=500)
+    periodicWork.append(vtk)
 
     controller = Controller(integrator=integrator,
                             statStep=100,
                             periodicWork=periodicWork)
 
-    if(animate):
-        title = MakeTitle(controller,"time","time")
-
-        bounds = (nx,ny)
-        update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,
-                                                stepper=controller.Step,
-                                                title=title,
-                                                fieldName="phi")
-        AnimateGrid2d(bounds,update_method,extremis=[-5,5],frames=cycles)
-    else:
-        controller.Step(cycles)
+    controller.Step(cycles)

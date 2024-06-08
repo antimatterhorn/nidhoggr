@@ -8,6 +8,7 @@ protected:
     Mesh::Grid<2>* grid;
     double dtmin;
     double g;
+    double maxC;
 public:
     using Vector = Lin::Vector<2>;
     using VectorField = Field<Vector>;
@@ -15,7 +16,7 @@ public:
 
     WaveHeight(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<2>* grid, std::string& depthMap) : 
         Physics<2>(nodeList,constants),
-        grid(grid), g(-constants.ESurfaceGrav()) {
+        grid(grid), g(constants.ESurfaceGrav()) {
         if (nodeList->getField<double>("phi") == nullptr)
             nodeList->insertField<double>("phi");
         if (nodeList->getField<double>("xi") == nullptr)
@@ -61,48 +62,29 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
         
-        ScalarField* xi     = initialState->template getField<double>("xi");
-        ScalarField* phi    = initialState->template getField<double>("phi");
+        ScalarField* xi = initialState->template getField<double>("xi");
+        ScalarField* phi = initialState->template getField<double>("phi");
 
-        ScalarField* DxiDt  = deriv.template getField<double>("xi");
+        ScalarField* DxiDt = deriv.template getField<double>("xi");
         ScalarField* DphiDt = deriv.template getField<double>("phi");
 
-        ScalarField* h      = grid->template getField<double>("depth");
+        ScalarField* h     = nodeList->getField<double>("depth");
         
-        #pragma omp parallel for
-        for (int i = 0; i < grid->size(); ++i) {
+        maxC = 0;
+        #pragma omp parallel for reduction(max:maxC)
+        for (int i=0; i<numNodes; ++i) {
+            double C = sqrt(g*std::abs(h->getValue(i)));
+            if (h->getValue(i)>0)
+                C = 0;
+            maxC = std::max(C,maxC);
             std::vector<int> neighbors = grid->getNeighboringCells(i);
-            double dx = grid->getdx();
-            double dy = grid->getdy();
-
-            double nablaPhi = 0.0;
-            double nablaH   = 0.0;
-            double phii     = phi->getValue(i);
-            double hi       = h->getValue(i);
-            double xii      = xi->getValue(i);
-
-            int rightNeighbor = neighbors[0];
-            int leftNeighbor = neighbors[1];
-            double firstDerivativeX = (phi->getValue(rightNeighbor) - phi->getValue(leftNeighbor)) / (2 * dx);
-            nablaPhi += firstDerivativeX * firstDerivativeX;
-            firstDerivativeX = (h->getValue(rightNeighbor) - h->getValue(leftNeighbor)) / (2 * dx);
-            nablaH += firstDerivativeX * firstDerivativeX;
-
-            int downNeighbor = neighbors[2];
-            int upNeighbor = neighbors[3];
-            double firstDerivativeY = (phi->getValue(upNeighbor) - phi->getValue(downNeighbor)) / (2 * dy);
-            nablaPhi += firstDerivativeY * firstDerivativeY;
-            firstDerivativeY = (h->getValue(upNeighbor) - h->getValue(downNeighbor)) / (2 * dy);
-            nablaH += firstDerivativeY * firstDerivativeY;
-
-            nablaPhi = sqrt(nablaPhi);
-            nablaH   = sqrt(nablaH);
-
-            double dxidti = g*(phii*nablaH + hi*nablaPhi);
-            double dphidti = dt*dxidti + xii;
-
-            DxiDt->setValue(i,dxidti); 
-            DphiDt->setValue(i,dphidti); 
+            double laplace2 = -4*phi->getValue(i);
+            for (auto idx : neighbors) {
+                laplace2 += phi->getValue(idx);
+            }                
+            laplace2 = laplace2/pow(grid->dx,2.0);
+            DxiDt->setValue(i,laplace2*C*C); 
+            DphiDt->setValue(i,dt*DxiDt->getValue(i)+xi->getValue(i));         
         }
     }
 
@@ -130,7 +112,9 @@ public:
 
     virtual double 
     EstimateTimestep() const override { 
-        return 0;
+        double dx = grid->dx;
+        double cfl = 0.1;
+        return cfl/maxC*dx;
     }
 
 

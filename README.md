@@ -1,6 +1,6 @@
 # nidhoggr
 
-![Cherenkov Radiation](examples/waveBox.png)
+![Cherenkov Radiation](examples/waves.png)
 
 
 ```
