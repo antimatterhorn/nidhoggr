@@ -16,25 +16,33 @@ public:
     WaveEquation(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<dim>* grid, double C) : 
         Physics<dim>(nodeList,constants),
         grid(grid), C(C) {
+        VerifyWaveFields();
+
+        grid->assignPositions(nodeList);
+        ScalarField* cs = nodeList->getField<double>("soundSpeed");
+        for (int i=0; i<nodeList->getNumNodes();++i) cs->setValue(i,C);
+    }
+
+    ~WaveEquation() {}
+
+    void
+    VerifyWaveFields() {
+        NodeList* nodeList = this->nodeList;
         if (nodeList->getField<double>("phi") == nullptr)
             nodeList->insertField<double>("phi");
         if (nodeList->getField<double>("xi") == nullptr)
             nodeList->insertField<double>("xi");
+        if (nodeList->getField<double>("soundSpeed") == nullptr)
+            nodeList->insertField<double>("soundSpeed");
         
-        /* 
-        This sets the nodeList positions field to whatever is inside Grid positions. This should ideally
-        happen with any physics package that uses a mesh, so this is a bit clunky to have here.
-        */
         grid->assignPositions(nodeList);
-        
+
         State<dim>* state = &this->state;
         ScalarField* xi = nodeList->getField<double>("xi");
         state->template addField<double>(xi);
         ScalarField* phi = nodeList->getField<double>("phi");
         state->template addField<double>(phi);
     }
-
-    ~WaveEquation() {}
 
     virtual void
     PreStepInitialize() override {
