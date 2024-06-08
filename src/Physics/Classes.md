@@ -5,10 +5,10 @@ classDiagram
     Physics <|-- PointSourceGravity
     Physics <|-- ConstantGravity
     Physics <|-- WaveEquation
-    Physics <|-- WaveHeight
     Physics : +NodeList* nodeList
     Physics : +PhysicalConstants& constants
     Physics : VerifyFields(NodeList* nodeList)
+    Physics : ZeroTimeInitialize()
     Physics : PrestepInitialize()
     Physics : EvaluateDerivatives(State* initialState, State<dim>& deriv, double time, double dt)
     Physics : FinalizeStep(State* finalState)
@@ -30,7 +30,8 @@ classDiagram
         +Grid* grid
         +double soundSpeed
     }
-    class WaveHeight{
+    WaveEquation o -- _WaveEquation
+    class _WaveEquation{
         +Grid* grid
         +string depthMap
     }

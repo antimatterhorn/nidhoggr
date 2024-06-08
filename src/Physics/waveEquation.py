@@ -13,6 +13,19 @@ class WaveEquation(Physics):
     def getCell2d(self,i="int",j="int",fieldName="std::string"):
         return
 
+@PYB11template()
+@PYB11template_dict({"dim" : "2"})
+class WaveEquation(Physics):
+    def pyinit2(self,
+               nodeList="NodeList*",
+               constants="PhysicalConstants&",
+               grid="Mesh::Grid<2>*",
+               depthMap="std::string&"):
+        return
+    @PYB11cppname("getCell")
+    def getCell2d(self,i="int",j="int",fieldName="std::string"):
+        return
+
 WaveEquation1d = PYB11TemplateClass(WaveEquation,
                               template_parameters = ("1"),
                               cppname = "WaveEquation<1>",

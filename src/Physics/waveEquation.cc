@@ -1,5 +1,6 @@
 #include "physics.hh"
 #include "../Mesh/grid.hh"
+#include "../IO/importDepthMap.hh"
 #include <iostream>
 
 template <int dim>
@@ -18,9 +19,39 @@ public:
         grid(grid), C(C) {
         VerifyWaveFields();
 
-        grid->assignPositions(nodeList);
         ScalarField* cs = nodeList->getField<double>("soundSpeed");
         for (int i=0; i<nodeList->getNumNodes();++i) cs->setValue(i,C);
+    }
+
+    WaveEquation(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<2>* grid, const std::string& depthMap) : 
+        Physics<dim>(nodeList, constants),
+        grid(grid), C(constants.ESurfaceGrav()) {
+        if (dim != 2) {
+            std::cerr << "Error: This constructor can only be used with dim = 2" << std::endl;
+            std::exit(EXIT_FAILURE);
+        }
+        VerifyWaveFields();
+
+        if (nodeList->getField<double>("depth") == nullptr)
+            nodeList->insertField<double>("depth");
+
+        grid->template insertField<double>("depth");
+        ImportDepthMap map(depthMap);
+        map.populateDepthField(grid);
+
+        ScalarField* depth      = grid->template getField<double>("depth");
+        ScalarField* nodeDepth  = nodeList->getField<double>("depth");
+        nodeDepth->copyValues(depth);
+
+        ScalarField* cs = nodeList->getField<double>("soundSpeed");
+        double maxC = 0;
+        #pragma omp parallel for reduction(max:maxC)
+        for (int i=0; i<nodeList->getNumNodes();++i) {
+            double c = (depth->getValue(i) < 0 ? sqrt(C*std::abs(depth->getValue(i))) : 0);
+            cs->setValue(i,c);
+            maxC = std::max(c,maxC);
+        }
+        C = maxC;
     }
 
     ~WaveEquation() {}
@@ -61,16 +92,19 @@ public:
 
         ScalarField* DxiDt = deriv.template getField<double>("xi");
         ScalarField* DphiDt = deriv.template getField<double>("phi");
+
+        ScalarField* cs     = nodeList->getField<double>("soundSpeed");
         
         #pragma omp parallel for
         for (int i=0; i<numNodes; ++i) {
+            double c = cs->getValue(i);
             std::vector<int> neighbors = grid->getNeighboringCells(i);
             double laplace2 = -4*phi->getValue(i);
             for (auto idx : neighbors) {
                 laplace2 += phi->getValue(idx);
             }                
             laplace2 = laplace2/pow(grid->dx,2.0);
-            DxiDt->setValue(i,laplace2*C*C); 
+            DxiDt->setValue(i,laplace2*c*c); 
             DphiDt->setValue(i,dt*DxiDt->getValue(i)+xi->getValue(i));         
         }
     }
