@@ -73,7 +73,7 @@ ImportDepthMap::populateDepthField(Mesh::Grid<2>* grid) {
         for (int i = 0; i < gridWidth; ++i) {
             // Calculate corresponding position in the depth map
             double x = (i + 0.5) * mapWidth / gridWidth;
-            double y = (j + 0.5) * mapHeight / gridHeight;
+            double y = (gridHeight - j - 0.5) * mapHeight / gridHeight;
 
             int x1 = std::max(0, std::min(static_cast<int>(std::floor(x)), mapWidth - 1));
             int x2 = std::max(0, std::min(static_cast<int>(std::ceil(x)), mapWidth - 1));

@@ -69,7 +69,7 @@ if __name__ == "__main__":
 
     osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
     periodicWork = [osc]
-    vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","depth"],dumpCycle=500)
+    vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","depth"],dumpCycle=100)
     periodicWork.append(vtk)
 
     controller = Controller(integrator=integrator,
