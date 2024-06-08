@@ -11,11 +11,12 @@ class oscillate:
         self.height = height
         self.phi = myNodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
-        a = 5*(cos(time))
-        i = int(self.width/2)
-        j = int(self.height/2)
-        idx = self.grid.index(i,j,0)
-        self.phi.setValue(idx,a)
+        if (cycle==1):
+            a = -10
+            i = int(self.width/4)
+            j = int(3*self.height/4)
+            idx = self.grid.index(i,j,0)
+            self.phi.setValue(idx,a)
 
 class vtkdump:
     def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
@@ -38,10 +39,10 @@ class debug:
 
 if __name__ == "__main__":
     animate = False
-    cycles = 2
+    cycles = 20000
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
-    nx = 20
-    ny = 20
+    nx = 800
+    ny = 800
 
     myNodeList = NodeList(nx*ny)
     
@@ -70,11 +71,11 @@ if __name__ == "__main__":
     osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
     periodicWork = [osc]
     if (not animate):
-        vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=10)
+        vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=100)
         periodicWork.append(vtk)
 
     controller = Controller(integrator=integrator,
-                            statStep=1,
+                            statStep=100,
                             periodicWork=periodicWork)
 
     if(animate):

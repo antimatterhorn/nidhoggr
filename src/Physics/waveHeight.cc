@@ -15,7 +15,7 @@ public:
 
     WaveHeight(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<2>* grid, std::string& depthMap) : 
         Physics<2>(nodeList,constants),
-        grid(grid), g(constants.ESurfaceGrav()) {
+        grid(grid), g(-constants.ESurfaceGrav()) {
         if (nodeList->getField<double>("phi") == nullptr)
             nodeList->insertField<double>("phi");
         if (nodeList->getField<double>("xi") == nullptr)
@@ -54,22 +54,6 @@ public:
         State<2> state = this->state;
         NodeList* nodeList = this->nodeList;
         state.updateFields(nodeList);
-
-        ScalarField* xi = nodeList->getField<double>("xi");
-        ScalarField* phi = nodeList->getField<double>("phi");
-
-        ScalarField* sxi = state.getField<double>("xi");
-        ScalarField* sphi = state.getField<double>("phi");
-
-        for (int i=0; i<nodeList->size(); ++i) {
-            double xii = xi->getValue(i);
-            double phii = phi->getValue(i);
-            double sxii = sxi->getValue(i);
-            double sphii = sphi->getValue(i);
-            if (i==210) {
-                printf("in prestep %d %f %f %f %f\n",i,phii,xii,sphii,sxii);
-            }
-        }
     }
 
     virtual void
@@ -101,10 +85,6 @@ public:
             int leftNeighbor = neighbors[1];
             double firstDerivativeX = (phi->getValue(rightNeighbor) - phi->getValue(leftNeighbor)) / (2 * dx);
             nablaPhi += firstDerivativeX * firstDerivativeX;
-            if (i==210)
-            {
-                printf("in eval %f, %03d %d %d: phii=%04.4f phiL=%f phiR=%f nablaPhi=%f\n",g,i,leftNeighbor,rightNeighbor,phii,phi->getValue(leftNeighbor),phi->getValue(rightNeighbor),nablaPhi);
-            }
             firstDerivativeX = (h->getValue(rightNeighbor) - h->getValue(leftNeighbor)) / (2 * dx);
             nablaH += firstDerivativeX * firstDerivativeX;
 
@@ -146,16 +126,6 @@ public:
 
         xi->copyValues(fxi);
         phi->copyValues(fphi);
-
-        for (int i=0; i<nodeList->size(); ++i) {
-            double xii = xi->getValue(i);
-            double phii = phi->getValue(i);
-            double fxii = fxi->getValue(i);
-            double fphii = fphi->getValue(i);
-            if (i==210) {
-                printf("in final %d %f %f %f %f\n",i,phii,xii,fphii,fxii);
-            }
-        }
     }
 
     virtual double 

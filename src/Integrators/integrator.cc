@@ -11,7 +11,7 @@ template <int dim>
 Integrator<dim>::~Integrator() {}
 
 template <int dim>
-void Integrator<dim>::Step() {
+void Integrator<dim>::Step() {  
     if (cycle == 0) {
         for (Physics<dim>* physics : packages)
             physics->ZeroTimeInitialize();
