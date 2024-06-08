@@ -52,7 +52,7 @@ if __name__ == "__main__":
     waveEqn = WaveHeight(nodeList=myNodeList,
                              constants=constants,
                              grid=grid,
-                             depthMap="output.asc")
+                             depthMap="sfo.asc")
 
     print(waveEqn)
 
