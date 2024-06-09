@@ -34,8 +34,6 @@ public:
             std::cerr << "Error: This constructor can only be used with dim = 2" << std::endl;
             std::exit(EXIT_FAILURE);
         }
-
-        std::cout << "about to verify fields" << std::endl;
         VerifyWaveFields();
 
         grid2d->assignPositions(nodeList);
@@ -46,8 +44,6 @@ public:
         grid2d->template insertField<double>("depth");
         ImportDepthMap map(depthMap);
         map.populateDepthField(grid2d);
-
-        std::cout << "verified fields" << std::endl;
 
         ScalarField* depth      = grid2d->template getField<double>("depth");
         ScalarField* nodeDepth  = nodeList->getField<double>("depth");
@@ -102,25 +98,24 @@ public:
         ScalarField* DphiDt = deriv.template getField<double>("phi");
 
         ScalarField* cs     = nodeList->getField<double>("soundSpeed");
-        std::cout << "fields" << std::endl;
+
         #pragma omp parallel for
         for (int i=0; i<numNodes; ++i) {
             double c = cs->getValue(i);
             std::vector<int> neighbors = (ocean ? grid2d->getNeighboringCells(i) : grid->getNeighboringCells(i));
-            std::cout << ocean << " " << c << std::endl;
             double laplace2 = -4*phi->getValue(i);
             for (auto idx : neighbors) {
                 laplace2 += phi->getValue(idx);
             }                
-            laplace2 = laplace2/pow(grid->dx,2.0);
+            laplace2 = (ocean ? laplace2/pow(grid2d->dx,2.0) : laplace2/pow(grid->dx,2.0));
             DxiDt->setValue(i,laplace2*c*c); 
-            DphiDt->setValue(i,dt*DxiDt->getValue(i)+xi->getValue(i));         
+            DphiDt->setValue(i,dt*DxiDt->getValue(i)+xi->getValue(i));
         }
     }
 
     double
     getCell(int i,int j, std::string fieldName="phi") {
-        int idx = grid->index(j,i,0);
+        int idx = (ocean ? grid2d->index(j,i,0) : grid->index(j,i,0));
         NodeList* nodeList = this->nodeList;
         ScalarField* phi = nodeList->getField<double>(fieldName);
         return phi->getValue(idx);
@@ -143,7 +138,7 @@ public:
 
     virtual double 
     EstimateTimestep() const override { 
-        double dx = grid->dx;
+        double dx = (ocean ? grid2d->dx : grid->dx);
         double cfl = 0.1;
         return cfl/C*dx;
     }

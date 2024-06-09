@@ -73,7 +73,7 @@ if __name__ == "__main__":
     periodicWork.append(vtk)
 
     controller = Controller(integrator=integrator,
-                            statStep=100,
+                            statStep=50,
                             periodicWork=periodicWork)
 
     controller.Step(cycles)
