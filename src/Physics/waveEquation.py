@@ -9,14 +9,7 @@ class WaveEquation(Physics):
                grid="Mesh::Grid<%(dim)s>*",
                C="double"):
         return
-    @PYB11cppname("getCell")
-    def getCell2d(self,i="int",j="int",fieldName="std::string"):
-        return
-
-@PYB11template()
-@PYB11template_dict({"dim" : "2"})
-class WaveEquation(Physics):
-    def pyinit2(self,
+    def pyinit1(self,
                nodeList="NodeList*",
                constants="PhysicalConstants&",
                grid="Mesh::Grid<2>*",

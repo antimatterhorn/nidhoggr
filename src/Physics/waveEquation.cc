@@ -7,6 +7,8 @@ template <int dim>
 class WaveEquation : public Physics<dim> {
 protected:
     Mesh::Grid<dim>* grid;
+    Mesh::Grid<2>* grid2d;
+    bool ocean = false;
     double C;
     double dtmin;
 public:
@@ -19,27 +21,35 @@ public:
         grid(grid), C(C) {
         VerifyWaveFields();
 
+        grid->assignPositions(nodeList);
+
         ScalarField* cs = nodeList->getField<double>("soundSpeed");
         for (int i=0; i<nodeList->getNumNodes();++i) cs->setValue(i,C);
     }
 
     WaveEquation(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<2>* grid, const std::string& depthMap) : 
         Physics<dim>(nodeList, constants),
-        grid(grid), C(constants.ESurfaceGrav()) {
+        grid2d(grid), C(constants.ESurfaceGrav()), ocean(true) {
         if (dim != 2) {
             std::cerr << "Error: This constructor can only be used with dim = 2" << std::endl;
             std::exit(EXIT_FAILURE);
         }
+
+        std::cout << "about to verify fields" << std::endl;
         VerifyWaveFields();
+
+        grid2d->assignPositions(nodeList);
 
         if (nodeList->getField<double>("depth") == nullptr)
             nodeList->insertField<double>("depth");
 
-        grid->template insertField<double>("depth");
+        grid2d->template insertField<double>("depth");
         ImportDepthMap map(depthMap);
-        map.populateDepthField(grid);
+        map.populateDepthField(grid2d);
 
-        ScalarField* depth      = grid->template getField<double>("depth");
+        std::cout << "verified fields" << std::endl;
+
+        ScalarField* depth      = grid2d->template getField<double>("depth");
         ScalarField* nodeDepth  = nodeList->getField<double>("depth");
         nodeDepth->copyValues(depth);
 
@@ -64,9 +74,7 @@ public:
         if (nodeList->getField<double>("xi") == nullptr)
             nodeList->insertField<double>("xi");
         if (nodeList->getField<double>("soundSpeed") == nullptr)
-            nodeList->insertField<double>("soundSpeed");
-        
-        grid->assignPositions(nodeList);
+            nodeList->insertField<double>("soundSpeed");       
 
         State<dim>* state = &this->state;
         ScalarField* xi = nodeList->getField<double>("xi");
@@ -94,11 +102,12 @@ public:
         ScalarField* DphiDt = deriv.template getField<double>("phi");
 
         ScalarField* cs     = nodeList->getField<double>("soundSpeed");
-        
+        std::cout << "fields" << std::endl;
         #pragma omp parallel for
         for (int i=0; i<numNodes; ++i) {
             double c = cs->getValue(i);
-            std::vector<int> neighbors = grid->getNeighboringCells(i);
+            std::vector<int> neighbors = (ocean ? grid2d->getNeighboringCells(i) : grid->getNeighboringCells(i));
+            std::cout << ocean << " " << c << std::endl;
             double laplace2 = -4*phi->getValue(i);
             for (auto idx : neighbors) {
                 laplace2 += phi->getValue(idx);

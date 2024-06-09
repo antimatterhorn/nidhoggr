@@ -49,7 +49,7 @@ if __name__ == "__main__":
     print("grid %dx%d"%(nx,ny))
     print(grid)
 
-    waveEqn = WaveHeight(nodeList=myNodeList,
+    waveEqn = WaveEquation2d(nodeList=myNodeList,
                              constants=constants,
                              grid=grid,
                              depthMap="sfo.asc")
