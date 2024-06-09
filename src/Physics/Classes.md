@@ -5,6 +5,7 @@ classDiagram
     Physics <|-- PointSourceGravity
     Physics <|-- ConstantGravity
     Physics <|-- WaveEquation
+    Physics <|-- NBodyGravity
     Physics : +NodeList* nodeList
     Physics : +PhysicalConstants& constants
     Physics : VerifyFields(NodeList* nodeList)
@@ -18,6 +19,9 @@ classDiagram
     }
     class ConstantGravity{
         +Vector gravity
+    }
+    class NBodyGravity{
+        +double plummerLength
     }
     class Hydro{
         +EquationOfState* eos
