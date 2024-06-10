@@ -3,7 +3,9 @@ from boundaries import *
 
 @PYB11template("dim")
 class SphereParticleBoundary(Boundaries):
-    def pyinit(self,physics="Physics<%(dim)s>*"):
+    def pyinit(self,physics="Physics<%(dim)s>*",
+                    position="Lin::Vector<%(dim)s>&",
+                    radius="double"):
         return
     
 SphereParticleBoundary1d = PYB11TemplateClass(SphereParticleBoundary,
