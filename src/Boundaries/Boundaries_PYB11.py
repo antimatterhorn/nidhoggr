@@ -3,10 +3,12 @@ PYB11includes = ['"boundaries.hh"',
                  '"gridBoundaries.hh"',
                  '"reflectingGridBoundaries.cc"',
                  '"pacmanGridBoundaries.cc"',
-                 '"dirichletGridBoundaries.cc"']
+                 '"dirichletGridBoundaries.cc"',
+                 '"sphereParticleBoundary.cc"']
 
 from boundaries import *
 from gridBoundaries import *
 from reflectingGridBoundaries import *
 from pacmanGridBoundaries import *
 from dirichletGridBoundaries import *
+from sphereParticleBoundary import *
