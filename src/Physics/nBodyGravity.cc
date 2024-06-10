@@ -85,11 +85,11 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 
-        VectorField* fposition       = finalState->template getField<Vector>("position");
-        VectorField* fvelocity       = finalState->template getField<Vector>("velocity");
+        VectorField* fposition  = finalState->template getField<Vector>("position");
+        VectorField* fvelocity  = finalState->template getField<Vector>("velocity");
 
-        VectorField* position       = nodeList->template getField<Vector>("position");
-        VectorField* velocity       = nodeList->template getField<Vector>("velocity");
+        VectorField* position   = nodeList->template getField<Vector>("position");
+        VectorField* velocity   = nodeList->template getField<Vector>("velocity");
 
         position->copyValues(fposition);
         velocity->copyValues(fvelocity);

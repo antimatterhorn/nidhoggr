@@ -72,10 +72,11 @@ public:
         if (nodeList->getField<double>("soundSpeed") == nullptr)
             nodeList->insertField<double>("soundSpeed");       
 
+        ScalarField* xi     = nodeList->getField<double>("xi");
+        ScalarField* phi    = nodeList->getField<double>("phi");
+
         State<dim>* state = &this->state;
-        ScalarField* xi = nodeList->getField<double>("xi");
         state->template addField<double>(xi);
-        ScalarField* phi = nodeList->getField<double>("phi");
         state->template addField<double>(phi);
     }
 
@@ -91,10 +92,10 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
         
-        ScalarField* xi = initialState->template getField<double>("xi");
-        ScalarField* phi = initialState->template getField<double>("phi");
+        ScalarField* xi     = initialState->template getField<double>("xi");
+        ScalarField* phi    = initialState->template getField<double>("phi");
 
-        ScalarField* DxiDt = deriv.template getField<double>("xi");
+        ScalarField* DxiDt  = deriv.template getField<double>("xi");
         ScalarField* DphiDt = deriv.template getField<double>("phi");
 
         ScalarField* cs     = nodeList->getField<double>("soundSpeed");
@@ -116,8 +117,8 @@ public:
     double
     getCell(int i,int j, std::string fieldName="phi") {
         int idx = (ocean ? grid2d->index(j,i,0) : grid->index(j,i,0));
-        NodeList* nodeList = this->nodeList;
-        ScalarField* phi = nodeList->getField<double>(fieldName);
+        NodeList* nodeList  = this->nodeList;
+        ScalarField* phi    = nodeList->getField<double>(fieldName);
         return phi->getValue(idx);
     }
 
@@ -126,11 +127,11 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 
-        ScalarField* fxi = finalState->template getField<double>("xi");
-        ScalarField* fphi = finalState->template getField<double>("phi");
+        ScalarField* fxi    = finalState->template getField<double>("xi");
+        ScalarField* fphi   = finalState->template getField<double>("phi");
 
-        ScalarField* xi = nodeList->getField<double>("xi");
-        ScalarField* phi = nodeList->getField<double>("phi");
+        ScalarField* xi     = nodeList->getField<double>("xi");
+        ScalarField* phi    = nodeList->getField<double>("phi");
 
         xi->copyValues(fxi);
         phi->copyValues(fphi);
