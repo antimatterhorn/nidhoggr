@@ -80,10 +80,57 @@ def AnimateGrid2d(bounds, update_method, threeColors=False, frames=100, interval
 # Example usage:
 # AnimateGrid2d((10, 10), update_method, save_as='animation.mp4')
 
+def AnimateScatter(bounds, update_method, frames=100, interval=50, save_as=None):
+    """
+    Creates an animation of a scatter plot of moving points.
 
-def AnimatePoints(points):
+    Parameters:
+    - bounds: tuple of (x_min, x_max, y_min, y_max) dimensions for the plot
+    - update_method: object with methods `module_stepper`, `module_call`, and `module_title`
+    - frames: int, number of frames in the animation
+    - interval: int, time interval between frames in milliseconds
+    - save_as: str, file name to save the animation (e.g., 'animation.mp4')
+    """
     fig, ax = plt.subplots()
-    plt.show()
+
+    ax.set_xlim(bounds[0], bounds[1])
+    ax.set_ylim(bounds[2], bounds[3])
+
+    scat = ax.scatter([], [])
+
+    def init():
+        scat.set_offsets([])
+        return scat,
+
+    def update(frame):
+        update_method.module_stepper()
+
+        points = update_method.posField
+        x = [p.x for p in points]
+        y = [p.y for p in points]
+
+        scat.set_offsets(np.c_[x, y])
+        ax.set_title(update_method.module_title())
+
+        return scat,
+
+    ani = FuncAnimation(fig, update, init_func=init, frames=frames, interval=interval, blit=True)
+
+    if save_as:
+        ani.save(save_as, writer='ffmpeg')
+        print(f'Animation saved as {save_as}')
+    else:
+        plt.show()
+
+class AnimationUpdateScatterMethod2d:
+    def __init__(self, posField, stepper, title=None):
+        self.posField = posField
+        self.module_stepper = stepper
+        if (title == None):
+            self.module_title = DummyTitle()
+        else:
+            self.module_title = title
+
 
 class AnimationUpdateMethod2d:
     def __init__(self, call, stepper, title=None, fieldName="pressure"):
