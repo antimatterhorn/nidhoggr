@@ -12,4 +12,9 @@ classDiagram
         +Grid* grid
         +Physics* physics
     }
+    class SphereParticleBoundary {
+        +Physics<dim>* physics
+        +Vector<dim>& position
+        +double radius
+    }
 ```
