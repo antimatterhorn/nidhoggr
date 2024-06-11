@@ -105,7 +105,7 @@ def AnimateScatter(bounds, update_method, frames=100, interval=50, save_as=None)
     def update(frame):
         update_method.module_stepper()
 
-        points = update_method.posField
+        points = update_method.positions
         x = [p.x for p in points]
         y = [p.y for p in points]
 
@@ -123,8 +123,8 @@ def AnimateScatter(bounds, update_method, frames=100, interval=50, save_as=None)
         plt.show()
 
 class AnimationUpdateScatterMethod2d:
-    def __init__(self, posField, stepper, title=None):
-        self.posField = posField
+    def __init__(self, positions, stepper, title=None):
+        self.positions = positiions
         self.module_stepper = stepper
         if (title == None):
             self.module_title = DummyTitle()
