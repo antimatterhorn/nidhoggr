@@ -67,7 +67,7 @@ if __name__ == "__main__":
         for j in range(num_colliders):
             x = (j - num_colliders // 2) * spacing_x + offset
             y = 2 + i * spacing_y  # Start from y=2 and span to y=8
-            cbounds.append(SphereParticleBoundary2d(physics=constantGravity, position=Vector2d(x, y), radius=collider_radius))
+            cbounds.append(SphereCollider2d(physics=constantGravity, position=Vector2d(x, y), radius=collider_radius, elasticity=0.8))
             colliders.append((x, y))
 
     integrator = RungeKutta2Integrator2d(packages=packages, dtmin=0.01, boundaries=cbounds)

@@ -5,11 +5,11 @@
 
 // Base class for Grid Boundaries
 template <int dim>
-class SphereParticleBoundary : public Collider<dim> {
+class SphereCollider : public Collider<dim> {
 protected:
     NodeList* nodeList;
     Lin::Vector<dim> position;
-    double radius;
+    double radius,elasticity;
 
     Lin::Vector<dim>
     normal(Lin::Vector<dim>& otherPosition) {
@@ -20,13 +20,22 @@ public:
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
 
-    SphereParticleBoundary(Physics<dim>* physics, Vector& position, double radius) : 
+    SphereCollider(Physics<dim>* physics, Vector& position, double radius) : 
         Collider<dim>(physics),
         position(position), radius(radius) {
         nodeList = physics->getNodeList();
+        elasticity = 1.0;
     }
     
-    virtual ~SphereParticleBoundary() {}
+    SphereCollider(Physics<dim>* physics, Vector& position, double radius, double elasticity) : 
+        Collider<dim>(physics),
+        position(position), radius(radius), elasticity(elasticity) {
+        nodeList = physics->getNodeList();
+        if (elasticity > 1.0)
+            std::cerr << "elasticity > 1. was this intentional?" << std::endl;
+    }
+
+    virtual ~SphereCollider() {}
 
     virtual void
     ApplyBoundaries() override {  
@@ -45,7 +54,7 @@ public:
                     Vector v1 = velocities->getValue(i);
                     Vector n  = (pos-position).normal();
                     Vector v2 = v1 - 2.0*(v1*n)*n;
-                    velocities->setValue(i,v2);                 // reflect across the normal
+                    velocities->setValue(i,v2*elasticity);                 // reflect across the normal
 
                     Vector newPos = position + (rad+radius)*n;  // move it out of the boundary
                     positions->setValue(i,newPos);
