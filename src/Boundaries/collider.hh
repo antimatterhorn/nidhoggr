@@ -16,6 +16,8 @@ public:
     
     virtual ~Collider() {}
 
+    virtual bool Inside(Lin::Vector<dim>& otherPosition, double otherRadius) { return false; }
+
 };
 
 #endif

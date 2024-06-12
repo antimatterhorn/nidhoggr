@@ -1,24 +1,15 @@
 #include <vector>
 #include "../Physics/physics.hh"
 #include "../DataBase/nodeList.hh"
-#include "boundaries.hh"
+#include "collider.hh"
 
 // Base class for Grid Boundaries
 template <int dim>
-class SphereParticleBoundary : public Boundaries<dim> {
+class SphereParticleBoundary : public Collider<dim> {
 protected:
     NodeList* nodeList;
     Lin::Vector<dim> position;
     double radius;
-
-    bool 
-    Inside(Lin::Vector<dim>& otherPosition, double otherRadius) {
-        double distance = (position-otherPosition).magnitude();
-        if (distance <= (radius + otherRadius))
-            return true;
-        else
-            return false;
-    }
 
     Lin::Vector<dim>
     normal(Lin::Vector<dim>& otherPosition) {
@@ -30,7 +21,7 @@ public:
     using ScalarField = Field<double>;
 
     SphereParticleBoundary(Physics<dim>* physics, Vector& position, double radius) : 
-        Boundaries<dim>(physics),
+        Collider<dim>(physics),
         position(position), radius(radius) {
         nodeList = physics->getNodeList();
     }
@@ -65,6 +56,15 @@ public:
         {
             std::cerr << "radius not found in nodeList. was this intentional?" << std::endl;
         }
+    }
+
+    bool 
+    Inside(Lin::Vector<dim>& otherPosition, double otherRadius) override {
+        double distance = (position-otherPosition).magnitude();
+        if (distance <= (radius + otherRadius))
+            return true;
+        else
+            return false;
     }
 
 };

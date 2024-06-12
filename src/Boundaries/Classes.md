@@ -1,6 +1,7 @@
 ```mermaid
 classDiagram
     Boundaries <|-- GridBoundaries
+    Boundaries <|-- Collider
     GridBoundaries <|-- DirichletGridBoundaries
     GridBoundaries <|-- PacmanGridBoundaries
     GridBoundaries <|-- ReflectingGridBoundaries
@@ -12,8 +13,11 @@ classDiagram
         +Grid* grid
         +Physics* physics
     }
+    class Collider {
+        Inside() bool
+    }
+    Collider <|-- SphereParticleBoundary
     class SphereParticleBoundary {
-        +Physics<dim>* physics
         +Vector<dim>& position
         +double radius
     }

@@ -1,8 +1,8 @@
 from PYB11Generator import *
-from boundaries import *
+from collider import *
 
 @PYB11template("dim")
-class SphereParticleBoundary(Boundaries):
+class SphereParticleBoundary(Collider):
     def pyinit(self,physics="Physics<%(dim)s>*",
                     position="Lin::Vector<%(dim)s>&",
                     radius="double"):
