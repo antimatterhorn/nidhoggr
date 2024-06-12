@@ -45,6 +45,14 @@ public:
         ImportDepthMap map(depthMap);
         map.populateDepthField(grid2d);
 
+        int num = grid2d->size();
+
+        printf("about to resize\n");
+
+        nodeList->resize(num);
+
+        printf("resized\n");
+
         ScalarField* depth      = grid2d->template getField<double>("depth");
         ScalarField* nodeDepth  = nodeList->getField<double>("depth");
         nodeDepth->copyValues(depth);

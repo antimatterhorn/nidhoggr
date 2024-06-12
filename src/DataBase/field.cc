@@ -143,4 +143,10 @@ void Field<T>::fill(unsigned int n, T val) {
     }
 }
 
+// Implementation of the clear method
+template <typename T>
+void Field<T>::clear() {
+    values.clear();
+}
+
 #endif // FIELD_CC

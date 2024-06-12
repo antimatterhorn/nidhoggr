@@ -13,7 +13,6 @@ private:
     std::vector<std::shared_ptr<FieldBase>> _fields;
     Field<int> _ids;
     std::vector<std::shared_ptr<FieldBase>> _extraFields;
-
 public:
     NodeList();
     NodeList(int numNodes);
@@ -48,6 +47,8 @@ public:
     std::vector<std::string> fieldNames() const;
     Field<int>& nodes();
     unsigned int size() const;
+
+    void resize(int numNodes);
 };
 
 #include "nodeList.cc" // Include the template implementation

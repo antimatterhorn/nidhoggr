@@ -116,5 +116,41 @@ Field<Lin::Vector<dim>>* NodeList::position() const {
     return nullptr;
 }
 
+void NodeList::resize(int numNodes) {
+    // Remove _ids field from the list of fields
+    auto it = std::find_if(_fields.begin(), _fields.end(), [&](const auto& field) {
+        return field->getNameString() == _ids.getNameString();
+    });
+    if (it != _fields.end()) {
+        _fields.erase(it);
+    }
+
+    // Clear all fields and refill with zeros or default vectors
+    for (auto& field : _fields) {
+        field->clear();
+        if (auto* doubleField = dynamic_cast<Field<double>*>(field.get())) {
+            // Refill Field<double> with zeros
+            doubleField->fill(numNodes, 0.0);
+        } else if (auto* vectorField = dynamic_cast<Field<Lin::Vector<1>>*>(field.get())) {
+            // Refill Field<Lin::Vector<dim>> with default vectors
+            vectorField->fill(numNodes, Lin::Vector<1>());
+        } else if (auto* vectorField = dynamic_cast<Field<Lin::Vector<2>>*>(field.get())) {
+            // Refill Field<Lin::Vector<dim>> with default vectors
+            vectorField->fill(numNodes, Lin::Vector<2>());
+        } else if (auto* vectorField = dynamic_cast<Field<Lin::Vector<3>>*>(field.get())) {
+            // Refill Field<Lin::Vector<dim>> with default vectors
+            vectorField->fill(numNodes, Lin::Vector<3>());
+        }
+    }
+
+    // Reinitialize the _ids field
+    _ids.clear();
+    for (int i = 0; i < numNodes; ++i) {
+        _ids.addValue(i);
+    }
+
+    // Add the _ids field back to the list of fields
+    addField(std::make_shared<Field<int>>(_ids));
+}
 
 #endif

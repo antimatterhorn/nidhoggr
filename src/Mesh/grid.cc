@@ -7,25 +7,28 @@ namespace Mesh {
     template <int dim>
     Grid<dim>::Grid(int num_cells_x, double spacing_x)
         : nx(num_cells_x), ny(1), nz(1), dx(spacing_x), dy(0.0), dz(0.0) {
+        gridPositions = Field<Lin::Vector<dim>>("gridPosition");
         initializeGrid();
     }
 
     template <int dim>
     Grid<dim>::Grid(int num_cells_x, int num_cells_y, double spacing_x, double spacing_y)
         : nx(num_cells_x), ny(num_cells_y), nz(1), dx(spacing_x), dy(spacing_y), dz(0.0) {
+        gridPositions = Field<Lin::Vector<dim>>("gridPosition");
         initializeGrid();
     }
 
     template <int dim>
     Grid<dim>::Grid(int num_cells_x, int num_cells_y, int num_cells_z, double spacing_x, double spacing_y, double spacing_z)
         : nx(num_cells_x), ny(num_cells_y), nz(num_cells_z), dx(spacing_x), dy(spacing_y), dz(spacing_z) {
+        gridPositions = Field<Lin::Vector<dim>>("gridPosition");
         initializeGrid();
     }
 
     template <int dim>
     void 
     Grid<dim>::initializeGrid() {
-        gridPositions = Field<Lin::Vector<dim>>("gridPosition");
+        gridPositions.clear();
 
         // Compute and store the position of each cell center
         for (int k = 0; k < nz; ++k) {
@@ -39,6 +42,45 @@ namespace Mesh {
                 }
             }
         }
+    }
+
+    template <int dim>
+    void 
+    Grid<dim>::reInitializeGrid(int num_cells_x, double spacing_x) {
+        static_assert(dim == 1, "This method is only for 1D grids");
+        nx = num_cells_x;
+        dx = spacing_x;
+        ny = 1;
+        nz = 1;
+        dy = 1.0;
+        dz = 1.0;
+        initializeGrid();
+    }
+
+    template <int dim>
+    void 
+    Grid<dim>::reInitializeGrid(int num_cells_x, int num_cells_y, double spacing_x, double spacing_y) {
+        static_assert(dim == 2, "This method is only for 2D grids");
+        nx = num_cells_x;
+        ny = num_cells_y;
+        dx = spacing_x;
+        dy = spacing_y;
+        nz = 1;
+        dz = 1.0;
+        initializeGrid();
+    }
+
+    template <int dim>
+    void 
+    Grid<dim>::reInitializeGrid(int num_cells_x, int num_cells_y, int num_cells_z, double spacing_x, double spacing_y, double spacing_z) {
+        static_assert(dim == 3, "This method is only for 3D grids");
+        nx = num_cells_x;
+        ny = num_cells_y;
+        nz = num_cells_z;
+        dx = spacing_x;
+        dy = spacing_y;
+        dz = spacing_z;
+        initializeGrid();
     }
 
     template <int dim>

@@ -16,6 +16,7 @@ public:
     virtual std::string getNameString() const = 0;
     virtual unsigned int getSize() const = 0;
     virtual unsigned int size() const = 0;
+    virtual void clear() = 0;
 };
 
 template <typename T>
@@ -53,6 +54,8 @@ public:
     std::string getNameString() const override;
 
     void fill(unsigned int n, T val);
+
+    void clear() override;
 };
 
 #include "field.cc"

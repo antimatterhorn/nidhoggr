@@ -18,8 +18,7 @@ ImportDepthMap::loadDepthMap(const std::string& filename) {
     }
 
     std::string line;
-    int ncols, nrows;
-    double xllcorner, yllcorner, cellsize, NODATA_value;
+    double NODATA_value;
 
     // Read header information
     file >> line >> ncols;
@@ -53,7 +52,7 @@ ImportDepthMap::bilinearInterpolation(double x, double y,
 }
 
 void 
-ImportDepthMap::populateDepthField(Mesh::Grid<2>* grid) {
+ImportDepthMap::interpolateDepthField(Mesh::Grid<2>* grid) {
     using VectorField = Field<double>;
 
     int mapWidth = depthMap[0].size();
@@ -104,6 +103,26 @@ ImportDepthMap::populateDepthField(Mesh::Grid<2>* grid) {
             double interpolatedValue = bilinearInterpolation(x, y, q11, q12, q21, q22, x1, x2, y1, y2);
             int gridIdx = grid->index(i, j);
             depthField->setValue(gridIdx, interpolatedValue);
+        }
+    }
+}
+
+void 
+ImportDepthMap::populateDepthField(Mesh::Grid<2>* grid) {
+    // Calculate cell size in meters
+    double earth_radius = 6371000.0;  // Radius of the Earth in meters
+    double lat = yllcorner;  // Latitude in degrees
+    double cellsize_meters = 2 * M_PI * earth_radius * cellsize * cos(lat * M_PI / 180.0) / 360.0;
+    // Reinitialize the grid using map dimensions and cell size
+    grid->reInitializeGrid(ncols, nrows, cellsize_meters, cellsize_meters);
+
+    Field<double>* depthField = grid->template getField<double>("depth");
+
+    // Populate the depth field with depth map values
+    for (int i = 0; i < nrows; ++i) {
+        for (int j = 0; j < ncols; ++j) {
+            int gridIdx = grid->index(j, i);  // Invert j and i to match depth map indexing
+            depthField->setValue(gridIdx, depthMap[i][j]);
         }
     }
 }

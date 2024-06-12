@@ -28,6 +28,9 @@ namespace Mesh {
         Grid(int num_cells_x, int num_cells_y, int num_cells_z, double spacing_x, double spacing_y, double spacing_z);
 
         void initializeGrid();
+        void reInitializeGrid(int num_cells_x, double spacing_x);
+        void reInitializeGrid(int num_cells_x, int num_cells_y, double spacing_x, double spacing_y);
+        void reInitializeGrid(int num_cells_x, int num_cells_y, int num_cells_z, double spacing_x, double spacing_y, double spacing_z);
         void setOrigin(Lin::Vector<dim> origin);
 
         int index(int i, int j = 0, int k = 0) const;

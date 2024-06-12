@@ -16,8 +16,11 @@ public:
     std::vector<std::vector<double>> depthMap;
 
     ImportDepthMap(const std::string& filename);
+    void interpolateDepthField(Mesh::Grid<2>* grid);
     void populateDepthField(Mesh::Grid<2>* grid);
 
+    int ncols,nrows;
+    double xllcorner,yllcorner,cellsize;
 private:
     std::vector<std::vector<double>> loadDepthMap(const std::string& filename);
     double bilinearInterpolation(double x, double y,
