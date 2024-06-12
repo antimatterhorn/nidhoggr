@@ -39,13 +39,21 @@ class debug:
 
 if __name__ == "__main__":
     cycles = 10000
-    constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
-    nx = 500
-    ny = 500
+
+    nx = 722
+    ny = 696
+    yllcorner = 36.3
+    cellsize = 0.004166666667
+    earthRadius = 6371000.0;
+    cellsize_meters = 2 * 3.14159 * earthRadius * cellsize * cos(yllcorner * 3.14159 / 180.0) / 360.0;
+
+    print("cell size: %3.3em\n"%cellsize_meters)
+
+    constants = MKS()
 
     myNodeList = NodeList(nx*ny)
     
-    grid = Grid2d(nx,ny,1,1)
+    grid = Grid2d(nx,ny,cellsize_meters,cellsize_meters)
     print("grid %dx%d"%(nx,ny))
     print(grid)
 
