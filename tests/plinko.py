@@ -45,14 +45,15 @@ def AnimateScatter(bounds, stepper, positions, colliders, frames=100, interval=5
 if __name__ == "__main__":
     animate = True
     
-    numNodes = 100
+    numNodes = 30
 
     constants = MKS()
     myNodeList = NodeList(numNodes)
     gravVec = Vector2d(0, -9.8)
 
     constantGravity = ConstantGravity2d(myNodeList, constants, gravVec)
-    packages = [constantGravity]
+    kinetics = Kinetics2d(myNodeList,constants)
+    packages = [constantGravity,kinetics]
 
     colliders = []
     cbounds = []
@@ -73,10 +74,12 @@ if __name__ == "__main__":
     integrator = RungeKutta2Integrator2d(packages=packages, dtmin=0.01, boundaries=cbounds)
     print(integrator)
 
-    myNodeList.insertFieldDouble("radius")
+
     rad = myNodeList.getFieldDouble("radius")
+    mass = myNodeList.getFieldDouble("mass")
     for i in range(numNodes):
         rad.setValue(i, 0.2)
+        mass.setValue(i,0.2)
 
     print("numNodes =", myNodeList.numNodes)
     print("field names =", myNodeList.fieldNames)
@@ -86,7 +89,7 @@ if __name__ == "__main__":
     for i in range(numNodes):
         pos.setValue(i, Vector2d(random.uniform(-10, 10), 10))
 
-    controller = Controller(integrator=integrator, periodicWork=[], statStep=100)
+    controller = Controller(integrator=integrator, periodicWork=[], statStep=1)
 
     bounds = (-10, 10, 0, 10)
     AnimateScatter(bounds, stepper=controller, positions=pos, colliders=colliders, frames=100, interval=50)

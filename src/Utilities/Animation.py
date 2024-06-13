@@ -124,7 +124,7 @@ def AnimateScatter(bounds, update_method, frames=100, interval=50, save_as=None)
 
 class AnimationUpdateScatterMethod2d:
     def __init__(self, positions, stepper, title=None):
-        self.positions = positiions
+        self.positions = positions
         self.module_stepper = stepper
         if (title == None):
             self.module_title = DummyTitle()
