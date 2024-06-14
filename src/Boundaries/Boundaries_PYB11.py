@@ -4,6 +4,7 @@ PYB11includes = ['"boundaries.hh"',
                  '"gridBoundaries.hh"',
                  '"reflectingGridBoundaries.cc"',
                  '"pacmanGridBoundaries.cc"',
+                 '"outflowGridBoundaries.cc"',
                  '"dirichletGridBoundaries.cc"',
                  '"sphereCollider.cc"']
 
@@ -12,5 +13,6 @@ from collider import *
 from gridBoundaries import *
 from reflectingGridBoundaries import *
 from pacmanGridBoundaries import *
+from outflowGridBoundaries import *
 from dirichletGridBoundaries import *
 from sphereCollider import *

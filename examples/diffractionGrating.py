@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
     packages = [waveEqn]
 
-    pm = PacmanGridBoundaries2d(grid=grid,physics=waveEqn)
+    pm = OutflowGridBoundaries2d(grid=grid,physics=waveEqn)
     print(pm)
     box = DirichletGridBoundaries2d(grid=grid,physics=waveEqn)
 
