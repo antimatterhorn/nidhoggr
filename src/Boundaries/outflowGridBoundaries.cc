@@ -5,10 +5,58 @@
 template <int dim>
 class OutflowGridBoundaries : public GridBoundaries<dim> {
 protected:
-
+    std::vector<std::vector<int>> boundaryIds;
 public:
     OutflowGridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics) : 
-        GridBoundaries<dim>(grid,physics) {}
+        GridBoundaries<dim>(grid,physics) {
+        if (dim == 1) {
+            std::vector<int> leftIds = grid->leftMost();  
+            std::vector<int> leftcol;
+            leftcol.push_back(1);
+
+            std::vector<int> rightIds = grid->rightMost();
+            std::vector<int> rightcol;
+            rightcol.push_back(rightIds[0]-1);
+
+            boundaryIds.push_back(leftIds);
+            boundaryIds.push_back(leftcol);
+            boundaryIds.push_back(rightIds);
+            boundaryIds.push_back(rightcol);
+        }
+        else if (dim == 2) {
+            std::vector<int> leftIds = grid->leftMost();  
+            std::vector<int> leftcol;
+
+            std::vector<int> rightIds = grid->rightMost();
+            std::vector<int> rightcol;
+
+            std::vector<int> topIds = grid->topMost();
+            std::vector<int> topcol;
+
+            std::vector<int> bottomIds = grid->bottomMost();
+            std::vector<int> bottomcol;
+            
+            for (int j=0; j<bottomIds.size(); ++j) {
+                leftcol.push_back(grid->index(1,j));
+                rightcol.push_back(grid->index(bottomIds.size()-2,j));
+            }
+
+            for (int i=0; i<leftIds.size(); ++i) {
+                topcol.push_back(grid->index(i,1));
+                bottomcol.push_back(grid->index(i,leftIds.size()-2));
+            }
+
+            boundaryIds.push_back(leftIds);
+            boundaryIds.push_back(leftcol);
+            boundaryIds.push_back(rightIds);
+            boundaryIds.push_back(rightcol);
+
+            boundaryIds.push_back(topIds);
+            boundaryIds.push_back(topcol);
+            boundaryIds.push_back(bottomIds);
+            boundaryIds.push_back(bottomcol);
+        }
+    }
     
     virtual ~OutflowGridBoundaries() {}
 
@@ -34,63 +82,29 @@ public:
     }
 
     void ApplyOutflowBoundary(Field<double>* field, Mesh::Grid<dim>* grid) {
-        // Handle left and right boundaries
-        std::vector<int> leftIds = grid->leftMost();
-        std::vector<int> rightIds = grid->rightMost();
-        CopyBoundaryData(field, leftIds, 1); // Copy from cell adjacent to left boundary
-        CopyBoundaryData(field, rightIds, -1); // Copy from cell adjacent to right boundary
-
-        if constexpr (dim >= 2) {
-            // Handle top and bottom boundaries
-            std::vector<int> topIds = grid->topMost();
-            std::vector<int> bottomIds = grid->bottomMost();
-            CopyBoundaryData(field, topIds, -grid->size_x()); // Copy from cell adjacent to top boundary
-            CopyBoundaryData(field, bottomIds, grid->size_x()); // Copy from cell adjacent to bottom boundary
-        }
-
-        if constexpr (dim == 3) {
-            // Handle front and back boundaries
-            std::vector<int> frontIds = grid->frontMost();
-            std::vector<int> backIds = grid->backMost();
-            CopyBoundaryData(field, frontIds, -grid->size_x() * grid->size_y()); // Copy from cell adjacent to front boundary
-            CopyBoundaryData(field, backIds, grid->size_x() * grid->size_y()); // Copy from cell adjacent to back boundary
+        for (int i=0;i<2*dim;++i) {
+            std::vector<int> b = boundaryIds[2*i];
+            std::vector<int> c = boundaryIds[2*i+1];
+            CopyBoundaryData(field,b,c);
         }
     }
 
     void ApplyOutflowBoundary(Field<Lin::Vector<dim>>* field, Mesh::Grid<dim>* grid) {
-        // Handle left and right boundaries
-        std::vector<int> leftIds = grid->leftMost();
-        std::vector<int> rightIds = grid->rightMost();
-        CopyBoundaryData(field, leftIds, 1); // Copy from cell adjacent to left boundary
-        CopyBoundaryData(field, rightIds, -1); // Copy from cell adjacent to right boundary
-
-        if constexpr (dim >= 2) {
-            // Handle top and bottom boundaries
-            std::vector<int> topIds = grid->topMost();
-            std::vector<int> bottomIds = grid->bottomMost();
-            CopyBoundaryData(field, topIds, -grid->size_x()); // Copy from cell adjacent to top boundary
-            CopyBoundaryData(field, bottomIds, grid->size_x()); // Copy from cell adjacent to bottom boundary
-        }
-
-        if constexpr (dim == 3) {
-            // Handle front and back boundaries
-            std::vector<int> frontIds = grid->frontMost();
-            std::vector<int> backIds = grid->backMost();
-            CopyBoundaryData(field, frontIds, -grid->size_x() * grid->size_y()); // Copy from cell adjacent to front boundary
-            CopyBoundaryData(field, backIds, grid->size_x() * grid->size_y()); // Copy from cell adjacent to back boundary
+        for (int i=0;i<2*dim;++i) {
+            std::vector<int> b = boundaryIds[2*i];
+            std::vector<int> c = boundaryIds[2*i+1];
+            CopyBoundaryData(field,b,c);
         }
     }
 
-    void CopyBoundaryData(Field<double>* field, const std::vector<int>& boundaryIds, int offset) {
-        for (int id : boundaryIds) {
-            field->setValue(id, field->getValue(id + offset));
-        }
+    void CopyBoundaryData(Field<double>* field, const std::vector<int>& boundaryIds, const std::vector<int>& copyIds) {
+        for (int i=0;i<boundaryIds.size();++i)
+            field->setValue(boundaryIds[i],field->getValue(copyIds[i]));
     }
 
-    void CopyBoundaryData(Field<Lin::Vector<dim>>* field, const std::vector<int>& boundaryIds, int offset) {
-        for (int id : boundaryIds) {
-            field->setValue(id, field->getValue(id + offset));
-        }
+    void CopyBoundaryData(Field<Lin::Vector<dim>>* field, const std::vector<int>& boundaryIds, const std::vector<int>& copyIds) {
+        for (int i=0;i<boundaryIds.size();++i)
+            field->setValue(boundaryIds[i],field->getValue(copyIds[i]));
     }
 };
 
