@@ -35,7 +35,7 @@ if __name__ == "__main__":
     cycles = 20000
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
     nx = 100
-    ny = 100
+    ny = nx
 
     myNodeList = NodeList(nx*ny)
     
@@ -61,7 +61,7 @@ if __name__ == "__main__":
     for i in range(nbox):
         x = int(nx/3)
         y = dy*(i+1)
-        box.addBox(Vector2d(x-1,y-h),Vector2d(x+1,y+h))
+        box.addSphere(Vector2d(x,y),2)
 
     pbounds = [pm,box]
 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
         update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,
                                                 stepper=controller.Step,
                                                 title=title,
-                                                fieldName="phi")
-        AnimateGrid2d(bounds,update_method,extremis=[-5,5],frames=cycles)
+                                                fieldName="maxphi")
+        AnimateGrid2d(bounds,update_method,extremis=[0,2],frames=cycles,cmap='plasma')
     else:
         controller.Step(cycles)

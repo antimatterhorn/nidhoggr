@@ -9,6 +9,10 @@ class DirichletGridBoundaries(GridBoundaries):
         return
     def removeBox(self,p1="Lin::Vector<%(dim)s>",p2="Lin::Vector<%(dim)s>"):
         return
+    def addSphere(self,p="Lin::Vector<%(dim)s>",radius="double"):
+        return
+    def removeSphere(self,p="Lin::Vector<%(dim)s>",radius="double"):
+        return
     
 DirichletGridBoundaries1d = PYB11TemplateClass(DirichletGridBoundaries,
                               template_parameters = ("1"),
