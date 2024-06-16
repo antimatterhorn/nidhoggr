@@ -24,13 +24,13 @@ public:
             boundaryIds.push_back(rightcol);
         }
         else if (dim == 2) {
-            std::vector<int> leftIds = grid->leftMost();  
+            std::vector<int> leftIds   = grid->leftMost();  
             std::vector<int> leftcol;
 
-            std::vector<int> rightIds = grid->rightMost();
+            std::vector<int> rightIds  = grid->rightMost();
             std::vector<int> rightcol;
 
-            std::vector<int> topIds = grid->topMost();
+            std::vector<int> topIds    = grid->topMost();
             std::vector<int> topcol;
 
             std::vector<int> bottomIds = grid->bottomMost();

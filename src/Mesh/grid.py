@@ -23,6 +23,18 @@ class Grid:
         return "std::array<int, %(dim)s>"
     def assignPositions(self,nodeList="NodeList*"):
         return
+    def leftMost(self):
+        return
+    def rightMost(self):
+        return
+    def topMost(self):
+        return
+    def bottomMost(self):
+        return
+    def frontMost(self):
+        return
+    def backMost(self):
+        return
 
     nx = PYB11property("int", getter="getnx", doc="The number of x coords.")
     ny = PYB11property("int", getter="getny", doc="The number of y coords.")
