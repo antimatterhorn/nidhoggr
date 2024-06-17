@@ -34,8 +34,7 @@ class debug:
         xi = self.nodeList.getFieldDouble("xi")
         for i in range(self.nodeList.numNodes):
             if phi[i] != 0 or xi[i] != 0:
-                print(cycle,i,phi[i],xi[i])
-      
+                print(cycle,i,phi[i],xi[i]) 
 
 if __name__ == "__main__":
     cycles = 10000
@@ -54,7 +53,6 @@ if __name__ == "__main__":
     myNodeList = NodeList(nx*ny)
     
     grid = Grid2d(nx,ny,cellsize_meters,cellsize_meters)
-    print("grid %dx%d"%(nx,ny))
     print(grid)
 
     waveEqn = WaveEquation2d(nodeList=myNodeList,
@@ -63,9 +61,7 @@ if __name__ == "__main__":
                              depthMap="sfo.asc")
 
     print(waveEqn)
-
     packages = [waveEqn]
-
 
     integrator = RungeKutta2Integrator2d(packages=packages,
                               dtmin=0.0001,
@@ -77,7 +73,7 @@ if __name__ == "__main__":
 
     osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
     periodicWork = [osc]
-    vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","depth"],dumpCycle=100)
+    vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","depth","maxphi"],dumpCycle=100)
     periodicWork.append(vtk)
 
     controller = Controller(integrator=integrator,
