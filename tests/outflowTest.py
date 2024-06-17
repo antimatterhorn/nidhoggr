@@ -11,7 +11,7 @@ class oscillate:
         self.height = height
         self.phi = myNodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
-        if time < 3.14159/2:
+        if time < 3.14159/4:
             a = 5*(cos(time))
             i = int(self.width/2)
             j = int(self.height/2)

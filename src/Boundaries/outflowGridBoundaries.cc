@@ -192,6 +192,7 @@ public:
             std::vector<int> b2 = bounds[2*d+1];
             for (int i = 0; i<b1.size(); ++i) {
                 field->setValue(b1[i],0);
+                field->setValue(b2[i],0);
             }
         }
     }
@@ -203,6 +204,7 @@ public:
             std::vector<int> b2 = bounds[2*d+1];
             for (int i = 0; i<b1.size(); ++i) {
                 field->setValue(b1[i],Vector());
+                field->setValue(b2[i],Vector());
             }
         }
     }
