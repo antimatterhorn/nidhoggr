@@ -11,11 +11,12 @@ class oscillate:
         self.height = height
         self.phi = myNodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
-        a = 5*(cos(time))
-        i = int(self.width/2)
-        j = int(self.height/2)
-        idx = self.grid.index(i,j,0)
-        self.phi.setValue(idx,a)
+        if time < 3.14159/2:
+            a = 5*(cos(time))
+            i = int(self.width/2)
+            j = int(self.height/2)
+            idx = self.grid.index(i,j,0)
+            self.phi.setValue(idx,a)
 
 class vtkdump:
     def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
@@ -46,7 +47,7 @@ if __name__ == "__main__":
 
     packages = [waveEqn]
 
-    pm = OutflowGridBoundaries2d(grid=grid,physics=waveEqn)
+    pm = OutflowGridBoundaries2d(grid=grid,physics=waveEqn,derivative="xi")
     pbounds = [pm]
 
     integrator = RungeKutta2Integrator2d(packages=packages,
@@ -72,6 +73,6 @@ if __name__ == "__main__":
                                                 stepper=controller.Step,
                                                 title=title,
                                                 fieldName="phi")
-        AnimateGrid2d(bounds,update_method,extremis=[-5,5],frames=cycles)
+        AnimateGrid2d(bounds,update_method,extremis=[-1,1],frames=cycles,cmap="plasma")
     else:
         controller.Step(cycles)

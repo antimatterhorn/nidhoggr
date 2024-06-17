@@ -5,6 +5,8 @@ from gridBoundaries import *
 class OutflowGridBoundaries(GridBoundaries):
     def pyinit(self,grid="Mesh::Grid<%(dim)s>*",physics="Physics<%(dim)s>*"):
         return
+    def pyinit1(self,grid="Mesh::Grid<%(dim)s>*",physics="Physics<%(dim)s>*",derivative="std::string"):
+        return
     
 OutflowGridBoundaries1d = PYB11TemplateClass(OutflowGridBoundaries,
                               template_parameters = ("1"),

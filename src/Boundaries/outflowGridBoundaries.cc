@@ -6,7 +6,12 @@ template <int dim>
 class OutflowGridBoundaries : public GridBoundaries<dim> {
 protected:
     std::vector<std::vector<int>> boundaryIds;
+    std::string derivFieldName;
 public:
+    using Vector=Lin::Vector<dim>;
+    using VectorField = Field<Vector>;
+    using ScalarField = Field<double>;
+
     OutflowGridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics) : 
         GridBoundaries<dim>(grid,physics) {
         if (dim == 1) {
@@ -115,6 +120,11 @@ public:
             boundaryIds.push_back(backcol);
         }
     }
+
+    OutflowGridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics, std::string derivative) : 
+        OutflowGridBoundaries<dim>(grid,physics){
+        derivFieldName = derivative;
+    }
     
     virtual ~OutflowGridBoundaries() {}
 
@@ -123,23 +133,43 @@ public:
         Mesh::Grid<dim>* grid = this->grid;
         Physics<dim>* physics = this->physics;
         State<dim>* state = physics->getState();
+
         for (int i = 0; i < state->count(); ++i) {
             FieldBase* field = state->getFieldByIndex(i); // Get the field at index i
-            if (typeid(*field) == typeid(Field<double>)) {
-                Field<double>* doubleField = dynamic_cast<Field<double>*>(field);
+            if (typeid(*field) == typeid(ScalarField)) {
+                ScalarField* doubleField = dynamic_cast<ScalarField*>(field);
                 if (doubleField) {
                     ApplyOutflowBoundary(doubleField, grid);
                 }
-            } else if (typeid(*field) == typeid(Field<Lin::Vector<dim>>)) {
-                Field<Lin::Vector<dim>>* vectorField = dynamic_cast<Field<Lin::Vector<dim>>*>(field);
+            } else if (typeid(*field) == typeid(VectorField)) {
+                VectorField* vectorField = dynamic_cast<VectorField*>(field);
                 if (vectorField) {
                     ApplyOutflowBoundary(vectorField, grid);
                 }
             }
         }
+
+        if (!derivFieldName.empty()) {
+            for (int i = 0; i < state->count(); ++i) {
+                FieldBase* field = state->getFieldByIndex(i);
+                if (field->getNameString() == derivFieldName) {
+                    if (typeid(*field) == typeid(ScalarField)) {
+                        ScalarField* doubleField = dynamic_cast<ScalarField*>(field);
+                        if (doubleField) {
+                            ZeroBoundaryDerivative(doubleField, grid);
+                        }
+                    } else if (typeid(*field) == typeid(VectorField)) {
+                        VectorField* vectorField = dynamic_cast<VectorField*>(field);
+                        if (vectorField) {
+                            ZeroBoundaryDerivative(vectorField, grid);
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    void ApplyOutflowBoundary(Field<double>* field, Mesh::Grid<dim>* grid) {
+    void ApplyOutflowBoundary(ScalarField* field, Mesh::Grid<dim>* grid) {
         for (int i=0;i<2*dim;++i) {
             std::vector<int> b = boundaryIds[2*i];
             std::vector<int> c = boundaryIds[2*i+1];
@@ -147,7 +177,7 @@ public:
         }
     }
 
-    void ApplyOutflowBoundary(Field<Lin::Vector<dim>>* field, Mesh::Grid<dim>* grid) {
+    void ApplyOutflowBoundary(VectorField* field, Mesh::Grid<dim>* grid) {
         for (int i=0;i<2*dim;++i) {
             std::vector<int> b = boundaryIds[2*i];
             std::vector<int> c = boundaryIds[2*i+1];
@@ -155,14 +185,50 @@ public:
         }
     }
 
-    void CopyBoundaryData(Field<double>* field, const std::vector<int>& boundaryIds, const std::vector<int>& copyIds) {
+    void ZeroBoundaryDerivative(ScalarField* field, Mesh::Grid<dim>* grid) {
+        std::vector<std::vector<int>> bounds = GetBounds(grid);
+        for (int d = 0; d<dim;++d) {
+            std::vector<int> b1 = bounds[2*d];
+            std::vector<int> b2 = bounds[2*d+1];
+            for (int i = 0; i<b1.size(); ++i) {
+                field->setValue(b1[i],0);
+            }
+        }
+    }
+
+    void ZeroBoundaryDerivative(VectorField* field, Mesh::Grid<dim>* grid) {
+        std::vector<std::vector<int>> bounds = GetBounds(grid);
+        for (int d = 0; d<dim;++d) {
+            std::vector<int> b1 = bounds[2*d];
+            std::vector<int> b2 = bounds[2*d+1];
+            for (int i = 0; i<b1.size(); ++i) {
+                field->setValue(b1[i],Vector());
+            }
+        }
+    }
+
+    void CopyBoundaryData(ScalarField* field, const std::vector<int>& boundaryIds, const std::vector<int>& copyIds) {
         for (int i=0;i<boundaryIds.size();++i)
             field->setValue(boundaryIds[i],field->getValue(copyIds[i]));
     }
 
-    void CopyBoundaryData(Field<Lin::Vector<dim>>* field, const std::vector<int>& boundaryIds, const std::vector<int>& copyIds) {
+    void CopyBoundaryData(VectorField* field, const std::vector<int>& boundaryIds, const std::vector<int>& copyIds) {
         for (int i=0;i<boundaryIds.size();++i)
             field->setValue(boundaryIds[i],field->getValue(copyIds[i]));
+    }
+
+    std::vector<std::vector<int>> GetBounds(Mesh::Grid<dim>* grid) {
+        std::vector<std::vector<int>> retVector;
+        retVector.push_back(grid->leftMost());
+        retVector.push_back(grid->rightMost());
+        if (dim>1) {
+            retVector.push_back(grid->topMost());
+            retVector.push_back(grid->bottomMost());
+        }
+        if (dim>2) {
+            retVector.push_back(grid->frontMost());
+            retVector.push_back(grid->backMost());
+        }
+        return retVector;
     }
 };
-
