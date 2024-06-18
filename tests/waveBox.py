@@ -26,11 +26,11 @@ class vtkdump:
       
 
 if __name__ == "__main__":
-    animate = False
+    animate = True
     cycles = 20000
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
-    nx = 500
-    ny = 500
+    nx = 100
+    ny = nx
 
     myNodeList = NodeList(nx*ny)
     
@@ -46,13 +46,12 @@ if __name__ == "__main__":
 
     packages = [waveEqn]
 
-    pm = PacmanGridBoundaries2d(grid=grid,physics=waveEqn)
-    print(pm)
     box = DirichletGridBoundaries2d(grid=grid,physics=waveEqn)
     box.addBox(Vector2d(int(nx/5),int(ny/5)),Vector2d(int(4*nx/5),int(4*ny/5)))
     box.removeBox(Vector2d(int(nx/5)+5,int(ny/5)+5),Vector2d(int(4*nx/5)-5,int(4*ny/5)-5))
     box.removeBox(Vector2d(0,int(ny/2)-5),Vector2d(nx,int(ny/2)+5))
-    pbounds = [pm,box]
+    box.addDomain()
+    pbounds = [box]
 
     integrator = RungeKutta2Integrator2d(packages=packages,
                               dtmin=0.05,

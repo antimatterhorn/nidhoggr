@@ -8,6 +8,13 @@ class DirichletGridBoundaries : public GridBoundaries<dim> {
 protected:
     std::vector<int> ids;
     Mesh::Grid<dim>* grid;
+
+    void
+    addIds(std::vector<int> vec) {
+        for (int i=0; i<vec.size();i++) {
+            ids.push_back(vec[i]);
+        }
+    }
 public:
     using Vector      = Lin::Vector<dim>;
     using VectorField = Field<Vector>;
@@ -84,6 +91,43 @@ public:
                     ids.erase(it);
                 }
             }              
+        }
+    }
+
+    virtual void
+    addDomain() {
+        if (dim == 1) {
+            std::vector<int> leftIds = grid->leftMost();  
+            std::vector<int> rightIds = grid->rightMost();
+
+            addIds(leftIds);
+            addIds(rightIds);
+        }
+        else if (dim == 2) {
+            std::vector<int> leftIds   = grid->leftMost();  
+            std::vector<int> rightIds  = grid->rightMost();
+            std::vector<int> topIds    = grid->topMost();
+            std::vector<int> bottomIds = grid->bottomMost();
+
+            addIds(leftIds);
+            addIds(rightIds);
+            addIds(topIds);
+            addIds(bottomIds);
+        }
+        else if (dim == 3) {
+            std::vector<int> leftIds   = grid->leftMost();  
+            std::vector<int> rightIds  = grid->rightMost();
+            std::vector<int> topIds    = grid->topMost();
+            std::vector<int> bottomIds = grid->bottomMost();
+            std::vector<int> frontIds  = grid->frontMost();
+            std::vector<int> backIds   = grid->backMost();
+
+            addIds(leftIds);
+            addIds(rightIds);
+            addIds(topIds);
+            addIds(bottomIds);
+            addIds(frontIds);
+            addIds(backIds);
         }
     }
 

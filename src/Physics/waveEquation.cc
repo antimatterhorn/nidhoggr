@@ -146,7 +146,7 @@ public:
     virtual double 
     EstimateTimestep() const override { 
         double dx = (ocean ? grid2d->dx : grid->dx);
-        double cfl = 0.05;
+        double cfl = 0.1;
         return cfl/C*dx;
     }
 

@@ -13,6 +13,8 @@ class DirichletGridBoundaries(GridBoundaries):
         return
     def removeSphere(self,p="Lin::Vector<%(dim)s>",radius="double"):
         return
+    def addDomain(self):
+        return
     
 DirichletGridBoundaries1d = PYB11TemplateClass(DirichletGridBoundaries,
                               template_parameters = ("1"),
