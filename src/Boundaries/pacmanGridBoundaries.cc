@@ -7,6 +7,10 @@ class PacmanGridBoundaries : public GridBoundaries<dim> {
 protected:
 
 public:
+    using Vector      = Lin::Vector<dim>;
+    using VectorField = Field<Vector>;
+    using ScalarField = Field<double>;
+    
     PacmanGridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics) : 
         GridBoundaries<dim>(grid,physics) {}
     
@@ -19,52 +23,46 @@ public:
         State<dim>* state = physics->getState();
         for (int i = 0; i < state->count(); ++i) {
             FieldBase* field = state->getFieldByIndex(i); // Get the field at index i
-            if (typeid(*field) == typeid(Field<double>)) {
-                Field<double>* doubleField = dynamic_cast<Field<double>*>(field);
+            if (typeid(*field) == typeid(ScalarField)) {
+                ScalarField* doubleField = dynamic_cast<ScalarField*>(field);
                 if (doubleField) {
-                    std::vector<int> leftIds = grid->leftMost();
+                    std::vector<int> leftIds  = grid->leftMost();
                     std::vector<int> rightIds = grid->rightMost();
-                    Field<double> left = Field<double>("left",leftIds.size());
-                    Field<double> right = Field<double>("right",rightIds.size());
-                    SwapFieldData(doubleField,left,right,leftIds,rightIds);
+                    ScalarField temp  = ScalarField("temp",leftIds.size());
+                    SwapFieldData(doubleField,leftIds,rightIds);
                     
-                    if constexpr (dim == 2) {
-                        std::vector<int> topIds = grid->topMost();
+                    if constexpr (dim > 1) {
+                        std::vector<int> topIds    = grid->topMost();
                         std::vector<int> bottomIds = grid->bottomMost();
-                        Field<double> top = Field<double>("top",topIds.size());
-                        Field<double> bottom = Field<double>("bottom",bottomIds.size());
-                        SwapFieldData(doubleField,top,bottom,topIds,bottomIds);
+                        ScalarField temp    = ScalarField("temp",topIds.size());
+                        SwapFieldData(doubleField,topIds,bottomIds);
                     }
-                    else if constexpr (dim == 3) {
+                    if constexpr (dim > 2) {
                         std::vector<int> frontIds = grid->frontMost();
-                        std::vector<int> backIds = grid->backMost();
-                        Field<double> front = Field<double>("front",frontIds.size());
-                        Field<double> back = Field<double>("back",backIds.size());
-                        SwapFieldData(doubleField,front,back,frontIds,backIds);
+                        std::vector<int> backIds  = grid->backMost();
+                        ScalarField temp = ScalarField("temp",frontIds.size());
+                        SwapFieldData(doubleField,frontIds,backIds);
                     }
                 }
-            } else if (typeid(*field) == typeid(Field<Lin::Vector<dim>>)) {
-                Field<Lin::Vector<dim>>* vectorField = dynamic_cast<Field<Lin::Vector<dim>>*>(field);
+            } else if (typeid(*field) == typeid(VectorField)) {
+                VectorField* vectorField = dynamic_cast<VectorField*>(field);
                 if (vectorField) {
-                    std::vector<int> leftIds = grid->leftMost();
+                    std::vector<int> leftIds  = grid->leftMost();
                     std::vector<int> rightIds = grid->rightMost();
-                    Field<Lin::Vector<dim>> left = Field<Lin::Vector<dim>>("left",leftIds.size());
-                    Field<Lin::Vector<dim>> right = Field<Lin::Vector<dim>>("right",rightIds.size());
-                    SwapFieldData(vectorField,left,right,leftIds,rightIds);
+                    VectorField temp  = VectorField("temp",leftIds.size());
+                    SwapFieldData(vectorField,leftIds,rightIds);
                     
-                    if constexpr (dim == 2) {
-                        std::vector<int> topIds = grid->topMost();
+                    if constexpr (dim > 1) {
+                        std::vector<int> topIds    = grid->topMost();
                         std::vector<int> bottomIds = grid->bottomMost();
-                        Field<Lin::Vector<dim>> top = Field<Lin::Vector<dim>>("top",topIds.size());
-                        Field<Lin::Vector<dim>> bottom = Field<Lin::Vector<dim>>("bottom",bottomIds.size());
-                        SwapFieldData(vectorField,top,bottom,topIds,bottomIds);
+                        VectorField temp    = VectorField("temp",topIds.size());
+                        SwapFieldData(vectorField,topIds,bottomIds);
                     }
-                    else if constexpr (dim == 3) {
+                    if constexpr (dim > 2) {
                         std::vector<int> frontIds = grid->frontMost();
-                        std::vector<int> backIds = grid->backMost();
-                        Field<Lin::Vector<dim>> front = Field<Lin::Vector<dim>>("front",frontIds.size());
-                        Field<Lin::Vector<dim>> back = Field<Lin::Vector<dim>>("back",backIds.size());
-                        SwapFieldData(vectorField,front,back,frontIds,backIds);
+                        std::vector<int> backIds  = grid->backMost();
+                        VectorField temp = VectorField("temp",frontIds.size());
+                        SwapFieldData(vectorField,frontIds,backIds);
                     }
                 }
             }
@@ -72,50 +70,28 @@ public:
     }
 
     virtual void
-    SwapFieldData(Field<double>* field, 
-                    Field<double>& tempField1, 
-                    Field<double>& tempField2, 
+    SwapFieldData(ScalarField* field,
                     std::vector<int>& ids1,
                     std::vector<int>& ids2) {
         for (int i = 0; i<ids1.size(); ++i) {
-            int id = ids1[i];
-            tempField1.setValue(i,field->getValue(id));
-        }
-        for (int i = 0; i<ids2.size(); ++i) {
-            int id = ids2[i];
-            tempField2.setValue(i,field->getValue(id));
-        }
-        for (int i = 0; i<ids1.size(); ++i) {
-            int id = ids1[i];
-            field->setValue(id,tempField2.getValue(i));
-        }
-        for (int i = 0; i<ids2.size(); ++i) {
-            int id = ids2[i];
-            field->setValue(id,tempField1.getValue(i));
+            int id1 = ids1[i];
+            int id2 = ids2[i];
+            double temp = field->getValue(id1);
+            field->setValue(id1,field->getValue(id2));
+            field->setValue(id2,temp);
         }
     }
 
     virtual void
-    SwapFieldData(Field<Lin::Vector<dim>>* field, 
-                    Field<Lin::Vector<dim>>& tempField1, 
-                    Field<Lin::Vector<dim>>& tempField2, 
+    SwapFieldData(VectorField* field, 
                     std::vector<int>& ids1,
                     std::vector<int>& ids2) {
         for (int i = 0; i<ids1.size(); ++i) {
-            int id = ids1[i];
-            tempField1.setValue(i,field->getValue(id));
-        }
-        for (int i = 0; i<ids2.size(); ++i) {
-            int id = ids2[i];
-            tempField2.setValue(i,field->getValue(id));
-        }
-        for (int i = 0; i<ids1.size(); ++i) {
-            int id = ids1[i];
-            field->setValue(id,tempField2.getValue(i));
-        }
-        for (int i = 0; i<ids2.size(); ++i) {
-            int id = ids2[i];
-            field->setValue(id,tempField1.getValue(i));
+            int id1 = ids1[i];
+            int id2 = ids2[i]; 
+            Vector temp = field->getValue(id2);
+            field->setValue(id1,field->getValue(id2));
+            field->setValue(id2,temp);
         }
     }
 };

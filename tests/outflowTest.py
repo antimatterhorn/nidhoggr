@@ -13,7 +13,7 @@ class oscillate:
     def __call__(self,cycle,time,dt):
         if time < 3.14159/4:
             a = 5*(cos(time))
-            i = int(self.width/2)
+            i = int(self.width/4)
             j = int(self.height/2)
             idx = self.grid.index(i,j,0)
             self.phi.setValue(idx,a)
@@ -47,7 +47,7 @@ if __name__ == "__main__":
 
     packages = [waveEqn]
 
-    pm = OutflowGridBoundaries2d(grid=grid,physics=waveEqn,derivative="xi")
+    pm = PacmanGridBoundaries2d(grid=grid,physics=waveEqn)
     pbounds = [pm]
 
     integrator = RungeKutta2Integrator2d(packages=packages,
