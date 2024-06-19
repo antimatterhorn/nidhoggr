@@ -2,6 +2,7 @@ from PYB11Generator import *
 PYB11includes = ['"boundaries.hh"',
                  '"collider.hh"',
                  '"gridBoundaries.hh"',
+                 '"domainBoundaries.hh"',
                  '"reflectingGridBoundaries.cc"',
                  '"pacmanGridBoundaries.cc"',
                  '"outflowGridBoundaries.cc"',
