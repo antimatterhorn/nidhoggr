@@ -104,15 +104,17 @@ public:
 
         #pragma omp parallel for
         for (int i=0; i<numNodes; ++i) {
-            double c = cs->getValue(i);
-            std::vector<int> neighbors = (ocean ? grid2d->getNeighboringCells(i) : grid->getNeighboringCells(i));
-            double laplace2 = -4*phi->getValue(i);
-            for (auto idx : neighbors) {
-                laplace2 += phi->getValue(idx);
-            }                
-            laplace2 = (ocean ? laplace2/pow(grid2d->dx,2.0) : laplace2/pow(grid->dx,2.0));
-            DxiDt->setValue(i,laplace2*c*c); 
-            DphiDt->setValue(i,dt*DxiDt->getValue(i)+xi->getValue(i));
+            if (!grid->onBoundary(i)) {
+                double c = cs->getValue(i);
+                std::vector<int> neighbors = (ocean ? grid2d->getNeighboringCells(i) : grid->getNeighboringCells(i));
+                double laplace2 = -4*phi->getValue(i);
+                for (auto idx : neighbors) {
+                    laplace2 += phi->getValue(idx);
+                }                
+                laplace2 = (ocean ? laplace2/pow(grid2d->dx,2.0) : laplace2/pow(grid->dx,2.0));
+                DxiDt->setValue(i,laplace2*c*c); 
+                DphiDt->setValue(i,dt*DxiDt->getValue(i)+xi->getValue(i));
+            }
         }
     }
 
