@@ -3,7 +3,7 @@
 
 // Base class for Grid Boundaries
 template <int dim>
-class PacmanGridBoundaries : public GridBoundaries<dim> {
+class PeriodicGridBoundaries : public GridBoundaries<dim> {
 protected:
     std::vector<std::vector<int>> boundaryIds;
 public:
@@ -11,7 +11,7 @@ public:
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
     
-    PacmanGridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics) : 
+    PeriodicGridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics) : 
         GridBoundaries<dim>(grid,physics) {
         if (dim == 1) {
             std::vector<int> leftIds = grid->leftMost();  
@@ -128,7 +128,7 @@ public:
         }
     }
     
-    virtual ~PacmanGridBoundaries() {}
+    virtual ~PeriodicGridBoundaries() {}
     virtual void
     ApplyBoundaries() override {
         Mesh::Grid<dim>* grid = this->grid;
