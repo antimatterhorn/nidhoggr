@@ -4,6 +4,7 @@ PYB11includes = ['"physics.hh"',
                 '"pointSourceGravity.cc"',
                 '"nBodyGravity.cc"',
                 '"waveEquation.cc"',
+                '"waveEquationLin.cc"',
                 '"hydro.hh"',
                 '"simplePhysics.cc"',
                 '"eulerHydro.cc"',
@@ -15,6 +16,7 @@ from constantGravity import *
 from pointSourceGravity import *
 from nBodyGravity import *
 from waveEquation import *
+from waveEquationLin import *
 from hydro import *
 from simplePhysics import *
 from eulerHydro import *

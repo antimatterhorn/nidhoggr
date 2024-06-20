@@ -11,8 +11,8 @@ class oscillate:
         self.height = height
         self.phi = myNodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
-        if time < 3.14159:
-            a = 5*(sin(time*0.1))
+        if time < 0.1:
+            a = 5
             x = int(self.width/4)
             y = int(self.height/2)
             for i in range(grid.nx):
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     print("grid %dx%d"%(nx,ny))
     print(grid)
 
-    waveEqn = WaveEquation2d(nodeList=myNodeList,
+    waveEqn = WaveEquationLinear2d(nodeList=myNodeList,
                              constants=constants,
                              grid=grid,C=1.0)
 
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     pbounds = [pm]
 
     integrator = RungeKutta4Integrator2d(packages=packages,
-                              dtmin=0.05,
+                              dtmin=0.01,
                               boundaries=pbounds)
     print(integrator)
 
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     periodicWork = [osc]
 
     controller = Controller(integrator=integrator,
-                            statStep=100,
+                            statStep=1,
                             periodicWork=periodicWork)
 
     if(animate):
