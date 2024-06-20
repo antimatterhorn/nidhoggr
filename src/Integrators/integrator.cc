@@ -29,7 +29,6 @@ void Integrator<dim>::Step() {
         }
     }
 
-
     for (Physics<dim>* physics : packages) {
         State<dim>* state = physics->getState();
         State<dim> derivatives(state->size());

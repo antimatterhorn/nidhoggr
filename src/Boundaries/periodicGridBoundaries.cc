@@ -5,7 +5,7 @@
 template <int dim>
 class PeriodicGridBoundaries : public GridBoundaries<dim> {
 protected:
-    std::vector<std::vector<int>> boundaryIds;
+    std::vector<std::vector<int>> boundaryLists;
 public:
     using Vector      = Lin::Vector<dim>;
     using VectorField = Field<Vector>;
@@ -22,11 +22,11 @@ public:
             std::vector<int> rightcol;
             rightcol.push_back(rightIds[0]-1);
 
-            boundaryIds.push_back(leftIds);
-            boundaryIds.push_back(rightcol); 
+            boundaryLists.push_back(leftIds);
+            boundaryLists.push_back(rightcol); 
 
-            boundaryIds.push_back(rightIds);
-            boundaryIds.push_back(leftcol);
+            boundaryLists.push_back(rightIds);
+            boundaryLists.push_back(leftcol);
             
         }
         else if (dim == 2) {
@@ -42,27 +42,27 @@ public:
             std::vector<int> bottomIds = grid->bottomMost();
             std::vector<int> bottomcol;
             
-            for (int j=0; j<bottomIds.size(); ++j) {
+            for (int j=0; j<rightIds.size(); ++j) {
                 leftcol.push_back(grid->index(1,j));
                 rightcol.push_back(grid->index(bottomIds.size()-2,j));
             }
 
-            for (int i=0; i<leftIds.size(); ++i) {
+            for (int i=0; i<bottomIds.size(); ++i) {
                 topcol.push_back(grid->index(i,1));
                 bottomcol.push_back(grid->index(i,leftIds.size()-2));
             }
 
-            boundaryIds.push_back(leftIds);
-            boundaryIds.push_back(rightcol);
+            boundaryLists.push_back(leftIds);
+            boundaryLists.push_back(rightcol);
 
-            boundaryIds.push_back(rightIds);
-            boundaryIds.push_back(leftcol);
+            boundaryLists.push_back(rightIds);
+            boundaryLists.push_back(leftcol);
 
-            boundaryIds.push_back(topIds);
-            boundaryIds.push_back(bottomcol); 
+            boundaryLists.push_back(topIds);
+            boundaryLists.push_back(bottomcol); 
 
-            boundaryIds.push_back(bottomIds);
-            boundaryIds.push_back(topcol);
+            boundaryLists.push_back(bottomIds);
+            boundaryLists.push_back(topcol);
             
         }
         else if (dim == 3) {
@@ -108,23 +108,23 @@ public:
                 }
             }
 
-            boundaryIds.push_back(leftIds);
-            boundaryIds.push_back(rightcol);
+            boundaryLists.push_back(leftIds);
+            boundaryLists.push_back(rightcol);
             
-            boundaryIds.push_back(rightIds);
-            boundaryIds.push_back(leftcol);           
+            boundaryLists.push_back(rightIds);
+            boundaryLists.push_back(leftcol);           
 
-            boundaryIds.push_back(topIds);
-            boundaryIds.push_back(bottomcol);
+            boundaryLists.push_back(topIds);
+            boundaryLists.push_back(bottomcol);
           
-            boundaryIds.push_back(bottomIds);
-            boundaryIds.push_back(topcol);
+            boundaryLists.push_back(bottomIds);
+            boundaryLists.push_back(topcol);
 
-            boundaryIds.push_back(frontIds);
-            boundaryIds.push_back(backcol);
+            boundaryLists.push_back(frontIds);
+            boundaryLists.push_back(backcol);
             
-            boundaryIds.push_back(backIds);
-            boundaryIds.push_back(frontcol);
+            boundaryLists.push_back(backIds);
+            boundaryLists.push_back(frontcol);
         }
     }
     
@@ -151,30 +151,36 @@ public:
         }
     }
 
-    void ApplyPeriodicBoundary(ScalarField* field) {
+    void ApplyPeriodicBoundary(ScalarField* field) {       
         for (int i=0; i<2*dim;++i) {
-            std::vector<int> b = boundaryIds[2*i];
-            std::vector<int> c = boundaryIds[2*i+1];
+            std::vector<int> b = boundaryLists[2*i];
+            std::vector<int> c = boundaryLists[2*i+1];
             CopyBoundaryData(field, b, c);
         }
     }
 
     void ApplyPeriodicBoundary(VectorField* field) {
         for (int i=0; i<2*dim;++i) {
-            std::vector<int> b = boundaryIds[2*i];
-            std::vector<int> c = boundaryIds[2*i+1];
+            std::vector<int> b = boundaryLists[2*i];
+            std::vector<int> c = boundaryLists[2*i+1];
             CopyBoundaryData(field, b, c);
         }
     }
 
-    void CopyBoundaryData(ScalarField* field, const std::vector<int>& boundaryIds, const std::vector<int>& copyIds) {
-        for (int i=0;i<boundaryIds.size();++i)
-            field->setValue(boundaryIds[i],field->getValue(copyIds[i]));
+    void CopyBoundaryData(ScalarField* field, const std::vector<int>& boundaryIds, const std::vector<int>& copyIds) {     
+        for (int i=0;i<boundaryIds.size();++i) {
+            int bi = boundaryIds[i];
+            int ci = copyIds[i];
+            field->setValue(bi,field->getValue(ci));
+        }      
     }
 
     void CopyBoundaryData(VectorField* field, const std::vector<int>& boundaryIds, const std::vector<int>& copyIds) {
-        for (int i=0;i<boundaryIds.size();++i)
-            field->setValue(boundaryIds[i],field->getValue(copyIds[i]));
+        for (int i=0;i<boundaryIds.size();++i) {
+            int bi = boundaryIds[i];
+            int ci = copyIds[i];
+            field->setValue(bi,field->getValue(ci));
+        }
     }
 
     std::vector<std::vector<int>> GetBounds(Mesh::Grid<dim>* grid) {

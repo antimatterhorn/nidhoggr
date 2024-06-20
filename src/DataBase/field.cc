@@ -38,6 +38,11 @@ const std::vector<T>& Field<T>::getValues() const {
 
 template <typename T>
 const T& Field<T>::getValue(const unsigned int index) const { 
+    if (index > values.size() - 1) {
+        std::cerr << "you've requested item " << index << " out of " << values.size() << 
+            " in " << this->getNameString() << " which doesn't exist" << std::endl;
+        std::exit;
+    }
     return values[index]; 
 }
 

@@ -12,7 +12,7 @@ class oscillate:
         self.phi = myNodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
         if time < 0.1:
-            a = 5
+            a = 2
             x = int(self.width/4)
             y = int(self.height/2)
             for i in range(grid.nx):
@@ -28,6 +28,17 @@ class vtkdump:
         self.cycle = dumpCycle
     def __call__(self,cycle,time,dt):
         self.meshWriter.write("-cycle=%03d.silo"%(cycle))
+
+class debug:
+    def __init__(self,nodeList,debugCycle=1):
+        self.nodeList = nodeList
+        self.cycle = debugCycle
+    def __call__(self,cycle,time,dt):
+        phi = self.nodeList.getFieldDouble("phi")
+        xi = self.nodeList.getFieldDouble("xi")
+        for i in range(self.nodeList.numNodes):
+            if phi[i] != 0 or xi[i] != 0:
+                print(cycle,i,phi[i],xi[i]) 
       
 
 if __name__ == "__main__":
@@ -43,7 +54,7 @@ if __name__ == "__main__":
     print("grid %dx%d"%(nx,ny))
     print(grid)
 
-    waveEqn = WaveEquationLinear2d(nodeList=myNodeList,
+    waveEqn = WaveEquation2d(nodeList=myNodeList,
                              constants=constants,
                              grid=grid,C=1.0)
 
@@ -54,7 +65,7 @@ if __name__ == "__main__":
     pm = PeriodicGridBoundaries2d(grid=grid,physics=waveEqn)
     pbounds = [pm]
 
-    integrator = RungeKutta4Integrator2d(packages=packages,
+    integrator = Integrator2d(packages=packages,
                               dtmin=0.01,
                               boundaries=pbounds)
     print(integrator)
@@ -63,6 +74,7 @@ if __name__ == "__main__":
     print("field names =",myNodeList.fieldNames)
 
     osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
+    deb = debug(nodeList=myNodeList)
     periodicWork = [osc]
 
     controller = Controller(integrator=integrator,
@@ -77,6 +89,6 @@ if __name__ == "__main__":
                                                 stepper=controller.Step,
                                                 title=title,
                                                 fieldName="phi")
-        AnimateGrid2d(bounds,update_method,extremis=[-1,1],frames=cycles,cmap="plasma")
+        AnimateGrid2d(bounds,update_method,extremis=[-10,10],frames=cycles,cmap="plasma")
     else:
         controller.Step(cycles)
