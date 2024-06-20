@@ -80,37 +80,31 @@ def AnimateGrid2d(bounds, update_method, threeColors=False, frames=100, interval
 # Example usage:
 # AnimateGrid2d((10, 10), update_method, save_as='animation.mp4')
 
-def AnimateScatter(bounds, update_method, frames=100, interval=50, save_as=None):
+def AnimateScatter(bounds, stepper, positions, frames=100, interval=50, save_as=None):
     """
-    Creates an animation of a scatter plot of moving points.
-
-    Parameters:
-    - bounds: tuple of (x_min, x_max, y_min, y_max) dimensions for the plot
-    - update_method: object with methods `module_stepper`, `module_call`, and `module_title`
-    - frames: int, number of frames in the animation
-    - interval: int, time interval between frames in milliseconds
-    - save_as: str, file name to save the animation (e.g., 'animation.mp4')
+    Custom implementation of animate scatter just for this test.
     """
     fig, ax = plt.subplots()
 
     ax.set_xlim(bounds[0], bounds[1])
     ax.set_ylim(bounds[2], bounds[3])
 
-    scat = ax.scatter([], [])
+    scat = ax.scatter([], [], label='Nodes')
+
+    ax.legend()
 
     def init():
-        scat.set_offsets([])
+        scat.set_offsets(np.empty((0, 2)))  # Initialize with empty 2D array
         return scat,
 
     def update(frame):
-        update_method.module_stepper()
+        stepper.Step()  # Execute one step of the simulation
 
-        points = update_method.positions
+        points = [positions[i] for i in range(positions.size())]
         x = [p.x for p in points]
         y = [p.y for p in points]
 
         scat.set_offsets(np.c_[x, y])
-        ax.set_title(update_method.module_title())
 
         return scat,
 
@@ -121,15 +115,6 @@ def AnimateScatter(bounds, update_method, frames=100, interval=50, save_as=None)
         print(f'Animation saved as {save_as}')
     else:
         plt.show()
-
-class AnimationUpdateScatterMethod2d:
-    def __init__(self, positions, stepper, title=None):
-        self.positions = positions
-        self.module_stepper = stepper
-        if (title == None):
-            self.module_title = DummyTitle()
-        else:
-            self.module_title = title
 
 
 class AnimationUpdateMethod2d:

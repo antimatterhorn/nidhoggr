@@ -1,4 +1,6 @@
 from nidhoggr import *
+from Animation import *
+
 
 class dumpState:
     def __init__(self,nodeList,workCycle=1,G=1):
@@ -38,27 +40,14 @@ if __name__ == "__main__":
         positions.setValue(i,Generator.positions[i])
 
     integrator = RungeKutta4Integrator2d(packages=packages,
-                                         dtmin=1e-3)
+                                         dtmin=0.5e1)
   
 
     dump = dumpState(myNodeList,workCycle=1000,G=constants.G)
     periodicWork = [dump]
 
-    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=1000,tstop=1e3)
+    controller = Controller(integrator=integrator,periodicWork=[],statStep=1,tstop=1e3)
 
-    print("G =",constants.G)
-    controller.Step(200000)
-    
-    import matplotlib.pyplot as plt
+    bounds = (-1,1,-1,1)
 
-
-    x_values, y_values = zip(*dump.dump)
-
-    plt.plot(x_values, y_values, 'o')  
-
-    plt.xlabel('x [R_E]')
-    plt.ylabel('y [R_E]')
-    plt.title('Plot of (x, y)')
-
-    plt.grid(True)
-    plt.show()
+    AnimateScatter(bounds, stepper=controller, positions=positions, frames=100, interval=50)

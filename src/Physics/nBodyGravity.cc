@@ -74,7 +74,7 @@ public:
 
     virtual double
     EstimateTimestep() const override {
-        double timestepCoefficient = 1e-4; // Adjust as needed
+        double timestepCoefficient = 1e-2; // Adjust as needed
         double timestep = timestepCoefficient * sqrt(dtmin);
 
         return timestep;
