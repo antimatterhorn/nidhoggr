@@ -11,6 +11,7 @@ protected:
     bool ocean = false;
     double C;
     double dtmin;
+    std::vector<int> insideIds;
 public:
     using Vector = Lin::Vector<dim>;
     using VectorField = Field<Vector>;
@@ -62,6 +63,22 @@ public:
 
     ~WaveEquation() {}
 
+    virtual void
+    ZeroTimeInitialize() override {
+        NodeList* nodeList = this->nodeList;
+        int numNodes = nodeList->size();
+        for (int i=0; i<numNodes; ++i) {
+            if (ocean) {
+                if (!grid2d->onBoundary(i))
+                    insideIds.push_back(i);
+            }
+            else {
+                if (!grid->onBoundary(i))
+                    insideIds.push_back(i);
+            }
+        }
+    }
+
     void
     VerifyWaveFields() {
         NodeList* nodeList = this->nodeList;
@@ -103,34 +120,18 @@ public:
         ScalarField* cs     = nodeList->getField<double>("soundSpeed");
 
         #pragma omp parallel for
-        for (int i=0; i<numNodes; ++i) {
-            if (ocean) {
-                if (!grid2d->onBoundary(i)) {
-                    double c = cs->getValue(i);
-                    std::vector<int> neighbors = grid2d->getNeighboringCells(i);
-                    double laplace2 = -4*phi->getValue(i);
-                    for (auto idx : neighbors) {
-                        laplace2 += phi->getValue(idx);
-                    }                
-                    laplace2 = (ocean ? laplace2/pow(grid2d->dx,2.0) : laplace2/pow(grid->dx,2.0));
-                    DxiDt->setValue(i,laplace2*c*c); 
-                    DphiDt->setValue(i,dt*DxiDt->getValue(i)+xi->getValue(i));
-                }
-            }
-            else {
-                if (!grid->onBoundary(i)) {
-                    double c = cs->getValue(i);
-                    std::vector<int> neighbors = grid->getNeighboringCells(i);
-                    double laplace2 = -4*phi->getValue(i);
-                    for (auto idx : neighbors) {
-                        laplace2 += phi->getValue(idx);
-                    }                
-                    laplace2 = (ocean ? laplace2/pow(grid2d->dx,2.0) : laplace2/pow(grid->dx,2.0));
-                    DxiDt->setValue(i,laplace2*c*c); 
-                    DphiDt->setValue(i,dt*DxiDt->getValue(i)+xi->getValue(i));
-                }
-            }
+        for (int p=0; p<insideIds.size(); ++p) {
+            int i = insideIds[p];
 
+            double c = cs->getValue(i);
+            std::vector<int> neighbors = (ocean ? grid2d->getNeighboringCells(i) : grid->getNeighboringCells(i));
+            double laplace2 = -4*phi->getValue(i);
+            for (auto idx : neighbors) {
+                laplace2 += phi->getValue(idx);
+            }                
+            laplace2 = (ocean ? laplace2/pow(grid2d->dx,2.0) : laplace2/pow(grid->dx,2.0));
+            DxiDt->setValue(i,laplace2*c*c); 
+            DphiDt->setValue(i,dt*DxiDt->getValue(i)+xi->getValue(i));
         }
     }
 
@@ -164,7 +165,7 @@ public:
     virtual double 
     EstimateTimestep() const override { 
         double dx = (ocean ? grid2d->dx : grid->dx);
-        double cfl = 0.1;
+        double cfl = 0.1;  // i hope you're using RK4 or else this is gonna blow up!
         return cfl/C*dx;
     }
 
