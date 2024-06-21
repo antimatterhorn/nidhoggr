@@ -10,3 +10,6 @@ add_dependencies(IO silo_lib)
 
 # Link the Silo library to the IO target
 target_link_libraries(IO PRIVATE ${CMAKE_BINARY_DIR}/silo/lib/libsilo.a)
+
+
+configure_file(PyImage.py PyImage.py COPYONLY)
