@@ -1,5 +1,5 @@
 from PYB11Generator import *
-PYB11includes = ['"timeDilation.cc"','"cosmology.cc"']
+PYB11includes = ['"timeDilation.cc"','"cosmology.cc"','"stringArt.cc"']
 
 class TimeDilation:
     def pyinit(self,
@@ -23,3 +23,12 @@ class Cosmology:
         return "void"
     def output(self):
         return "void"
+
+class StringArt:
+    def pyinit(self,
+               fileName="std::string",
+               nails=("int",300),
+               windings=("int",1000),
+               mode=("bool",0),
+               width=("double",0.2)):
+        return
