@@ -12,8 +12,13 @@ class oscillate:
         self.phi = myNodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
         a = 5*(cos(time))
-        i = int(self.width/2)
-        j = int(self.height/2)
+        i = int(self.width/6)
+        j = int(self.height/4)
+        idx = self.grid.index(i,j,0)
+        self.phi.setValue(idx,a)
+        a = 5*(cos(time*1.1))
+        i = int(self.width/6)
+        j = int(self.height*3/4)
         idx = self.grid.index(i,j,0)
         self.phi.setValue(idx,a)
 
@@ -46,12 +51,19 @@ if __name__ == "__main__":
 
     packages = [waveEqn]
 
+    pm = OutflowGridBoundaries2d(grid=grid,physics=waveEqn)
+    print(pm)
     box = DirichletGridBoundaries2d(grid=grid,physics=waveEqn)
-    box.addBox(Vector2d(int(nx/5),int(ny/5)),Vector2d(int(4*nx/5),int(4*ny/5)))
-    box.removeBox(Vector2d(int(nx/5)+5,int(ny/5)+5),Vector2d(int(4*nx/5)-5,int(4*ny/5)-5))
-    box.removeBox(Vector2d(0,int(ny/2)-5),Vector2d(nx,int(ny/2)+5))
-    box.addDomain()
-    pbounds = [box]
+
+    nbox = 10
+    dy = ny/nbox
+    h  = int(dy/2.5)
+    for i in range(nbox):
+        x = int(nx/3)
+        y = dy*(i+1)
+        box.addSphere(Vector2d(x,y),2)
+
+    pbounds = [pm,box]
 
     integrator = RungeKutta2Integrator2d(packages=packages,
                               dtmin=0.05,
@@ -78,7 +90,7 @@ if __name__ == "__main__":
         update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,
                                                 stepper=controller.Step,
                                                 title=title,
-                                                fieldName="phi")
-        AnimateGrid2d(bounds,update_method,extremis=[-5,5],frames=cycles)
+                                                fieldName="maxphi")
+        AnimateGrid2d(bounds,update_method,extremis=[0,2],frames=cycles,cmap='plasma')
     else:
         controller.Step(cycles)

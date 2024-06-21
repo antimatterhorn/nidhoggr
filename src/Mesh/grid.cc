@@ -39,6 +39,8 @@ namespace Mesh {
                 }
             }
         }
+
+        findBoundaries(1);
     }
 
     template <int dim>
@@ -73,66 +75,6 @@ namespace Mesh {
         // This is a generic case. You can define custom behavior or throw an error if needed.
         static_assert(dim <= 3, "Only up to 3 dimensions are supported");
         return -1; // Error value
-    }
-
-    template <int dim>
-    int 
-    Grid<dim>::getnx() const {
-        return nx;
-    }
-
-    template <int dim>
-    int 
-    Grid<dim>::getny() const {
-        return ny;
-    }
-
-    template <int dim>
-    int 
-    Grid<dim>::getnz() const {
-        return nz;
-    }
-
-    template <int dim>
-    int 
-    Grid<dim>::size_x() const {
-        return nx;
-    }
-
-    template <int dim>
-    int 
-    Grid<dim>::size_y() const {
-        return ny;
-    }
-
-    template <int dim>
-    int 
-    Grid<dim>::size_z() const {
-        return nz;
-    }
-
-    template <int dim>
-    int 
-    Grid<dim>::size() const {
-        return gridPositions.size();
-    }
-
-    template <int dim>
-    double 
-    Grid<dim>::getdx() const {
-        return dx;
-    }
-
-    template <int dim>
-    double 
-    Grid<dim>::getdy() const {
-        return dy;
-    }
-
-    template <int dim>
-    double 
-    Grid<dim>::getdz() const {
-        return dz;
     }
 
     template <int dim>
@@ -218,104 +160,62 @@ namespace Mesh {
     }
 
     template <int dim>
-    std::vector<int> 
-    Grid<dim>::leftMost() {
-        std::vector<int> boundaryIndices;
-        if constexpr (dim == 1)
-            boundaryIndices.push_back(index(0));
+    void
+    Grid<dim>::findBoundaries(const int buffer) {
+        lm.clear();
+        rm.clear();
+        tm.clear();
+        bm.clear();
+        fm.clear();
+        km.clear();
+        
+        if constexpr (dim == 1) {
+            for (int b=0; b<buffer; ++b) {
+                lm.push_back(index(b));
+                rm.push_back(index(nx - 1 - b));
+            }
+        }
         else if constexpr (dim == 2) {
-            for (int j = 0; j < ny; ++j)
-                boundaryIndices.push_back(index(0, j));
+            for (int b=0; b<buffer; ++b) {
+                for (int j = 0; j < ny; ++j) {
+                    lm.push_back(index(b, j));
+                    rm.push_back(index(nx - 1 - b, j));
+                }
+                for (int i = 0; i < nx; ++i) {
+                    tm.push_back(index(i, b));
+                    bm.push_back(index(i, ny - 1 - b));
+                }
+            }
         }
         else if constexpr (dim == 3) {
-            for (int j = 0; j < ny; ++j)
-                for (int k = 0; k < nz; ++k)
-                    boundaryIndices.push_back(index(0, j, k));
+            for (int b=0; b<buffer; ++b) {
+                for (int j = 0; j < ny; ++j) {
+                    for (int k = 0; k < nz; ++k) {
+                        lm.push_back(index(b, j, k));
+                        rm.push_back(index(size() - 1 - b, j, k));
+                    }
+                }
+                for (int i = 0; i < nx; ++i) {
+                    for (int k = 0; k < nz; ++k) {
+                        tm.push_back(index(i, b, k));
+                        bm.push_back(index(i, ny - 1 - b, k));
+                    }
+                }
+                for (int i = 0; i < nx; ++i) {
+                    for (int j = 0; j < ny; ++j) {
+                        fm.push_back(index(i, j, b));
+                        km.push_back(index(i, j, nz - 1 - b));
+                    }
+                }
+            }
         }
-        return boundaryIndices;
-    }
-
-    template <int dim>
-    std::vector<int> 
-    Grid<dim>::rightMost() {
-        std::vector<int> boundaryIndices;
-        if constexpr (dim == 1)
-            boundaryIndices.push_back(index(size() - 1));
-        else if constexpr (dim == 2) {
-            for (int j = 0; j < ny; ++j)
-                boundaryIndices.push_back(index(nx - 1, j));
-        }
-        else if constexpr (dim == 3) {
-            for (int j = 0; j < ny; ++j)
-                for (int k = 0; k < nz; ++k)
-                    boundaryIndices.push_back(index(nx - 1, j, k));
-        }
-        return boundaryIndices;
-    }
-
-    template <int dim>
-    std::vector<int> 
-    Grid<dim>::topMost() {
-        std::vector<int> boundaryIndices;
-        if constexpr (dim == 2) {
-            for (int i = 0; i < nx; ++i)
-                boundaryIndices.push_back(index(i, 0));
-        }
-        else if constexpr (dim == 3) {
-            for (int i = 0; i < nx; ++i)
-                for (int k = 0; k < nz; ++k)
-                    boundaryIndices.push_back(index(i, 0, k));
-        }
-        return boundaryIndices;
-    }
-
-    template <int dim>
-    std::vector<int> 
-    Grid<dim>::bottomMost() {
-        std::vector<int> boundaryIndices;
-        if constexpr (dim == 2) {
-            for (int i = 0; i < nx; ++i)
-                boundaryIndices.push_back(index(i, ny - 1));
-        }
-        else if constexpr (dim == 3) {
-            for (int i = 0; i < nx; ++i)
-                for (int k = 0; k < nz; ++k)
-                    boundaryIndices.push_back(index(i, ny - 1, k));
-        }
-        return boundaryIndices;
-    }
-
-    template <int dim>
-    std::vector<int> 
-    Grid<dim>::frontMost() {
-        std::vector<int> boundaryIndices;
-        if constexpr (dim == 3) {
-            for (int i = 0; i < nx; ++i)
-                for (int j = 0; j < ny; ++j)
-                    boundaryIndices.push_back(index(i, j, 0));
-        }
-        return boundaryIndices;
-    }
-
-    template <int dim>
-    std::vector<int> 
-    Grid<dim>::backMost() {
-        std::vector<int> boundaryIndices;
-        if constexpr (dim == 3) {
-            for (int i = 0; i < nx; ++i)
-                for (int j = 0; j < ny; ++j)
-                    boundaryIndices.push_back(index(i, j, nz - 1));
-        }
-        return boundaryIndices;
     }
 
     template <int dim>
     bool 
     Grid<dim>::onBoundary(const int idx) {
         bool inside = true;
-        
-        std::vector<int> lm = leftMost();
-        std::vector<int> rm = rightMost();
+    
         for (int i=0;i<lm.size();++i) {
             if (lm[i]==idx) {
                 inside = false;
@@ -330,8 +230,6 @@ namespace Mesh {
         }
 
         if (dim>1) {
-            std::vector<int> tm = topMost();
-            std::vector<int> bm = bottomMost();
             for (int i=0;i<tm.size();++i) {
                 if (tm[i]==idx) {
                     inside = false;
@@ -347,16 +245,14 @@ namespace Mesh {
         }
 
         if (dim>2) {
-            std::vector<int> fm = frontMost();
-            std::vector<int> rm = backMost();
             for (int i=0;i<fm.size();++i) {
                 if (fm[i]==idx) {
                     inside = false;
                     break;
                 }
             }
-            for (int i=0;i<rm.size();++i) {
-                if (rm[i]==idx) {
+            for (int i=0;i<km.size();++i) {
+                if (km[i]==idx) {
                     inside = false;
                     break;
                 }

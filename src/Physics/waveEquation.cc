@@ -1,13 +1,17 @@
 #include "physics.hh"
 #include "../Mesh/grid.hh"
+#include "../IO/importDepthMap.hh"
 #include <iostream>
 
 template <int dim>
 class WaveEquation : public Physics<dim> {
 protected:
     Mesh::Grid<dim>* grid;
+    Mesh::Grid<2>* grid2d;
+    bool ocean = false;
     double C;
     double dtmin;
+    std::vector<int> insideIds;
 public:
     using Vector = Lin::Vector<dim>;
     using VectorField = Field<Vector>;
@@ -16,25 +20,84 @@ public:
     WaveEquation(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<dim>* grid, double C) : 
         Physics<dim>(nodeList,constants),
         grid(grid), C(C) {
+        VerifyWaveFields();
+
+        grid->assignPositions(nodeList);
+
+        ScalarField* cs = nodeList->getField<double>("soundSpeed");
+        for (int i=0; i<nodeList->getNumNodes();++i) cs->setValue(i,C);
+    }
+
+    WaveEquation(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<2>* grid, const std::string& depthMap) : 
+        Physics<dim>(nodeList, constants),
+        grid2d(grid), C(constants.ESurfaceGrav()), ocean(true) {
+        if (dim != 2) {
+            std::cerr << "Error: This constructor can only be used with dim = 2" << std::endl;
+            std::exit(EXIT_FAILURE);
+        }
+        VerifyWaveFields();
+
+        grid2d->assignPositions(nodeList);
+
+        if (nodeList->getField<double>("depth") == nullptr)
+            nodeList->insertField<double>("depth");
+
+        grid2d->template insertField<double>("depth");
+        ImportDepthMap map(depthMap);
+        map.populateDepthField(grid2d);
+
+        ScalarField* depth      = grid2d->template getField<double>("depth");
+        ScalarField* nodeDepth  = nodeList->getField<double>("depth");
+        nodeDepth->copyValues(depth);
+
+        ScalarField* cs = nodeList->getField<double>("soundSpeed");
+        double maxC = 0;
+        #pragma omp parallel for reduction(max:maxC)
+        for (int i=0; i<nodeList->getNumNodes();++i) {
+            double c = (depth->getValue(i) < 0 ? sqrt(C*std::abs(depth->getValue(i))) : 0);
+            cs->setValue(i,c);
+            maxC = std::max(c,maxC);
+        }
+        C = maxC;
+    }
+
+    ~WaveEquation() {}
+
+    virtual void
+    ZeroTimeInitialize() override {
+        NodeList* nodeList = this->nodeList;
+        int numNodes = nodeList->size();
+        for (int i=0; i<numNodes; ++i) {
+            if (ocean) {
+                if (!grid2d->onBoundary(i))
+                    insideIds.push_back(i);
+            }
+            else {
+                if (!grid->onBoundary(i))
+                    insideIds.push_back(i);
+            }
+        }
+    }
+
+    void
+    VerifyWaveFields() {
+        NodeList* nodeList = this->nodeList;
         if (nodeList->getField<double>("phi") == nullptr)
             nodeList->insertField<double>("phi");
         if (nodeList->getField<double>("xi") == nullptr)
             nodeList->insertField<double>("xi");
-        
-        /* 
-        This sets the nodeList positions field to whatever is inside Grid positions. This should ideally
-        happen with any physics package that uses a mesh, so this is a bit clunky to have here.
-        */
-        grid->assignPositions(nodeList);
-        
+        if (nodeList->getField<double>("maxphi") == nullptr)
+            nodeList->insertField<double>("maxphi");
+        if (nodeList->getField<double>("soundSpeed") == nullptr)
+            nodeList->insertField<double>("soundSpeed");       
+
+        ScalarField* xi     = nodeList->getField<double>("xi");
+        ScalarField* phi    = nodeList->getField<double>("phi");
+
         State<dim>* state = &this->state;
-        ScalarField* xi = nodeList->getField<double>("xi");
         state->template addField<double>(xi);
-        ScalarField* phi = nodeList->getField<double>("phi");
         state->template addField<double>(phi);
     }
-
-    ~WaveEquation() {}
 
     virtual void
     PreStepInitialize() override {
@@ -48,30 +111,35 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
         
-        ScalarField* xi = initialState->template getField<double>("xi");
-        ScalarField* phi = initialState->template getField<double>("phi");
+        ScalarField* xi     = initialState->template getField<double>("xi");
+        ScalarField* phi    = initialState->template getField<double>("phi");
 
-        ScalarField* DxiDt = deriv.template getField<double>("xi");
+        ScalarField* DxiDt  = deriv.template getField<double>("xi");
         ScalarField* DphiDt = deriv.template getField<double>("phi");
-        
+
+        ScalarField* cs     = nodeList->getField<double>("soundSpeed");
+
         #pragma omp parallel for
-        for (int i=0; i<numNodes; ++i) {
-            std::vector<int> neighbors = grid->getNeighboringCells(i);
+        for (int p=0; p<insideIds.size(); ++p) {
+            int i = insideIds[p];
+
+            double c = cs->getValue(i);
+            std::vector<int> neighbors = (ocean ? grid2d->getNeighboringCells(i) : grid->getNeighboringCells(i));
             double laplace2 = -4*phi->getValue(i);
             for (auto idx : neighbors) {
                 laplace2 += phi->getValue(idx);
             }                
-            laplace2 = laplace2/pow(grid->dx,2.0);
-            DxiDt->setValue(i,laplace2*C*C); 
-            DphiDt->setValue(i,dt*DxiDt->getValue(i)+xi->getValue(i));         
+            laplace2 = (ocean ? laplace2/pow(grid2d->dx,2.0) : laplace2/pow(grid->dx,2.0));
+            DxiDt->setValue(i,laplace2*c*c); 
+            DphiDt->setValue(i,dt*DxiDt->getValue(i)+xi->getValue(i));
         }
     }
 
     double
     getCell(int i,int j, std::string fieldName="phi") {
-        int idx = grid->index(j,i,0);
-        NodeList* nodeList = this->nodeList;
-        ScalarField* phi = nodeList->getField<double>(fieldName);
+        int idx = (ocean ? grid2d->index(j,i,0) : grid->index(j,i,0));
+        NodeList* nodeList  = this->nodeList;
+        ScalarField* phi    = nodeList->getField<double>(fieldName);
         return phi->getValue(idx);
     }
 
@@ -80,20 +148,24 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 
-        ScalarField* fxi = finalState->template getField<double>("xi");
-        ScalarField* fphi = finalState->template getField<double>("phi");
+        ScalarField* fxi    = finalState->template getField<double>("xi");
+        ScalarField* fphi   = finalState->template getField<double>("phi");
 
-        ScalarField* xi = nodeList->getField<double>("xi");
-        ScalarField* phi = nodeList->getField<double>("phi");
+        ScalarField* xi     = nodeList->getField<double>("xi");
+        ScalarField* phi    = nodeList->getField<double>("phi");
+        ScalarField* mphi   = nodeList->getField<double>("maxphi");
 
         xi->copyValues(fxi);
         phi->copyValues(fphi);
+
+        for (int i=0; i<numNodes; ++i)
+            mphi->setValue(i,std::max(mphi->getValue(i),std::abs(phi->getValue(i))));
     }
 
     virtual double 
     EstimateTimestep() const override { 
-        double dx = grid->dx;
-        double cfl = 0.1;
+        double dx = (ocean ? grid2d->dx : grid->dx);
+        double cfl = 0.1;  // i hope you're using RK4 or else this is gonna blow up!
         return cfl/C*dx;
     }
 

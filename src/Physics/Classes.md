@@ -1,13 +1,16 @@
 
 ```mermaid
 classDiagram
-    Physics <|-- Hydro
+    Physics <|-- SimplePhysics
     Physics <|-- PointSourceGravity
     Physics <|-- ConstantGravity
+    Physics <|-- NBodyGravity
     Physics <|-- WaveEquation
+    Physics <|-- Hydro
     Physics : +NodeList* nodeList
     Physics : +PhysicalConstants& constants
     Physics : VerifyFields(NodeList* nodeList)
+    Physics : ZeroTimeInitialize()
     Physics : PrestepInitialize()
     Physics : EvaluateDerivatives(State* initialState, State<dim>& deriv, double time, double dt)
     Physics : FinalizeStep(State* finalState)
@@ -18,16 +21,23 @@ classDiagram
     class ConstantGravity{
         +Vector gravity
     }
+    class NBodyGravity{
+        +double plummerLength
+    }
     class Hydro{
         +EquationOfState* eos
     }
-    Physics <|-- SimplePhysics
     class SimplePhysics{
         
     }
     class WaveEquation{
         +Grid* grid
         +double soundSpeed
+    }
+    WaveEquation o -- _WaveEquation
+    class _WaveEquation{
+        +Grid* grid
+        +string depthMap
     }
     class RockPaperScissors{
         +Grid* grid

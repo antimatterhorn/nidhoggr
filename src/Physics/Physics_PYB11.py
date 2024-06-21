@@ -8,8 +8,12 @@ PYB11includes = ['"physics.hh"',
                 '"simplePhysics.cc"',
                 '"eulerHydro.cc"',
                 '"gridHydroHLL.cc"',
+<<<<<<< HEAD
                 '"waveHeight.cc"',
                 '"rockPaperScissors.cc"']
+=======
+                '"kinetics.cc"']
+>>>>>>> main
 
 from physics import *
 from constantGravity import *
@@ -20,5 +24,9 @@ from hydro import *
 from simplePhysics import *
 from eulerHydro import *
 from gridHydroHLL import *
+<<<<<<< HEAD
 from waveHeight import *
 from rockPaperScissors import *
+=======
+from kinetics import *
+>>>>>>> main

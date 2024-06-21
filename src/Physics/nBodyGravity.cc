@@ -74,7 +74,7 @@ public:
 
     virtual double
     EstimateTimestep() const override {
-        double timestepCoefficient = 1e-4; // Adjust as needed
+        double timestepCoefficient = 1e-2; // Adjust as needed
         double timestep = timestepCoefficient * sqrt(dtmin);
 
         return timestep;
@@ -85,11 +85,11 @@ public:
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
 
-        VectorField* fposition       = finalState->template getField<Vector>("position");
-        VectorField* fvelocity       = finalState->template getField<Vector>("velocity");
+        VectorField* fposition  = finalState->template getField<Vector>("position");
+        VectorField* fvelocity  = finalState->template getField<Vector>("velocity");
 
-        VectorField* position       = nodeList->template getField<Vector>("position");
-        VectorField* velocity       = nodeList->template getField<Vector>("velocity");
+        VectorField* position   = nodeList->template getField<Vector>("position");
+        VectorField* velocity   = nodeList->template getField<Vector>("velocity");
 
         position->copyValues(fposition);
         velocity->copyValues(fvelocity);

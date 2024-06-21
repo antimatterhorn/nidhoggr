@@ -34,30 +34,34 @@ class debug:
         xi = self.nodeList.getFieldDouble("xi")
         for i in range(self.nodeList.numNodes):
             if phi[i] != 0 or xi[i] != 0:
-                print(cycle,i,phi[i],xi[i])
-      
+                print(cycle,i,phi[i],xi[i]) 
 
 if __name__ == "__main__":
     cycles = 10000
-    constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
-    nx = 500
-    ny = 500
+
+    nx = 722
+    ny = 696
+    yllcorner = 36.3
+    cellsize = 0.004166666667
+    earthRadius = 6371000.0;
+    cellsize_meters = 2 * 3.14159 * earthRadius * cellsize * cos(yllcorner * 3.14159 / 180.0) / 360.0;
+
+    print("cell size: %3.3em\n"%cellsize_meters)
+
+    constants = MKS()
 
     myNodeList = NodeList(nx*ny)
     
-    grid = Grid2d(nx,ny,1,1)
-    print("grid %dx%d"%(nx,ny))
+    grid = Grid2d(nx,ny,cellsize_meters,cellsize_meters)
     print(grid)
 
-    waveEqn = WaveHeight(nodeList=myNodeList,
+    waveEqn = WaveEquation2d(nodeList=myNodeList,
                              constants=constants,
                              grid=grid,
                              depthMap="sfo.asc")
 
     print(waveEqn)
-
     packages = [waveEqn]
-
 
     integrator = RungeKutta2Integrator2d(packages=packages,
                               dtmin=0.0001,
@@ -69,11 +73,11 @@ if __name__ == "__main__":
 
     osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
     periodicWork = [osc]
-    vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","depth"],dumpCycle=100)
+    vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","depth","maxphi"],dumpCycle=100)
     periodicWork.append(vtk)
 
     controller = Controller(integrator=integrator,
-                            statStep=100,
+                            statStep=50,
                             periodicWork=periodicWork)
 
     controller.Step(cycles)
