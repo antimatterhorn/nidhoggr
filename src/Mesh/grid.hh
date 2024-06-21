@@ -43,12 +43,12 @@ namespace Mesh {
         inline double getdx() const { return dx; };
         inline double getdy() const { return dy; };
         inline double getdz() const { return dz; };
-        inline std::vector<int> leftMost()  const { return lm; };
-        inline std::vector<int> rightMost() const { return rm; };
-        inline std::vector<int> topMost()   const { return tm; };
-        inline std::vector<int> bottomMost() const { return bm; };
-        inline std::vector<int> frontMost() const { return fm; };
-        inline std::vector<int> backMost()  const { return km; };
+        inline std::vector<int> leftMost() const    { return lm; };
+        inline std::vector<int> rightMost() const   { return rm; };
+        inline std::vector<int> topMost() const     { return tm; };
+        inline std::vector<int> bottomMost() const  { return bm; };
+        inline std::vector<int> frontMost() const   { return fm; };
+        inline std::vector<int> backMost() const    { return km; };
 
         double spacing(int axis) const;
         Lin::Vector<dim> getPosition(int id);
@@ -56,11 +56,8 @@ namespace Mesh {
         std::vector<int> getNeighboringCells(int idx) const;
         std::array<int, 3> indexToCoordinates(int idx) const;
 
-
         void findBoundaries(const int buffer);
-
         bool onBoundary(const int idx);
-
         void assignPositions(NodeList* nodeList);
 
         template <typename T>
