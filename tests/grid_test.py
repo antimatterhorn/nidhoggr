@@ -1,7 +1,7 @@
 from nidhoggr import *
 
 nx = 5
-ny = 5
+ny = 8
 dx = 0.1
 dy = 0.1
 
@@ -17,6 +17,14 @@ for j in range(ny):
         idx = myGrid.index(i,j,0)
         row.append(idx)
     print(", ".join(f"{num:02d}" for num in row))
+
+print("bounds:")
+for j in range(ny):
+    row = []
+    for i in range(nx):
+        idx = myGrid.index(i,j,0)
+        row.append(myGrid.onBoundary(idx))
+    print(", ".join(f"{num:b}" for num in row))
 
 print("\nleft:\t",", ".join(f"{num:02d}" for num in myGrid.leftMost()))
 print("right:\t",", ".join(f"{num:02d}" for num in myGrid.rightMost()))

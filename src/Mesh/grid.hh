@@ -16,6 +16,7 @@ namespace Mesh {
         int nz; // Number of grid cells in z-direction
 
         std::vector<std::shared_ptr<FieldBase>> _extraFields;
+        std::vector<int> lm,rm,tm,bm,fm,km;
     public:
         double dx; // Grid spacing in x-direction
         double dy; // Grid spacing in y-direction
@@ -32,27 +33,32 @@ namespace Mesh {
 
         int index(int i, int j = 0, int k = 0) const;
 
-        int getnx() const;
-        int getny() const;
-        int getnz() const;
-        int size_x() const;
-        int size_y() const;
-        int size_z() const;
-        int size() const;
-        double getdx() const;
-        double getdy() const;
-        double getdz() const;
+        inline int getnx() const    { return nx; };
+        inline int getny() const    { return ny; };
+        inline int getnz() const    { return nz; };
+        inline int size_x() const   { return nx; };
+        inline int size_y() const   { return ny; };
+        inline int size_z() const   { return nz; };
+        inline int size() const     { return nx*ny*nz; };
+        inline double getdx() const { return dx; };
+        inline double getdy() const { return dy; };
+        inline double getdz() const { return dz; };
+        inline std::vector<int> leftMost()  const { return lm; };
+        inline std::vector<int> rightMost() const { return rm; };
+        inline std::vector<int> topMost()   const { return tm; };
+        inline std::vector<int> bottomMost() const { return bm; };
+        inline std::vector<int> frontMost() const { return fm; };
+        inline std::vector<int> backMost()  const { return km; };
+
         double spacing(int axis) const;
         Lin::Vector<dim> getPosition(int id);
 
         std::vector<int> getNeighboringCells(int idx) const;
         std::array<int, 3> indexToCoordinates(int idx) const;
-        std::vector<int> leftMost();
-        std::vector<int> rightMost();
-        std::vector<int> topMost();
-        std::vector<int> bottomMost();
-        std::vector<int> frontMost();
-        std::vector<int> backMost();
+
+
+        void findBoundaries(const int buffer);
+
         bool onBoundary(const int idx);
 
         void assignPositions(NodeList* nodeList);

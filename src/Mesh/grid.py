@@ -35,6 +35,8 @@ class Grid:
         return
     def backMost(self):
         return
+    def onBoundary(self,idx="int"):
+        return
 
     nx = PYB11property("int", getter="getnx", doc="The number of x coords.")
     ny = PYB11property("int", getter="getny", doc="The number of y coords.")
