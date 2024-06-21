@@ -4,4 +4,5 @@ from PIL import Image,ImageOps # requires pip3 install PIL
 
 class PyImage:
     def __init__(self,fileName):
-        return Image.open(fileName)
+        self.img = Image.open(fileName)
+        return
