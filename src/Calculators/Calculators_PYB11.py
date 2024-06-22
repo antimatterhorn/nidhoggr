@@ -26,9 +26,10 @@ class Cosmology:
 
 class StringArt:
     def pyinit(self,
-               fileName="std::string",
-               nails=("int",300),
+               image="std::vector<std::vector<int>>",
+               nails="std::vector<Lin::Vector<2>>",
                windings=("int",1000),
-               mode=("bool",0),
-               width=("double",0.2)):
+               mode=("int",0),
+               width=("double",0.2),
+               radius=("double",1.0)):
         return

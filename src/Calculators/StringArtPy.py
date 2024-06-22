@@ -3,12 +3,12 @@ import numpy as np
 from math import *
 from random import randrange
 
-from nidhoggr import StringArt
+from nidhoggr import StringArt, Vector2d
 from PyImage import PyImage
 from PIL import Image,ImageOps
 
 class StringArtPy:
-    def __init__(self,fileName,nails=300,windings=1000,mode="black",width=0.2):
+    def __init__(self,fileName,nailCount=300,windings=1000,mode="black",width=0.2):
         assert mode in ("black","white")
         if mode == "black":
             m = 0
@@ -51,8 +51,27 @@ class StringArtPy:
                 r = sqrt(x*x+y*y)
                 if r > img.width//2:
                     self.pix[i,j] = 255*(1-m)
+        pixels = []
+        for i in range(img.width):
+            row = []
+            for j in range(img.width):
+                row.append(self.pix[i,j])
+            pixels.append(row)
+        
+
 
         self.xsize  = img.width-1
         self.ysize  = self.xsize
         self.radius = self.xsize//2
+
+        nails = []
+        dt = 2.0*pi/nailCount
+        theta = 0.0
+        for i in range(nailCount):
+            x = self.radius*cos(theta)
+            y = self.radius*sin(theta)
+            nails.append(Vector2d(x,y))
+            theta += dt
+
+        sa = StringArt(pixels,nails,radius=self.radius)
         return 
