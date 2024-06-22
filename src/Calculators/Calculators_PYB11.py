@@ -33,3 +33,5 @@ class StringArt:
                width=("double",0.2),
                radius=("double",1.0)):
         return
+    def PinList(self):
+        return

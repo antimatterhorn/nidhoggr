@@ -64,15 +64,15 @@ class StringArtPy:
         self.ysize  = self.xsize
         self.radius = self.xsize//2
 
-        nails = []
+        self.nails = []
         dt = 2.0*pi/nailCount
         theta = 0.0
         for i in range(nailCount):
             x = self.radius*cos(theta)
             y = self.radius*sin(theta)
-            nails.append(Vector2d(x,y))
+            self.nails.append(Vector2d(x,y))
             theta += dt
 
-        sa = StringArt(image=pixels,nails=nails,windings=windings,mode=0,width=0.2,radius=self.radius)
-        print(sa)
+        sa = StringArt(image=pixels,nails=self.nails,windings=windings,mode=0,width=0.2,radius=self.radius)
+        self.pins = sa.PinList()
         return 

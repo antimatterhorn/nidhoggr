@@ -10,6 +10,7 @@ private:
     double stringWidth;
     double radius;
     std::vector<std::pair<Lin::Vector<2>, Lin::Vector<2>>> lines;
+    std::vector<int> pins;
 
     std::vector<int> Range(int k0, int k1) {
         std::vector<int> K;
@@ -129,7 +130,11 @@ public:
             ClearPixels(n0,n1);
             printf("%d %d   %d -> %d\n",i,windings,k,jj);
             k = jj;
+            pins.push_back(jj);
         }
     }
+
+    std::vector<int>
+    PinList() { return pins; }
 
 };

@@ -1,4 +1,30 @@
 from nidhoggr import *
 from StringArtPy import *
+import matplotlib.pyplot as plt
 
-sa = StringArtPy("waveBox.png")
+lineWidth = 0.2
+
+sa = StringArtPy("lincoln.jpg",nailCount=300,windings=1000,width=lineWidth)
+
+i = 0
+# Initialize lists to store x and y coordinates for plotting
+x = []
+y = []
+while i < len(sa.pins)-1:
+    pin0 = sa.pins[i]
+    pin1 = sa.pins[i+1]
+    point0 = sa.nails[pin0]
+    point1 = sa.nails[pin1]
+
+    x.extend([point0.x, point1.x])  # Add x coordinates of the line
+    y.extend([point0.y, point1.y])  # Add y coordinates of the line
+
+    i+=1
+
+plt.figure()
+plt.plot(x, y, marker='o', color='black',lineWidth=lineWidth)  # Use marker='o' to plot points at each vertex of the line
+plt.title('Lines Between Points')
+plt.xlabel('X')
+plt.ylabel('Y')
+plt.grid(True)
+plt.show()
