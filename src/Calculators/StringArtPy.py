@@ -73,5 +73,6 @@ class StringArtPy:
             nails.append(Vector2d(x,y))
             theta += dt
 
-        sa = StringArt(pixels,nails,radius=self.radius)
+        sa = StringArt(image=pixels,nails=nails,windings=windings,mode=0,width=0.2,radius=self.radius)
+        print(sa)
         return 
