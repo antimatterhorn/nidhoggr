@@ -54,10 +54,10 @@ if __name__ == "__main__":
 
     packages = [waveEqn]
 
-    pm = PacmanGridBoundaries2d(grid=grid,physics=waveEqn)
+    pm = PeriodicGridBoundaries2d(grid=grid,physics=waveEqn)
     pbounds = []
 
-    integrator = RungeKutta2Integrator2d(packages=packages,
+    integrator = RungeKutta4Integrator2d(packages=packages,
                               dtmin=0.01,
                               boundaries=pbounds)
     print(integrator)
@@ -83,6 +83,6 @@ if __name__ == "__main__":
                                                 stepper=controller.Step,
                                                 title=title,
                                                 fieldName="phi")
-        AnimateGrid2d(bounds,update_method,extremis=[-1,1],cmap="viridis",frames=1000)
+        AnimateGrid2d(bounds,update_method,extremis=[-1,1],cmap="plasma",frames=1000)
     else:
         controller.Step(5000)
