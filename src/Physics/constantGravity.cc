@@ -61,7 +61,7 @@ public:
             double vmag = velocity->getValue(i).mag2();
             dtmin = std::min(dtmin,vmag/amag);
         }
-
+        this->lastDt = dt;
     }
 
     virtual double

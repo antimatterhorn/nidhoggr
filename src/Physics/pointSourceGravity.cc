@@ -63,7 +63,7 @@ public:
             dvdt->setValue(i,a);
         }
 
-
+        this->lastDt = dt;
     }
 
     virtual double

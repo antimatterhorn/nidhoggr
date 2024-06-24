@@ -56,7 +56,7 @@ public:
                     Vector v2 = v1 - 2.0*(v1*n)*n;
                     velocities->setValue(i,v2*elasticity);                 // reflect across the normal
 
-                    Vector newPos = position + (rad+radius)*n;  // move it out of the boundary
+                    Vector newPos = pos + (0.1*rad)*n;  // move it out of the boundary
                     positions->setValue(i,newPos);
                 }
             }

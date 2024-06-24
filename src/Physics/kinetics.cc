@@ -87,6 +87,7 @@ public:
         
 
         timeVisited = time;
+        this->lastDt = dt;
     }
 
     virtual double

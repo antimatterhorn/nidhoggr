@@ -11,6 +11,7 @@ protected:
     NodeList* nodeList;
     PhysicalConstants& constants;
     State<dim> state;
+    double lastDt;
 public:
     Physics(NodeList* nodeList, PhysicalConstants& constants) : 
         nodeList(nodeList), 
@@ -59,6 +60,9 @@ public:
 
     virtual State<dim>* 
     getState() { return &state; }
+
+    virtual double
+    lastStep() const {return lastDt; }
 };
 
 #endif //PHYSICS_HH

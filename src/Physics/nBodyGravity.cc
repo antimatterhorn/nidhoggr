@@ -70,6 +70,8 @@ public:
             dxdt->setValue(i,v+dt*a);
             dvdt->setValue(i,a);
         }
+
+        this->lastDt = dt;
     }
 
     virtual double

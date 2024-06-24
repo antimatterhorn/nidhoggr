@@ -71,6 +71,8 @@ if __name__ == "__main__":
             cbounds.append(SphereCollider2d(physics=constantGravity, position=Vector2d(x, y), radius=collider_radius, elasticity=0.8))
             colliders.append((x, y))
 
+    cbounds.append(BoxCollider2d(physics=constantGravity, position1=Vector2d(-10, 0), position2=Vector2d(10,1), elasticity=0.5))
+    
     integrator = RungeKutta2Integrator2d(packages=packages, dtmin=0.01, boundaries=cbounds)
     print(integrator)
 
