@@ -45,7 +45,7 @@ def AnimateScatter(bounds, stepper, positions, colliders, frames=100, interval=5
 if __name__ == "__main__":
     animate = True
     
-    numNodes = 30
+    numNodes = 80
 
     constants = MKS()
     myNodeList = NodeList(numNodes)
@@ -71,8 +71,10 @@ if __name__ == "__main__":
             cbounds.append(SphereCollider2d(physics=constantGravity, position=Vector2d(x, y), radius=collider_radius, elasticity=0.8))
             colliders.append((x, y))
 
-    cbounds.append(BoxCollider2d(physics=constantGravity, position1=Vector2d(-10, 0), position2=Vector2d(10,1), elasticity=0.5))
-    
+    cbounds.append(BoxCollider2d(physics=constantGravity, position1=Vector2d(-10, -3), position2=Vector2d(10.5,1), elasticity=0.5))
+    cbounds.append(BoxCollider2d(physics=constantGravity, position1=Vector2d(-11, 0), position2=Vector2d(-9.5,10), elasticity=1))
+    cbounds.append(BoxCollider2d(physics=constantGravity, position1=Vector2d(9.5, 0), position2=Vector2d(11,10), elasticity=1))
+
     integrator = RungeKutta2Integrator2d(packages=packages, dtmin=0.01, boundaries=cbounds)
     print(integrator)
 
@@ -89,7 +91,7 @@ if __name__ == "__main__":
     pos = myNodeList.getFieldVector2d("position")
 
     for i in range(numNodes):
-        pos.setValue(i, Vector2d(random.uniform(-10, 10), 10))
+        pos.setValue(i, Vector2d(random.uniform(-9, 9), 10))
 
     controller = Controller(integrator=integrator, periodicWork=[], statStep=1)
 
