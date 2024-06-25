@@ -1,5 +1,6 @@
 #include "../Math/vectorMath.hh"
 #include <iostream>
+#include "../Utilities/progressBar.hh"
 
 class StringArt {
 private:
@@ -128,7 +129,8 @@ public:
             ll += rr;
             lines.push_back(std::make_pair(n0,n1));
             ClearPixels(n0,n1);
-            printf("%d %d   %d -> %d\n",i,windings,k,jj);
+            ProgressBar(double(i)/double(windings), " ");
+            //printf("%d %d   %d -> %d\n",i,windings,k,jj);
             k = jj;
             pins.push_back(jj);
         }
