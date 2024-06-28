@@ -18,4 +18,7 @@ classDiagram
         +strvector fieldNames
         write(string)
     }
+    class PyImage{
+        +string fileName
+    }
 ```

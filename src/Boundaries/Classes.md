@@ -3,7 +3,7 @@ classDiagram
     Boundaries <|-- GridBoundaries
     Boundaries <|-- Collider
     GridBoundaries <|-- DirichletGridBoundaries
-    GridBoundaries <|-- PacmanGridBoundaries
+    GridBoundaries <|-- PeriodicGridBoundaries
     GridBoundaries <|-- ReflectingGridBoundaries
     class Boundaries{
         +Physics* physics
@@ -14,11 +14,17 @@ classDiagram
         +Physics* physics
     }
     class Collider {
+        +Physics* physics
         Inside() bool
     }
-    Collider <|-- SphereParticleBoundary
-    class SphereParticleBoundary {
-        +Vector<dim>& position
+    Collider <|-- SphereCollider
+    class SphereCollider {
+        +Vector& position
         +double radius
+    }
+    Collider <|-- BoxCollider
+    class BoxCollider {
+        +Vector& position1
+        +Vector& position2
     }
 ```

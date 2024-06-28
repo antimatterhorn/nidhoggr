@@ -1,12 +1,12 @@
 
 ```mermaid
 classDiagram
-    Physics <|-- SimplePhysics
     Physics <|-- PointSourceGravity
     Physics <|-- ConstantGravity
     Physics <|-- NBodyGravity
     Physics <|-- WaveEquation
     Physics <|-- Hydro
+    Physics <|-- Kinetics
     Physics : +NodeList* nodeList
     Physics : +PhysicalConstants& constants
     Physics : VerifyFields(NodeList* nodeList)
@@ -26,9 +26,6 @@ classDiagram
     }
     class Hydro{
         +EquationOfState* eos
-    }
-    class SimplePhysics{
-        
     }
     class WaveEquation{
         +Grid* grid
