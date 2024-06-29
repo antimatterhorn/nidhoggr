@@ -35,3 +35,5 @@ class StringArt:
         return
     def PinList(self):
         return
+    def TotalLength(self):
+        return

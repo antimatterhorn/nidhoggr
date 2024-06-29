@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 lineWidth = 0.2
 
-sa = StringArtPy("einstein.jpg",nailCount=300,windings=1000,width=lineWidth)
+sa = StringArtPy("pi.png",nailCount=157,windings=800,width=lineWidth)
 
 i = 0
 # Initialize lists to store x and y coordinates for plotting

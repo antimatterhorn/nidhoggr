@@ -9,7 +9,7 @@ private:
     int windings;
     int mode;
     double stringWidth;
-    double radius;
+    double radius,length;
     std::vector<std::pair<Lin::Vector<2>, Lin::Vector<2>>> lines;
     std::vector<int> pins;
 
@@ -133,10 +133,14 @@ public:
             //printf("%d %d   %d -> %d\n",i,windings,k,jj);
             k = jj;
             pins.push_back(jj);
+            length+=(n1-n0).magnitude();
         }
     }
 
     std::vector<int>
     PinList() { return pins; }
+
+    double
+    TotalLength() { return length; }
 
 };
