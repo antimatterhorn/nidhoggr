@@ -75,4 +75,5 @@ class StringArtPy:
 
         sa = StringArt(image=pixels,nails=self.nails,windings=windings,mode=0,width=0.2,radius=self.radius)
         self.pins = sa.PinList()
+        self.length = sa.TotalLength()
         return 

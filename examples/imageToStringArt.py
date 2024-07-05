@@ -28,3 +28,5 @@ plt.xlabel('X')
 plt.ylabel('Y')
 plt.grid(True)
 plt.show()
+
+print(sa.length/sa.radius)
