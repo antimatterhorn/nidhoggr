@@ -11,17 +11,18 @@ class oscillate:
         self.height = height
         self.phi = self.nodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
-        a = 5*(cos(time))
+        a = 5*(cos(0.5*time))
         i = int(self.width/2)
         j = int(self.height/2)
         idx = self.grid.index(i,j,0)
         self.phi.setValue(idx,a)
 
-from Utilities import TextMicrophone,SiloDump 
+from Utilities import Microphone,SiloDump 
 
 if __name__ == "__main__":
-    animate = True
-    cycles = 20000
+    animate = False
+    dump = False
+    cycles = 40000
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
     nx = 100
     ny = nx
@@ -56,14 +57,14 @@ if __name__ == "__main__":
     print("field names =",myNodeList.fieldNames)
 
     osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
-    mic = TextMicrophone(nodeList=myNodeList,grid=grid,i=51,j=50,filename='mic.txt')
+    mic = Microphone(nodeList=myNodeList,grid=grid,i=65,j=65,filename='mic.wav')
     periodicWork = [osc,mic]
-    if (not animate):
+    if(dump):
         silo = SiloDump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=50)
         periodicWork.append(silo)
 
     controller = Controller(integrator=integrator,
-                            statStep=100,
+                            statStep=500,
                             periodicWork=periodicWork)
 
     if(animate):
@@ -77,3 +78,5 @@ if __name__ == "__main__":
         AnimateGrid2d(bounds,update_method,extremis=[-5,5],frames=cycles)
     else:
         controller.Step(cycles)
+
+    mic.update_wav_header()
