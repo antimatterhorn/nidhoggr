@@ -17,20 +17,7 @@ class oscillate:
         idx = self.grid.index(i,j,0)
         self.phi.setValue(idx,a)
 
-class microphone:
-    def __init__(self, nodeList, grid,i,j,filename,workCycle=1):
-        self.nodeList = nodeList
-        self.cycle = workCycle
-        self.grid = grid
-        self.i = i
-        self.j = j
-        self.phi = self.nodeList.getFieldDouble("phi")
-        self.filename = filename
-    def __call__(self,cycle,time,dt):
-        phi = self.nodeList.getFieldDouble("phi")
-        value = phi[self.grid.index(self.i,self.j,0)]
-        with open(self.filename, 'a') as f:
-            f.write(f"{time},{value}\n")
+from Utilities import Microphone
 
 class silodump:
     def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
@@ -41,7 +28,7 @@ class silodump:
       
 
 if __name__ == "__main__":
-    animate = True
+    animate = False
     cycles = 20000
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
     nx = 100
@@ -77,7 +64,7 @@ if __name__ == "__main__":
     print("field names =",myNodeList.fieldNames)
 
     osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
-    mic = microphone(nodeList=myNodeList,grid=grid,i=51,j=50,filename='mic.txt')
+    mic = Microphone(nodeList=myNodeList,grid=grid,i=51,j=50,filename='mic.txt')
     periodicWork = [osc,mic]
     if (not animate):
         silo = silodump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=50)
