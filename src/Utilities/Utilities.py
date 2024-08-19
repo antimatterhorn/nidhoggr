@@ -30,10 +30,14 @@ class Microphone:
     def __call__(self, cycle, time, dt):
         phi = self.nodeList.getFieldDouble("phi")
         value = self.gain*phi[self.grid.index(self.i, self.j, 0)]
+        if abs(value) > 1:
+            self.gain = 1.0/abs(value)
+            value = self.gain*phi[self.grid.index(self.i, self.j, 0)]
+        # Normalize the value from the range -1 to 1 to the range 0 to 255
+        normalized_value = int(((value + 1) / 2) * 255)
 
         with open(self.filename, 'ab') as f:  # Append to the file in binary write mode
-            data = int(value * 255).to_bytes(1, 'big')  # Convert value to 8-bit PCM
-            # need to do something here about negative values of phi
+            data = normalized_value.to_bytes(1, 'big')  # Convert value to 8-bit PCM
             f.write(data)  # Write the audio data
 
     def write_wav_header(self, f):
