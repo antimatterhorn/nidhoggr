@@ -9,7 +9,7 @@ class oscillate:
         self.grid = grid
         self.width = width
         self.height = height
-        self.phi = myNodeList.getFieldDouble("phi")
+        self.phi = self.nodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
         a = 5*(cos(time))
         i = int(self.width/2)
@@ -17,7 +17,22 @@ class oscillate:
         idx = self.grid.index(i,j,0)
         self.phi.setValue(idx,a)
 
-class vtkdump:
+class microphone:
+    def __init__(self, nodeList, grid,i,j,filename,workCycle=1):
+        self.nodeList = nodeList
+        self.cycle = workCycle
+        self.grid = grid
+        self.i = i
+        self.j = j
+        self.phi = self.nodeList.getFieldDouble("phi")
+        self.filename = filename
+    def __call__(self,cycle,time,dt):
+        phi = self.nodeList.getFieldDouble("phi")
+        value = phi[self.grid.index(self.i,self.j,0)]
+        with open(self.filename, 'a') as f:
+            f.write(f"{time},{value}\n")
+
+class silodump:
     def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
         self.meshWriter = SiloMeshWriter2d(baseName="waveBox",nodeList=myNodeList,fieldNames=["phi","xi"])
         self.cycle = dumpCycle
@@ -62,10 +77,11 @@ if __name__ == "__main__":
     print("field names =",myNodeList.fieldNames)
 
     osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
-    periodicWork = [osc]
+    mic = microphone(nodeList=myNodeList,grid=grid,i=51,j=50,filename='mic.txt')
+    periodicWork = [osc,mic]
     if (not animate):
-        vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=50)
-        periodicWork.append(vtk)
+        silo = silodump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=50)
+        periodicWork.append(silo)
 
     controller = Controller(integrator=integrator,
                             statStep=100,
