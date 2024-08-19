@@ -17,9 +17,7 @@ class oscillate:
         idx = self.grid.index(i,j,0)
         self.phi.setValue(idx,a)
 
-from Utilities import Microphone,SiloDump
-
-      
+from Utilities import TextMicrophone,SiloDump 
 
 if __name__ == "__main__":
     animate = True
@@ -58,7 +56,7 @@ if __name__ == "__main__":
     print("field names =",myNodeList.fieldNames)
 
     osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
-    mic = Microphone(nodeList=myNodeList,grid=grid,i=51,j=50,filename='mic.txt')
+    mic = TextMicrophone(nodeList=myNodeList,grid=grid,i=51,j=50,filename='mic.txt')
     periodicWork = [osc,mic]
     if (not animate):
         silo = SiloDump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=50)
