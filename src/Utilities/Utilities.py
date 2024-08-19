@@ -17,13 +17,14 @@ class TextMicrophone:
             f.write(f"{time},{value}\n")
 
 class Microphone:
-    def __init__(self, nodeList, grid, i, j, filename, gain=1.0):
+    def __init__(self, nodeList, grid, i, j, filename, gain=1.0,workCycle=1):
         self.nodeList = nodeList
         self.grid = grid
         self.i = i
         self.j = j
         self.filename = filename
         self.gain = gain
+        self.cycle = workCycle
         with open(filename, 'wb') as f:  # Create the file in binary write mode
             self.write_wav_header(f)  # Write the header information
 
@@ -31,7 +32,7 @@ class Microphone:
         phi = self.nodeList.getFieldDouble("phi")
         value = self.gain*phi[self.grid.index(self.i, self.j, 0)]
         if abs(value) > 1:
-            self.gain = 1.0/abs(value)
+            self.gain = 0.99/abs(value)
             value = self.gain*phi[self.grid.index(self.i, self.j, 0)]
         # Normalize the value from the range -1 to 1 to the range 0 to 255
         normalized_value = int(((value + 1) / 2) * 255)
@@ -41,28 +42,30 @@ class Microphone:
             f.write(data)  # Write the audio data
 
     def write_wav_header(self, f):
-        # WAV header format: https://www.sonypictures.com/mgm/tech/wavefile.html
-        chunk_id = b'RIFF'
-        chunk_size = 36 + (44 * len(self.grid))
-        fmt_chunk_id = b'WAVE'
-        fmt_chunk_size = 16
-        audio_format = 1  # PCM
-        num_channels = 1  # Mono
-        sample_rate = 44100  # 44 kHz
-        byte_rate = sample_rate * num_channels
-        block_align = num_channels
-        bits_per_sample = 8
+        # WAV header format
+        f.write(b'RIFF')  # ChunkID
+        f.write(b'\x00\x00\x00\x00')  # Placeholder for ChunkSize
+        f.write(b'WAVE')  # Format
+        f.write(b'fmt ')  # Subchunk1ID
+        f.write(int.to_bytes(16, 4, 'little'))  # Subchunk1Size (16 for PCM)
+        f.write(int.to_bytes(1, 2, 'little'))  # AudioFormat (1 for PCM)
+        f.write(int.to_bytes(1, 2, 'little'))  # NumChannels (1 for mono)
+        f.write(int.to_bytes(44100, 4, 'little'))  # SampleRate
+        f.write(int.to_bytes(44100 * 1 * 1, 4, 'little'))  # ByteRate (SampleRate * NumChannels * BitsPerSample/8)
+        f.write(int.to_bytes(1 * 1, 2, 'little'))  # BlockAlign (NumChannels * BitsPerSample/8)
+        f.write(int.to_bytes(8, 2, 'little'))  # BitsPerSample (8 bits)
+        f.write(b'data')  # Subchunk2ID
+        f.write(b'\x00\x00\x00\x00')  # Placeholder for Subchunk2Size
 
-        f.write(chunk_id)
-        f.write(int.to_bytes(chunk_size, 4, 'big'))
-        f.write(fmt_chunk_id)
-        f.write(int.to_bytes(fmt_chunk_size, 4, 'big'))
-        f.write(int.to_bytes(audio_format, 2, 'big'))
-        f.write(int.to_bytes(num_channels, 2, 'big'))
-        f.write(int.to_bytes(sample_rate, 4, 'big'))
-        f.write(int.to_bytes(byte_rate, 4, 'big'))
-        f.write(int.to_bytes(block_align, 2, 'big'))
-        f.write(int.to_bytes(bits_per_sample, 2, 'big'))
+    # Later update the header with actual sizes
+    def update_wav_header(self):
+        import os
+        file_size = os.path.getsize(self.filename)
+        with open(self.filename, 'r+b') as f:
+            f.seek(4)
+            f.write(int.to_bytes(file_size - 8, 4, 'little'))  # Update ChunkSize
+            f.seek(40)
+            f.write(int.to_bytes(file_size - 44, 4, 'little'))  # Update Subchunk2Size
 
 
 class SiloDump:
