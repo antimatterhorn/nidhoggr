@@ -18,12 +18,7 @@ class oscillate:
             idx = self.grid.index(i,j,0)
             self.phi.setValue(idx,a)
 
-class vtkdump:
-    def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
-        self.meshWriter = SiloMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=fieldNames)
-        self.cycle = dumpCycle
-    def __call__(self,cycle,time,dt):
-        self.meshWriter.write("%03d.silo"%cycle)
+from Utilities import SiloDump
 
 class debug:
     def __init__(self,nodeList,debugCycle=1):
@@ -73,7 +68,7 @@ if __name__ == "__main__":
 
     osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
     periodicWork = [osc]
-    vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","depth","maxphi"],dumpCycle=100)
+    vtk = SiloDump("testMesh",myNodeList,fieldNames=["phi","depth","maxphi"],dumpCycle=100)
     periodicWork.append(vtk)
 
     controller = Controller(integrator=integrator,

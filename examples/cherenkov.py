@@ -23,14 +23,8 @@ class oscillate:
         # self.phi.setValue(5050,-val)
         # self.phi.setValue(2025,val)
         # self.phi.setValue(8075,val)
-class vtkdump:
-    def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
-        self.meshWriter = SiloMeshWriter2d(baseName="testMesh",nodeList=myNodeList,fieldNames=["phi","xi"])
-        self.cycle = dumpCycle
-    def __call__(self,cycle,time,dt):
-        self.meshWriter.write("%03d.silo"%cycle)
 
-      
+from Utilities import SiloDump
 
 if __name__ == "__main__":
     animate = True
@@ -66,7 +60,7 @@ if __name__ == "__main__":
     print("field names =",myNodeList.fieldNames)
 
     osc = oscillate(nodeList=myNodeList,grid=grid,cs=cs,width=nx,height=ny,workCycle=1)
-    vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=100)
+    vtk = SiloDump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=100)
     if (animate):
         periodicWork = [osc]
     else:

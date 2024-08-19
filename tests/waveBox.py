@@ -17,18 +17,12 @@ class oscillate:
         idx = self.grid.index(i,j,0)
         self.phi.setValue(idx,a)
 
-from Utilities import Microphone
+from Utilities import Microphone,SiloDump
 
-class silodump:
-    def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
-        self.meshWriter = SiloMeshWriter2d(baseName="waveBox",nodeList=myNodeList,fieldNames=["phi","xi"])
-        self.cycle = dumpCycle
-    def __call__(self,cycle,time,dt):
-        self.meshWriter.write("-cycle=%03d.silo"%(cycle))
       
 
 if __name__ == "__main__":
-    animate = False
+    animate = True
     cycles = 20000
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
     nx = 100
@@ -67,7 +61,7 @@ if __name__ == "__main__":
     mic = Microphone(nodeList=myNodeList,grid=grid,i=51,j=50,filename='mic.txt')
     periodicWork = [osc,mic]
     if (not animate):
-        silo = silodump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=50)
+        silo = SiloDump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=50)
         periodicWork.append(silo)
 
     controller = Controller(integrator=integrator,

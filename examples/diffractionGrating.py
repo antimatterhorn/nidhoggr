@@ -22,12 +22,7 @@ class oscillate:
         idx = self.grid.index(i,j,0)
         self.phi.setValue(idx,a)
 
-class vtkdump:
-    def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
-        self.meshWriter = SiloMeshWriter2d(baseName="waveBox",nodeList=myNodeList,fieldNames=["phi","xi"])
-        self.cycle = dumpCycle
-    def __call__(self,cycle,time,dt):
-        self.meshWriter.write("-cycle=%03d.silo"%(cycle))
+from Utilities import SiloDump
       
 
 if __name__ == "__main__":
@@ -76,7 +71,7 @@ if __name__ == "__main__":
     osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
     periodicWork = [osc]
     if (not animate):
-        vtk = vtkdump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=50)
+        vtk = SiloDump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=50)
         periodicWork.append(vtk)
 
     controller = Controller(integrator=integrator,
