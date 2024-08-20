@@ -17,12 +17,29 @@ class oscillate:
         idx = self.grid.index(i,j,0)
         self.phi.setValue(idx,a)
 
-from Utilities import Microphone,SiloDump 
+class SpkOscillator:
+    def __init__(self,speaker,nodeList,grid,width,height,workCycle=1):
+        self.speaker = speaker
+        self.nodeList = nodeList
+        self.cycle = workCycle
+        self.grid = grid
+        self.width = width
+        self.height = height
+        self.phi = self.nodeList.getFieldDouble("phi")
+    def __call__(self,cycle,time,dt):
+        a = self.speaker.get_output(cycle*2.5e-5)*1e3
+        #print(cycle*2.5e-3,a)
+        i = int(self.width/2)
+        j = int(self.height/2)
+        idx = self.grid.index(i,j,0)
+        self.phi.setValue(idx,a)
+
+from Utilities import Microphone,Speaker,SiloDump 
 
 if __name__ == "__main__":
     animate = False
     dump = False
-    cycles = 40000
+    cycles = 120000
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
     nx = 100
     ny = nx
@@ -56,7 +73,9 @@ if __name__ == "__main__":
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
-    osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
+    #osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
+    spk = Speaker(filename="CantinaBand.wav")
+    osc = SpkOscillator(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1,speaker=spk)
     mic = Microphone(nodeList=myNodeList,grid=grid,i=65,j=65,filename='mic.wav')
     periodicWork = [osc,mic]
     if(dump):

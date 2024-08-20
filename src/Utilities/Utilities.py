@@ -1,4 +1,6 @@
 from nidhoggr import SiloMeshWriter2d
+import wave
+import numpy as np
 
 class TextMicrophone:
     def __init__(self, nodeList, grid,i,j,filename,workCycle=1):
@@ -66,6 +68,41 @@ class Microphone:
             f.seek(40)
             f.write(int.to_bytes(file_size - 44, 4, 'little'))  # Update Subchunk2Size
 
+
+class Speaker:
+    def __init__(self, filename):
+        self.filename = filename
+        self.wav_file = wave.open(filename, 'rb')
+        self.sample_rate = self.wav_file.getframerate()
+        self.num_channels = self.wav_file.getnchannels()
+        self.sample_width = self.wav_file.getsampwidth()
+        self.num_frames = self.wav_file.getnframes()
+
+        # Read all frames at once
+        self.audio_data = self.wav_file.readframes(self.num_frames)
+        self.wav_file.close()
+
+        # Convert the audio data to a numpy array of floats
+        if self.sample_width == 1:  # 8-bit audio
+            self.audio_data = np.frombuffer(self.audio_data, dtype=np.uint8)
+            self.audio_data = (self.audio_data - 128) / 128.0  # Convert to range -1.0 to 1.0
+        elif self.sample_width == 2:  # 16-bit audio
+            self.audio_data = np.frombuffer(self.audio_data, dtype=np.int16)
+            self.audio_data = self.audio_data / 32768.0  # Convert to range -1.0 to 1.0
+
+        if self.num_channels > 1:
+            self.audio_data = self.audio_data.reshape(-1, self.num_channels)
+            self.audio_data = self.audio_data.mean(axis=1)  # Convert to mono by averaging channels
+
+    def get_output(self, time):
+        # Calculate the corresponding frame index
+        frame_index = int(time * self.sample_rate)
+
+        if frame_index >= self.num_frames:
+            return 0.0  # Return 0.0 if time exceeds the duration of the audio
+
+        # Return the audio sample at the calculated frame index
+        return self.audio_data[frame_index]
 
 class SiloDump:
     def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
