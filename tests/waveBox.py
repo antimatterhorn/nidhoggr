@@ -76,7 +76,7 @@ if __name__ == "__main__":
     #osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
     spk = Speaker(filename="CantinaBand.wav")
     osc = SpkOscillator(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1,speaker=spk)
-    mic = Microphone(nodeList=myNodeList,grid=grid,i=65,j=65,filename='mic.wav')
+    mic = Microphone(nodeList=myNodeList,grid=grid,i=90,j=90,filename='mic.wav')
     periodicWork = [osc,mic]
     if(dump):
         silo = SiloDump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=50)
