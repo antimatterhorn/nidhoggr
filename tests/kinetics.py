@@ -41,5 +41,5 @@ if __name__ == "__main__":
     controller = Controller(integrator=integrator, periodicWork=[], statStep=1)
 
     bounds = (-10, 10, -10, 10)
-    ani = AnimationUpdateScatterMethod2d(positions=pos,stepper=controller.Step)
+    ani = AnimateScatter(positions=pos,stepper=controller.Step)
     AnimateScatter(bounds, update_method=ani, frames=5, interval=50)
