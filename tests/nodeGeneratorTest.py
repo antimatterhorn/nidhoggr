@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import random
 from nidhoggr import *
 
-n = 80
+n = 100
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
@@ -12,6 +12,8 @@ ax = fig.add_subplot(projection='3d')
 from RPRPSNodeGenerator import ParameterizedSpiralSurface3d, RecursivePrimitiveRefinementSurface3d
 
 points = RecursivePrimitiveRefinementSurface3d(n).positions
+
+print("Generated %d points, when asked to generate %d."%(len(points),n))
 xs = []
 ys = []
 zs = []
