@@ -1,7 +1,6 @@
 from LinearAlgebra import *
 from math import cos,sin,acos,asin,sqrt
-
-pi = 3.14159
+from numpy import pi
 
 class ParameterizedSpiralSurface3d:
     # generates a surface of particles on a unit sphere using PS
