@@ -7,10 +7,10 @@ class SEANodeGeneratorSurface3d:
     # generates a single shell of particles on a unit sphere using the SEA generator from Kegerreis et al. 2019
     def __init__(self,nshell):
         self.positions = []
-        self.Areg = 4.0*pi/nshell                # area of a region
-        self.Hcap = 2*np.arcsin(np.sqrt(1.0/nshell))  # cap height
-        self.Ncol = round((pi-2.0*self.Hcap)/self.Areg)    # number of collars
-        self.Hcol = (pi-2.0*self.Hcap)/self.Ncol           # collar height
+        self.Areg = 4.0*pi/nshell                       # area of a region
+        self.Hcap = 2*np.arcsin(np.sqrt(1.0/nshell))    # cap height
+        self.Ncol = round((pi-2.0*self.Hcap)/self.Areg) # number of collars
+        self.Hcol = (pi-2.0*self.Hcap)/self.Ncol        # collar height
 
         self.collars = np.arange(self.Ncol,dtype='float')
         self.collars *= self.Hcol
