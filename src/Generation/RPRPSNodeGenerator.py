@@ -79,7 +79,7 @@ class RecursivePrimitiveRefinementSurface3d:
                       [262146,8,1],
                       [393218,8,2]]
         
-        if (nshell > 4 and nshell<163):
+        if (nshell > 4):
             for i in range(len(shapeData)):
                 nc  = 0
                 nco = 0
