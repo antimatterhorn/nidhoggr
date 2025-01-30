@@ -34,8 +34,11 @@ weights = np.exp(-dists**2 / (2 * sigma**2))
 
 # Normalize so that the sum of weights approximates the total area (4π for a unit sphere)
 local_density = weights.sum(axis=1)
-As = (4 * np.pi) / local_density  # Approximate area per point
-As = As/As.mean()
+As = (4 * np.pi) / local_density    # Approximate area per point
+As = As/As.mean()                   # Normalize areas
+
+print("Standard Deviation from Equal Area: %3.4f"%(np.std(As)))
+
 # Extract coordinates
 xs = points[:, 0]
 ys = points[:, 1]
@@ -47,7 +50,8 @@ ax.set_xlabel("X")
 ax.set_ylabel("Y")
 ax.set_zlabel("Z")
 
-# Create a separate 2D scatter plot for z vs area
+# Create a separate 2D scatter plot of lattitude vs. area
+# This is with knowledge that the worst portions of any tiling method are at the poles
 fig2 = plt.figure()
 ax2 = fig2.add_subplot()
 ax2.scatter(zs, As, c=As, cmap="viridis")
