@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import random
 from nidhoggr import *
 
-method = "AltAz"
+method = "RPR"
 
 n = 1000
 
@@ -35,7 +35,7 @@ weights = np.exp(-dists**2 / (2 * sigma**2))
 # Normalize so that the sum of weights approximates the total area (4π for a unit sphere)
 local_density = weights.sum(axis=1)
 As = (4 * np.pi) / local_density  # Approximate area per point
-
+As = As/As.mean()
 # Extract coordinates
 xs = points[:, 0]
 ys = points[:, 1]
