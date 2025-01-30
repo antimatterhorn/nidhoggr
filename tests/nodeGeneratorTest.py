@@ -4,28 +4,55 @@ import matplotlib.pyplot as plt
 import random
 from nidhoggr import *
 
-n = 100
+method = "AltAz"
+
+n = 1000
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
 
-# from RPRPSNodeGenerator import ParameterizedSpiralSurface3d, RecursivePrimitiveRefinementSurface3d
+if method == "RPR":
+    from RPRPSNodeGenerator import RecursivePrimitiveRefinementSurface3d
+    points = RecursivePrimitiveRefinementSurface3d(n).positions
+elif method == "PS":
+    from RPRPSNodeGenerator import ParameterizedSpiralSurface3d
+    points = ParameterizedSpiralSurface3d(n).positions
+elif method == "AltAz":
+    from AltAzNodeGenerator import AltAzNodeGeneratorSurface3d
+    points = AltAzNodeGeneratorSurface3d(n).positions
 
-# points = RecursivePrimitiveRefinementSurface3d(n).positions
+from scipy.spatial import distance_matrix
 
-# print("Generated %d points, when asked to generate %d."%(len(points),n))
-# xs = []
-# ys = []
-# zs = []
-# for p in points:
-#     xs.append(p[0])
-#     ys.append(p[1])
-#     zs.append(p[2])
+points = np.array(points)
 
-# ax.scatter(xs, ys, zs)
+# Compute pairwise distances on the sphere
+dists = distance_matrix(points, points)
 
-from SEANodeGenerator import SEANodeGeneratorSurface3d
+# Define a Gaussian-like weight function
+sigma = 0.1  # Tune this for best results
+weights = np.exp(-dists**2 / (2 * sigma**2))
 
-gen = SEANodeGeneratorSurface3d(n)
+# Normalize so that the sum of weights approximates the total area (4π for a unit sphere)
+local_density = weights.sum(axis=1)
+As = (4 * np.pi) / local_density  # Approximate area per point
+
+# Extract coordinates
+xs = points[:, 0]
+ys = points[:, 1]
+zs = points[:, 2]
+
+# 3D Scatter plot
+ax.scatter(xs, ys, zs, c=As, cmap="viridis")
+ax.set_xlabel("X")
+ax.set_ylabel("Y")
+ax.set_zlabel("Z")
+
+# Create a separate 2D scatter plot for z vs area
+fig2 = plt.figure()
+ax2 = fig2.add_subplot()
+ax2.scatter(zs, As, c=As, cmap="viridis")
+ax2.set_xlabel("Z Coordinate")
+ax2.set_ylabel("Area per Point (As)")
+ax2.set_title("Z Coordinate vs Area")
 
 plt.show()
