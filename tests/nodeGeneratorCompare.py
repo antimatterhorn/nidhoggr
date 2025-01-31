@@ -45,8 +45,8 @@ method = ParameterizedSpiralSurface3d
 xs,ys = stDev(method)
 scatter2 = ax.plot(xs, ys, c="green", label="PS")
 
-from AltAzNodeGenerator import AltAzNodeGeneratorSurface3d
-method = AltAzNodeGeneratorSurface3d
+from AltAzNodeGenerator import AltAzSurface3d
+method = AltAzSurface3d
 
 xs,ys = stDev(method)
 scatter3 = ax.plot(xs, ys, c="blue", label="AltAz")
