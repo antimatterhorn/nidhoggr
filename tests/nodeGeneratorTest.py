@@ -18,8 +18,8 @@ elif method == "PS":
     from RPRPSNodeGenerator import ParameterizedSpiralSurface3d
     points = ParameterizedSpiralSurface3d(n).positions
 elif method == "AltAz":
-    from AltAzNodeGenerator import AltAzNodeGeneratorSurface3d
-    points = AltAzNodeGeneratorSurface3d(n).positions
+    from AltAzNodeGenerator import AltAzSurface3d
+    points = AltAzSurface3d(n).positions
 elif method == "SEAGen":
     from SEANodeGenerator import SEAGenSurface3d
     points = SEAGenSurface3d(n).positions

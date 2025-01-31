@@ -2,7 +2,7 @@ from LinearAlgebra import *
 from math import cos,sin,acos,asin,sqrt
 from numpy import pi
 
-class AltAzNodeGeneratorSurface3d:
+class AltAzSurface3d:
     # generates a surface of particles on a unit sphere using PS
     def __init__(self,nshell):
         self.positions = []
