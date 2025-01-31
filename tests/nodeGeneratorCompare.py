@@ -9,7 +9,7 @@ from scipy.spatial import distance_matrix
 def stDev(method):
     ns = []
     sd = []
-    for n in range(10,2000,10):
+    for n in range(10,1000,10):
         p = method(n).positions
         p = np.array(p)
 
@@ -37,19 +37,25 @@ from RPRPSNodeGenerator import RecursivePrimitiveRefinementSurface3d
 method = RecursivePrimitiveRefinementSurface3d
 
 xs,ys = stDev(method)
-scatter1 = ax.scatter(xs, ys, c="red", label="RPR")
+scatter1 = ax.plot(xs, ys, c="red", label="RPR")
 
 from RPRPSNodeGenerator import ParameterizedSpiralSurface3d
 method = ParameterizedSpiralSurface3d
 
 xs,ys = stDev(method)
-scatter2 = ax.scatter(xs, ys, c="green", label="PS")
+scatter2 = ax.plot(xs, ys, c="green", label="PS")
 
 from AltAzNodeGenerator import AltAzNodeGeneratorSurface3d
 method = AltAzNodeGeneratorSurface3d
 
 xs,ys = stDev(method)
-scatter3 = ax.scatter(xs, ys, c="blue", label="AltAz")
+scatter3 = ax.plot(xs, ys, c="blue", label="AltAz")
+
+from SEANodeGenerator import SEAGenSurface3d
+method = SEAGenSurface3d
+
+xs,ys = stDev(method)
+scatter4 = ax.plot(xs, ys, c="black", label="SEAGen")
 
 ax.set_xlabel("number of points")
 ax.set_ylabel("standard deviation")

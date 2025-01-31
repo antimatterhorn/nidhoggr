@@ -4,9 +4,9 @@ import matplotlib.pyplot as plt
 import random
 from nidhoggr import *
 
-method = "RPR"
+method = "PS"
 
-n = 1000
+n = 500
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')
@@ -20,6 +20,9 @@ elif method == "PS":
 elif method == "AltAz":
     from AltAzNodeGenerator import AltAzNodeGeneratorSurface3d
     points = AltAzNodeGeneratorSurface3d(n).positions
+elif method == "SEAGen":
+    from SEANodeGenerator import SEAGenSurface3d
+    points = SEAGenSurface3d(n).positions
 
 from scipy.spatial import distance_matrix
 
@@ -49,6 +52,7 @@ ax.scatter(xs, ys, zs, c=As, cmap="viridis")
 ax.set_xlabel("X")
 ax.set_ylabel("Y")
 ax.set_zlabel("Z")
+ax.set_title(method)
 
 # Create a separate 2D scatter plot of lattitude vs. area
 # This is with knowledge that the worst portions of any tiling method are at the poles
