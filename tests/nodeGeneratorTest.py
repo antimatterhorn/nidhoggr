@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import random
 from nidhoggr import *
 
-method = "PS"
+method = "Fibonacci"
 
 n = 500
 
@@ -17,9 +17,9 @@ if method == "RPR":
 elif method == "PS":
     from RPRPSNodeGenerator import ParameterizedSpiralSurface3d
     points = ParameterizedSpiralSurface3d(n).positions
-elif method == "AltAz":
-    from AltAzNodeGenerator import AltAzSurface3d
-    points = AltAzSurface3d(n).positions
+elif method == "Fibonacci":
+    from FibonacciNodeGenerator import FibonacciSurface3d
+    points = FibonacciSurface3d(n).positions
 elif method == "SEAGen":
     from SEANodeGenerator import SEAGenSurface3d
     points = SEAGenSurface3d(n).positions

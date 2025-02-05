@@ -45,11 +45,11 @@ method = ParameterizedSpiralSurface3d
 xs,ys = stDev(method)
 scatter2 = ax.plot(xs, ys, c="green", label="PS")
 
-from AltAzNodeGenerator import AltAzSurface3d
-method = AltAzSurface3d
+from FibonacciNodeGenerator import FibonacciSurface3d
+method = FibonacciSurface3d
 
 xs,ys = stDev(method)
-scatter3 = ax.plot(xs, ys, c="blue", label="AltAz")
+scatter3 = ax.plot(xs, ys, c="blue", label="Fibonacci")
 
 from SEANodeGenerator import SEAGenSurface3d
 method = SEAGenSurface3d
