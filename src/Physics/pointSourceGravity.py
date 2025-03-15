@@ -7,6 +7,7 @@ class PointSourceGravity(Physics):
                nodeList="NodeList*",
                constants="PhysicalConstants&",
                pointSourceLocation="Lin::Vector<%(dim)s>&",
+               pointSourceVelocity="Lin::Vector<%(dim)s>&",
                pointSourceMass="double"):
         return
 

@@ -5,8 +5,10 @@ template <int dim>
 class PointSourceGravity : public Physics<dim> {
 protected:
     Lin::Vector<dim> pointSourceLocation;
+    Lin::Vector<dim> pointSourceVelocity;
     double pointSourceMass;
     double dtmin;
+    double lastUpdateTime = -1.0; // Tracks last update time
 public:
     using Vector = Lin::Vector<dim>;
     using VectorField = Field<Vector>;
@@ -15,10 +17,13 @@ public:
     PointSourceGravity(NodeList* nodeList,
                         PhysicalConstants& constants,
                         Vector& pointSourceLocation,
+                        Vector& pointSourceVelocity,
                         double pointSourceMass) :
         Physics<dim>(nodeList,constants),
         pointSourceLocation(pointSourceLocation),
+        pointSourceVelocity(pointSourceVelocity),
         pointSourceMass(pointSourceMass) {
+        
 
         int numNodes = nodeList->size();
         if (nodeList->getField<Vector>("acceleration") == nullptr)
@@ -35,6 +40,12 @@ public:
 
     virtual void
     EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt) override {
+        // Update point source position once per timestep
+        if (time != lastUpdateTime) {
+            pointSourceLocation += pointSourceVelocity * dt;
+            lastUpdateTime = time;
+        }
+        
         //compute accelerations
         NodeList* nodeList = this->nodeList;
         PhysicalConstants constants = this->constants;

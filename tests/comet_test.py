@@ -32,7 +32,7 @@ class dumpState:
 
 
 if __name__ == "__main__":
-    myNodeList = NodeList(100)
+    myNodeList = NodeList(2)
 
     constants = PhysicalConstants(1e30,     # solar mass in  kg
                                   1.5e11,    # au m
@@ -40,6 +40,8 @@ if __name__ == "__main__":
                                   1.0, 
                                   1.0) 
     loc = Vector2d(0, 0)
+    loc2 = Vector2d(50000,-50000)
+    vs   = (0,0.02)
     cmass = 2.0
 
     constants.setG(19.82)
@@ -47,8 +49,14 @@ if __name__ == "__main__":
     sourceGrav = PointSourceGravity2d(nodeList=myNodeList,
                                       constants=constants,
                                       pointSourceLocation=loc,
-                                      pointSourceMass=cmass)
-    packages = [sourceGrav]
+                                      pointSourceMass=cmass,
+                                      pointSourceVelocity = Vector2d(0,0))
+    movingGrav = PointSourceGravity2d(nodeList=myNodeList,
+                                      constants=constants,
+                                      pointSourceLocation=loc,
+                                      pointSourceMass=cmass*50,
+                                      pointSourceVelocity = Vector2d(0,0))
+    packages = [sourceGrav,movingGrav]
     integrator = RungeKutta4Integrator2d(packages=packages,
                                          dtmin=1e-3)
   
@@ -60,16 +68,17 @@ if __name__ == "__main__":
     velocity = myNodeList.getFieldVector2d("velocity")
     import random
 
-    for i in range(100):
+    for i in range(2):
         pos[i].x = random.randint(80000, 120000)
         velocity[i].y = v0
 
     minPer = minPeri(myNodeList,workCycle=2000,G=constants.G)
-    periodicWork = [minPer]
+    dump = dumpState(myNodeList,workCycle=2000,G=constants.G)
+    periodicWork = [minPer,dump]
 
     import numpy as np
 
-    r0 = 200000
+    r0 = 120000
     t0 = 0
     p = v0**2/2 - constants.G*cmass/r0
     a = -constants.G * cmass / (2*p)
@@ -81,46 +90,45 @@ if __name__ == "__main__":
     controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=10000,tstop=norbits*torbit)
 
     print("G =",constants.G)
-    controller.Step(30000000)
-    #now plot the orbit
+    controller.Step(300000)
+    # now plot the orbit
     
-    # import matplotlib.pyplot as plt
+    import matplotlib.pyplot as plt
+
+    x_values, y_values = zip(*dump.dump)
+
+    plt.plot(x_values, y_values, 'o',color="green")  
+    plt.plot(loc.x,loc.y,"o",color="red")
+
+    def theta(t):
+        return t0 + t/r0
+
+    def r(t):
+        return a*(1.0-e**2)/(1.0+e*np.cos(theta(t)))
 
 
-    # x_values, y_values = zip(*dump.dump)
+    theta_vec = np.vectorize(theta)
+    r_vec = np.vectorize(r)
+    # Generate an array of thetas
+    t_values = np.linspace(0, 4*np.pi, 100) 
 
-    # plt.plot(x_values, y_values, 'o')  
-    # plt.plot(loc.x,loc.y,"o",color="red")
+    # Calculate x(t) and y(t) for each time value
+    xs = r_vec(t_values) * np.cos(theta_vec(t_values))
+    ys = r_vec(t_values) * np.sin(theta_vec(t_values))
 
-    # def theta(t):
-    #     return t0 + t/r0
+    plt.plot(xs,ys)
 
-    # def r(t):
-    #     return a*(1.0-e**2)/(1.0+e*cos(theta(t)))
+    plt.xlabel('x [AU]')
+    plt.ylabel('y [AU]')
+    plt.title('Plot of (x, y)')
 
+    plt.grid(True)
+    plt.show()
 
-    # theta_vec = np.vectorize(theta)
-    # r_vec = np.vectorize(r)
-    # # Generate an array of thetas
-    # t_values = np.linspace(0, 4*np.pi, 100) 
-
-    # # Calculate x(t) and y(t) for each time value
-    # xs = r_vec(t_values) * np.cos(theta_vec(t_values))
-    # ys = r_vec(t_values) * np.sin(theta_vec(t_values))
-
-    # plt.plot(xs,ys)
-
-    # plt.xlabel('x [R_E]')
-    # plt.ylabel('y [R_E]')
-    # plt.title('Plot of (x, y)')
-
-    # plt.grid(True)
-    # plt.show()
-
-    # x_values, y_values = zip(*dump.energy)
-    # plt.plot(x_values, y_values)
-    # plt.title('Total Energy')
-    # plt.xlabel('time [s]')
-    # plt.ylabel('Specific Energy')
-    # plt.grid(True)
-    # plt.show()
+    x_values, y_values = zip(*dump.energy)
+    plt.plot(x_values, y_values)
+    plt.title('Total Energy')
+    plt.xlabel('time [s]')
+    plt.ylabel('Specific Energy')
+    plt.grid(True)
+    plt.show()
