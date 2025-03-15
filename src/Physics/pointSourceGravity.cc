@@ -34,6 +34,8 @@ public:
         state->template addField<Vector>(position);
         VectorField* velocity = nodeList->getField<Vector>("velocity");
         state->template addField<Vector>(velocity);
+        std::cout << "point source mass: "<< pointSourceMass<<"\n";
+        std::cout << "point source velocity: "<< pointSourceVelocity.x() << " " <<  pointSourceVelocity.y()<<"\n";
     }
 
     ~PointSourceGravity() {}

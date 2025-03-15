@@ -41,9 +41,9 @@ if __name__ == "__main__":
                                   1.0) 
     loc = Vector2d(0, 0)
     loc2 = Vector2d(50000,-50000)
-    vs   = (0,0.02)
+    vs   = Vector2d(0,0.01)
     cmass = 2.0
-
+    mmass = 0.2
     constants.setG(19.82)
 
     sourceGrav = PointSourceGravity2d(nodeList=myNodeList,
@@ -53,14 +53,16 @@ if __name__ == "__main__":
                                       pointSourceVelocity = Vector2d(0,0))
     movingGrav = PointSourceGravity2d(nodeList=myNodeList,
                                       constants=constants,
-                                      pointSourceLocation=loc,
-                                      pointSourceMass=cmass*50,
-                                      pointSourceVelocity = Vector2d(0,0))
-    packages = [sourceGrav,movingGrav]
+                                      pointSourceLocation=loc2,
+                                      pointSourceMass=1,
+                                      pointSourceVelocity = vs)
+    packages = [movingGrav,sourceGrav]
     integrator = RungeKutta4Integrator2d(packages=packages,
                                          dtmin=1e-3)
   
     pos = myNodeList.getFieldVector2d("position")
+
+
 
     norbits = 4
 
@@ -113,10 +115,12 @@ if __name__ == "__main__":
     t_values = np.linspace(0, 4*np.pi, 100) 
 
     # Calculate x(t) and y(t) for each time value
-    xs = r_vec(t_values) * np.cos(theta_vec(t_values))
-    ys = r_vec(t_values) * np.sin(theta_vec(t_values))
+    # xs = r_vec(t_values) * np.cos(theta_vec(t_values))
+    # ys = r_vec(t_values) * np.sin(theta_vec(t_values))
 
-    plt.plot(xs,ys)
+    # plt.plot(xs,ys)
+    time = controller.time
+    plt.plot([loc2.x,loc2.x+time*vs.x],[loc2.y,loc2.y+time*vs.y],'b-')
 
     plt.xlabel('x [AU]')
     plt.ylabel('y [AU]')
