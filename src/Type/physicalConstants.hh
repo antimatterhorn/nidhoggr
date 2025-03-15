@@ -54,6 +54,7 @@ public:
         mUnitTeK(unitTeK),
         mUnitCcou(unitCcou) {
             std::cout << "constants constructed" << std::endl;
+            GGravity = GMKS / (mUnitLm / mUnitMkg * pow(mUnitLm / mUnitTsec, 2.0));
     }
 
     // The fundamental independent quantities.
@@ -67,7 +68,7 @@ public:
     double protonMass() const { return mpMKS / mUnitMkg; }
     double electronMass() const { return meMKS / mUnitMkg; }
     double electronCharge() const { return qeMKS / mUnitCcou; }
-    double G() const { return GMKS / (mUnitLm / mUnitMkg * pow(mUnitLm / mUnitTsec, 2.0)); }
+    double G() const { return GGravity; }
     double c() const { return cMKS / (mUnitLm / mUnitTsec); }
     double kB() const { return kBMKS * mUnitTeK / (mUnitMkg * pow(mUnitLm / mUnitTsec, 2.0)); }
     double molarGasConstant() const { return RgasMKS * mUnitTeK / (mUnitMkg * pow(mUnitLm / mUnitTsec, 2.0)); }
@@ -80,6 +81,8 @@ public:
     double epsilonZero() const { return EpsilonZeroMKS * pow(mUnitLm, 3.0) * mUnitMkg / (pow(mUnitTsec, 2.0) * pow(mUnitCcou, 2.0)); }
     double ESurfaceGrav() const { return EGravMKS / (mUnitLm / pow(mUnitTsec,2.0)); }
 
+    // Method to set G directly
+    void setG(double newG) { GGravity = newG; }
 };
 
 #endif // PHYSICALCONSTANTS_HH

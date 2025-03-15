@@ -29,3 +29,6 @@ class PhysicalConstants:
     planckConstant = PYB11property("double", getter="planckConstant", doc="planckConstant")
     unitEnergyJ = PYB11property("double", getter="unitEnergyJ", doc="unitEnergyJ")
     epsilonZero = PYB11property("double", getter="epsilonZero", doc="epsilonZero")
+
+    def setG(self,newG="double"):
+        return
