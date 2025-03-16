@@ -40,10 +40,10 @@ if __name__ == "__main__":
                                   1.0, 
                                   1.0) 
     loc = Vector2d(0, 0)
-    loc2 = Vector2d(60000,-5000000)
-    vs   = Vector2d(0,1)
+    loc2 = Vector2d(60000,-500000)
+    vs   = Vector2d(0,0.05)
     cmass = 2.0
-    mmass = 1.0
+    mmass = 3.0
     constants.setG(19.82)
 
     sourceGrav = PointSourceGravity2d(nodeList=myNodeList,

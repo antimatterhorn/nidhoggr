@@ -29,7 +29,8 @@ if __name__ == "__main__":
     sourceGrav = PointSourceGravity2d(nodeList=myNodeList,
                                       constants=constants,
                                       pointSourceLocation=loc,
-                                      pointSourceMass=1)
+                                      pointSourceMass=1,
+                                      pointSourceVelocity = Vector2d(0,0))
     packages = [sourceGrav]
     integrator = RungeKutta4Integrator2d(packages=packages,
                                          dtmin=1e-3)
