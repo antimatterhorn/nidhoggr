@@ -40,10 +40,10 @@ if __name__ == "__main__":
                                   1.0, 
                                   1.0) 
     loc = Vector2d(0, 0)
-    loc2 = Vector2d(50000,-50000)
-    vs   = Vector2d(0,0.01)
+    loc2 = Vector2d(60000,-5000000)
+    vs   = Vector2d(0,1)
     cmass = 2.0
-    mmass = 0.2
+    mmass = 1.0
     constants.setG(19.82)
 
     sourceGrav = PointSourceGravity2d(nodeList=myNodeList,
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     movingGrav = PointSourceGravity2d(nodeList=myNodeList,
                                       constants=constants,
                                       pointSourceLocation=loc2,
-                                      pointSourceMass=1,
+                                      pointSourceMass=mmass,
                                       pointSourceVelocity = vs)
     packages = [movingGrav,sourceGrav]
     integrator = RungeKutta4Integrator2d(packages=packages,
@@ -69,10 +69,11 @@ if __name__ == "__main__":
     v0 = 0.019
     velocity = myNodeList.getFieldVector2d("velocity")
     import random
+    from math import sqrt
 
     for i in range(2):
         pos[i].x = random.randint(80000, 120000)
-        velocity[i].y = v0
+        velocity[i].y = sqrt(cmass*constants.G/10./pos[i].x)
 
     minPer = minPeri(myNodeList,workCycle=2000,G=constants.G)
     dump = dumpState(myNodeList,workCycle=2000,G=constants.G)
