@@ -32,17 +32,19 @@ if __name__ == "__main__":
     nComets = 200
     myNodeList = NodeList(nComets)
 
-    constants = PhysicalConstants(1e30,     # solar mass in  kg
-                                  1.5e11,    # au m
-                                  3.1e7,          # year in s
+    constants = PhysicalConstants(1.99e30,     # solar mass in  kg
+                                  1.496e11,    # au m
+                                  3.156e7,          # year in s
                                   1.0, 
                                   1.0) 
+    print("G: ",constants.G)
     loc = Vector2d(0, 0)
     loc2 = Vector2d(60000,-500000)
     vs   = Vector2d(0,0.1)
-    cmass = 2.0
+    cmass = 1.0
     mmass = 1.0
-    constants.setG(19.82)
+    constants.setG(39.51)
+    print("G: ",constants.G)
 
     sourceGrav = PointSourceGravity2d(nodeList=myNodeList,
                                       constants=constants,
@@ -76,7 +78,7 @@ if __name__ == "__main__":
         t = random.random()*2.0*np.pi
         pos[i].x = r*cos(t)
         pos[i].y = r*sin(t)
-        v = 0.4*np.sqrt(cmass*constants.G/r)
+        v = 0.8*np.sqrt(cmass*constants.G/r) # 80% of circular velocity
         velocity[i].x = -v*sin(t)
         velocity[i].y = v*cos(t)
 
@@ -86,7 +88,6 @@ if __name__ == "__main__":
 
     controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=10000,tstop=norbits*torbit)
 
-    print("G =",constants.G)
     controller.Step(1200000)
     # now plot the orbit
     
