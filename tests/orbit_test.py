@@ -1,5 +1,5 @@
 from nidhoggr import *
-
+from math import sqrt
 class dumpState:
     def __init__(self,nodeList,workCycle=1,G=1):
         self.nodeList = nodeList
@@ -40,7 +40,8 @@ if __name__ == "__main__":
 
     norbits = 4
 
-    v0 = -0.4*8.7298e-4
+    v0 = -0.5*sqrt(constants.G*1/abs(pos.x))
+    #v0 = -0.4*8.7298e-4
     velocity = myNodeList.getFieldVector2d("velocity")
     velocity[0].y = v0
 
