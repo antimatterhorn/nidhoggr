@@ -8,6 +8,12 @@ class PhysicalConstants:
                unitTeK= "const double",
                unitCcou="const double"):
         return
+    
+    def pyinit1(self, 
+               unitLm="const double", 
+               unitMkg="const double", 
+               unitTsec="const double"):
+        return
 
     unitLengthMeters = PYB11property("double", getter="unitLengthMeters", doc="unitLengthMeters")
     unitMassKg = PYB11property("double", getter="unitMassKg", doc="unitMassKg")

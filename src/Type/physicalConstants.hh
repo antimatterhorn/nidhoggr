@@ -57,6 +57,10 @@ public:
             GGravity = GMKS / (mUnitLm * mUnitLm * mUnitLm / (mUnitMkg * mUnitTsec * mUnitTsec));
     }
 
+    PhysicalConstants(const double unitLm,
+                        const double unitMkg,
+                        const double unitTsec) : PhysicalConstants(unitLm,unitMkg,unitTsec,1.0,1.0) {}
+
     // The fundamental independent quantities.
     double unitLengthMeters() const { return mUnitLm; }
     double unitMassKg() const { return mUnitMkg; }

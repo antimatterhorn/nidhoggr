@@ -21,9 +21,8 @@ if __name__ == "__main__":
 
     constants = PhysicalConstants(6.378e+6,     # earth radius in m
                                   5.972e+24,    # earth mass in kg 
-                                  1.0,          # s
-                                  1.0, 
-                                  1.0) 
+                                  1.0          # s
+                                  ) 
     loc = Vector2d(0, 0)
 
     sourceGrav = PointSourceGravity2d(nodeList=myNodeList,

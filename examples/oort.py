@@ -39,9 +39,8 @@ if __name__ == "__main__":
 
     constants = PhysicalConstants(1.496e11,     # au m
                                   1.99e30,     # solar mass in  kg
-                                  3.156e7,          # year in s
-                                  1.0, 
-                                  1.0) 
+                                  3.156e7          # year in s
+                                  ) 
     print("G: ",constants.G)
     loc = Vector2d(0, 0)
     loc2 = Vector2d(60000,-500000)
