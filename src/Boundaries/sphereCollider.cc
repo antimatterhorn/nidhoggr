@@ -60,6 +60,7 @@ public:
                     positions->setValue(i,newPos);
                 }
             }
+            physics->PushState(state);
         }
         else
         {

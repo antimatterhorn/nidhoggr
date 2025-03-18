@@ -88,22 +88,30 @@ public:
 
     virtual void
     FinalizeStep(const State<dim>* finalState) override {
+        PushState(finalState);
+    }
+
+    virtual void
+    PushState(const State<dim>* stateToPush) override {
         NodeList* nodeList = this->nodeList;
         int numNodes = nodeList->size();
         State<dim> state = this->state;
 
-        VectorField* fposition       = finalState->template getField<Vector>("position");
-        VectorField* fvelocity       = finalState->template getField<Vector>("velocity");
-
-        VectorField* sposition       = state.template getField<Vector>("position");
-        VectorField* svelocity       = state.template getField<Vector>("velocity");
-
         VectorField* position       = nodeList->template getField<Vector>("position");
         VectorField* velocity       = nodeList->template getField<Vector>("velocity");
 
+        VectorField* fposition       = stateToPush->template getField<Vector>("position");
+        VectorField* fvelocity       = stateToPush->template getField<Vector>("velocity");
+
         position->copyValues(fposition);
         velocity->copyValues(fvelocity);
-        sposition->copyValues(fposition);
-        svelocity->copyValues(fvelocity);
+
+        if (stateToPush != &(state))
+        {
+            VectorField* sposition       = state.template getField<Vector>("position");
+            VectorField* svelocity       = state.template getField<Vector>("velocity");
+            sposition->copyValues(fposition);
+            svelocity->copyValues(fvelocity);
+        }
     }
 };

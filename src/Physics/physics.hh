@@ -40,6 +40,9 @@ public:
     FinalizeStep(const State<dim>* finalState) {};
 
     virtual void
+    PushState(const State<dim>* stateToPush) {};
+
+    virtual void
     VerifyFields(NodeList* nodeList) {
         int numNodes = nodeList->size();
         if (nodeList->mass() == nullptr)
