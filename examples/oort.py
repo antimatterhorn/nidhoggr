@@ -60,9 +60,9 @@ if __name__ == "__main__":
     integrator = RungeKutta4Integrator2d(packages=packages,
                                          dtmin=1e-3)
 
-    norbits = 4
-    v0 = 0.019    
+    norbits = 4 
     r0 = 120000
+    v0 = np.sqrt(cmass*constants.G/r0)
     t0 = 0
     p = v0**2/2 - constants.G*cmass/r0
     a = -constants.G * cmass / (2*p)
