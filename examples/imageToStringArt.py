@@ -7,8 +7,6 @@ commandLine = CommandLineArguments(lineWidth = 0.2,
                                    nailCount = 157,
                                    windings = 800)
 
-lineWidth = 0.2
-
 sa = StringArtPy(filename,nailCount=nailCount,windings=windings,width=lineWidth)
 
 i = 0

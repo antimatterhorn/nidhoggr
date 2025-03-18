@@ -54,7 +54,7 @@ public:
         mUnitTeK(unitTeK),
         mUnitCcou(unitCcou) {
             std::cout << "constants constructed" << std::endl;
-            GGravity = GMKS / (mUnitLm / mUnitMkg * pow(mUnitLm / mUnitTsec, 2.0));
+            GGravity = GMKS / (mUnitLm * mUnitLm * mUnitLm / (mUnitMkg * mUnitTsec * mUnitTsec));
     }
 
     // The fundamental independent quantities.

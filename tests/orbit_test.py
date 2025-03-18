@@ -19,8 +19,8 @@ class dumpState:
 if __name__ == "__main__":
     myNodeList = NodeList(1)
 
-    constants = PhysicalConstants(6.378e+6,     # earth mass in kg
-                                  5.972e+24,    # earth radius in m
+    constants = PhysicalConstants(6.378e+6,     # earth radius in m
+                                  5.972e+24,    # earth mass in kg 
                                   1.0,          # s
                                   1.0, 
                                   1.0) 

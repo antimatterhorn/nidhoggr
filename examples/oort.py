@@ -36,8 +36,8 @@ if __name__ == "__main__":
     
     myNodeList = NodeList(nComets)
 
-    constants = PhysicalConstants(1.99e30,     # solar mass in  kg
-                                  1.496e11,    # au m
+    constants = PhysicalConstants(1.496e11,     # au m
+                                  1.99e30,     # solar mass in  kg
                                   3.156e7,          # year in s
                                   1.0, 
                                   1.0) 
@@ -45,8 +45,6 @@ if __name__ == "__main__":
     loc = Vector2d(0, 0)
     loc2 = Vector2d(60000,-500000)
     vs   = Vector2d(0,0.1)
-    constants.setG(39.51)
-    print("G: ",constants.G)
 
     sourceGrav = PointSourceGravity2d(nodeList=myNodeList,
                                       constants=constants,
