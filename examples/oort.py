@@ -32,7 +32,8 @@ if __name__ == "__main__":
     commandLine = CommandLineArguments(nComets = 200,
                                        cmass = 1.0,
                                        mmass = 1.0,
-                                       norbits = 4)
+                                       norbits = 4,
+                                       cycles = 1200000)
     
     myNodeList = NodeList(nComets)
 
@@ -87,7 +88,7 @@ if __name__ == "__main__":
 
     controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=10000,tstop=norbits*torbit)
 
-    controller.Step(1200000)
+    controller.Step(cycles)
     # now plot the orbit
     
     import matplotlib.pyplot as plt

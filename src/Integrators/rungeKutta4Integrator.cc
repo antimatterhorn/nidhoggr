@@ -21,16 +21,8 @@ public:
         double time = this->time;
         double dt = this->dt;
 
-        for (Physics<dim>* physics : packages)
-            physics->PreStepInitialize();
-
-        std::vector<Boundaries<dim>*> boundaries = this->boundaries;
-        if(boundaries.size() > 0)
-            for(Boundaries<dim>* bounds : boundaries)
-                bounds->ApplyBoundaries(); 
-
-
-        for (Physics<dim>* physics : packages) {
+        for (Physics<dim>* physics : packages) 
+        {
             physics->PreStepInitialize();
             
             State<dim>* state = physics->getState();
@@ -73,9 +65,10 @@ public:
             physics->FinalizeStep(&newState);
         }
      
+        std::vector<Boundaries<dim>*> boundaries = this->boundaries;
         if(boundaries.size() > 0)
             for(Boundaries<dim>* bounds : boundaries)
-                bounds->ApplyBoundaries();
+                bounds->ApplyBoundaries(); 
 
         this->time += dt;
         this->cycle += 1;

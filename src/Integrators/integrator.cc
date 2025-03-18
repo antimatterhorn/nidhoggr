@@ -21,15 +21,7 @@ void Integrator<dim>::Step() {
     cycle += 1;
 
     for (Physics<dim>* physics : packages)
-        physics->PreStepInitialize();
-
-    if (!boundaries.empty()) {
-        for (Boundaries<dim>* bounds : boundaries) {
-            bounds->ApplyBoundaries();
-        }
-    }
-
-    for (Physics<dim>* physics : packages) {
+    {
         physics->PreStepInitialize();
         
         State<dim>* state = physics->getState();
