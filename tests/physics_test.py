@@ -35,7 +35,7 @@ if __name__ == "__main__":
 
     dump = dumpState(myNodeList,workCycle=1)
 
-    controller = Controller(integrator=integrator,periodicWork=[dump],statStep=1)
+    controller = Controller(integrator=integrator,periodicWork=[dump],statStep=10)
     controller.Step(cycles)
     
     import matplotlib.pyplot as plt
