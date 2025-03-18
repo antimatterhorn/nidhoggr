@@ -16,6 +16,7 @@ classDiagram
     Physics : FinalizeStep(State* finalState)
     class PointSourceGravity{
         +Vector pointSourceLocation
+        +Vector pointSourceVelocity
         +double pointSourceMass
     }
     class ConstantGravity{
