@@ -20,14 +20,6 @@ public:
     using Vector=Lin::Vector<dim>;
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
-
-    BoxCollider(Physics<dim>* physics, Vector& position1, Vector& position2) : 
-        Collider<dim>(physics),
-        pos1(position1), pos2(position2){
-        nodeList = physics->getNodeList();
-        elasticity = 1.0;
-        findExtrema(); // this protects against foolishness
-    }
     
     BoxCollider(Physics<dim>* physics, Vector& position1, Vector& position2, double elasticity) : 
         Collider<dim>(physics),
@@ -38,6 +30,9 @@ public:
         findExtrema();
     }
 
+    BoxCollider(Physics<dim>* physics, Vector& position1, Vector& position2) : 
+        BoxCollider(physics,position1,position2,1.0) {}
+
     virtual ~BoxCollider() {}
 
     virtual void
@@ -45,8 +40,8 @@ public:
         Physics<dim>* physics   = this->physics;
         State<dim>* state       = physics->getState();
         int numNodes            = state->size();
-        VectorField* positions  = state->template getField<Vector>("position");
-        VectorField* velocities = state->template getField<Vector>("velocity");
+        VectorField* positions  = nodeList->getField<Vector>("position");
+        VectorField* velocities = nodeList->getField<Vector>("velocity");
         ScalarField* radii      = nodeList->getField<double>("radius");
         
         if (radii!= nullptr) {
@@ -63,7 +58,10 @@ public:
                     positions->setValue(i,newPos);
                 }
             }
-            physics->PushState(state);
+            //physics->PushState(state);
+            /* i'm changing boundaries to modify the nodeList directly for now rather than the state
+               this may not be a good idea for full generality, but at the moment, there is just a lot
+               of copying back and forth to and from the state and that incurs a cost. */
         }
         else
         {

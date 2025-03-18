@@ -20,13 +20,6 @@ public:
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
 
-    SphereCollider(Physics<dim>* physics, Vector& position, double radius) : 
-        Collider<dim>(physics),
-        position(position), radius(radius) {
-        nodeList = physics->getNodeList();
-        elasticity = 1.0;
-    }
-    
     SphereCollider(Physics<dim>* physics, Vector& position, double radius, double elasticity) : 
         Collider<dim>(physics),
         position(position), radius(radius), elasticity(elasticity) {
@@ -35,6 +28,10 @@ public:
             std::cerr << "elasticity > 1. was this intentional?" << std::endl;
     }
 
+    SphereCollider(Physics<dim>* physics, Vector& position, double radius) : 
+        SphereCollider(physics,position,radius,1.0) {}
+    
+
     virtual ~SphereCollider() {}
 
     virtual void
@@ -42,8 +39,8 @@ public:
         Physics<dim>* physics   = this->physics;
         State<dim>* state       = physics->getState();
         int numNodes            = state->size();
-        VectorField* positions  = state->template getField<Vector>("position");
-        VectorField* velocities = state->template getField<Vector>("velocity");
+        VectorField* positions  = nodeList->getField<Vector>("position");
+        VectorField* velocities = nodeList->getField<Vector>("velocity");
         ScalarField* radii      = nodeList->getField<double>("radius");
 
         if (radii!= nullptr) {
@@ -60,7 +57,10 @@ public:
                     positions->setValue(i,newPos);
                 }
             }
-            physics->PushState(state);
+            //physics->PushState(state);
+            /* i'm changing boundaries to modify the nodeList directly for now rather than the state
+               this may not be a good idea for full generality, but at the moment, there is just a lot
+               of copying back and forth to and from the state and that incurs a cost. */
         }
         else
         {

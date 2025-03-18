@@ -64,7 +64,7 @@ public:
                     Vector vij = vi-vj;
                     Vector rij = ri-rj;
 
-                    if (rij.magnitude() < (si+sj) && vij*rij<0) {
+                    if (rij.magnitude() < (si+sj) && vij*rij<0) { //collision
                         double mi = mass->getValue(i);
                         double mj = mass->getValue(j);
 
