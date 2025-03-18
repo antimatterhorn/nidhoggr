@@ -43,13 +43,14 @@ def AnimateScatter(bounds, stepper, positions, colliders, frames=100, interval=5
     plt.show()
 
 if __name__ == "__main__":
-    animate = True
-    
-    numNodes = 80
+    commandLine = CommandLineArguments(animate = True,
+                                       numNodes = 80,
+                                       g = -9.8)
+
 
     constants = MKS()
     myNodeList = NodeList(numNodes)
-    gravVec = Vector2d(0, -9.8)
+    gravVec = Vector2d(0, g)
 
     constantGravity = ConstantGravity2d(myNodeList, constants, gravVec)
     kinetics = Kinetics2d(myNodeList,constants)

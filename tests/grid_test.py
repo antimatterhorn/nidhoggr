@@ -1,11 +1,14 @@
 from nidhoggr import *
 
-nx = 5
-ny = 8
-dx = 0.1
-dy = 0.1
+commandLine = CommandLineArguments(nx = 5,
+                                   ny = 8,
+                                   dx = 0.1,
+                                   dy = 0.1,
+                                   ox = 0,
+                                   oy = 0)
 
-origin = Vector2d(0,0)
+
+origin = Vector2d(ox,oy)
 
 myGrid = Grid2d(nx,ny,dx,dy)
 myGrid.setOrigin(origin)

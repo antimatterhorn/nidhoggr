@@ -4,9 +4,8 @@ import matplotlib.pyplot as plt
 import random
 from nidhoggr import *
 
-method = "Fibonacci"
-
-n = 500
+commandLine = CommandLineArguments(method = "Fibonacci",
+                                   n = 500)
 
 fig = plt.figure()
 ax = fig.add_subplot(projection='3d')

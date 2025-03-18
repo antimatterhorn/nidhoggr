@@ -2,9 +2,14 @@ from nidhoggr import *
 from StringArtPy import *
 import matplotlib.pyplot as plt
 
+commandLine = CommandLineArguments(lineWidth = 0.2,
+                                   filename = "pi.png",
+                                   nailCount = 157,
+                                   windings = 800)
+
 lineWidth = 0.2
 
-sa = StringArtPy("pi.png",nailCount=157,windings=800,width=lineWidth)
+sa = StringArtPy(filename,nailCount=nailCount,windings=windings,width=lineWidth)
 
 i = 0
 # Initialize lists to store x and y coordinates for plotting

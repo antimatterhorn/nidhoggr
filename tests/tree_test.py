@@ -1,11 +1,11 @@
 from nidhoggr import *
 
-nx = 10
-ny = 10
-nz = 10
-dx = 0.1
-dy = 0.1
-dz = 0.1
+commandLine = CommandLineArguments(nx = 10,
+                                   ny = 10,
+                                   nz = 10,
+                                   dx = 0.1,
+                                   dy = 0.1,
+                                   dz = 0.1)
 
 nodeList = NodeList(nx*ny*nz)
 myGrid = Grid3d(nx,ny,nz,dx,dy,dz)

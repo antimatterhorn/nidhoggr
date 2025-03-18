@@ -30,12 +30,13 @@ if __name__ == "__main__":
     # ------------------------------------------------
     # Some problem setup conditions
     # ------------------------------------------------
-    animate = True
+    commandLine = CommandLineArguments(animate = True,
+                                        nx = 100,
+                                        ny = 100,
+                                        cs = 1.0)
+    
     constants = MKS()
-    nx = 100
-    ny = 100
-    cs = 1.0
-
+    
     # ------------------------------------------------
     # Create the nodelist and grid
     # ------------------------------------------------

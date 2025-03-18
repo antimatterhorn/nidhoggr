@@ -29,7 +29,11 @@ class dumpState:
 
 
 if __name__ == "__main__":
-    nComets = 200
+    commandLine = CommandLineArguments(nComets = 200,
+                                       cmass = 1.0,
+                                       mmass = 1.0,
+                                       norbits = 4)
+    
     myNodeList = NodeList(nComets)
 
     constants = PhysicalConstants(1.99e30,     # solar mass in  kg
@@ -41,8 +45,6 @@ if __name__ == "__main__":
     loc = Vector2d(0, 0)
     loc2 = Vector2d(60000,-500000)
     vs   = Vector2d(0,0.1)
-    cmass = 1.0
-    mmass = 1.0
     constants.setG(39.51)
     print("G: ",constants.G)
 
@@ -60,7 +62,6 @@ if __name__ == "__main__":
     integrator = RungeKutta4Integrator2d(packages=packages,
                                          dtmin=1e-3)
 
-    norbits = 4 
     r0 = 120000
     v0 = np.sqrt(cmass*constants.G/r0)
     t0 = 0

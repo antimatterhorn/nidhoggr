@@ -26,11 +26,14 @@ from Utilities import SiloDump
       
 
 if __name__ == "__main__":
-    animate = True
-    cycles = 20000
+    commandLine = CommandLineArguments(animate = True,
+                                       cycles = 20000,
+                                       nx = 100,
+                                       ny = 100)
+    
+
     constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
-    nx = 100
-    ny = nx
+
 
     myNodeList = NodeList(nx*ny)
     
