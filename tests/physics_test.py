@@ -42,7 +42,7 @@ if __name__ == "__main__":
     import numpy as np
 
     def theta(t):
-        return t**2
+        return 10.0*t**2 - 0.5*t**3
 
     theta_vec = np.vectorize(theta)
     t_values = np.linspace(0, cycles*dtmin, cycles*10)
@@ -52,11 +52,12 @@ if __name__ == "__main__":
     xs = t_values
     ys = theta_vec(t_values)
 
-    plt.plot(x_values, y_values, 'o')  
-    plt.plot(xs,ys)
+    plt.plot(x_values, y_values, 'o', label="simulated")  
+    plt.plot(xs,ys,label="analytic")
 
     plt.xlabel('t')
     plt.ylabel('y')
 
     plt.grid(True)
+    plt.legend()
     plt.show()

@@ -38,7 +38,7 @@ public:
 
     virtual void
     EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt) override {
-        // extremely simple ode, y(t) = t^2  -> y'=2*t
+        // extremely simple ode, y(t) = 10*t^2 - 1/2*t^3  -> y'=20*t - 3/2*t^2
 
         NodeList* nodeList = this->nodeList;
         PhysicalConstants constants = this->constants;
@@ -49,7 +49,7 @@ public:
 
         #pragma omp parallel for
         for (int i=0; i<numNodes ; ++i) {
-            dydt->setValue(i,2.0*(time+dt));
+            dydt->setValue(i,20.0*(time+dt) - 1.5*(time+dt)*(time+dt));
         }
     }
 
