@@ -93,10 +93,10 @@ if __name__ == "__main__":
     x_values, y_values = zip(*dump.dump)
 
     plt.plot(x_values, y_values, 'o',color="green")  
-    plt.plot(loc.x,loc.y,"o",color="red")
+    plt.plot(cmLoc.x,cmLoc.y,"o",color="red")
 
     time = controller.time
-    plt.plot([loc2.x,loc2.x+time*vs.x],[loc2.y,loc2.y+time*vs.y],'b-')
+    plt.plot([mmLoc.x,mmLoc.x+time*mmVel.x],[mmLoc.y,mmLoc.y+time*mmVel.y],'b-')
 
     plt.xlabel('x [AU]')
     plt.ylabel('y [AU]')

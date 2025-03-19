@@ -21,8 +21,18 @@ void Integrator<dim>::Step() {
     cycle += 1;
 
     for (Physics<dim>* physics : packages)
-    {
         physics->PreStepInitialize();
+
+    std::vector<Boundaries<dim>*> boundaries = this->boundaries;
+    if(boundaries.size() > 0)
+        for(Boundaries<dim>* bounds : boundaries)
+            bounds->ApplyBoundaries();
+    
+    for (Physics<dim>* physics : packages)
+        physics->PushState(physics->getState());
+
+    for (Physics<dim>* physics : packages)
+    {
         
         State<dim>* state = physics->getState();
         State<dim> derivatives(state->size());

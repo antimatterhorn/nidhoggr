@@ -28,9 +28,10 @@ public:
         if(boundaries.size() > 0)
             for(Boundaries<dim>* bounds : boundaries)
                 bounds->ApplyBoundaries();
-            
+
         for (Physics<dim>* physics : packages)
         {
+            physics->PreStepInitialize();
             State<dim>* state = physics->getState();
             State<dim> interim(state->size());
             State<dim> k1(state->size());
