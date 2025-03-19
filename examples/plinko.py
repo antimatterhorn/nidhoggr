@@ -76,7 +76,10 @@ if __name__ == "__main__":
     cbounds.append(BoxCollider2d(physics=constantGravity, position1=Vector2d(-11, 0), position2=Vector2d(-9.5,10), elasticity=1))
     cbounds.append(BoxCollider2d(physics=constantGravity, position1=Vector2d(9.5, 0), position2=Vector2d(11,10), elasticity=1))
 
-    integrator = RungeKutta2Integrator2d(packages=packages, dtmin=0.01, boundaries=cbounds)
+    for bound in cbounds:
+        kinetics.addBoundary(bound)
+
+    integrator = RungeKutta2Integrator2d(packages=packages, dtmin=0.01)
     print(integrator)
 
 

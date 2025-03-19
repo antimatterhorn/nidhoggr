@@ -56,14 +56,13 @@ if __name__ == "__main__":
 
     # Create boundaries
     pm = PeriodicGridBoundaries2d(grid=grid,physics=waveEqn)
-    pbounds = []
+    waveEqn.addBoundary(pm)
 
     # ------------------------------------------------
     # Create the integrator and assign packages to it
     # ------------------------------------------------
     integrator = RungeKutta4Integrator2d(packages=packages,
-                              dtmin=0.01,
-                              boundaries=pbounds)
+                              dtmin=0.01)
     print(integrator)
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
