@@ -4,6 +4,10 @@
 #include "../Math/vectorMath.hh"
 #include "../Type/physicalConstants.hh"
 #include "../State/state.hh"
+#include "../Boundaries/boundaries.hh"
+
+template <int dim>
+class Boundaries; // forward declaration
 
 template <int dim>
 class Physics {
@@ -12,6 +16,7 @@ protected:
     PhysicalConstants& constants;
     State<dim> state;
     double lastDt;
+    std::vector<std::unique_ptr<Boundaries<dim>>> boundaries;
 public:
     Physics(NodeList* nodeList, PhysicalConstants& constants) : 
         nodeList(nodeList), 
@@ -66,6 +71,11 @@ public:
 
     virtual double
     lastStep() const {return lastDt; }
+
+    virtual void
+    addBoundary(Boundaries<dim>* boundary){
+        boundaries.push_back(std::unique_ptr<Boundaries<dim>>(boundary));
+    }
 };
 
 #endif //PHYSICS_HH
