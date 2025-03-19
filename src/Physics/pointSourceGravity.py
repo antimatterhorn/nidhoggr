@@ -10,6 +10,12 @@ class PointSourceGravity(Physics):
                pointSourceVelocity="Lin::Vector<%(dim)s>&",
                pointSourceMass="double"):
         return
+    # def pyinit1(self,
+    #            nodeList="NodeList*",
+    #            constants="PhysicalConstants&",
+    #            pointSourceLocation="Lin::Vector<%(dim)s>&",
+    #            pointSourceMass="double"):
+    #     return
 
 PointSourceGravity1d = PYB11TemplateClass(PointSourceGravity,
                               template_parameters = ("1"),

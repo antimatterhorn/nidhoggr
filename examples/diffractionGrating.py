@@ -32,8 +32,7 @@ if __name__ == "__main__":
                                        ny = 100)
     
 
-    constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
-
+    constants = MKS()
 
     myNodeList = NodeList(nx*ny)
     

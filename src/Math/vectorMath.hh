@@ -17,6 +17,7 @@ public:
     Vector();
     Vector(std::initializer_list<double> init);
     Vector(std::array<double, dim> init);
+    Vector(std::vector<double> init);
 
     Vector<dim> add(const Vector<dim>& other) const;
     void fill(const double other);

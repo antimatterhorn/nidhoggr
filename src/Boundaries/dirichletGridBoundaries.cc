@@ -135,6 +135,7 @@ public:
     ApplyBoundaries() override {
         Physics<dim>* physics = this->physics;
         State<dim>* state = physics->getState();
+        NodeList* nodeList = physics->getNodeList();
         for (int i = 0; i < state->count(); ++i) {
             FieldBase* field = state->getFieldByIndex(i); // Get the field at index i
 

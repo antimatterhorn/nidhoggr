@@ -21,6 +21,8 @@ def CommandLineArguments(**kwargs):
             option = optparse.make_option(f"--{key}", type="int", default=value)
         elif isinstance(value, float):
             option = optparse.make_option(f"--{key}", type="float", default=value)
+        elif isinstance(value, tuple):
+            option = optparse.make_option(f"--{key}", type="tuple", default=value)
         else:
             option = optparse.make_option(f"--{key}", type="string", default=value)
         

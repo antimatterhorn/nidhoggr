@@ -37,6 +37,14 @@ public:
         std::cout << "point source mass: "<< pointSourceMass<<"\n";
     }
 
+    // PointSourceGravity(NodeList* nodeList,
+    //         PhysicalConstants& constants,
+    //         Vector& pointSourceLocation,
+    //         double pointSourceMass) :
+    //     PointSourceGravity(nodeList, constants, pointSourceLocation, Vector::zero(), pointSourceMass) {}
+    // This can't work since it has to be a pointer to a vector and nobody is holding it!
+
+    
     ~PointSourceGravity() {}
 
     virtual void

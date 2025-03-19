@@ -12,6 +12,8 @@ class Vector:
         return
     def pyinit3(self,x="double",y="double",z="double"):
         return
+    # def pyinit_tuple(self,init="tuple"):
+    #     return
     def __add__(self):
         return
     def __sub__(self):

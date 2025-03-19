@@ -37,25 +37,23 @@ if __name__ == "__main__":
     
     myNodeList = NodeList(nComets)
 
-    constants = PhysicalConstants(1.496e11,     # au m
-                                  1.99e30,     # solar mass in  kg
-                                  3.156e7          # year in s
-                                  ) 
+    constants = SOL() # sol units au,msun,yr
     print("G: ",constants.G)
-    loc = Vector2d(0, 0)
-    loc2 = Vector2d(60000,-500000)
-    vs   = Vector2d(0,0.1)
+
+    cmLoc = Vector2d(0,0)
+    mmLoc = Vector2d(60000,-500000)
+    mmVel = Vector2d(0,0.1)
 
     sourceGrav = PointSourceGravity2d(nodeList=myNodeList,
                                       constants=constants,
-                                      pointSourceLocation=loc,
+                                      pointSourceLocation=cmLoc,
                                       pointSourceMass=cmass,
                                       pointSourceVelocity = Vector2d(0,0))
     movingGrav = PointSourceGravity2d(nodeList=myNodeList,
                                       constants=constants,
-                                      pointSourceLocation=loc2,
+                                      pointSourceLocation=mmLoc,
                                       pointSourceMass=mmass,
-                                      pointSourceVelocity = vs)
+                                      pointSourceVelocity = mmVel)
     packages = [movingGrav,sourceGrav]
     integrator = RungeKutta4Integrator2d(packages=packages,
                                          dtmin=1e-3)

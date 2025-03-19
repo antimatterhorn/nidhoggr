@@ -26,6 +26,14 @@ Vector<dim>::Vector(std::array<double, dim> init) {
 }
 
 template <int dim>
+Vector<dim>::Vector(std::vector<double> init) {
+    if (init.size() != dim) {
+        throw std::invalid_argument("Invalid number of elements for Vector constructor");
+    }
+    std::copy(init.begin(), init.end(), values.begin());
+}
+
+template <int dim>
 Vector<dim> Vector<dim>::add(const Vector<dim>& other) const {
     Vector<dim> result;
     for (int i = 0; i < dim; ++i) {
