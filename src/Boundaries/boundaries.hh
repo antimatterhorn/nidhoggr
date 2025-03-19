@@ -13,10 +13,7 @@ class Boundaries {
 protected:
     Physics<dim>* physics;
 public:
-    Boundaries(Physics<dim>* physics) : 
-        physics(physics) {
-
-    }
+    Boundaries(Physics<dim>* physics) : physics(physics) {}
     
     virtual ~Boundaries() {}
 

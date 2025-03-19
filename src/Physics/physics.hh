@@ -25,7 +25,9 @@ public:
         VerifyFields(nodeList);
     }
 
-    virtual ~Physics() {}
+    virtual ~Physics() {
+        boundaries.clear();
+    }
 
     virtual void
     ZeroTimeInitialize() {}
