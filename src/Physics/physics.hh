@@ -76,6 +76,12 @@ public:
     addBoundary(Boundaries<dim>* boundary){
         boundaries.push_back(std::unique_ptr<Boundaries<dim>>(boundary));
     }
+
+    virtual void
+    ApplyBoundaries() {
+        for (const auto& boundary : boundaries)
+           boundary->ApplyBoundaries();
+    }
 };
 
 #endif //PHYSICS_HH

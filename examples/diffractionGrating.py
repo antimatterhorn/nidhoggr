@@ -60,11 +60,11 @@ if __name__ == "__main__":
         y = dy*(i+1)
         box.addSphere(Vector2d(x,y),2)
 
-    pbounds = [pm,box]
+    waveEqn.addBoundary(pm)
+    waveEqn.addBoundary(box)
 
     integrator = RungeKutta2Integrator2d(packages=packages,
-                              dtmin=0.05,
-                              boundaries=pbounds)
+                              dtmin=0.05)
     print(integrator)
 
     print("numNodes =",myNodeList.numNodes)

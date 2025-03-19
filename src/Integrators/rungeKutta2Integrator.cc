@@ -5,8 +5,8 @@ class RungeKutta2Integrator : public Integrator<dim> {
 protected:
 
 public:
-    RungeKutta2Integrator(std::vector<Physics<dim>*> packages, double dtmin, std::vector<Boundaries<dim>*> boundaries) : 
-        Integrator<dim>(packages,dtmin,boundaries) {}
+    RungeKutta2Integrator(std::vector<Physics<dim>*> packages, double dtmin) : 
+        Integrator<dim>(packages,dtmin) {}
 
     ~RungeKutta2Integrator() {}
 
@@ -22,15 +22,10 @@ public:
         double time = this->time;
 
         for (Physics<dim>* physics : packages)
-            physics->PreStepInitialize();
-
-        std::vector<Boundaries<dim>*> boundaries = this->boundaries;
-        if(boundaries.size() > 0)
-            for(Boundaries<dim>* bounds : boundaries)
-                bounds->ApplyBoundaries();
-
-        for (Physics<dim>* physics : packages)
         {
+            physics->PreStepInitialize();
+            physics->ApplyBoundaries();
+
             State<dim>* state = physics->getState();
             State<dim> interim(state->size());
             State<dim> k1(state->size());
@@ -55,12 +50,9 @@ public:
             k1 *= 0.5*dt;
             newState += k1;
 
+            physics->ApplyBoundaries();
             physics->FinalizeStep(&newState);
         }
-
-        if(boundaries.size() > 0)
-            for(Boundaries<dim>* bounds : boundaries)
-                bounds->ApplyBoundaries();
 
         this->time += this->dt;
         this->cycle += 1;

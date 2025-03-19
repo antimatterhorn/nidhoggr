@@ -14,12 +14,11 @@ template <int dim>
 class Integrator {
 protected:
     std::vector<Physics<dim>*> packages;
-    std::vector<Boundaries<dim>*> boundaries;
     unsigned int cycle;
     double time, dt, dtmin;
 
 public:
-    Integrator(std::vector<Physics<dim>*> packages, double dtmin, std::vector<Boundaries<dim>*> boundaries);
+    Integrator(std::vector<Physics<dim>*> packages, double dtmin);
     ~Integrator();
 
     virtual void Step();

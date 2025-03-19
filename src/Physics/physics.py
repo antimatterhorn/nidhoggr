@@ -6,6 +6,9 @@ class Physics:
                nodeList="NodeList*",
                constants="PhysicalConstants&"):
         return
+    def addBoundary(self,
+                    boundary="Boundaries<dim>*"):
+        return
     
 Physics1d = PYB11TemplateClass(Physics,
                               template_parameters = ("1"),
