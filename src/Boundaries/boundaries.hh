@@ -15,7 +15,10 @@ protected:
 public:
     Boundaries(Physics<dim>* physics) : physics(physics) {}
     
-    virtual ~Boundaries() {}
+    virtual ~Boundaries() {
+        std::cout << "Destroying Boundaries" << std::endl;
+        physics = nullptr;
+    }
 
     virtual void
     ApplyBoundaries() {}

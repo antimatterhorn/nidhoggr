@@ -26,6 +26,7 @@ public:
     }
 
     virtual ~Physics() {
+        std::cout << "Destroying Physics" << std::endl;
         boundaries.clear();
     }
 

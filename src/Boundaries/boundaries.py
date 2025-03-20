@@ -1,9 +1,11 @@
 from PYB11Generator import *
 
+@PYB11holder("std::unique_ptr")
 @PYB11template("dim")
 class Boundaries:
     def pyinit(self,physics="Physics<%(dim)s>*"):
         return
+    PYB11keepalive(1, 2) # Keep Boundaries (1) alive as long as Physics (2) exists
     
 Boundaries1d = PYB11TemplateClass(Boundaries,
                               template_parameters = ("1"),

@@ -1,6 +1,7 @@
 from PYB11Generator import *
 from boundaries import *
 
+@PYB11holder("std::unique_ptr")
 @PYB11template("dim")
 class Collider(Boundaries):
     def pyinit(self,physics="Physics<%(dim)s>*"):
