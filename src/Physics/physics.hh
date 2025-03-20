@@ -83,7 +83,7 @@ public:
     virtual void
     ApplyBoundaries() {
         for (const auto& boundary : boundaries)
-           boundary->ApplyBoundaries();
+           boundary->ApplyBoundaries(state,nodeList);
     }
 };
 

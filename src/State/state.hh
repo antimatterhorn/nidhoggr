@@ -10,6 +10,7 @@ class State {
 private:   
     std::vector<std::shared_ptr<FieldBase>> fields;
     int numNodes;
+    double lastDt;
 public:
     State(int numNodes) : 
         numNodes(numNodes) { };
@@ -243,6 +244,12 @@ public:
         }
 
     }
+
+    void
+    updateLastDt(const double dt) { lastDt = dt;}
+
+    double
+    getLastDt() { return lastDt;}
 };
 
 

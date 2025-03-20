@@ -1,6 +1,5 @@
 from PYB11Generator import *
 
-@PYB11holder("std::unique_ptr")
 @PYB11template("dim")
 class Boundaries:
     def pyinit(self):

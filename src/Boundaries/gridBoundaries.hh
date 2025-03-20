@@ -12,8 +12,7 @@ class GridBoundaries : public Boundaries<dim> {
 protected:
     Mesh::Grid<dim>* grid;
 public:
-    GridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics) : 
-        Boundaries<dim>(physics),
+    GridBoundaries(Mesh::Grid<dim>* grid) : 
         grid(grid) {}
     
     virtual ~GridBoundaries() {}

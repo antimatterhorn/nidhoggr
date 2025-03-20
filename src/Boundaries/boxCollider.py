@@ -1,7 +1,6 @@
 from PYB11Generator import *
 from collider import *
 
-@PYB11holder("std::unique_ptr")
 @PYB11template("dim")
 class BoxCollider(Collider):
     def pyinit(self,position1="Lin::Vector<%(dim)s>&",

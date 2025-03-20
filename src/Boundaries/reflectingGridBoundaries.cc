@@ -11,15 +11,15 @@ public:
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
 
-    ReflectingGridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics) : 
-        GridBoundaries<dim>(grid,physics) {
+    ReflectingGridBoundaries(Mesh::Grid<dim>* grid) : 
+        GridBoundaries<dim>(grid) {
         
     }
     
     virtual ~ReflectingGridBoundaries() {}
 
     virtual void
-    ApplyBoundaries() override {
+    ApplyBoundaries(State<dim>& state, NodeList* nodeList) override {
 
     }
 };

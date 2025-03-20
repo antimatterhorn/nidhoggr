@@ -12,8 +12,8 @@ public:
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
 
-    OutflowGridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics) : 
-        GridBoundaries<dim>(grid,physics) {
+    OutflowGridBoundaries(Mesh::Grid<dim>* grid) : 
+        GridBoundaries<dim>(grid) {
         if (dim == 1) {
             std::vector<int> leftIds = grid->leftMost();  
             std::vector<int> leftcol;
@@ -121,21 +121,19 @@ public:
         }
     }
 
-    OutflowGridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics, std::string derivative) : 
-        OutflowGridBoundaries<dim>(grid,physics){
+    OutflowGridBoundaries(Mesh::Grid<dim>* grid, std::string derivative) : 
+        OutflowGridBoundaries<dim>(grid){
         derivFieldName = derivative;
     }
     
     virtual ~OutflowGridBoundaries() {}
 
     virtual void
-    ApplyBoundaries() override {
+    ApplyBoundaries(State<dim>& state, NodeList* nodeList) override {
         Mesh::Grid<dim>* grid = this->grid;
-        Physics<dim>* physics = this->physics;
-        State<dim>* state = physics->getState();
 
-        for (int i = 0; i < state->count(); ++i) {
-            FieldBase* field = state->getFieldByIndex(i); // Get the field at index i
+        for (int i = 0; i < state.count(); ++i) {
+            FieldBase* field = state.getFieldByIndex(i); // Get the field at index i
             if (typeid(*field) == typeid(ScalarField)) {
                 ScalarField* doubleField = dynamic_cast<ScalarField*>(field);
                 if (doubleField) {
@@ -150,8 +148,8 @@ public:
         }
 
         if (!derivFieldName.empty()) {
-            for (int i = 0; i < state->count(); ++i) {
-                FieldBase* field = state->getFieldByIndex(i);
+            for (int i = 0; i < state.count(); ++i) {
+                FieldBase* field = state.getFieldByIndex(i);
                 if (field->getNameString() == derivFieldName) {
                     if (typeid(*field) == typeid(ScalarField)) {
                         ScalarField* doubleField = dynamic_cast<ScalarField*>(field);

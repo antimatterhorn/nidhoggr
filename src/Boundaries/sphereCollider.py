@@ -1,15 +1,12 @@
 from PYB11Generator import *
 from collider import *
 
-@PYB11holder("std::unique_ptr")
 @PYB11template("dim")
 class SphereCollider(Collider):
-    def pyinit(self,physics="Physics<%(dim)s>*",
-                    position="Lin::Vector<%(dim)s>&",
+    def pyinit(self,position="Lin::Vector<%(dim)s>&",
                     radius="double"):
         return
-    def pyinit2(self,physics="Physics<%(dim)s>*",
-                    position="Lin::Vector<%(dim)s>&",
+    def pyinit2(self,position="Lin::Vector<%(dim)s>&",
                     radius="double",
                     elasticity="double"):
         return

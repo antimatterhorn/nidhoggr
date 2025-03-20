@@ -3,7 +3,7 @@ from boundaries import *
 
 @PYB11template("dim")
 class GridBoundaries(Boundaries):
-    def pyinit(self,grid="Mesh::Grid<%(dim)s>*",physics="Physics<%(dim)s>*"):
+    def pyinit(self,grid="Mesh::Grid<%(dim)s>*"):
         return
     
 GridBoundaries1d = PYB11TemplateClass(GridBoundaries,

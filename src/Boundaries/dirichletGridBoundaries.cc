@@ -20,8 +20,8 @@ public:
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
 
-    DirichletGridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics) : 
-        GridBoundaries<dim>(grid,physics),
+    DirichletGridBoundaries(Mesh::Grid<dim>* grid) : 
+        GridBoundaries<dim>(grid),
         grid(grid) {}
     
     virtual ~DirichletGridBoundaries() {}
@@ -132,12 +132,9 @@ public:
     }
 
     virtual void
-    ApplyBoundaries() override {
-        Physics<dim>* physics = this->physics;
-        State<dim>* state = physics->getState();
-        NodeList* nodeList = physics->getNodeList();
-        for (int i = 0; i < state->count(); ++i) {
-            FieldBase* field = state->getFieldByIndex(i); // Get the field at index i
+    ApplyBoundaries(State<dim>& state, NodeList* nodeList) override {
+        for (int i = 0; i < state.count(); ++i) {
+            FieldBase* field = state.getFieldByIndex(i); // Get the field at index i
 
             if (dynamic_cast<ScalarField*>(field) != nullptr) {
                 ScalarField* doubleField = dynamic_cast<ScalarField*>(field);

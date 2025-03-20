@@ -11,8 +11,8 @@ public:
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
     
-    PeriodicGridBoundaries(Mesh::Grid<dim>* grid, Physics<dim>* physics) : 
-        GridBoundaries<dim>(grid,physics) {
+    PeriodicGridBoundaries(Mesh::Grid<dim>* grid) : 
+        GridBoundaries<dim>(grid) {
         if (dim == 1) {
             std::vector<int> leftIds = grid->leftMost();  
             std::vector<int> leftcol;
@@ -130,13 +130,11 @@ public:
     
     virtual ~PeriodicGridBoundaries() {}
     virtual void
-    ApplyBoundaries() override {
+    ApplyBoundaries(State<dim>& state, NodeList* nodeList) override {
         Mesh::Grid<dim>* grid = this->grid;
-        Physics<dim>* physics = this->physics;
-        State<dim>* state = physics->getState();
 
-        for (int i = 0; i < state->count(); ++i) {
-            FieldBase* field = state->getFieldByIndex(i); // Get the field at index i
+        for (int i = 0; i < state.count(); ++i) {
+            FieldBase* field = state.getFieldByIndex(i); // Get the field at index i
             if (typeid(*field) == typeid(ScalarField)) {
                 ScalarField* doubleField = dynamic_cast<ScalarField*>(field);
                 if (doubleField) {

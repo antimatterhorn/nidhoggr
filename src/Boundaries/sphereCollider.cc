@@ -7,7 +7,6 @@
 template <int dim>
 class SphereCollider : public Collider<dim> {
 protected:
-    NodeList* nodeList;
     Lin::Vector<dim> position;
     double radius,elasticity;
 
@@ -20,25 +19,21 @@ public:
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
 
-    SphereCollider(Physics<dim>* physics, Vector& position, double radius, double elasticity) : 
-        Collider<dim>(physics),
+    SphereCollider(Vector& position, double radius, double elasticity) : 
         position(position), radius(radius), elasticity(elasticity) {
-        nodeList = physics->getNodeList();
         if (elasticity > 1.0)
             std::cerr << "elasticity > 1. was this intentional?" << std::endl;
     }
 
-    SphereCollider(Physics<dim>* physics, Vector& position, double radius) : 
-        SphereCollider(physics,position,radius,1.0) {}
+    SphereCollider(Vector& position, double radius) : 
+        SphereCollider(position,radius,1.0) {}
     
 
     virtual ~SphereCollider() {}
 
     virtual void
-    ApplyBoundaries() override {  
-        Physics<dim>* physics   = this->physics;
-        State<dim>* state       = physics->getState();
-        int numNodes            = state->size();
+    ApplyBoundaries(State<dim>& state, NodeList* nodeList) override {  
+        int numNodes            = state.size();
         VectorField* positions  = nodeList->getField<Vector>("position");
         VectorField* velocities = nodeList->getField<Vector>("velocity");
         ScalarField* radii      = nodeList->getField<double>("radius");
