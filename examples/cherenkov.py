@@ -55,7 +55,7 @@ if __name__ == "__main__":
     packages = [waveEqn]
 
     # Create boundaries
-    pm = PeriodicGridBoundaries2d(grid=grid,physics=waveEqn)
+    pm = PeriodicGridBoundaries2d(grid=grid)
     waveEqn.addBoundary(pm)
 
     # ------------------------------------------------

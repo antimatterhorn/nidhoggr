@@ -69,12 +69,12 @@ if __name__ == "__main__":
         for j in range(num_colliders):
             x = (j - num_colliders // 2) * spacing_x + offset
             y = 2 + i * spacing_y  # Start from y=2 and span to y=8
-            cbounds.append(SphereCollider2d(physics=constantGravity, position=Vector2d(x, y), radius=collider_radius, elasticity=0.8))
+            cbounds.append(SphereCollider2d(position=Vector2d(x, y), radius=collider_radius, elasticity=0.8))
             colliders.append((x, y))
 
-    cbounds.append(BoxCollider2d(physics=constantGravity, position1=Vector2d(-10, -3), position2=Vector2d(10.5,1), elasticity=0.5))
-    cbounds.append(BoxCollider2d(physics=constantGravity, position1=Vector2d(-11, 0), position2=Vector2d(-9.5,10), elasticity=1))
-    cbounds.append(BoxCollider2d(physics=constantGravity, position1=Vector2d(9.5, 0), position2=Vector2d(11,10), elasticity=1))
+    cbounds.append(BoxCollider2d(position1=Vector2d(-10, -3), position2=Vector2d(10.5,1), elasticity=0.5))
+    cbounds.append(BoxCollider2d(position1=Vector2d(-11, 0), position2=Vector2d(-9.5,10), elasticity=1))
+    cbounds.append(BoxCollider2d(position1=Vector2d(9.5, 0), position2=Vector2d(11,10), elasticity=1))
 
     for bound in cbounds:
         kinetics.addBoundary(bound)

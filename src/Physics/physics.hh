@@ -16,7 +16,7 @@ protected:
     PhysicalConstants& constants;
     State<dim> state;
     double lastDt;
-    std::vector<std::unique_ptr<Boundaries<dim>>> boundaries;
+    std::vector<Boundaries<dim>*> boundaries;
 public:
     Physics(NodeList* nodeList, PhysicalConstants& constants) : 
         nodeList(nodeList), 
@@ -26,7 +26,6 @@ public:
     }
 
     virtual ~Physics() {
-        std::cout << "Destroying Physics" << std::endl;
         boundaries.clear();
     }
 
@@ -42,6 +41,7 @@ public:
         NodeList* nodeList = this->nodeList;
 
         state.updateFields(nodeList);
+        state.updateLastDt(lastDt);
     };
 
     virtual void
@@ -77,13 +77,14 @@ public:
 
     virtual void
     addBoundary(Boundaries<dim>* boundary){
-        boundaries.push_back(std::unique_ptr<Boundaries<dim>>(boundary));
+        boundaries.push_back(boundary);
     }
 
     virtual void
     ApplyBoundaries() {
-        for (const auto& boundary : boundaries)
-           boundary->ApplyBoundaries(state,nodeList);
+        if(boundaries.size() > 0)
+            for (const auto& boundary : boundaries)
+                boundary->ApplyBoundaries(state,nodeList);
     }
 };
 

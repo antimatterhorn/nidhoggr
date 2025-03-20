@@ -59,8 +59,7 @@ if __name__ == "__main__":
     packages = [waveEqn]
 
     integrator = RungeKutta2Integrator2d(packages=packages,
-                              dtmin=0.0001,
-                              boundaries=[])
+                              dtmin=0.0001)
     print(integrator)
 
     print("numNodes =",myNodeList.numNodes)

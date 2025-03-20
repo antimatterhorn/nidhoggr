@@ -15,9 +15,7 @@ protected:
 public:
     Boundaries() {}
     
-    virtual ~Boundaries() {
-        std::cout << "Destroying Boundaries" << std::endl;
-    }
+    virtual ~Boundaries() {}
 
     virtual void
     ApplyBoundaries(State<dim>& state, NodeList* nodeList) {}

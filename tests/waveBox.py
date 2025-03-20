@@ -58,16 +58,16 @@ if __name__ == "__main__":
 
     packages = [waveEqn]
 
-    box = DirichletGridBoundaries2d(grid=grid,physics=waveEqn)
+    box = DirichletGridBoundaries2d(grid=grid)
     box.addBox(Vector2d(int(nx/5),int(ny/5)),Vector2d(int(4*nx/5),int(4*ny/5)))
     box.removeBox(Vector2d(int(nx/5)+5,int(ny/5)+5),Vector2d(int(4*nx/5)-5,int(4*ny/5)-5))
     box.removeBox(Vector2d(0,int(ny/2)-5),Vector2d(nx,int(ny/2)+5))
     box.addDomain()
-    pbounds = [box]
+
+    waveEqn.addBoundary(box)
 
     integrator = RungeKutta2Integrator2d(packages=packages,
-                              dtmin=0.05,
-                              boundaries=pbounds)
+                              dtmin=0.05)
     print(integrator)
 
     print("numNodes =",myNodeList.numNodes)
