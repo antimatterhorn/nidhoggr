@@ -11,8 +11,7 @@ class Collider : public Boundaries<dim> {
 protected:
 
 public:
-    Collider(Physics<dim>* physics) : 
-        Boundaries<dim>(physics){}
+    Collider(){}
     
     virtual ~Collider() {}
 

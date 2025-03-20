@@ -11,17 +11,16 @@ class Physics;
 template <int dim>
 class Boundaries {
 protected:
-    Physics<dim>* physics;
+
 public:
-    Boundaries(Physics<dim>* physics) : physics(physics) {}
+    Boundaries() {}
     
     virtual ~Boundaries() {
         std::cout << "Destroying Boundaries" << std::endl;
-        physics = nullptr;
     }
 
     virtual void
-    ApplyBoundaries() {}
+    ApplyBoundaries(State<dim>& state, NodeList* nodeList) {}
 
 };
 

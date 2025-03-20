@@ -21,24 +21,21 @@ public:
     using VectorField = Field<Vector>;
     using ScalarField = Field<double>;
     
-    BoxCollider(Physics<dim>* physics, Vector& position1, Vector& position2, double elasticity) : 
-        Collider<dim>(physics),
+    BoxCollider(Vector& position1, Vector& position2, double elasticity) : 
         pos1(position1), pos2(position2), elasticity(elasticity) {
-        nodeList = physics->getNodeList();
+
         if (elasticity > 1.0)
             std::cerr << "elasticity > 1. was this intentional?" << std::endl;
         findExtrema();
     }
 
-    BoxCollider(Physics<dim>* physics, Vector& position1, Vector& position2) : 
-        BoxCollider(physics,position1,position2,1.0) {}
+    BoxCollider(Vector& position1, Vector& position2) : 
+        BoxCollider(position1,position2,1.0) {}
 
     virtual ~BoxCollider() {}
 
     virtual void
-    ApplyBoundaries() override {  
-        Physics<dim>* physics   = this->physics;
-        State<dim>* state       = physics->getState();
+    ApplyBoundaries(State<dim>& state, NodeList* nodeList) override {  
         int numNodes            = state->size();
         VectorField* positions  = nodeList->getField<Vector>("position");
         VectorField* velocities = nodeList->getField<Vector>("velocity");

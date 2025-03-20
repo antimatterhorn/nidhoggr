@@ -4,13 +4,11 @@ from collider import *
 @PYB11holder("std::unique_ptr")
 @PYB11template("dim")
 class BoxCollider(Collider):
-    def pyinit(self,physics="Physics<%(dim)s>*",
-                    position1="Lin::Vector<%(dim)s>&",
+    def pyinit(self,position1="Lin::Vector<%(dim)s>&",
                     position2="Lin::Vector<%(dim)s>&",
                     radius="double"):
         return
-    def pyinit2(self,physics="Physics<%(dim)s>*",
-                    position1="Lin::Vector<%(dim)s>&",
+    def pyinit2(self,position1="Lin::Vector<%(dim)s>&",
                     position2="Lin::Vector<%(dim)s>&",
                     elasticity="double"):
         return
