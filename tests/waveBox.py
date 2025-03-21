@@ -34,15 +34,19 @@ class SpkOscillator:
         idx = self.grid.index(i,j,0)
         self.phi.setValue(idx,a)
 
-from Utilities import Microphone,Speaker,SiloDump 
+from Utilities import HarmonicOscillator,SiloDump 
 
 if __name__ == "__main__":
-    animate = False
-    dump = False
-    cycles = 120000
-    constants = PhysicalConstants(1,1,1.0,1.0,1.0) 
-    nx = 100
-    ny = nx
+    commandLine = CommandLineArguments(animate = True,
+                                       dump = False,
+                                       cycles = 120000,
+                                       nx = 100,
+                                       ny = 100,
+                                       cs = 1.0,
+                                       frequency = 500.0,
+                                       amplitude  = 1.0)
+    
+    constants = MKS()
 
     myNodeList = NodeList(nx*ny)
     
@@ -52,7 +56,7 @@ if __name__ == "__main__":
 
     waveEqn = WaveEquation2d(nodeList=myNodeList,
                              constants=constants,
-                             grid=grid,C=1.0)
+                             grid=grid,C=cs)
 
     print(waveEqn)
 
@@ -66,18 +70,16 @@ if __name__ == "__main__":
 
     waveEqn.addBoundary(box)
 
-    integrator = RungeKutta2Integrator2d(packages=packages,
-                              dtmin=0.05)
+    integrator = RungeKutta4Integrator2d(packages=packages,dtmin=0.05)
     print(integrator)
 
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
     #osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
-    spk = Speaker(filename="CantinaBand.wav")
+    spk = HarmonicOscillator(frequency=frequency,amplitude=amplitude)
     osc = SpkOscillator(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1,speaker=spk)
-    mic = Microphone(nodeList=myNodeList,grid=grid,i=90,j=90,filename='mic.wav')
-    periodicWork = [osc,mic]
+    periodicWork = [osc]
     if(dump):
         silo = SiloDump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=50)
         periodicWork.append(silo)
@@ -94,8 +96,6 @@ if __name__ == "__main__":
                                                 stepper=controller.Step,
                                                 title=title,
                                                 fieldName="phi")
-        AnimateGrid2d(bounds,update_method,extremis=[-5,5],frames=cycles)
+        AnimateGrid2d(bounds,update_method,extremis=[-500,500],frames=cycles)
     else:
         controller.Step(cycles)
-
-    mic.update_wav_header()

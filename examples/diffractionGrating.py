@@ -62,7 +62,7 @@ if __name__ == "__main__":
     waveEqn.addBoundary(pm)
     waveEqn.addBoundary(box)
 
-    integrator = RungeKutta2Integrator2d(packages=packages,
+    integrator = RungeKutta4Integrator2d(packages=packages,
                               dtmin=0.05)
     print(integrator)
 

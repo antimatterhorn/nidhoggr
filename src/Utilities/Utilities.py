@@ -104,6 +104,13 @@ class Speaker:
         # Return the audio sample at the calculated frame index
         return self.audio_data[frame_index]
 
+class HarmonicOscillator:
+    def __init__(self, frequency, amplitude):
+        self.frequency = frequency
+        self.amplitude = amplitude
+    def get_output(self, time):
+        return self.amplitude*np.sin(2*np.pi*self.frequency*time)
+
 class SiloDump:
     def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
         self.meshWriter = SiloMeshWriter2d(baseName="waveBox",nodeList=nodeList,fieldNames=["phi","xi"])
