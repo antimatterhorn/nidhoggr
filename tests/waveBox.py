@@ -96,6 +96,6 @@ if __name__ == "__main__":
                                                 stepper=controller.Step,
                                                 title=title,
                                                 fieldName="phi")
-        AnimateGrid2d(bounds,update_method,extremis=[-5,5],frames=cycles)
+        AnimateGrid2d(bounds,update_method,extremis=[-3,3],frames=cycles,cmap="plasma")
     else:
         controller.Step(cycles)

@@ -157,4 +157,9 @@ public:
             }
         }
     }
+
+    virtual std::vector<int> 
+    boundaryIds() {
+        return ids;
+    }
 };

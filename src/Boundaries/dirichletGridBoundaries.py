@@ -15,6 +15,8 @@ class DirichletGridBoundaries(GridBoundaries):
         return
     def addDomain(self):
         return
+    def boundaryIds(self):
+        return "std::vector<int>"
     
 DirichletGridBoundaries1d = PYB11TemplateClass(DirichletGridBoundaries,
                               template_parameters = ("1"),
