@@ -12,31 +12,40 @@ def CommandLineArguments(**kwargs):
         dict: A dictionary with parsed command-line arguments.
     """
     option_list = []
-    
+
     # Infer types and create options dynamically
     for key, value in kwargs.items():
         if isinstance(value, bool):
-            option = optparse.make_option(f"--{key}", action="store_true" if not value else "store_false", default=value)
+            # Treat booleans as strings and convert manually later
+            option = optparse.make_option(f"--{key}", type="string", default=str(value))
         elif isinstance(value, int):
             option = optparse.make_option(f"--{key}", type="int", default=value)
         elif isinstance(value, float):
             option = optparse.make_option(f"--{key}", type="float", default=value)
         elif isinstance(value, tuple):
-            option = optparse.make_option(f"--{key}", type="tuple", default=value)
+            option = optparse.make_option(f"--{key}", type="string", default=str(value))
         else:
             option = optparse.make_option(f"--{key}", type="string", default=value)
-        
+
         option_list.append(option)
 
-    # Create parser and add options
     parser = optparse.OptionParser()
     parser.add_options(option_list)
 
-    # Parse the arguments
     options, _ = parser.parse_args()
     parsed_args = vars(options)
 
-    # Inject parsed variables into the calling function's local scope
+    # Manually convert booleans and tuples
+    for key, value in parsed_args.items():
+        if isinstance(kwargs.get(key), bool):
+            parsed_args[key] = value.lower() in ("true", "1", "yes", "on")
+        elif isinstance(kwargs.get(key), tuple):
+            try:
+                parsed_args[key] = eval(value)
+            except:
+                parsed_args[key] = kwargs[key]  # fallback
+
+    # Inject into caller's local scope
     frame = inspect.currentframe().f_back
     frame.f_locals.update(parsed_args)
 

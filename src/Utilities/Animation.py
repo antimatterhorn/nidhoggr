@@ -28,11 +28,11 @@ def AnimateGrid2d(bounds, update_method, threeColors=False, frames=100, interval
             ax.clear()
 
             # Generate RGB values for each cell
-            rgb_grid = np.zeros((nx * scale, ny * scale, 3))
+            rgb_grid = np.zeros((ny * scale, nx * scale))
 
             for j in range(ny * scale):
                 for i in range(nx * scale):
-                    rgb_grid[i, j] = update_method(i % nx, j % ny)
+                    rgb_grid[j,i] = update_method(i % nx, j % ny)
             # Plot the grid
             ax.imshow(rgb_grid, origin='lower', extent=[0, nx * scale, 0, ny * scale], interpolation='nearest')
             ax.set_title(update_method.module_title())
@@ -48,15 +48,16 @@ def AnimateGrid2d(bounds, update_method, threeColors=False, frames=100, interval
             ax_bottom.clear()
 
             # Generate RGB values for each cell
-            rgb_grid = np.zeros((nx * scale, ny * scale))
+            rgb_grid = np.zeros((ny * scale, nx * scale))  # Rows = y, Cols = x
 
             max_values = []
             for j in range(ny * scale):
                 maxi = 0
                 for i in range(nx * scale):
-                    rgb_grid[i, j] = update_method(i % nx, j % ny)
+                    rgb_grid[j, i] = update_method(i % nx, j % ny)
                     if i == nx * scale // 2:
-                        maxi = rgb_grid[i, j]
+                        maxi = rgb_grid[j, i]
+
                 max_values.append(maxi)
             # Plot the grid
             if extremis:

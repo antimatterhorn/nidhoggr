@@ -26,12 +26,13 @@ class SpkOscillator:
         self.width = width
         self.height = height
         self.phi = self.nodeList.getFieldDouble("phi")
+        print("Will oscillate at point (%d,%d)\n"%(int(self.width/2),int(self.height/2)))
     def __call__(self,cycle,time,dt):
         a = self.speaker.get_output(cycle*2.5e-3)
         #print(cycle*2.5e-3,a)
         j = int(self.width/2)
         i = int(self.height/2)
-        idx = self.grid.index(i,j,0)
+        idx = self.grid.index(j,i,0)
         self.phi.setValue(idx,a)
 
 from Utilities import HarmonicOscillator,SiloDump 
@@ -80,6 +81,7 @@ if __name__ == "__main__":
     spk = HarmonicOscillator(frequency=frequency,amplitude=amplitude)
     osc = SpkOscillator(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1,speaker=spk)
     periodicWork = [osc]
+    #periodicWork = []
     if(dump):
         silo = SiloDump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=50)
         periodicWork.append(silo)

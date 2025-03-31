@@ -31,7 +31,7 @@ class SpkOscillator:
         #print(cycle*2.5e-3,a)
         j = int(self.width/2)
         i = int(self.height/2)
-        idx = self.grid.index(i,j,0)
+        idx = self.grid.index(j,i,0)
         self.phi.setValue(idx,a)
 
 from Utilities import HarmonicOscillator,SiloDump 
@@ -63,9 +63,25 @@ if __name__ == "__main__":
     packages = [waveEqn]
 
     box = DirichletGridBoundaries2d(grid=grid)
-    box.addBox(Vector2d(int(nx/5),int(ny/5)),Vector2d(int(4*nx/5),int(4*ny/5)))
-    box.removeBox(Vector2d(int(nx/5)+5,int(ny/5)+5),Vector2d(int(4*nx/5)-5,int(4*ny/5)-5))
-    box.removeBox(Vector2d(0,int(ny/2)-5),Vector2d(nx,int(ny/2)+5))
+    # --- 1. Left vertical bar ---
+    x0 = int(nx * 0.1)
+    x1 = int(nx * 0.2)
+    box.addBox(Vector2d(x0, 0), Vector2d(x1, ny))
+
+    # --- 2. Right vertical bar ---
+    x2 = int(nx * 0.8)
+    x3 = int(nx * 0.9)
+    box.addBox(Vector2d(x2, 0), Vector2d(x3, ny))
+
+    # --- 3. Diagonal bar approximation ---
+    # We'll make thin boxes that step diagonally upward
+    num_steps = ny
+    for step in range(num_steps):
+        y0 = step
+        y1 = step + 1
+        # Interpolate x from left to right as y increases
+        x = int(x2 - (x2 - x0) * (step / num_steps))
+        box.addBox(Vector2d(x, y0), Vector2d(x + 1, y1))
     box.addDomain()
 
     waveEqn.addBoundary(box)
@@ -96,6 +112,6 @@ if __name__ == "__main__":
                                                 stepper=controller.Step,
                                                 title=title,
                                                 fieldName="phi")
-        AnimateGrid2d(bounds,update_method,extremis=[-5,5],frames=cycles)
+        AnimateGrid2d(bounds,update_method,extremis=[-5,5],frames=cycles,cmap="plasma")
     else:
         controller.Step(cycles)

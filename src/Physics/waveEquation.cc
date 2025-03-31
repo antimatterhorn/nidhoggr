@@ -178,7 +178,7 @@ public:
 
     double
     getCell(int i,int j, std::string fieldName="phi") {
-        int idx = (ocean ? grid2d->index(j,i,0) : grid->index(j,i,0));
+        int idx = (ocean ? grid2d->index(i,j,0) : grid->index(i,j,0));
         NodeList* nodeList  = this->nodeList;
         ScalarField* phi    = nodeList->getField<double>(fieldName);
         return phi->getValue(idx);
