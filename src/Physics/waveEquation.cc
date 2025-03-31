@@ -120,19 +120,60 @@ public:
         ScalarField* cs     = nodeList->getField<double>("soundSpeed");
 
         #pragma omp parallel for
-        for (int p=0; p<insideIds.size(); ++p) {
+        for (int p = 0; p < insideIds.size(); ++p) {
             int i = insideIds[p];
-
+        
             double c = cs->getValue(i);
-            std::vector<int> neighbors = (ocean ? grid2d->getNeighboringCells(i) : grid->getNeighboringCells(i));
-            double laplace2 = -4*phi->getValue(i);
-            for (auto idx : neighbors) {
-                laplace2 += phi->getValue(idx);
-            }                
-            laplace2 = (ocean ? laplace2/pow(grid2d->dx,2.0) : laplace2/pow(grid->dx,2.0));
-            DxiDt->setValue(i,laplace2*c*c); 
-            DphiDt->setValue(i,dt*DxiDt->getValue(i)+xi->getValue(i));
+            double phi_i = phi->getValue(i);
+            double laplace = 0.0;
+        
+            if constexpr (dim == 1) {
+                double dx = grid->dx;
+                int left = i - 1;
+                int right = i + 1;
+                if (left < 0) left = i;
+                if (right >= grid->nx) right = i;
+        
+                laplace = (phi->getValue(right) - 2 * phi_i + phi->getValue(left)) / (dx * dx);
+            }
+        
+            if constexpr (dim == 2) {
+                auto [ix, iy, _] = grid->indexToCoordinates(i);
+                double dx = grid->dx;
+                double dy = grid->dy;
+                int nx = grid->getnx();
+                int ny = grid->getny();
+            
+                auto get = [&](int x, int y) -> double {
+                    if (x < 0 || x >= nx || y < 0 || y >= ny) return phi_i;
+                    return phi->getValue(grid->index(x, y));
+                };
+            
+                laplace = (get(ix+1, iy) - 2*phi_i + get(ix-1, iy)) / (dx * dx) +
+                          (get(ix, iy+1) - 2*phi_i + get(ix, iy-1)) / (dy * dy);
+            }
+            
+        
+            if constexpr (dim == 3) {
+                auto [ix, iy, iz] = grid->indexToCoordinates(i);
+                double dx = grid->dx, dy = grid->dy, dz = grid->dz;
+                int nx = grid->getnx(), ny = grid->getny(), nz = grid->getnz();
+            
+                auto get = [&](int x, int y, int z) -> double {
+                    if (x < 0 || x >= nx || y < 0 || y >= ny || z < 0 || z >= nz) return phi_i;
+                    return phi->getValue(grid->index(x, y, z));
+                };
+            
+                laplace = (get(ix+1, iy, iz) - 2*phi_i + get(ix-1, iy, iz)) / (dx * dx) +
+                          (get(ix, iy+1, iz) - 2*phi_i + get(ix, iy-1, iz)) / (dy * dy) +
+                          (get(ix, iy, iz+1) - 2*phi_i + get(ix, iy, iz-1)) / (dz * dz);
+            }
+            
+        
+            DxiDt->setValue(i, laplace * c * c);
+            DphiDt->setValue(i, dt * DxiDt->getValue(i) + xi->getValue(i));
         }
+        
     }
 
     double

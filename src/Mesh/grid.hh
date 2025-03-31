@@ -11,13 +11,13 @@ namespace Mesh {
     template <int dim>
     class Grid {
     private:
+        std::vector<std::shared_ptr<FieldBase>> _extraFields;
+        std::vector<int> lm,rm,tm,bm,fm,km;
+    public:
         int nx; // Number of grid cells in x-direction
         int ny; // Number of grid cells in y-direction
         int nz; // Number of grid cells in z-direction
 
-        std::vector<std::shared_ptr<FieldBase>> _extraFields;
-        std::vector<int> lm,rm,tm,bm,fm,km;
-    public:
         double dx; // Grid spacing in x-direction
         double dy; // Grid spacing in y-direction
         double dz; // Grid spacing in z-direction
