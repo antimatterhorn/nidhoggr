@@ -86,7 +86,7 @@ if __name__ == "__main__":
         update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,
                                                 stepper=controller.Step,
                                                 title=title,
-                                                fieldName="maxphi")
+                                                fieldName="maxphi") # change to 'phi' to view full wave
         AnimateGrid2d(bounds,update_method,extremis=[0,2],frames=cycles,cmap='plasma')
     else:
         controller.Step(cycles)
