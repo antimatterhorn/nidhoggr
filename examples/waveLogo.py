@@ -11,7 +11,7 @@ class oscillate:
         self.height = height
         self.phi = self.nodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
-        a = 5*(cos(0.5*time))
+        a = 5*(cos(0.5*time))*np.exp(-time)
         i = int(self.width/2)
         j = int(self.height/2)
         idx = self.grid.index(i,j,0)
@@ -39,18 +39,19 @@ class SpkOscillator:
                 idx = self.grid.index(j,i,0)
                 self.phi.setValue(idx,m)
 
-from Utilities import HarmonicOscillator,SiloDump 
+from Utilities import DampedHarmonicOscillator,SiloDump 
 
 if __name__ == "__main__":
     commandLine = CommandLineArguments(animate = True,
                                        dump = False,
                                        cycles = 120000,
-                                       nx = 100,
-                                       ny = 100,
+                                       nx = 150,
+                                       ny = 80,
                                        cs = 1.0,
                                        frequency = 10.0,
                                        amplitude  = 8.0,
-                                       ns = 5)
+                                       damping = -5.0,
+                                       ns = 16)
     
     constants = MKS()
 
@@ -69,25 +70,40 @@ if __name__ == "__main__":
     packages = [waveEqn]
 
     box = DirichletGridBoundaries2d(grid=grid)
-    # --- 1. Left vertical bar ---
-    x0 = int(nx * 0.1)
-    x1 = int(nx * 0.2)
-    box.addBox(Vector2d(x0, 0.1*ny), Vector2d(x1, 0.9*ny))
+    box.addBox(Vector2d(16,20),Vector2d(20,44))
+    box.addBox(Vector2d(16,20),Vector2d(96,24))
+    box.addBox(Vector2d(20,44),Vector2d(52,48))
+    box.addBox(Vector2d(24,20),Vector2d(28,32))
+    box.addBox(Vector2d(32,20),Vector2d(36,56))
+    box.addBox(Vector2d(36,56),Vector2d(40,60))
+    box.addBox(Vector2d(40,20),Vector2d(44,56))
+    box.addBox(Vector2d(48,44),Vector2d(52,56))
+    box.addBox(Vector2d(48,32),Vector2d(52,40))
+    box.addBox(Vector2d(52,56),Vector2d(56,60))
+    box.addBox(Vector2d(56,20),Vector2d(60,56))
+    box.addBox(Vector2d(60,56),Vector2d(64,60))
+    box.addBox(Vector2d(64,44),Vector2d(68,56))
+    box.addBox(Vector2d(64,44),Vector2d(72,48))
+    box.addBox(Vector2d(64,20),Vector2d(68,32))
+    box.addBox(Vector2d(72,20),Vector2d(76,44))
+    box.addBox(Vector2d(76,44),Vector2d(88,48))
+    box.addBox(Vector2d(80,32),Vector2d(84,40))
+    box.addBox(Vector2d(88,8),Vector2d(92,44))
+    box.addBox(Vector2d(92,44),Vector2d(104,48))
+    box.addBox(Vector2d(108,44),Vector2d(120,48))
+    box.addBox(Vector2d(124,44),Vector2d(136,48))
+    box.addBox(Vector2d(104,8),Vector2d(108,44))
+    box.addBox(Vector2d(120,8),Vector2d(124,44))
+    box.addBox(Vector2d(88,8),Vector2d(124,12))
+    box.addBox(Vector2d(104,20),Vector2d(112,24))
+    box.addBox(Vector2d(96,32),Vector2d(100,40))
+    box.addBox(Vector2d(112,32),Vector2d(116,40))
+    box.addBox(Vector2d(120,20),Vector2d(132,24))
+    box.addBox(Vector2d(128,20),Vector2d(132,32))
+    box.addBox(Vector2d(132,32),Vector2d(140,36))
+    box.addBox(Vector2d(136,32),Vector2d(140,44))
 
-    # --- 2. Right vertical bar ---
-    x2 = int(nx * 0.8)
-    x3 = int(nx * 0.9)
-    box.addBox(Vector2d(x2, 0.1*ny), Vector2d(x3, 0.9*ny))
 
-    # --- 3. Diagonal bar approximation ---
-    # We'll make thin boxes that step diagonally upward
-    num_steps = int(0.8*ny)
-    for step in range(num_steps):
-        y0 = step
-        y1 = step + 1
-        # Interpolate x from left to right as y increases
-        x = int(x2 - (x2 - x0) * (step / num_steps))
-        box.addBox(Vector2d(x, y0+0.1*ny), Vector2d(x + 8, y1+0.1*ny))
     box.addDomain()
 
     waveEqn.addBoundary(box)
@@ -99,7 +115,7 @@ if __name__ == "__main__":
     print("field names =",myNodeList.fieldNames)
 
     #osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
-    spk = HarmonicOscillator(frequency=frequency,amplitude=amplitude)
+    spk = DampedHarmonicOscillator(frequency=frequency,amplitude=amplitude,damping=damping)
     osc = SpkOscillator(nodeList=myNodeList,grid=grid,width=nx,height=ny,ns=ns,workCycle=1,speaker=spk)
     periodicWork = [osc]
     if(dump):
@@ -117,7 +133,7 @@ if __name__ == "__main__":
         update_method = AnimationUpdateMethod2d(call=waveEqn.getCell2d,
                                                 stepper=controller.Step,
                                                 title=title,
-                                                fieldName="phi")
+                                                fieldName="maxphi")
         AnimateGrid2d(bounds,update_method,extremis=[-5,5],frames=cycles,cmap="plasma")
     else:
         controller.Step(cycles)

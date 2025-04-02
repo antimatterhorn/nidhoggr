@@ -111,6 +111,14 @@ class HarmonicOscillator:
     def get_output(self, time):
         return self.amplitude*np.sin(2*np.pi*self.frequency*time)
 
+class DampedHarmonicOscillator:
+    def __init__(self, frequency, amplitude, damping):
+        self.frequency = frequency
+        self.amplitude = amplitude
+        self.damping   = damping
+    def get_output(self, time):
+        return self.amplitude*np.sin(2*np.pi*self.frequency*time)*np.exp(self.damping*time)
+
 class SiloDump:
     def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
         self.meshWriter = SiloMeshWriter2d(baseName="waveBox",nodeList=nodeList,fieldNames=["phi","xi"])
