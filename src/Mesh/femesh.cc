@@ -2,7 +2,6 @@
 #define FEMESH_CC
 
 #include "femesh.hh"
-#include "elementFactory.hh"
 #include <stdexcept>
 #include <set>
 
