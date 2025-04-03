@@ -12,13 +12,14 @@
 #include "../DataBase/field.hh"
 #include "../DataBase/nodeList.hh"
 #include "elementType.hh"
+#include "element.hh"
 
-namespace Mesh {
+namespace Mesh {    
     template <int dim>
     class FEMesh {
     private:
-        std::vector<Lin::Vector<dim>> nodes;
-        std::vector<std::vector<size_t>> elements;
+        Field<Lin::Vector<dim>> positions;
+        std::vector<std::shared_ptr<Element<dim>>> elements;
         std::vector<ElementType> elementTypes;
 
         std::unordered_map<size_t, std::vector<size_t>> neighbors;
@@ -35,7 +36,7 @@ namespace Mesh {
         void addElement(ElementType type, const std::vector<size_t>& nodeIndices);
 
         const std::vector<Vector>& getNodes() const;
-        const std::vector<std::vector<size_t>>& getElements() const;
+        const std::vector<std::shared_ptr<Element<dim>>>& getElements() const;
         const std::vector<ElementType>& getElementTypes() const;
 
         void computeNeighbors();
