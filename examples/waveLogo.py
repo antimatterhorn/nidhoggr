@@ -18,7 +18,7 @@ class oscillate:
         self.phi.setValue(idx,a)
 
 class SpkOscillator:
-    def __init__(self,speaker,nodeList,grid,width,height,ns,workCycle=1):
+    def __init__(self,speaker,nodeList,grid,width,height,locations,workCycle=1):
         self.speaker = speaker
         self.nodeList = nodeList
         self.cycle = workCycle
@@ -26,18 +26,15 @@ class SpkOscillator:
         self.width = width
         self.height = height
         self.phi = self.nodeList.getFieldDouble("phi")
-        self.ns = ns
+        self.locations = locations
     def __call__(self,cycle,time,dt):
         m = self.speaker.get_output(cycle*2.5e-3)
         #print(cycle*2.5e-3,a)
-        wa = self.width/self.ns
-        wb = self.height/self.ns
-        for a in range(self.ns):
-            for b in range(self.ns):
-                j = int(wa+a*wa)
-                i = int(wb+b*wb)
-                idx = self.grid.index(j,i,0)
-                self.phi.setValue(idx,m)
+        for loc in self.locations:
+            i = int(loc[0])
+            j = int(loc[1])
+            idx = self.grid.index(i,j,0)
+            self.phi.setValue(idx,m)
 
 from Utilities import DampedHarmonicOscillator,SiloDump 
 
@@ -114,9 +111,39 @@ if __name__ == "__main__":
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
+    locations = []
+    locations.append([15,10])
+    locations.append([15,70])
+    locations.append([45,10])
+    locations.append([45,70])
+    locations.append([75,10])
+    locations.append([75,70])
+    locations.append([105,10])
+    locations.append([105,70])
+    locations.append([135,10])
+    locations.append([135,70])
+    #n
+    locations.append([22,30])
+    #i
+    locations.append([38,30])
+    locations.append([38,50])
+    #d
+    locations.append([50,30])
+    #h
+    locations.append([61,30])
+    #o
+    locations.append([80,30])
+    #g
+    locations.append([100,30])
+    #g
+    locations.append([110,30])
+    #r
+    locations.append([124,30])
+
+
     #osc = oscillate(nodeList=myNodeList,grid=grid,width=nx,height=ny,workCycle=1)
     spk = DampedHarmonicOscillator(frequency=frequency,amplitude=amplitude,damping=damping)
-    osc = SpkOscillator(nodeList=myNodeList,grid=grid,width=nx,height=ny,ns=ns,workCycle=1,speaker=spk)
+    osc = SpkOscillator(nodeList=myNodeList,grid=grid,width=nx,height=ny,locations=locations,workCycle=1,speaker=spk)
     periodicWork = [osc]
     if(dump):
         silo = SiloDump("testMesh",myNodeList,fieldNames=["phi","xi"],dumpCycle=50)
