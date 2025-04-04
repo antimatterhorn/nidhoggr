@@ -251,6 +251,10 @@ Vector<dim> operator*(const double other, const Vector<dim>& vec) {
     return vec * other;
 }
 
+Vector2D triangleCentroid(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3) {
+    return (p1 + p2 + p3) / 3.0;
+}
+
 Vector2D quadCentroid(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3, const Vector2D& p4) {
     return (p1 + p2 + p3 + p4) / 4.0;
 }

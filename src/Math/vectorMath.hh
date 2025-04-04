@@ -70,6 +70,7 @@ using Vector1D = Vector<1>;
 using Vector2D = Vector<2>;
 using Vector3D = Vector<3>;
 
+Vector2D triangleCentroid(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3);
 Vector2D quadCentroid(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3, const Vector2D& p4);
 double triangleArea(const Lin::Vector2D& p1, const Lin::Vector2D& p2, const Lin::Vector2D& p3);
 double quadArea(const Vector2D& p1, const Vector2D& p2, const Vector2D& p3, const Vector2D& p4);

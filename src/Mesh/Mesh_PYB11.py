@@ -4,4 +4,4 @@ PYB11includes = ['"grid.cc"','"femesh.cc"']
 
 from grid import *
 from femesh import *
-from element import *
+from element import * # element.hh is already included in femesh.cc

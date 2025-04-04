@@ -16,7 +16,8 @@ namespace Mesh {
 
         virtual ~Element() = default;
 
-        virtual double computeMeasure(const std::vector<Vector>& positions) const = 0;
+        virtual double computeArea(const std::vector<Vector>& positions) const = 0;
+        virtual Vector computeCentroid(const std::vector<Vector>& positions) const = 0;
 
         ElementType type() const { return mType; }
         const std::vector<size_t>& nodeIndices() const { return mNodeIndices; }
@@ -33,11 +34,18 @@ namespace Mesh {
         TriangleElement(const std::vector<size_t>& nodeIndices)
             : Element<2>(ElementType::Triangle, nodeIndices) {}
     
-        double computeMeasure(const std::vector<Vector>& positions) const override {
+        double computeArea(const std::vector<Vector>& positions) const override {
             const auto& A = positions[mNodeIndices[0]];
             const auto& B = positions[mNodeIndices[1]];
             const auto& C = positions[mNodeIndices[2]];
             return Lin::triangleArea(A, B, C);  
+        }
+
+        Vector computeCentroid(const std::vector<Vector>& positions) const override {
+            const auto& A = positions[mNodeIndices[0]];
+            const auto& B = positions[mNodeIndices[1]];
+            const auto& C = positions[mNodeIndices[2]];
+            return Lin::triangleCentroid(A, B, C);
         }
     };
 
@@ -52,12 +60,20 @@ namespace Mesh {
             }
         }
     
-        double computeMeasure(const std::vector<Vector>& positions) const override {
+        double computeArea(const std::vector<Vector>& positions) const override {
             const auto& A = positions[mNodeIndices[0]];
             const auto& B = positions[mNodeIndices[1]];
             const auto& C = positions[mNodeIndices[2]];
             const auto& D = positions[mNodeIndices[3]];
             return Lin::quadArea(A, B, C, D);
+        }
+
+        Vector computeCentroid(const std::vector<Vector>& positions) const override {
+            const auto& A = positions[mNodeIndices[0]];
+            const auto& B = positions[mNodeIndices[1]];
+            const auto& C = positions[mNodeIndices[2]];
+            const auto& D = positions[mNodeIndices[3]];
+            return Lin::quadCentroid(A, B, C, D);
         }
     };
         
