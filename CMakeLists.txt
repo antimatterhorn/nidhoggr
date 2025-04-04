@@ -12,6 +12,10 @@ message("CXX Compiler ID: ${CMAKE_CXX_COMPILER_ID}")
 # Find and enable OpenMP
 find_package(OpenMP REQUIRED)
 
+set(EIGEN3_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/extern/eigen)
+include_directories(${EIGEN3_INCLUDE_DIR})
+
+
 # Set the path to the pyb11 executable
 set(PYB11GENERATOR_ROOT_DIR ${CMAKE_SOURCE_DIR}/extern/PYB11Generator)
 include(${PYB11GENERATOR_ROOT_DIR}/cmake/PYB11Generator.cmake)
