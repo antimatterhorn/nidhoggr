@@ -11,12 +11,14 @@ template <int dim>
 FEMesh<dim>::FEMesh() : positions("positions") {}
 
 template <int dim>
-void FEMesh<dim>::addNode(const Vector& position) {
+void 
+FEMesh<dim>::addNode(const Vector& position) {
     positions.addValue(position);
 }
 
 template <int dim>
-void FEMesh<dim>::addElement(ElementType type, const std::vector<size_t>& nodeIndices) {
+void 
+FEMesh<dim>::addElement(ElementType type, const std::vector<size_t>& nodeIndices) {
     // Check validity of node indices
     for (size_t idx : nodeIndices) {
         if (idx >= positions.size()) {
@@ -47,7 +49,8 @@ const std::vector<ElementType>& FEMesh<dim>::getElementTypes() const {
 }
 
 template <int dim>
-void FEMesh<dim>::computeNeighbors() {
+void 
+FEMesh<dim>::computeNeighbors() {
     neighbors.clear();
 
     for (const auto& element : elements) {
@@ -70,7 +73,8 @@ void FEMesh<dim>::computeNeighbors() {
 }
 
 template <int dim>
-std::vector<size_t> FEMesh<dim>::getNeighbors(size_t nodeId) const {
+std::vector<size_t> 
+FEMesh<dim>::getNeighbors(size_t nodeId) const {
     auto it = neighbors.find(nodeId);
     if (it != neighbors.end()) {
         return it->second;
@@ -80,7 +84,8 @@ std::vector<size_t> FEMesh<dim>::getNeighbors(size_t nodeId) const {
 }
 
 template <int dim>
-void FEMesh<dim>::identifyBoundaryNodes() {
+void 
+FEMesh<dim>::identifyBoundaryNodes() {
     // Placeholder: could later be based on element adjacency, tags, or external criteria
     boundaryNodes.clear();
     for (size_t i = 0; i < positions.size(); ++i) {

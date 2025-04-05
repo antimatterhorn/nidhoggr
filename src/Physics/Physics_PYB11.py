@@ -8,7 +8,8 @@ PYB11includes = ['"physics.hh"',
                 '"simplePhysics.cc"',
                 '"eulerHydro.cc"',
                 '"gridHydroHLL.cc"',
-                '"kinetics.cc"']
+                '"kinetics.cc"',
+                '"fem.cc"']
 
 from physics import *
 from constantGravity import *
@@ -20,3 +21,4 @@ from simplePhysics import *
 from eulerHydro import *
 from gridHydroHLL import *
 from kinetics import *
+from fem import *
