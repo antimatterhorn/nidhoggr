@@ -1,6 +1,6 @@
 [submodule "extern/PYB11Generator"]
 	path = extern/PYB11Generator
-	url = https://github.com/LLNL/PYB11Generator.git
+	url = https://github.com/antimatterhorn/PYB11Generator.git
 	branch = master
 [submodule "extern/pybind11"]
 	path = extern/pybind11
