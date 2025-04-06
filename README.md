@@ -11,7 +11,7 @@
 |_|_|_|___|_|_|___|_  |_  |_|
       v0.7.7      |___|___|
 
-git pull
+git clone --recurse-submodules https://github.com/your-username/nidhoggr.git
 git submodule update --remote --recursive
 
 
@@ -40,3 +40,5 @@ Hopefully you already have python somewhere...
 You may need to pip3 install PYB11Generator
 
 Consult the Classes.md files in src subdirectories for interface guides.
+
+Note: Nidhoggr uses a forked version of PYB11Generator pinned to a patch branch that fixes enum tuple support.
