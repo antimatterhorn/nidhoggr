@@ -39,11 +39,18 @@ namespace Mesh {
         const std::vector<std::shared_ptr<Element<dim>>>& getElements() const;
         const std::vector<ElementType>& getElementTypes() const;
 
+        std::vector<std::vector<size_t>> getElementConnectivity() const;
+        std::vector<std::pair<ElementType, std::vector<size_t>>> getElementInfo() const;
+
+
         void computeNeighbors();
         void identifyBoundaryNodes();
 
         std::vector<size_t> getNeighbors(size_t nodeId) const;
         const std::vector<size_t>& getBoundaryNodes() const;
+
+        void buildFromObj(const std::string& filepath, const std::string& axes);
+
     };
 }
 

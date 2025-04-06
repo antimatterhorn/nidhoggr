@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vector>
 #include <string>
 #include <cassert>
@@ -6,14 +8,14 @@
 #include "../Math/vectorMath.hh"
 #include "../DataBase/field.hh"
 
-template <int dim>
-std::pair<Field<Lin::Vector<dim>>, Field<std::vector<int>>> 
-importObj(const std::string& file_path, const std::string& axes="(x,z)") {
-    if(dim==2)
-        return importObj2d(file_path,axes);
-    else if(dim==3)
-        return importObj3d(file_path);
-}
+// template <int dim>
+// std::pair<Field<Lin::Vector<dim>>, Field<std::vector<int>>> 
+// importObj(const std::string& file_path, const std::string& axes="(x,z)") {
+//     if(dim==2)
+//         return importObj2d(file_path,axes);
+//     else if(dim==3)
+//         return importObj3d(file_path);
+// }
 
 std::pair<Field<Lin::Vector<2>>, Field<std::vector<int>>> 
 importObj2d(const std::string& file_path, const std::string& axes="(x,z)") {

@@ -2,5 +2,6 @@ from nidhoggr import *
 
 commandLine = CommandLineArguments()
 
-femGrid = FEMesh2d()
-triangle = TriangleElement([1,2,3])
+mesh = FEMesh2d()
+mesh.buildFromObj("example.obj",axes="(x,z)")
+

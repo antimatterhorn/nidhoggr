@@ -4,6 +4,7 @@
 #include "femesh.hh"
 #include <stdexcept>
 #include <set>
+#include "../IO/importObj.cc"
 
 namespace Mesh {
 
@@ -99,6 +100,65 @@ template <int dim>
 const std::vector<size_t>& FEMesh<dim>::getBoundaryNodes() const {
     return boundaryNodes;
 }
+
+template <int dim>
+std::vector<std::vector<size_t>> FEMesh<dim>::getElementConnectivity() const {
+    std::vector<std::vector<size_t>> connectivity;
+    for (const auto& elem : elements) {
+        connectivity.push_back(elem->nodeIndices());
+    }
+    return connectivity;
+}
+
+template <int dim>
+std::vector<std::pair<ElementType, std::vector<size_t>>>
+FEMesh<dim>::getElementInfo() const {
+    std::vector<std::pair<ElementType, std::vector<size_t>>> result;
+    for (size_t i = 0; i < elements.size(); ++i) {
+        result.emplace_back(elementTypes[i], elements[i]->nodeIndices());
+    }
+    return result;
+}
+
+
+void 
+buildFromObj2dHelper(FEMesh<2>& mesh, const std::string& filepath, const std::string& axes) {
+    auto [vertices, faces] = importObj2d(filepath, axes);
+
+    for (const auto& v : vertices.getValues()) {
+        mesh.addNode(v);
+    }
+
+    for (const auto& face : faces.getValues()) {
+        if (face.size() == 3) {
+            mesh.addElement(ElementType::Triangle, {
+                static_cast<size_t>(face[0] - 1),
+                static_cast<size_t>(face[1] - 1),
+                static_cast<size_t>(face[2] - 1)
+            });
+        } else if (face.size() == 4) {
+            mesh.addElement(ElementType::Quad, {
+                static_cast<size_t>(face[0] - 1),
+                static_cast<size_t>(face[1] - 1),
+                static_cast<size_t>(face[2] - 1),
+                static_cast<size_t>(face[3] - 1)
+            });
+        } else {
+            throw std::runtime_error("Only triangle and quad elements are supported in buildFromObj.");
+        }
+    }
+}
+
+template <int dim>
+void 
+FEMesh<dim>::buildFromObj(const std::string& filepath, const std::string& axes) {
+    if constexpr (dim == 2) {
+        buildFromObj2dHelper(*this, filepath, axes);
+    } else {
+        throw std::runtime_error("buildFromObj is only implemented for 2D FEMesh");
+    }
+}
+
 
 // Explicit instantiations
 template class FEMesh<2>;
