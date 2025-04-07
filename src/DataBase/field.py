@@ -1,5 +1,7 @@
 from PYB11Generator import *
 
+# PYB11includes = ['"../Mesh/element.hh"']
+# PYB11namespaces = ["Mesh"]  # So 'Mesh::Element<1>' is a valid type
 
 #-------------------------------------------------------------------------------
 # FieldBase
@@ -22,7 +24,7 @@ class Field(FieldBase):
     @PYB11virtual
     @PYB11const
     def size(self):
-        "Number of elements"
+        "Number of field elements"
         return "unsigned"
     
 
@@ -93,3 +95,15 @@ FieldofVector3d = PYB11TemplateClass(Field,
                               cppname = "Field<Lin::Vector<3>>",
                               pyname = "FieldofVector3d",
                               docext = " (Lin::Vector<3>).")
+
+FieldofTriangle = PYB11TemplateClass(Field,
+                              template_parameters = ("Mesh::TriangleElement"),
+                              cppname = "Field<Mesh::TriangleElement>",
+                              pyname = "FieldofTriangleElement",
+                              docext = " (Mesh::TriangleElement).")
+
+FieldofQuad = PYB11TemplateClass(Field,
+                              template_parameters = ("Mesh::QuadElement"),
+                              cppname = "Field<Mesh::QuadElement>",
+                              pyname = "FieldofQuadElement",
+                              docext = " (Mesh::QuadElement).")

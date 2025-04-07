@@ -17,4 +17,20 @@ classDiagram
         std::vector frontmost()
         std::vector backmost()
     }
+
+    class FEMesh{
+        buildFromObj(string filepath, string axes)
+        addNode(Vector position)
+        addElement(ElementType type, std::vector<size_t> nodeIndices)
+        
+        Vector getPosition(int idx)
+        std::vector getNodes()
+        std::vector getElements()
+        std::vector getElementConnectivity()
+        std::vector getElementInfo()
+        void computeNeighbors()
+        void identifyBoundaryNodes()
+        std::vector<size_t> getNeighbors(size_t nodeId)
+        std::vector<size_t> getBoundaryNodes()
+    }
 ```
