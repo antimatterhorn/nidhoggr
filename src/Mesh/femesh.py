@@ -26,6 +26,9 @@ class FEMesh:
         return "std::vector<std::pair<ElementType, std::vector<size_t>>>"
     def buildFromObj(self, filepath="std::string", axes="std::string"):
         return "void"
+    def writeVTK(self, filepath="std::string"):
+        return "void"
+
     
 FEMesh1d = PYB11TemplateClass(FEMesh,
                               template_parameters = ("1"),

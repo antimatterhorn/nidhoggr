@@ -58,5 +58,5 @@ importObj2d(const std::string& file_path, const std::string& axes="(x,z)") {
 
 std::pair<Field<Lin::Vector<3>>, Field<std::vector<int>>> 
 importObj3d(const std::string& file_path) {
-
+    throw std::runtime_error("3d not supported yet in importObj.");
 }

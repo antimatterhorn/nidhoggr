@@ -50,7 +50,7 @@ namespace Mesh {
         const std::vector<size_t>& getBoundaryNodes() const;
 
         void buildFromObj(const std::string& filepath, const std::string& axes);
-
+        void writeVTK(const std::string& filepath) const;
     };
 }
 
