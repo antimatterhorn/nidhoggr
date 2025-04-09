@@ -28,7 +28,7 @@ def AnimateGrid2d(bounds, update_method, threeColors=False, frames=100, interval
             ax.clear()
 
             # Generate RGB values for each cell
-            rgb_grid = np.zeros((ny * scale, nx * scale))
+            rgb_grid = np.zeros((ny * scale, nx * scale, 3))
 
             for j in range(ny * scale):
                 for i in range(nx * scale):
