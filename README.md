@@ -1,6 +1,6 @@
 # nidhoggr
 
-![Cherenkov Radiation](examples/waves.png)
+![Schroedinger Waves](examples/logo_test.png)
 
 
 ```
