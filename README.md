@@ -1,7 +1,12 @@
 # nidhoggr
 
-![Schroedinger Waves](examples/logo_test.png)
+Nidhoggr is a generic physics simulation framework. It is designed to be used as a base for varied physics simulation methods (FVM,FEM,etc)
+while keeping helper methods likes equations of state and integrators generic enough to be portable to a wide variety of 
+methods choices.
 
+
+![Schroedinger Waves](examples/logo_test.png)
+*An example Schroedinger wave solve with Dirichlet boundary conditions*
 
 ```
 
@@ -11,11 +16,6 @@
 |_|_|_|___|_|_|___|_  |_  |_|
       v0.7.7      |___|___|
 
-
-
-Nidhoggr is a generic physics simulation framework. It is designed to be used as a base for other physics simulation methods, 
-while keeping helper methods likes equations of state and integrators generic enough to be portable to a wide variety of 
-methods choices.
 
 
 git clone --recurse-submodules https://github.com/your-username/nidhoggr.git
