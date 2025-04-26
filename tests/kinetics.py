@@ -1,8 +1,4 @@
 from nidhoggr import *
-import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
-import numpy as np
-import random
 from Animation import *
 
 if __name__ == "__main__":
@@ -41,5 +37,4 @@ if __name__ == "__main__":
     controller = Controller(integrator=integrator, periodicWork=[], statStep=1)
 
     bounds = (-10, 10, -10, 10)
-    ani = AnimateScatter(positions=pos,stepper=controller.Step)
-    AnimateScatter(bounds, update_method=ani, frames=5, interval=50)
+    AnimateScatter(bounds, stepper=controller, positions=pos, frames=10, interval=50)

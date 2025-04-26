@@ -2,7 +2,7 @@ Introduction
 ============
 
 The Níðhöggr (pronounced Nith-hewer) is the mythical beast that gnaws at the roots of the world-tree, Yggdrasil. 
-This may or may not have been inspired by my simultaneous loathing and admiration for tree codes.
+This naming choice may or may not have been inspired by my simultaneous loathing and admiration for tree codes.
 
 .. image:: Nidhogg.png
 
@@ -10,7 +10,7 @@ Purpose of Nidhoggr
 -------------------
 
 Nidhoggr is a generic physics simulation framework. It is designed to be used as a base for varied physics simulation methods 
-(FVM,FEM,etc) while keeping helper methods like equations of state and integrators generic enough to be portable to a wide 
+(FVM,FEM,etc) while keeping helper methods like equations of state and integrators generic enough to be portable between a wide 
 variety of methods choices. Nidhoggr's major classes and methods are written in C++ and wrapped in Python using pybind11 to 
 enable them to be imported as Python3+ modules inside a runscript. Python holds and passes the pointers to most objects 
 inside the code, while the integration step is always handled by compiled C++ code. Any Python class that returns the expected 
