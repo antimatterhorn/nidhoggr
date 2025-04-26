@@ -1,0 +1,12 @@
+﻿File,Purpose
+cherenkov.py,Simulates a supersonic (or superluminal) point source moving through a medium at a speed greater than c.
+cosmo.py,Creates an example cosmology and reports the properties of that cosmology at the chosen redshift.
+diffractionGrating.py,Simulates the transmission of an acoustic wave through a diffraction grating.
+imageToStringArt.py,Creates the instructions for (and previews) an image made from strings stretched across a wheel with a chosen number of pins.
+oort.py,"Simulates a star passing through the Oort cloud, causing a comet to become dislodged from its orbit and plunge toward the sun."
+plinko.py,Simulates the Plinko game.
+relativity.py,Calculates the time dilation for a relativistic traveler.
+rps.py,"Simulates the destruction of chemical mixtures in a rock-paper-scissors-like reaction setup, where A->B->C->A."
+tensors.py,Creates some tensors and does some linear algebra with them.
+vectors.py,Creates some vectors and does some linear algebra with them.
+waveLogo.py,Simulates acoustic waves inside a region with Dirichlet boundary conditions arranged in a unique fashion.

@@ -1,0 +1,23 @@
+﻿Component,Working,Under Development,Planned
+Physics,N-body gravity,HLL hydro,SPH
+,Gravity point sources,FEM,
+,Constant direction gravity,,
+,Particle kinetics,,
+,Acoustic wave solvers,,
+,Shallow wave solvers,,
+,Chemical reaction solvers,,
+Equations of State,Ideal gas,,Helmholtz
+,Polytrope,,
+Time Integrators,Forward Euler,,Symplectic
+,RK2,,
+,RK4,,
+Meshing,Eulerian grid,FEM,AMR
+Data IO,Silo,,
+,vtk,,
+,obj,,
+Custom Data Types,Vectors,,
+,Tensors,,
+,Cosmologies,,
+,Units/PhysicalConstants,,
+Parallelization,OpenMP,,MPI
+,,,CUDA
