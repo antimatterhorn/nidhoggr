@@ -6,6 +6,7 @@ methods choices.
 
 
 ![Schroedinger Waves](examples/logo_test.png)
+
 *An example Schroedinger wave solve with Dirichlet boundary conditions*
 
 ```
