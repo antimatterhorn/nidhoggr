@@ -2,6 +2,7 @@
 \usepackage{geometry}
 \usepackage{hyperref}
 \usepackage{graphicx}
+\usepackage{courier}
 \geometry{margin=1in}
 
 \title{Nidhoggr User Manual}
@@ -12,15 +13,76 @@
 	
 	\maketitle
 	
+	\newpage
+	
+	\begin{center}
+		\begin{verbatim}
+     _   _ _
+ ___|_|_| | |_ ___ ___ ___ ___
+|   | | . |   | . | . | . |  _|
+|_|_|_|___|_|_|___|_  |_  |_|
+v0.8.0            |___|___|
+		\end{verbatim}
+	\end{center}
+	
+	\newpage
+	
 	\tableofcontents
 	\newpage
 	
 	\section{Introduction}
-	\begin{itemize}
-		\item Purpose of Nidhoggr
-		\item Overview of capabilities
-		\item Intended audience
-	\end{itemize}
+	\subsection{Purpose of Nidhoggr}
+
+Nidhoggr is a generic physics simulation framework. It is designed to be used as a base for varied physics simulation methods (FVM,FEM,etc) while keeping helper methods likes equations of state and integrators generic enough to be portable to a wide variety of methods choices. Nidhoggr's major classes and methods are written in C++ and wrapped in Python using pybind11 to enable them to be imported as Python3+ modules inside a runscript. Python holds and passes the pointers to most objects inside the code, while the integration step is always handled by compiled C++ code. Any Python class that returns the expected data types of the compiled C++ classes can substitute for a precompiled package (e.g. a custom equation of state), though speed will suffer. 
+
+	\subsection{Overview of capabilities}
+	
+As of \date{\today}, Nidhoggr's capabilities are as follows:
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|l|l|l|l|}
+		\hline
+		\textbf{Component} & \textbf{Working} & \textbf{Development} & \textbf{Planned} \\
+		\hline
+		Physics & N-body gravity & HLL hydro & SPH\\ 
+		& Gravity point sources & FEM &\\
+		& Constant direction gravity sources &  &\\
+		& Particle kinetics &  &\\
+		& Acoustic wave solvers &  &\\
+		& Shallow wave equation solvers &  &\\
+		& Chemical reaction solvers &  &\\
+		\hline
+		Equations of State & Ideal gas &  & Helmholtz\\ 
+		& Polytrope &  &\\
+		\hline
+		Time Integrators & Forward Euler &  & Symplectic\\ 
+		& 2nd Order Runge-Kutta &  &\\
+		& 4th Order Runge-Kutta &  &\\
+		\hline
+		Meshing & Eulerian grid & FEM & AMR\\
+		\hline
+		Data IO & Silo &  &\\
+		& vtk &  &\\
+		& obj &  &\\
+		& wav &  &\\
+		\hline
+		Custom Data Types & Vectors & Elements &\\
+		& Tensors &  &\\
+		& Cosmologies & & \\
+		& Units & & \\
+		\hline
+		Parallel & OpenMP & & MPI \\
+		\hline
+	\end{tabular}
+	\caption{Status of Major Components in Nidhoggr}
+	\label{tab:component-status}
+\end{table}
+	
+	\subsection{Intended audience}
+	
+Nidhoggr's intended audience is computational scientists who want a toy simulation code to scope simple problems with that's easily driveable and scriptable with a Python interface, and anyone who doesn't mind getting their hands dirty writing their own physics packages in a fully abstracted simulation framework. 
+
+\newpage
 	
 	\section{Installation}
 	\begin{itemize}
@@ -28,39 +90,90 @@
 		\item Dependencies
 		\item Downloading the source code
 		\item Building and installing
-		\item Troubleshooting installation
 	\end{itemize}
+
+\newpage
 	
 	\section{Getting Started}
 	\begin{itemize}
 		\item Basic concepts
 		\item First run: a simple example
-		\item Directory structure
 	\end{itemize}
+
+\newpage
 	
 	\section{Usage}
 	\begin{itemize}
 		\item Running Nidhoggr
 		\item Command-line options
-		\item Configuration files
-		\item Input and output formats
 	\end{itemize}
+
+\newpage
 	
 	\section{Core Concepts}
 	\begin{itemize}
-		\item Computational methods (e.g., FEM, SPH, etc.)
+		\item Nodelists and Fields
+		\item Physics methods
+		\item Equations of State
 		\item Mesh/grid handling
 		\item Boundary conditions
-		\item Material models
-		\item Solver settings
+		\item Integrators
+		\item The Controller
 	\end{itemize}
+
+\newpage
 	
 	\section{Examples}
-	\begin{itemize}
-		\item Simple test cases
-		\item Advanced simulations
-		\item Benchmarks and verification
-	\end{itemize}
+	
+The \texttt{examples} folder holds Python runscripts that solve a particular notional physics (or purely calculational) problem. 
+
+\begin{table}[h!]
+	\centering
+	\begin{tabular}{|l|l|}
+		\hline
+		\textbf{File} & \textbf{Purpose}\\
+		\hline
+		\texttt{cherenkov.py} & Simulates a supersonic (or superluminal) point source \\
+		& moving through a medium at a speed greater than c. \\
+		\hline		
+		\texttt{cosmo.py} & Creates an example cosmology ($\Omega_m$,$\Lambda$,$H_0$) and reports \\
+		& the properties of that cosmology at the chosen redshift. \\
+		\hline
+		\texttt{diffractionGrating.py} & Simulates the transmission of an acoustic wave through \\
+		& a diffraction grating.\\
+		\hline
+		\texttt{imageToStringArt.py} & Creates the instructions for (and previews) an image made \\
+		& from strings stretched across a wheel with a chosen number \\
+		& of pins. \\
+		\hline
+		\texttt{oort.py} & Simulates a star passing through the Oort cloud \\
+		& and dislodging a comet from its orbit. \\
+		\hline
+		\texttt{plinko.py} & Simulates the Plinko game. \\
+		\hline
+		\texttt{relativity.py} & Calculates the time dilation for a relativistic traveler. \\
+		\hline
+		\texttt{rps.py} & Simulates the destruction of chemical mixtures in a \\
+		& rock-paper-scissors-like reaction setup, where \\
+		&  $A\to B\to C\to A$.\\
+		\hline
+		\texttt{tensors.py} & Creates some tensors and does some linear algebra with them.\\
+		\hline
+		\texttt{vectors.py} & Creates some vectors and does some linear algebra with them.\\
+		\hline
+		\texttt{waveLogo.py} & Simulates acoustic waves inside a region with Dirichlet\\
+		& boundary conditions arranged in a unique fashion.\\
+		\hline
+	\end{tabular}
+	\caption{Examples included in the main branch.}
+	\label{tab:component-status}
+\end{table}
+
+	\subsection{Simple test cases}
+
+Many of the Python scripts inside the \texttt{tests} folder stress single components of Nidhoggr, or a small subset of them. For instance, \texttt{waveBox.py} tests the acoustic wave solver with a single oscillatory source in the center of a box with two openings on either end (using Dirichlet boundaries to create the box). 
+
+\newpage
 	
 	\section{Customization and Extension}
 	\begin{itemize}
@@ -68,6 +181,8 @@
 		\item Adding new physics modules
 		\item Extending the input parser
 	\end{itemize}
+
+\newpage
 	
 	\section{Best Practices}
 	\begin{itemize}
@@ -75,12 +190,16 @@
 		\item Debugging guidance
 		\item Performance tuning
 	\end{itemize}
+
+\newpage
 	
 	\section{Troubleshooting}
 	\begin{itemize}
 		\item Common errors and solutions
 		\item FAQ
 	\end{itemize}
+
+\newpage
 	
 	\section{Reference}
 	\begin{itemize}
@@ -88,6 +207,8 @@
 		\item Important classes and functions
 		\item File organization
 	\end{itemize}
+
+\newpage
 	
 	\section{Acknowledgments}
 	\begin{itemize}
@@ -100,6 +221,8 @@
 		\item License terms
 		\item How to cite Nidhoggr
 	\end{itemize}
+
+\newpage
 	
 	\appendix
 	
