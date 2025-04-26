@@ -1,0 +1,98 @@
+\documentclass[12pt]{article}
+\usepackage{geometry}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\geometry{margin=1in}
+
+\title{Nidhoggr Technical Reference Manual}
+\author{Cody Raskin}
+\date{\today}
+
+\begin{document}
+	
+	\maketitle
+	
+	\tableofcontents
+	\newpage
+	
+	\section{Introduction}
+	\begin{itemize}
+		\item Purpose and Scope
+		\item History and Development Goals
+		\item Overview of Physical Models
+	\end{itemize}
+	
+	\section{Software Architecture}
+	\begin{itemize}
+		\item High-Level Code Organization
+		\item Major Modules and Dependencies
+		\item Build System (CMake, etc.)
+	\end{itemize}
+	
+	\section{Data Structures}
+	\begin{itemize}
+		\item Mesh and Grid Classes
+		\item Field Representations
+		\item Boundary Condition Structures
+		\item Material and Equation-of-State (EOS) Models
+	\end{itemize}
+	
+	\section{Numerical Methods}
+	\begin{itemize}
+		\item Finite Element Methods (FEM) Implementation
+		\item Smoothed Particle Hydrodynamics (SPH) Implementation
+		\item Solvers (e.g., linear, nonlinear, iterative methods)
+		\item Time Integration Schemes
+	\end{itemize}
+	
+	\section{Physics Models}
+	\begin{itemize}
+		\item Hydrodynamics
+		\item Solid Mechanics
+		\item Damage and Fracture Modeling
+		\item Radiation Transport (if applicable)
+	\end{itemize}
+	
+	\section{I/O and Post-Processing}
+	\begin{itemize}
+		\item Input File Formats
+		\item Output File Formats (VTK, Silo, etc.)
+		\item Restart and Checkpointing
+		\item Visualization Recommendations
+	\end{itemize}
+	
+	\section{Extending Nidhoggr}
+	\begin{itemize}
+		\item Adding New Material Models
+		\item Adding New Boundary Conditions
+		\item Implementing New Solvers
+		\item Adding New Output Types
+	\end{itemize}
+	
+	\section{Coding Standards and Guidelines}
+	\begin{itemize}
+		\item Naming Conventions
+		\item Best Practices for Contributions
+		\item Testing and Validation Procedures
+	\end{itemize}
+	
+	\section{Known Limitations and Future Work}
+	\begin{itemize}
+		\item Current Limitations
+		\item Planned Features
+	\end{itemize}
+	
+	\appendix
+	
+	\section{Appendix A: Class Hierarchies}
+	\begin{itemize}
+		\item UML-style Diagrams (optional)
+	\end{itemize}
+	
+	\section{Appendix B: Developer Tools}
+	\begin{itemize}
+		\item Debugging Tools
+		\item Profiling and Performance Analysis
+	\end{itemize}
+	
+\end{document}

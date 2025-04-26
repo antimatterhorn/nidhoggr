@@ -4,3 +4,9 @@
 /tests/__pycache__
 /examples/__pycache__
 .vscode
+*.aux
+*.dvi
+*.log
+*.out
+*.toc
+*.synctex.gz
