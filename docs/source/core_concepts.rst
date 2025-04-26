@@ -11,7 +11,7 @@ most classes on integer dimensionality. For example,
 class Kinetics : public Physics<dim> {}``
 
 defines a derived class ``Kinetics`` that operates in 1, 2, or 3 spaital dimensions. When templated classes are Python wrapped in Nidhoggr,
-they typically specify dimensionality in their instatiated name, *e.g.* ``Kinetics2D``.
+they typically specify dimensionality in their instatiated name, *e.g.* ``Kinetics2d``.
 
 Units and Constants
 -------------------
@@ -21,7 +21,7 @@ for most problems, you will want to define your units in order for certain unive
 correct values. This is done via the ``PhysicalConstants`` object which has two constructor methods. You can either supply 
 the full scope of your desired units with unit length (in meters), unit mass (in kg), 
 unit time (in seconds), unit temperature (in Kelvin), and unit charge (in Coulomb), or just a subset of the first three, 
-wherein temperature will be assumed to be Kelvins and charge will be assumed to be Coulombs. 
+whereupon temperature will be assumed to be Kelvins and charge will be assumed to be Coulombs. 
 
 For example, in order to simulate something like the Earth with state quantities near 1, you may choose to instantiate your units like so:
 
@@ -41,7 +41,8 @@ Nodelists and Fields
 --------------------
 Fields are essentially decorated std::vectors that come with some additional functionality that make them 
 assignable to various physics packages by name, *e.g.* ``density`` may be a Field that certain physics classes create and evolve
-as part of the state. 
+as part of the state. This way, if multiple physics packages use the same Field names, they will be able to operate on the same data in
+an operator split mode.
 
 Nidhoggr's primary container for state data is the ``Nodelist`` class. Fields are assigned to a ``Nodelist`` for containerization
 of data, for pairing of different Field data into a state, and for state copying. Most physics packages will expect a ``Nodelist`` 
@@ -49,7 +50,9 @@ to be passed as a constructor argument to keep track of
 which state vectors the physics package is intended to evolve. 
 
 Note that Nidhoggr does not assume any specific Fields (except ``id``) are necessary without a physics package first 
-creating that Field and then assigning it to the ``Nodelist``, not even ``position``.
+creating that Field and then assigning it to the ``Nodelist``, not even ``position``. If you try to access a Field called ``density`` inside
+a problem without any physics classes that use ``density``, Nidhoggr will raise an error, unless you have manually created that Field yourself
+within your problem script.
 
 Physics Packages
 --------------------
@@ -65,7 +68,10 @@ or something to that effect.
 
 Equations of State
 --------------------
-
+If a particular physics package requires an equation of state (EOS), you'll need to pass it in as the ``eos`` argument. For example, suppose
+I want to use an Ideal Gas EOS for my hydro physics object. I simply create the EOS with ``eos = IdealGasEOS(5.0/3.0,constants)`` 
+and pass it to my hydro physics object as the ``eos`` argument: 
+``hydro = GridHydroHLL2d(myNodeList,constants,eos,myGrid)``.
 
 
 Mesh/Grid Handling
@@ -83,3 +89,28 @@ The Controller
 
 Periodic Work
 --------------------
+Nidhoggr's controller object permits for periodic work to be inserted at a chosen cadence into the simulation.
+This is done by passing a ``periodicWork`` argument to the controller constructor: 
+
+.. code-block:: python
+    
+    controller = Controller(integrator=integrator,
+                            statStep=100,
+                            periodicWork=periodicWork)
+
+Suppose, for instance, I want to insert periodic work that oscillates the value of my ``phi`` field at a certain cadence in the center
+of the grid domain.
+I can do this by creating an oscillator class in Python:
+
+.. literalinclude:: oscillator.py
+   :language: python
+
+Then I construct the associated periodic work object like so:
+
+.. code-block:: python
+
+    osc = oscillate(nodeList=myNodeList,grid=grid,cs=cs,width=nx,height=ny)
+    periodicWork = [osc]
+
+before passing this Python list to the controller constructor. The controller expects a ``__call__(self,cycle,time,dt)`` method inside 
+each periodic work function and will invoke each ``call`` method at your chosen cadence.

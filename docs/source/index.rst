@@ -8,7 +8,6 @@ Nidhoggr Documentation
    intro
    installation
    getting_started
-   usage
    core_concepts
    examples
 
