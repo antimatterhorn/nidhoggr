@@ -1,0 +1,21 @@
+git clone --recurse-submodules https://github.com/antimatterhorn/nidhoggr.git
+git submodule update --remote --recursive
+
+
+mkdir build
+
+Nidhoggr/
+|-- docs/
+|-- exmaples/
+|-- src/
+|   |-- Math/
+|   |   |-- vectorMath.cc
+|   |   |-- vectorMath.py
+|   |   |-- ...
+|   |-- ...
+|-- tests/
+|-- build/
+
+inside build directory->
+cmake ..
+make
