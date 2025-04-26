@@ -1,18 +1,7 @@
 Core Concepts
 =============
 
-As previously described, Nidhoggr is a compiled C++ codebase that is driven primarily by Python via 
-compiled Python modules. If you're familiar with how NumPy works, you have most of the knowledge you'll 
-need to understand how Nidhoggr works. In fact, while Nidhoggr does have many linear algebra classes and 
-methods builtin, it often works best when paired with other popular Python modules, like NumPy and Matplotlib.
 
-Importing Nidhoggr Modules
---------------------------
-
-The ``nidhoggr.py`` file in the tests and examples directories imports all of the compiled Nidhoggr 
-modules for you, and so if you wish to import the entire codebase, you can simply ``from nidhoggr import *`` 
-However, you may choose to import only a subset of the available modules for your specific problem. Consult ``nidhoggr.py`` 
-for the full list of modules.
 
 Units and Constants
 -------------------
@@ -35,13 +24,39 @@ Nidhoggr also comes with some helper methods for a handful of frequently used un
 ``Units.py``, like ``MKS()``, ``CGS()``, and ``SOL()``. 
 Simply invoke them with ``myUnits = MKS()`` if you've imported the ``Units`` module.
 
+
 Nodelists and Fields
 --------------------
+Fields are essentially decorated std::vectors that come with some additional functionality that make them 
+assignable to various physics packages by name, *e.g.* ``density`` may be a Field that certain physics classes create and evolve
+as part of the state.
+Nidhoggr's primary container for state data is the ``Nodelist`` class. Fields are assigned to a ``Nodelist`` for containerization
+of data and state copying.
 
-- Physics methods
-- Equations of State
-- Mesh/grid handling
-- Boundary conditions
-- Integrators
-- Controller
-- Periodic work
+Physics Packages
+--------------------
+Nidhoggr's integrators expect assigned (derived) physics classes to override the physics base class methods for 
+PrestepInitialize, EvaluateDerivatives and FinalizeStep. The order in which you assign these physics objects to 
+the integrator is the order in which they will be computed (operator splitting). Consult the Classes.md files in 
+``src`` subdirectories for interface guides on many of the classes and methods.
+
+Equations of State
+--------------------
+
+
+
+Mesh/Grid Handling
+--------------------
+
+
+Boundary Conditions
+--------------------
+
+Integrators
+--------------------
+
+The Controller
+--------------------
+
+Periodic Work
+--------------------

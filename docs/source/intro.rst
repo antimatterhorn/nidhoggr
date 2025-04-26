@@ -1,8 +1,10 @@
 Introduction
 ============
 
-The Nidhoggr (pronounced Nith-hewer) is the mythical beast that gnaws at the roots of the world-tree, Yggdrasil. 
+The Níðhöggr (pronounced Nith-hewer) is the mythical beast that gnaws at the roots of the world-tree, Yggdrasil. 
 This may or may not have been inspired by my simultaneous loathing and admiration for tree codes.
+
+.. image:: Nidhogg.png
 
 Purpose of Nidhoggr
 -------------------

@@ -5,10 +5,6 @@ Installation
    :language: bash
 
 
-
-
-
-
 Hopefully you already have python somewhere...
 You may need to ``pip3 install PYB11Generator``
 
