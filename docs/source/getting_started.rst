@@ -1,6 +1,13 @@
 Getting Started
 ===============
 
+Before proceeding, ensure that your Nidhoggr installation is working correctly by running Python interactively inside the ``tests`` directory.
+Attempt to import the ``nidhoggr`` package with ``from nidhoggr import *`` and ensure that you see the following output:
+
+.. nidhoggr-logo::
+
+If so, then Nidhoggr is ready to use. If not, then you'll need to troubleshoot your installation before proceeding.
+
 First run: a simple example
 ---------------------------
 
