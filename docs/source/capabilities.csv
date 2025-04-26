@@ -11,8 +11,10 @@ Equations of State,Ideal gas,,Helmholtz
 Time Integrators,Forward Euler,,Symplectic
 ,RK2,,
 ,RK4,,
-Meshing,Eulerian grid,FEM,AMR
-Data IO,Silo,,
+Meshing,Eulerian grid,Tet mesh,AMR
+,Triangular mesh,Hexahedron mesh,
+,Quad mesh,,
+Data IO,silo,,
 ,vtk,,
 ,obj,,
 Custom Data Types,Vectors,,

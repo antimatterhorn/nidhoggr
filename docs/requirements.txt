@@ -1,4 +1,3 @@
 sphinx
-furo
 myst-parser
 sphinx-rtd-theme

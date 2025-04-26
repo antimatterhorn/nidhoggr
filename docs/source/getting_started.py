@@ -21,7 +21,7 @@ if __name__ == "__main__":
     pos     = myNodeList.getFieldVector2d("position")
     
     mass.setValue(0, 1)
-    rad.setValue(0, 1)
+    rad.setValue(0, 0.01)
     vel.setValue(0, Vector2d(5,5))
     pos.setValue(0, Vector2d(0,0))
     # Initial_conditions_set
