@@ -2,10 +2,8 @@ from nidhoggr import *
 from Animation import *
 
 if __name__ == "__main__":
-    animate = True
-    
-    numNodes = 1
     constants = MKS()
+    numNodes = 1
     myNodeList = NodeList(numNodes)
     # Node_created
     gravVec = Vector2d(0, -9.8)

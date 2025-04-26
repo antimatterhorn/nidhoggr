@@ -11,7 +11,7 @@ most classes on integer dimensionality. For example,
 class Kinetics : public Physics<dim> {}``
 
 defines a derived class ``Kinetics`` that operates in 1, 2, or 3 spaital dimensions. When templated classes are Python wrapped in Nidhoggr,
-they typically specify dimensionality in their instatiated name, *e.g.* ``Kinetics2d``.
+they typically specify dimensionality in their instantiated name, *e.g.* ``Kinetics2d``.
 
 Units and Constants
 -------------------
