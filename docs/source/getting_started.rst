@@ -2,7 +2,7 @@ Getting Started
 ===============
 
 Before proceeding, ensure that your Nidhoggr installation is working correctly by running Python interactively inside the ``tests`` directory.
-Attempt to import the ``nidhoggr`` package with ``from nidhoggr import *`` and ensure that you see the following output:
+Attempt to import the ``nidhoggr`` package with ``from nidhoggr import *`` and you should be greeted with the following output:
 
 .. nidhoggr-logo::
 
@@ -26,8 +26,11 @@ in this case is a Nodelist with a single node.
 Next, we want to create our physics packages, so we'll define a gravity vector pointing downwards in 2d space, and then create the constant gravity package.
 In Nidhoggr, if you're using particles as simple hard spheres, it's a good idea to also construct the Kinetics package as that will ensure that the mass, radius,
 and velocity fields are created and assigned to your Nodelist. Then we place both physics
-packages into a convenient Python list. Note that while mixing dimensionality is possible within Nidhoggr, it's not recommended unless you know what you're doing,
-so in this case, we'll stick to 2d space for everything.
+packages into a convenient Python list. 
+
+.. note::
+   While mixing dimensionality is possible within Nidhoggr, it's not recommended unless you know what you're doing,
+   so in this case, we'll stick to 2d space for everything.
 
 .. literalinclude:: getting_started.py
    :language: python
@@ -45,6 +48,11 @@ signature just to verify that it was created successfully.
    :end-before: Integrator_created
    :linenos:
    :lineno-start: 15
+
+.. code-block:: bash
+
+   $ <Integrators.RungeKutta4Integrator2d object at 0x7f5770ad3770>
+
 
 To create our intial conditions, we'll access the fields of our Nodelist and set the values of the 0th node to some initial state, in this case, 
 a radius of 1 and mass of 1.
@@ -69,13 +77,13 @@ no effect on the simulation.
    :lineno-start: 28
 
 We can understand these chosen boundaries by solving the simple kinematic problem of an object traveling under the influence of Earth gravity.
-If we solve for the time it takes to reach apogee (where velocity is zero), and plug that time into the equation for motion, we find an apogee
+If we solve for the time it takes to reach apogee (where vertical velocity is zero), and plug that time into the equation for motion, we find an apogee
 height of about 1.3 meters, hence setting the maximum y-value of our animation boundaries to 1.4. 
 
 .. math::
     \begin{aligned}
-    v &= v_{0} + a t\\
-    v &= 5 - 9.8t\\
+    v_y &= v_{0,y} + a t\\
+    v_y &= 5 - 9.8t\\
     0 &= 5 - 9.8t_a\\
     t_a &= \frac{5}{9.8}s \\
     y_a &= y_0 + v_{y,0} t_a + \frac{1}{2} a {t_a}^2\\

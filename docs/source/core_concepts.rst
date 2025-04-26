@@ -34,25 +34,31 @@ Nidhoggr also comes with some helper methods for a handful of frequently used un
 ``Units.py``, like ``MKS()``, ``CGS()``, and ``SOL()``. 
 Simply invoke them with ``myUnits = MKS()`` if you've imported the ``Units`` module.
 
-The ``PhysicalConstants`` object is typically passed to a physics package via the constructor for that package. Not all physics packages
-require a ``PhysicalConstants`` object.
+.. note::
+    The ``PhysicalConstants`` object is typically passed to a physics package via the constructor for that package. Not all physics packages
+    require a ``PhysicalConstants`` object.
 
-Nodelists and Fields
+Fields and Nodelists
 --------------------
 Fields are essentially decorated std::vectors that come with some additional functionality that make them 
 assignable to various physics packages by name, *e.g.* ``density`` may be a Field that certain physics classes create and evolve
 as part of the state. This way, if multiple physics packages use the same Field names, they will be able to operate on the same data in
 an operator split mode.
 
+.. note::
+    Nidhoggr does not currently support the use of multiple Field objects with the same internal name. If you try to assign two Fields 
+    with the same name to a ``Nodelist``, Nidhoggr will raise an error.
+
 Nidhoggr's primary container for state data is the ``Nodelist`` class. Fields are assigned to a ``Nodelist`` for containerization
 of data, for pairing of different Field data into a state, and for state copying. Most physics packages will expect a ``Nodelist`` 
 to be passed as a constructor argument to keep track of
 which state vectors the physics package is intended to evolve. 
 
-Note that Nidhoggr does not assume any specific Fields (except ``id``) are necessary without a physics package first 
-creating that Field and then assigning it to the ``Nodelist``, not even ``position``. If you try to access a Field called ``density`` inside
-a problem without any physics classes that use ``density``, Nidhoggr will raise an error, unless you have manually created that Field yourself
-within your problem script.
+.. note::
+    Nidhoggr does not assume any specific Fields (except ``id``) are necessary without a physics package first 
+    creating that Field and then assigning it to the ``Nodelist``. If you try to access a Field called ``density`` inside
+    a problem without any physics classes that use ``density``, Nidhoggr will raise an error, unless you have manually created that Field yourself
+    within your problem script.
 
 Physics Packages
 --------------------
@@ -76,16 +82,56 @@ and pass it to my hydro physics object as the ``eos`` argument:
 
 Mesh/Grid Handling
 --------------------
-
+<wip>
 
 Boundary Conditions
 --------------------
+<wip>
 
 Integrators
 --------------------
+Nihoggr's integrators follow a basic pattern of initializing the state of the physics objects at each step, applying boundary conditions,
+evaluating derivatives, advancing the state of each physics object from those derivatives, and then finalizing each physics object's state.
+An example of this pattern for simple forward-euler integration is shown below:
+
+.. code-block:: c++
+
+        physics->PreStepInitialize();
+        physics->ApplyBoundaries();
+
+        State<dim>* state = physics->getState();
+        State<dim> derivatives(state->size());
+        derivatives.ghost(state);
+
+        physics->EvaluateDerivatives(state, derivatives, time, 0);
+
+        derivatives *= dt;
+        State<dim> newState(state->size());
+        newState.ghost(state);
+        newState += *state;
+        newState += derivatives;
+
+        physics->ApplyBoundaries();
+        physics->FinalizeStep(&newState);
+
+.. note::
+    A ``State<dim>`` object is a collection of Fields, usually a subset of Fields from a Nodelist, and is typically created by copying values
+    from a Nodelist, rather than by reference. This way, a State can be advanced through integration steps while preserving the original State
+    inside the Nodelist if pair-wise interactions are necessary for a particular physics object. 
+    
+.. note::
+    The ``dt`` argument in the EvaluateDerivatives
+    method is used to advanced to partial steps within an integration (such as in the case of Runge Kutta integration), and so for this example is
+    set to 0, meaning all derivatives are calculated at the start of the step, rather than at some time within it. 
 
 The Controller
 --------------------
+The controller object is a Python class that issues instructions to the ingetrator object and performs any extra periodic work. Integration steps
+are performed using the ``Step()`` method of the integrator, and the controller is responsible for issuing these steps and halting the simulation
+if a ``tstop`` is supplied. The controller is simple enough to be reproduced in its entirety below:
+
+.. literalinclude:: ../../src/Utilities/Controller.py
+   :language: python
 
 Periodic Work
 --------------------
@@ -113,4 +159,5 @@ Then I construct the associated periodic work object like so:
     periodicWork = [osc]
 
 before passing this Python list to the controller constructor. The controller expects a ``__call__(self,cycle,time,dt)`` method inside 
-each periodic work function and will invoke each ``call`` method at your chosen cadence.
+each periodic work function and will invoke each ``call`` method at your chosen cadence. You can use periodic work to implement many other 
+effects in your simulation, or to perform analysis tasks in real time during integration. 
