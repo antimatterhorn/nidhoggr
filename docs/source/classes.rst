@@ -1,6 +1,7 @@
 Class Guides
 =======================
-
+Most classes in Nidhoggr are purely virtual. This allows for the interaction between class species (like physics classes
+and integrators) to be abstracted and predictable.  
 
 Physics Classes
 --------------------
@@ -59,5 +60,45 @@ derivatives back to the ``deriv`` ``State`` object.
 
 .. note::
     The integrator will call this method multiple times per time step if the particular integrator in question is of high temporal order. 
-    Thus, the value of ``dt`` here may be a partial step, but in the case of a simple, forward Euler integration (O(Δt)), ``dt=0`` means that we are 
+    Thus, the value of ``dt`` here may be a partial step and the initial ``State`` object may change within a time step, 
+    but in the case of a simple, forward Euler integration (:math:`\mathcal{O}(\Delta t)`), ``dt=0`` means that we are 
     computing the derivatives using ``State`` vector quantities evaluated at the current time. 
+
+The final bit of code in ``EvaluateDerivatives`` merely calculates the minimum timestep based on a velocity condition.
+
+.. literalinclude:: ../../src/Physics/constantGravity.cc
+   :language: c++
+   :linenos:
+   :lines: 75-102
+   :lineno-start: 75
+
+``FinalizeStep`` is meant to tie up any further calculations that should happen at the end of a time step. In this case, we merely push
+the values of the ``finalState`` passed from the integrator to the physics ``State`` object and the corresponding Fields in the ``NodeList``
+using the ``Field.copyValues`` method.
+
+Integrator Classes
+------------------
+Nihoggr's integrators follow a basic pattern of initializing the state of the physics objects at each step, applying boundary conditions,
+evaluating derivatives, advancing the state of each physics object from those derivatives, and then finalizing each physics object's state.
+An example of this pattern for simple forward Euler integration is shown below:
+
+.. literalinclude:: ../../src/Integrators/integrator.cc
+   :language: c++
+   :lines: 6-51
+
+.. note::
+   While this class is a foward Euler integrator, it is also the base class for all integrators in Nidhoggr.
+
+Equations of State
+------------------
+Equations of state are possibly the simplest classes in Nidhoggr. They consume Field objects and set the values of other Fields according to
+their respective closure equations. Most of the logic for how they work is self-described by the base class interface file ``equationOfState.hh``.
+
+.. literalinclude:: ../../src/EOS/equationOfState.hh
+   :language: c++
+   :linenos:
+   :lines: 9-20
+   :lineno-start: 9
+
+.. note::
+    Equations of state are not typically templated in Nidhoggr since they act only on scalar Fields. 

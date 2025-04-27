@@ -1,5 +1,14 @@
 Nidhoggr Documentation
 =======================
+Þar saug Niðhöggr
+nái framgengna,
+sleit vargr vera—
+vituð ér enn, eða hvat ?
+
+.. image:: nithhewer.png
+   :align: center
+   :width: 50%
+
 
 .. toctree::
    :maxdepth: 2

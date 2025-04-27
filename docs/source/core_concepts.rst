@@ -7,8 +7,10 @@ Dimensionality
 Nidhoggr is designed from the start to be extensible to multiple spatial dimensions. This is accomplished by templating
 most classes on integer dimensionality. For example, 
 
-``template <int dim>
-class Kinetics : public Physics<dim> {}``
+.. code-block:: c++
+    
+    template <int dim>
+    class Kinetics : public Physics<dim> {}
 
 defines a derived class ``Kinetics`` that operates in 1, 2, or 3 spaital dimensions. When templated classes are Python wrapped in Nidhoggr,
 they typically specify dimensionality in their instantiated name, *e.g.* ``Kinetics2d``.
@@ -25,7 +27,9 @@ whereupon temperature will be assumed to be Kelvins and charge will be assumed t
 
 For example, in order to simulate something like the Earth with state quantities near 1, you may choose to instantiate your units like so:
 
-``myUnits = PhysicalConstants(6.387e6, 5.97e24, 1.0)``
+.. code-block:: python
+
+    myUnits = PhysicalConstants(6.387e6, 5.97e24, 1.0)
 
 From these units, Nidhoggr will calculate at the time of the constructor new values for all of the universal constants 
 to use in your chosen physics packages.
@@ -89,39 +93,7 @@ Boundary Conditions
 
 Integrators
 --------------------
-Nihoggr's integrators follow a basic pattern of initializing the state of the physics objects at each step, applying boundary conditions,
-evaluating derivatives, advancing the state of each physics object from those derivatives, and then finalizing each physics object's state.
-An example of this pattern for simple forward-euler integration is shown below:
-
-.. code-block:: c++
-
-        physics->PreStepInitialize();
-        physics->ApplyBoundaries();
-
-        State<dim>* state = physics->getState();
-        State<dim> derivatives(state->size());
-        derivatives.ghost(state);
-
-        physics->EvaluateDerivatives(state, derivatives, time, 0);
-
-        derivatives *= dt;
-        State<dim> newState(state->size());
-        newState.ghost(state);
-        newState += *state;
-        newState += derivatives;
-
-        physics->ApplyBoundaries();
-        physics->FinalizeStep(&newState);
-
-.. note::
-    A ``State<dim>`` object is a collection of Fields, usually a subset of Fields from a Nodelist, and is typically created by copying values
-    from a Nodelist, rather than by reference. This way, a State can be advanced through integration steps while preserving the original State
-    inside the Nodelist if pair-wise interactions are necessary for a particular physics object. 
-    
-.. note::
-    The ``dt`` argument in the EvaluateDerivatives
-    method is used to advanced to partial steps within an integration (such as in the case of Runge Kutta integration), and so for this example is
-    set to 0, meaning all derivatives are calculated at the start of the step, rather than at some time within it. 
+<wip>
 
 The Controller
 --------------------

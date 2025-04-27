@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/source/nithhewer.png" alt="Nidhoggr Logo" width="200">
+</p>
+
 # nidhoggr
 
 Nidhoggr is a generic physics simulation framework. It is designed to be used as a base for varied physics simulation methods (FVM,FEM,etc)

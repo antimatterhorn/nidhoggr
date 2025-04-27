@@ -1,7 +1,7 @@
 Introduction
 ============
 
-The Níðhöggr (pronounced Nith-hewer) is the mythical beast that gnaws at the roots of the world-tree, Yggdrasil. 
+The Níðhöggr (pronounced Nith-hewer) is the mythical serpent demon that gnaws at the roots of the world-tree, Yggdrasil. 
 This naming choice may or may not have been inspired by my simultaneous loathing and admiration for tree codes.
 
 .. image:: Nidhogg.png
