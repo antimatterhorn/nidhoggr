@@ -96,4 +96,5 @@ like so:
 .. image:: example.gif
 
 Simply close the animation window to quit Nidhoggr. At this point, I encourage you to increase the total number of nodes and set their initial conditions
-with a loop over numNodes. Try giving each node slightly different initial conditions and see how the animation changes!
+with a loop over numNodes. Try giving each node slightly different initial conditions (and positions since they are kinetic and so will collide with one another) 
+and see how the animation changes!
