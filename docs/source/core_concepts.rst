@@ -62,8 +62,7 @@ which state vectors the physics package is intended to evolve.
 
 Physics Packages
 --------------------
-Nidhoggr's integrators expect assigned (derived) physics classes to override the physics base class methods for 
-PrestepInitialize, EvaluateDerivatives and FinalizeStep. Assigning multiple physics packages to
+Assigning multiple physics packages to
 the integrator is as simple as passing a Python list of constructed physics objects to the integrator's constructor. 
 The order in which you assign these physics objects to 
 the integrator is the order in which they will be computed (operator splitting). For example,
