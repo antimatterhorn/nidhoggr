@@ -89,6 +89,48 @@ Mesh/Grid Handling
 
 Boundary Conditions
 --------------------
+Currently, Nidhoggr has two species of boundary objects: grid boundaries and collider boundaries.
+Grid boundaries apply to mesh-based physics and collider boundaries apply to lagrangian particles.
+
+Grid Boundaries
+^^^^^^^^^^^^^^^
+The types of grid boundaries used in Nidhoggr are:
+
+.. code-block:: text
+    
+    DirichletGridBoundaries
+    OutflowGridBoundaries
+    PeriodicGridBoundaries
+    ReflectingGridBoundaries 
+
+Each of these is available in any of 1d, 2d, or 3d varieties. Grid boundaries are applied directly
+to the grid cells and so must be pointed at the correct grid object at construction.
+
+.. code-block:: python
+
+    box = DirichletGridBoundaries2d(grid=myGrid)
+
+Dirichlet grid boundaries have methods for applying boundaries to cells within the grid such as 
+``box.addBox(Vector2d(16,20),Vector2d(20,44))`` which would add Dirichlet conditions to the cells
+whose positions span 16-20 in *x* and 20-44 in *y*.
+The full list of available methods for ``DirichletGridBoundaries`` is given below.
+
+.. literalinclude:: ../../src/Boundaries/dirichletGridBoundaries.py
+    :language: python
+    :lines: 8-17
+
+The ``addDomain`` method applies Dirichlet conditions to all of the bounds (left-most,right-most,etc.)
+of the mesh.
+
+The other grid boundary types merely apply to the bounding cells of the mesh.
+
+.. warning::
+    At this time, Nidhoggr's reflecting, periodic, and outlfow boundaries apply to all of the bounds
+    of your mesh, *i.e* the left and right-most cells will be periodic as well as the top and bottom-most
+    cells in 2d. 
+
+Collider Boundaries
+^^^^^^^^^^^^^^^^^^^
 <wip>
 
 Integrators
