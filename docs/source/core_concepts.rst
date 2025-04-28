@@ -120,9 +120,8 @@ The full list of available methods for ``DirichletGridBoundaries`` is given belo
     :lines: 8-17
 
 The ``addDomain`` method applies Dirichlet conditions to all of the bounds (left-most,right-most,etc.)
-of the mesh.
-
-The other grid boundary types merely apply to the bounding cells of the mesh.
+of the mesh. The other grid boundary types merely perform ``addDomain`` at constructor time and do not
+have any special methods.
 
 .. warning::
     At this time, Nidhoggr's reflecting, periodic, and outlfow boundaries apply to all of the bounds
@@ -131,7 +130,28 @@ The other grid boundary types merely apply to the bounding cells of the mesh.
 
 Collider Boundaries
 ^^^^^^^^^^^^^^^^^^^
-<wip>
+Collider boundaries are spherical (or round in 2d) or box-shaped objects that reflect the motion of 
+lagrangian particles across the normal of their surface. A ``SphereCollider`` takes as arguments 
+a position Vector for the center of the sphere (or circle), a radius, and an elasticity parameter
+between 0 and 1. A value of 1 for this parameter means purely elastic collisions with absolute
+momentum conservation. 
+
+.. code-block:: python
+
+    SphereCollider2d(position=Vector2d(x, y), radius=collider_radius, elasticity=0.8)
+
+A ``BoxCollider`` takes as arguments two position Vectors that describe 
+opposite corners of the box and an elacsticity parameter. 
+
+.. code-block:: python
+
+    BoxCollider2d(position1=Vector2d(x, y), position2=Vector2d(x+width,y+height), elasticity=0.5)
+
+Collider boundaries can be assigned to lagrangian physics packages with the ``addBoundary()`` method:
+
+.. code-block:: python
+
+    myKineticsPhysicsPkg.addBoundary(myBoxCollider)
 
 Integrators
 --------------------
@@ -145,32 +165,4 @@ if a ``tstop`` is supplied. The controller is simple enough to be reproduced in 
 
 .. literalinclude:: ../../src/Utilities/Controller.py
    :language: python
-
-Periodic Work
---------------------
-Nidhoggr's controller object permits for periodic work to be inserted at a chosen cadence into the simulation.
-This is done by passing a ``periodicWork`` argument to the controller constructor: 
-
-.. code-block:: python
-    
-    controller = Controller(integrator=integrator,
-                            statStep=100,
-                            periodicWork=periodicWork)
-
-Suppose, for instance, I want to insert periodic work that oscillates the value of my ``phi`` field at a certain cadence in the center
-of the grid domain.
-I can do this by creating an oscillator class in Python:
-
-.. literalinclude:: oscillator.py
-   :language: python
-
-Then I construct the associated periodic work object like so:
-
-.. code-block:: python
-
-    osc = oscillate(nodeList=myNodeList,grid=grid,cs=cs,width=nx,height=ny)
-    periodicWork = [osc]
-
-before passing this Python list to the controller constructor. The controller expects a ``__call__(self,cycle,time,dt)`` method inside 
-each periodic work function and will invoke each ``call`` method at your chosen cadence. You can use periodic work to implement many other 
-effects in your simulation, or to perform analysis tasks in real time during integration. 
+   

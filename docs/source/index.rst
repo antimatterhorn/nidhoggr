@@ -19,6 +19,7 @@ vituð ér enn, eða hvat ?
    getting_started
    core_concepts
    examples
+   advanced_topics
 
 .. toctree::
    :maxdepth: 2
