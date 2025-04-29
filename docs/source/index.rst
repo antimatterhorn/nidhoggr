@@ -1,9 +1,6 @@
 Nidhoggr Documentation
 =======================
-Þar saug Niðhöggr
-nái framgengna,
-sleit vargr vera—
-vituð ér enn, eða hvat ?
+View Nidhoggr's source code at `Github <https://github.com/antimatterhorn/nidhoggr>`_
 
 .. image:: nithhewer.png
    :align: center

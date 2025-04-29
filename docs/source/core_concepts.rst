@@ -66,6 +66,30 @@ which state vectors the physics package is intended to evolve.
 
 Physics Packages
 --------------------
+Physics packages are the primary computational engines of Nidhoggr. With a few exceptions,
+all physics packages consume a ``NodeList`` and a ``constants`` object at constructor time.
+Hydrodynamics physics packages also require an equation of state (``eos``). Physics packages
+hold onto State vectors of pertinent Fields and prescribe how their derivatives are to be
+calculated. However, physics packages do not themselves advance the state - the Integrators do.
+
+The current list of available physics packages and their constructors is
+
+.. code-block:: text
+
+    ConstantGravityXd(nodeList,constants,gravityVector)
+    EulerHydroXd(nodeList,constants,eos,grid)
+    FEMXd(nodeList,constants,mesh)
+    GridHydroHLLXd(nodeList,constants,eos,grid)
+    KineticsXd(nodeList,constants)
+    NBodyGravityXd(nodeList,constants,plummerLength)
+    PointSourceGravityXd(nodeList,constants,pointSourceLocation,pointSourceVelocity,pointSourceMass)
+    RockPaperScissors(grid,A,D)
+    WaveEquationXd(nodeList,constants,grid,C)
+    WaveEquationXd(nodeList,constants,grid,depthMap)
+
+For each of these, replace the ``Xd`` with your desired dimensionality (1d,2d,3d). Consult the
+python class definitions in the ``src/Physics`` directory for specific implementation details.
+
 Assigning multiple physics packages to
 the integrator is as simple as passing a Python list of constructed physics objects to the integrator's constructor. 
 The order in which you assign these physics objects to 
@@ -81,6 +105,13 @@ If a particular physics package requires an equation of state (EOS), you'll need
 I want to use an Ideal Gas EOS for my hydro physics object. I simply create the EOS with ``eos = IdealGasEOS(5.0/3.0,constants)`` 
 and pass it to my hydro physics object as the ``eos`` argument: 
 ``hydro = GridHydroHLL2d(myNodeList,constants,eos,myGrid)``.
+
+The current list of available equations of state and their constructors is
+
+.. code-block:: text
+
+    IdealGasEOS(specificHeatRatio,constants)
+    PolyTropicEOS(polyTropicConstant,polyTropicIndex,constants)
 
 
 Mesh/Grid Handling

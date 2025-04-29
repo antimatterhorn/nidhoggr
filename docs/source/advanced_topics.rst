@@ -29,3 +29,23 @@ Then I construct the associated periodic work object like so:
 before passing this Python list to the controller constructor. The controller expects a ``__call__(self,cycle,time,dt)`` method inside 
 each periodic work function and will invoke each ``call`` method at your chosen cadence. You can use periodic work to implement many other 
 effects in your simulation, or to perform analysis tasks in real time during integration. 
+
+Calculators and Linear Algebra
+------------------------------
+Nidhoggr also includes a small number of calculator objects that can be used anywhere in a Nidhoggr
+script. These includes
+
+.. code-block:: text
+
+    cosmology
+    stringArt
+    timeDilation
+
+Each of these has an example script in the ``examples`` directory.
+
+In addition to the above-mentioned calculators, Nidhoggr includes a fairly well-featured linear
+algebra computational package through its Vector and Tensor class methods. 
+
+.. note::
+    Nihoggr's Vector and Tensor classes are limited to a maximum of three dimensions along any
+    span.
