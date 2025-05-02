@@ -116,6 +116,25 @@ The current list of available equations of state and their constructors is
 
 Mesh/Grid Handling
 --------------------
+Nidhoggr supports two kinds of meshes: Eulerian grids and Element meshes. 
+
+Eulerian Grids
+^^^^^^^^^^^^^^
+Eulerian grids are invoked with the dimensional ``Grid`` class with 
+``myGrid=Grid2d(nx=[int],ny=[int],dx=[float],dy=[float])`` to create a 2D grid with nx cells in the x-direction
+and ny cells in the y-direction. The ``dx`` and ``dy`` parameters set the spatial dimensions of a single cell.
+Grids in Nidhoggr can be 1D, 2D, or 3D, and the constructor assigns positions to the cells of the grid 
+in ascending order in each spatial coordinate. 
+
+.. note::
+    Grids also have an optional ``setOrigin(Vector)`` method for moving the
+    (0,0) coordinate to any location inside your grid, `i.e.` if you've created a 4x4 grid and the first cell has
+    coordinates (0,0), but you'd like the origin to sit at the center of the grid instead, you can do so simply by invoking
+    ``myGrid.setOrigin(Vector2d(2,2))`` which will adjust all of the spatial coordinates of your cells to make
+    the center of the grid the (0,0) coordinate.
+
+Element Meshes
+^^^^^^^^^^^^^^
 <wip>
 
 Boundary Conditions
@@ -186,7 +205,16 @@ Collider boundaries can be assigned to lagrangian physics packages with the ``ad
 
 Integrators
 --------------------
-<wip>
+Nidhoggr's integrators all have essentially the same interface: they take as arguments your physics packages
+as ``packages=[python list]`` and a ``dtmin=[float]`` argument to set the lowest allowable timestep. As of |today|, the 
+integrators available in Nidhoggr are
+
+.. code-block:: text
+
+    IntegratorXd - a forward Euler integrator
+    RungeKutta2IntegratorXd
+    RungeKutta4IntegratorXd
+
 
 The Controller
 --------------------
