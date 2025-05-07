@@ -1,7 +1,7 @@
 [submodule "extern/PYB11Generator"]
 	path = extern/PYB11Generator
 	url = https://github.com/antimatterhorn/PYB11Generator.git
-	branch = master
+	branch = fix_enum_tuple_support
 [submodule "extern/pybind11"]
 	path = extern/pybind11
 	url = https://github.com/pybind/pybind11.git
