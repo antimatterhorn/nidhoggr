@@ -2,6 +2,84 @@
 #include "../Mesh/grid.hh"
 #include <iostream>
 
+template<int dim>
+struct HLLFlux {
+    double mass;
+    Lin::Vector<dim> momentum;
+    double energy;
+};
+
+template<int dim>
+HLLFlux<dim>
+computeHLLFlux(int iL, int iR, int axis,
+               const Field<double>& rho,
+               const Field<Lin::Vector<dim>>& v,
+               const Field<double>& u,
+               const Field<double>& p,
+               const Field<double>& cs) {
+    using Vector = Lin::Vector<dim>;
+
+    // Left state
+    double rhoL = rho.getValue(iL);
+    Vector vL = v.getValue(iL);
+    double uL = u.getValue(iL);
+    double pL = p.getValue(iL);
+    double cL = cs.getValue(iL);
+    Vector momL = vL * rhoL;
+    double eL = uL + 0.5 * vL.mag2();
+    double EL = rhoL * eL;
+
+    // Right state
+    double rhoR = rho.getValue(iR);
+    Vector vR = v.getValue(iR);
+    double uR = u.getValue(iR);
+    double pR = p.getValue(iR);
+    double cR = cs.getValue(iR);
+    Vector momR = vR * rhoR;
+    double eR = uR + 0.5 * vR.mag2();
+    double ER = rhoR * eR;
+
+    // Normal velocities
+    double vnL = vL[axis];
+    double vnR = vR[axis];
+
+    // Fluxes for left and right states
+    double massFluxL = rhoL * vnL;
+    Vector momFluxL = momL * vnL;
+    momFluxL[axis] += pL;
+    double energyFluxL = vnL * (EL + pL);
+
+    double massFluxR = rhoR * vnR;
+    Vector momFluxR = momR * vnR;
+    momFluxR[axis] += pR;
+    double energyFluxR = vnR * (ER + pR);
+
+    // Estimate wave speeds
+    double sL = std::min(vnL - cL, vnR - cR);
+    double sR = std::max(vnL + cL, vnR + cR);
+
+    // HLL flux
+    HLLFlux<dim> result;
+
+    if (sL >= 0.0) {
+        result.mass = massFluxL;
+        result.momentum = momFluxL;
+        result.energy = energyFluxL;
+    } else if (sR <= 0.0) {
+        result.mass = massFluxR;
+        result.momentum = momFluxR;
+        result.energy = energyFluxR;
+    } else {
+        double sRSum = sR - sL;
+        result.mass     = (sR * massFluxL - sL * massFluxR + sR * sL * (rhoR - rhoL)) / sRSum;
+        result.momentum = (sR * momFluxL - sL * momFluxR + sR * sL * (momR - momL)) / sRSum;
+        result.energy   = (sR * energyFluxL - sL * energyFluxR + sR * sL * (ER - EL)) / sRSum;
+    }
+
+    return result;
+}
+
+
 template <int dim>
 class GridHydroHLL : public Hydro<dim> {
 protected:
@@ -27,6 +105,9 @@ public:
         state->template addField<double>(rho);
         state->template addField<double>(u);
 
+        // ScalarField* pressure   = nodeList->getField<double>("pressure");
+        // ScalarField* soundSpeed = nodeList->getField<double>("soundSpeed");
+
         for (int i = 0; i < grid->size(); i++) {
             if (!grid->onBoundary(i))
                 insideIds.push_back(i);
@@ -46,120 +127,71 @@ public:
     }
 
     virtual void 
-    EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt) override {  
+    EvaluateDerivatives(const State<dim>* initialState,
+            State<dim>& deriv,
+            const double time,
+            const double dt) override {
         NodeList* nodeList = this->nodeList;
-        int numNodes = nodeList->size();
 
-        VectorField F0("f0", initialState->size());
-        VectorField F1("f1", initialState->size());
-        VectorField F2("f2", initialState->size());
+        // Primitive state fields
+        auto* rho = initialState->template getField<double>("density");
+        auto* v   = initialState->template getField<Vector>("velocity");
+        auto* u   = initialState->template getField<double>("specificInternalEnergy");
 
-        ScalarField u0("u0", initialState->size());
-        VectorField u1("u1", initialState->size());
-        ScalarField u2("u2", initialState->size());
+        // Derivative fields
+        auto* drhodt = deriv.template getField<double>("density");
+        auto* dvdt   = deriv.template getField<Vector>("velocity");
+        auto* dudt   = deriv.template getField<double>("specificInternalEnergy");
 
-        VectorField* v   = initialState->template getField<Vector>("velocity");
-        ScalarField* rho = initialState->template getField<double>("density");
-        ScalarField* u   = initialState->template getField<double>("specificInternalEnergy");
-
-        u0.copyValues(rho);
-
-        VectorField* dvdt = deriv.template getField<Vector>("velocity");
-        ScalarField* drdt = deriv.template getField<double>("density");
-        ScalarField* dudt = deriv.template getField<double>("specificInternalEnergy");
-
-        ScalarField* pressure   = nodeList->getField<double>("pressure");
-        ScalarField* soundSpeed = nodeList->getField<double>("soundSpeed");
-
-        std::vector<VectorField*> F = {&F0, &F1, &F2};
-
-        VectorField ep("ep", initialState->size());
-        VectorField em("em", initialState->size());
+        // Derived fields
+        auto* pressure   = nodeList->getField<double>("pressure");
+        auto* soundSpeed = nodeList->getField<double>("soundSpeed");
 
         for (int h = 0; h < insideIds.size(); ++h) {
             int i = insideIds[h];
 
-            double Pr = pressure->getValue(i);
-            double den = rho->getValue(i);
             Vector vi = v->getValue(i);
-            double e = u->getValue(i) + 0.5*vi.mag2();         // u + 1/2 v^2
-            Vector cs = Vector::one()*soundSpeed->getValue(i);
+            double rhoi = rho->getValue(i);
+            double ui   = u->getValue(i);
+            double Pi   = pressure->getValue(i);
+            double ci   = soundSpeed->getValue(i);
 
-            u1.setValue(i,den*vi);
-            u2.setValue(i,den*e);
+            double ei = ui + 0.5 * vi.mag2();     // total specific energy
+            Vector momi = vi * rhoi;              // momentum
+            double Ei = rhoi * ei;                // total energy
 
-            F0.setValue(i,den*vi);                             // rho*v
-            F1.setValue(i,Vector::one()*(den*vi.mag2()+Pr));   // rho*v^2 + Pr
-            F2.setValue(i,vi*(den*e+1));                       // v*(rho*e+1)
+            // Net flux accumulators
+            double net_rho_flux = 0.0;
+            Vector net_mom_flux = Vector::zero();
+            double net_E_flux   = 0.0;
 
-            ep.setValue(i, vi + cs);
-            em.setValue(i, vi - cs);
-        }
+            auto neighbors = grid->getNeighboringCells(i);
 
-        for (int h = 0; h < insideIds.size(); ++h) {
-            int i = insideIds[h];
-            std::vector<int> nbrs = grid->getNeighboringCells(i);
-
-            std::array<double, 3> FluxP, FluxM; 
-            std::array<Vector, 3> Lv;
             for (int k = 0; k < dim; ++k) {
-                FluxP = getFlux(k, i, nbrs[2 * k], u0,u1,u2, ep, em, F);
-                FluxM = getFlux(k, nbrs[2 * k + 1], i, u0,u1,u2, ep, em, F);
-                for (int s = 0; s < 3; ++s)
-                    Lv[s][k] = (FluxM[s] - FluxP[s]) / grid->spacing(k);
+                int jL = neighbors[2 * k];       // left neighbor in dimension k
+                int jR = neighbors[2 * k + 1];   // right neighbor in dimension k
+
+                auto flux_L = computeHLLFlux<dim>(jL, i, k, *rho, *v, *u, *pressure, *soundSpeed);
+                auto flux_R = computeHLLFlux<dim>(i, jR, k, *rho, *v, *u, *pressure, *soundSpeed);
+
+                double dx = grid->spacing(k);
+
+                net_rho_flux += (flux_L.mass - flux_R.mass) / dx;
+                net_mom_flux += (flux_L.momentum - flux_R.momentum) / dx;
+                net_E_flux   += (flux_L.energy - flux_R.energy) / dx;
             }
 
-            double Lv0 = 0, Lv2 = 0;
-            for (int k = 0; k < dim; ++k) {
-                Lv0 += Lv[0][k];
-                Lv2 += Lv[2][k];
-            }
-            Vector vi = v->getValue(i);
-            double den = rho->getValue(i);
-            double ui = u->getValue(i);
+            // Derivative updates
+            drhodt->setValue(i, net_rho_flux);
 
-            drdt->setValue(i, Lv0);
-            dvdt->setValue(i, (Lv[1]-vi*Lv0)/den);   // (Lv1 - v*drdt)/rho
-            dudt->setValue(i, (Lv2 - ui*Lv0 - 0.5*vi.mag2()*Lv0 - den*vi*dvdt->getValue(i)));  // (Lv2 - u*drdt - 0.5v*v*drdt - rho*v*dvdt)/rho
+            Vector dvi = (net_mom_flux - vi * net_rho_flux) / rhoi;
+            double dui = (net_E_flux
+                - vi.dot(net_mom_flux)
+                - 0.5 * vi.mag2() * net_rho_flux) / rhoi;
+
+            dvdt->setValue(i, dvi);
+            dudt->setValue(i, dui);
         }
-
-    }
-
-    std::array<double, 3> 
-    getFlux(int axis, int i, int j, ScalarField& u0, VectorField& u1, ScalarField& u2, 
-        VectorField& ep, VectorField& em, 
-        std::vector<VectorField*>& F) {
-        double epR, epL, emR, emL, ap, am;
-        epR = 0.5 * (ep.getValue(j)[axis] + ep.getValue(i)[axis]);
-        epL = ep.getValue(i)[axis];
-        emR = 0.5 * (em.getValue(j)[axis] + em.getValue(i)[axis]);
-        emL = em.getValue(i)[axis];
-
-        ap = std::max({epL, epR, 0.0});
-        am = std::max({-emL, -emR, 0.0}); 
-
-        std::array<double, 3> FL, FR, Flux;
-
-        double u0L, u0R, u2L, u2R;
-        Vector u1L, u1R;
-
-        u0L = u0.getValue(i);
-        u0R = 0.5 * (u0.getValue(j) + u0.getValue(i));
-        u1L = u1.getValue(i);
-        u1R = 0.5 * (u1.getValue(j) + u1.getValue(i));
-        u2L = u2.getValue(i);
-        u2R = 0.5 * (u2.getValue(j) + u2.getValue(i));
-
-        for (int k = 0; k < 3; ++k) {
-            FL[k] = F[k]->getValue(i)[axis];
-            FR[k] = 0.5 * (F[k]->getValue(i)[axis] + F[k]->getValue(j)[axis]);
-        }
-
-        Flux[0] = (ap * FL[0] + am * FR[0] - ap * am * (u0R - u0L)) / (ap + am); 
-        Flux[1] = (ap * FL[1] + am * FR[1] - ap * am * (u1R - u1L)[axis]) / (ap + am); 
-        Flux[2] = (ap * FL[2] + am * FR[2] - ap * am * (u2R - u2L)) / (ap + am);
-
-        return Flux;
     }
 
     virtual void 
@@ -183,9 +215,9 @@ public:
     EOSLookup() {        
         NodeList* nodeList = this->nodeList;
 
-        ScalarField* rho = nodeList->getField<double>("density");
-        ScalarField* u = nodeList->getField<double>("specificInternalEnergy");
-        ScalarField* pressure = nodeList->getField<double>("pressure");
+        ScalarField* rho        = nodeList->getField<double>("density");
+        ScalarField* u          = nodeList->getField<double>("specificInternalEnergy");
+        ScalarField* pressure   = nodeList->getField<double>("pressure");
         ScalarField* soundSpeed = nodeList->getField<double>("soundSpeed");
 
         EquationOfState* eos = this->eos;
