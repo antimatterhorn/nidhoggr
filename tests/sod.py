@@ -40,8 +40,9 @@ if __name__ == "__main__":
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
-    box = OutflowGridBoundaries2d(grid=myGrid)
-    #hydro.addBoundary(box)
+    # box = DirichletGridBoundaries2d(grid=myGrid)
+    # box.addDomain()
+    # hydro.addBoundary(box)
 
     integrator = Integrator2d([hydro],dtmin=dtmin)
 
@@ -59,7 +60,7 @@ if __name__ == "__main__":
                 density.setValue(idx, 0.125)
                 energy.setValue(idx, 2.0)   # low pressure side
 
-    meshWriter = silodump(baseName="HLL",nodeList=myNodeList,fieldNames=["density","energy","pressure"])
+    meshWriter = silodump(baseName="HLL",nodeList=myNodeList,fieldNames=["density","specificInternalEnergy","pressure"])
 
     controller = Controller(integrator=integrator,periodicWork=[meshWriter],statStep=1)
 
