@@ -15,7 +15,7 @@ if __name__ == "__main__":
     
     myNodeList = NodeList(nx*ny)
 
-    cycles = 2000
+    cycles = 1
     dtmin = 0.01
 
     print("numNodes =",myNodeList.numNodes)
@@ -53,8 +53,18 @@ if __name__ == "__main__":
                 density.setValue(idx, 0.125)
                 energy.setValue(idx, 2.0)   # low pressure side
 
-    meshWriter = SiloDump(baseName="HLL",nodeList=myNodeList,fieldNames=["density","specificInternalEnergy","pressure"])
+    meshWriter = SiloDump(baseName="HLL",
+                            nodeList=myNodeList,
+                            fieldNames=["density","specificInternalEnergy","pressure"],
+                            dumpCycle=50)
 
     controller = Controller(integrator=integrator,periodicWork=[meshWriter],statStep=50)
 
     controller.Step(cycles)
+
+    xs = np.zeros(nx)
+    ys = np.zeros(nx)
+    position = myNodeList.getFieldVector2d("position")
+    for i in range(nx*ny):
+        
+
