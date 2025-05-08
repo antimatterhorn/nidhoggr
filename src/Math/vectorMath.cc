@@ -68,6 +68,11 @@ double Vector<dim>::dotProduct(const Vector<dim>& other) const {
 }
 
 template <int dim>
+double Vector<dim>::dot(const Vector<dim>& other) const {
+    return dotProduct(other);
+}
+
+template <int dim>
 Vector<dim> Vector<dim>::scalarProduct(double scalar) const {
     Vector<dim> result;
     for (int i = 0; i < dim; ++i) {

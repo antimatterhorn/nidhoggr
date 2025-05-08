@@ -11,7 +11,7 @@ if __name__ == "__main__":
     animate = False
     
     nx = 100
-    ny = 100
+    ny = 20
     dx = 1
     dy = 1
 
@@ -39,20 +39,25 @@ if __name__ == "__main__":
     
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
-    
+
+    box = OutflowGridBoundaries2d(grid=myGrid)
+    #hydro.addBoundary(box)
+
     integrator = Integrator2d([hydro],dtmin=dtmin)
 
 
     density = myNodeList.getFieldDouble("density")
     energy  = myNodeList.getFieldDouble("specificInternalEnergy")
-    for i in range (nx*ny):
-        density.setValue(i,1.0)
-        energy.setValue(i,1.0)
 
-    i = int(nx/2)
-    j = int(ny/2)
-    idx = myGrid.index(i,j,0)
-    energy.setValue(idx,15.0)
+    for j in range(ny):
+        for i in range(nx):
+            idx = myGrid.index(i,j,0)
+            if i < nx // 2:
+                density.setValue(idx, 1.0)
+                energy.setValue(idx, 2.5)   # high pressure side
+            else:
+                density.setValue(idx, 0.125)
+                energy.setValue(idx, 2.0)   # low pressure side
 
     meshWriter = silodump(baseName="HLL",nodeList=myNodeList,fieldNames=["density","energy","pressure"])
 

@@ -124,7 +124,6 @@ public:
     virtual void 
     VerifyHLLFields(NodeList* nodeList) {
         grid->assignPositions(nodeList);
-        // i need to check/add pressure and soundspeed fields to nodelist
     }
 
     virtual void 
@@ -216,9 +215,9 @@ public:
     EOSLookup() {        
         NodeList* nodeList = this->nodeList;
 
-        ScalarField* rho = nodeList->getField<double>("density");
-        ScalarField* u = nodeList->getField<double>("specificInternalEnergy");
-        ScalarField* pressure = nodeList->getField<double>("pressure");
+        ScalarField* rho        = nodeList->getField<double>("density");
+        ScalarField* u          = nodeList->getField<double>("specificInternalEnergy");
+        ScalarField* pressure   = nodeList->getField<double>("pressure");
         ScalarField* soundSpeed = nodeList->getField<double>("soundSpeed");
 
         EquationOfState* eos = this->eos;

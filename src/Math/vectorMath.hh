@@ -23,6 +23,7 @@ public:
     void fill(const double other);
     Vector<dim> sub(const Vector<dim>& other) const;
     double dotProduct(const Vector<dim>& other) const;
+    double dot(const Vector<dim>& other) const;
     Vector<dim> scalarProduct(double scalar) const;
         // Specialized crossProduct method for Vector<3>
     Vector<3> crossProduct(const Vector<3>& other) const {
