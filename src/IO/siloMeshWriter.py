@@ -7,7 +7,7 @@ class SiloMeshWriter:
                nodeList="NodeList&",
                fieldNames="std::vector<std::string>&"):
         return
-    def write(self,fileName="std::string&"):
+    def write(self,fileName="std::string&",isGrid="bool&"):
         return
 
 SiloMeshWriter1d = PYB11TemplateClass(SiloMeshWriter,

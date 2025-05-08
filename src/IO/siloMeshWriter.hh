@@ -13,7 +13,7 @@ class SiloMeshWriter {
 public:
     SiloMeshWriter(const std::string& baseName, const NodeList& nodeList, const std::vector<std::string>& fieldNames);
 
-    void write(const std::string& fileName);
+    void write(const std::string& fileName, const bool& isGrid = false);
 
 private:
     std::string baseName;
@@ -21,6 +21,8 @@ private:
     std::vector<std::string> fieldNames;
 
     void writePointMesh(DBfile* dbfile);
+    void writeStructuredMesh(DBfile* dbfile);
+    void writeMeshFields(DBfile* dbfile);
     void writeFields(DBfile* dbfile);
 };
 

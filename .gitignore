@@ -11,4 +11,5 @@
 *.log
 *.out
 *.toc
+*.silo
 *.synctex.gz
