@@ -1,17 +1,10 @@
 from nidhoggr import *
 
-class silodump:
-    def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
-        self.meshWriter = SiloMeshWriter2d(baseName=baseName,nodeList=nodeList,fieldNames=fieldNames)
-        self.cycle = dumpCycle
-    def __call__(self,cycle,time,dt):
-        self.meshWriter.write("-cycle=%03d.silo"%(cycle))
-
 if __name__ == "__main__":
     animate = False
     
-    nx = 100
-    ny = 20
+    nx = 500
+    ny = 50
     dx = 1
     dy = 1
 
@@ -60,8 +53,8 @@ if __name__ == "__main__":
                 density.setValue(idx, 0.125)
                 energy.setValue(idx, 2.0)   # low pressure side
 
-    meshWriter = silodump(baseName="HLL",nodeList=myNodeList,fieldNames=["density","specificInternalEnergy","pressure"])
+    meshWriter = SiloDump(baseName="HLL",nodeList=myNodeList,fieldNames=["density","specificInternalEnergy","pressure"])
 
-    controller = Controller(integrator=integrator,periodicWork=[meshWriter],statStep=1)
+    controller = Controller(integrator=integrator,periodicWork=[meshWriter],statStep=50)
 
     controller.Step(cycles)

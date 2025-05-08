@@ -121,7 +121,7 @@ class DampedHarmonicOscillator:
 
 class SiloDump:
     def __init__(self,baseName,nodeList,fieldNames,dumpCycle=10):
-        self.meshWriter = SiloMeshWriter2d(baseName="waveBox",nodeList=nodeList,fieldNames=["phi","xi"])
+        self.meshWriter = SiloMeshWriter2d(baseName=baseName,nodeList=nodeList,fieldNames=fieldNames)
         self.cycle = dumpCycle
     def __call__(self,cycle,time,dt):
         self.meshWriter.write("-cycle=%03d.silo"%(cycle))
