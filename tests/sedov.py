@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 if __name__ == "__main__":
     animate = False
     
-    nx = 500
-    ny = 10
+    nx = 100
+    ny = 100
     dx = 1
     dy = 1
 
@@ -44,15 +44,27 @@ if __name__ == "__main__":
     density = myNodeList.getFieldDouble("density")
     energy  = myNodeList.getFieldDouble("specificInternalEnergy")
 
+    # Parameters
+    x0 = nx // 2
+    y0 = ny // 2
+    sigma = 1.5  # width in grid units
+    e0 = 1000.0  # total peak energy density
+
     for j in range(ny):
         for i in range(nx):
-            idx = myGrid.index(i,j,0)
-            if i < nx // 2:
-                density.setValue(idx, 1.0)
-                energy.setValue(idx, 2.5)   # high pressure side
-            else:
-                density.setValue(idx, 0.125)
-                energy.setValue(idx, 2.0)   # low pressure side
+            idx = myGrid.index(i, j, 0)
+            
+            # Distance from center
+            ddx = i - x0
+            ddy = j - y0
+            r2 = ddx*ddx + ddy*ddy
+            
+            # Gaussian profile
+            e = e0 * np.exp(-r2 / (2.0 * sigma**2))
+            
+            energy.setValue(idx, e)
+            density.setValue(idx, 1.0)
+
 
     meshWriter = SiloDump(baseName="HLL",
                             nodeList=myNodeList,
