@@ -1,10 +1,12 @@
 from nidhoggr import *
+import matplotlib.pyplot as plt
+
 
 if __name__ == "__main__":
     animate = False
     
     nx = 500
-    ny = 50
+    ny = 20
     dx = 1
     dy = 1
 
@@ -15,8 +17,8 @@ if __name__ == "__main__":
     
     myNodeList = NodeList(nx*ny)
 
-    cycles = 1
-    dtmin = 0.01
+    cycles = 3000
+    dtmin = 0.001
 
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
@@ -24,7 +26,7 @@ if __name__ == "__main__":
     #constants = PhysicalConstants(1.0, 1.0, 1.0)
     constants = MKS()
     print("G =",constants.G)
-    eos = IdealGasEOS(5.0/3.0,constants)
+    eos = IdealGasEOS(1.4,constants)
     print(eos,"gamma =",eos.gamma)
 
 
@@ -33,9 +35,9 @@ if __name__ == "__main__":
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
-    # box = DirichletGridBoundaries2d(grid=myGrid)
+    box = ReflectingGridBoundaries2d(grid=myGrid)
     # box.addDomain()
-    # hydro.addBoundary(box)
+    hydro.addBoundary(box)
 
     integrator = Integrator2d([hydro],dtmin=dtmin)
 
@@ -62,9 +64,12 @@ if __name__ == "__main__":
 
     controller.Step(cycles)
 
-    xs = np.zeros(nx)
-    ys = np.zeros(nx)
+    xs = []
+    ys = []
     position = myNodeList.getFieldVector2d("position")
     for i in range(nx*ny):
-        
-
+        if position[i].y == ((ny/2)+0.5):
+            xs.append(position[i].x)
+            ys.append(density[i])
+    plt.plot(xs,ys)
+    plt.show()
