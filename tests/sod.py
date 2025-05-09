@@ -56,7 +56,7 @@ if __name__ == "__main__":
 
     meshWriter = SiloDump(baseName="HLL",
                             nodeList=myNodeList,
-                            fieldNames=["density","specificInternalEnergy","pressure"],
+                            fieldNames=["density","specificInternalEnergy","pressure","velocity"],
                             dumpCycle=50)
 
     controller = Controller(integrator=integrator,periodicWork=[meshWriter],statStep=50)
