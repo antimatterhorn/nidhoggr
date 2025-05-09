@@ -85,6 +85,8 @@ public:
         }        
     }
 
+    virtual ~ReflectingGridBoundaries() = default;
+
     virtual void ApplyBoundaries(State<dim>& state, NodeList* nodeList) override {
         for (int i = 0; i < state.count(); ++i) {
             FieldBase* field = state.getFieldByIndex(i);
