@@ -126,7 +126,7 @@ public:
         derivFieldName = derivative;
     }
     
-    virtual ~OutflowGridBoundaries() {}
+    virtual ~OutflowGridBoundaries() = default;
 
     virtual void
     ApplyBoundaries(State<dim>& state, NodeList* nodeList) override {

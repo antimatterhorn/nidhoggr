@@ -128,7 +128,8 @@ public:
         }
     }
     
-    virtual ~PeriodicGridBoundaries() {}
+    virtual ~PeriodicGridBoundaries() = default;
+    
     virtual void
     ApplyBoundaries(State<dim>& state, NodeList* nodeList) override {
         Mesh::Grid<dim>* grid = this->grid;
