@@ -1,6 +1,7 @@
 from PYB11Generator import *
 PYB11includes = ['"physics.hh"',
                 '"constantGravity.cc"',
+                '"constantGridAccel.cc"',
                 '"pointSourceGravity.cc"',
                 '"nBodyGravity.cc"',
                 '"waveEquation.cc"',
@@ -13,6 +14,7 @@ PYB11includes = ['"physics.hh"',
 
 from physics import *
 from constantGravity import *
+from constantGridAccel import *
 from pointSourceGravity import *
 from nBodyGravity import *
 from waveEquation import *
