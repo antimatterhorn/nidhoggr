@@ -100,4 +100,8 @@ public:
             svelocity->copyValues(fvelocity);
         }
     }
+
+    virtual std::string name() const override { return "constantGravity"; }
+    virtual std::string description() const override {
+        return "Constant acceleration"; }
 };

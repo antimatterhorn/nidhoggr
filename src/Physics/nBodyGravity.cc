@@ -96,4 +96,8 @@ public:
         position->copyValues(fposition);
         velocity->copyValues(fvelocity);
     }
+
+    virtual std::string name() const override { return "nBodyGravity"; }
+    virtual std::string description() const override {
+        return "N-body gravity physics package for particles"; }
 };

@@ -210,6 +210,11 @@ public:
         return cfl/C*dx;
     }
 
+    virtual std::string name() const override { return "waveEquation"; }
+    virtual std::string description() const override {
+        return "Acoustic wave physics package for grids"; }
+};
+
 
 // d^2 phi / dt^2 = c^2 del^2 phi
 
@@ -228,5 +233,3 @@ public:
 //           = 4 * phi_ij          + dx^2 del^2(phi_ij) + ... // assume dx=dy
 
 // del^2 phi_ij = (-4*phi_{i,j} + phi_{i+1,j} + phi_{i-1,j} phi_{i,j+1} + phi_{i,j-1})/dx^2
-
-};

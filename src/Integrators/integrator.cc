@@ -41,13 +41,19 @@ void Integrator<dim>::Step() {
         physics->FinalizeStep(&newState);
     }
 
-    double olddt = 1e30;
+    double smallestDt = 1e30;
     for (Physics<dim>* physics : packages) {
         double newdt = physics->EstimateTimestep();
-        newdt = std::min(newdt,olddt);
-        dt = std::max(newdt, dtmin);
-        olddt = newdt;
+        if (newdt < smallestDt) {
+            smallestDt = newdt;
+            //std::cout << physics->name() << " requested timestep of " << newdt << "\n";
+        }
     }
+    if (smallestDt < dt)
+        dt *= 0.2;
+    else
+        dt *= 1.2;
+    dt = std::max(dt, this->dtmin);
 }
 
 template <int dim>

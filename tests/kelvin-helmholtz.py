@@ -18,7 +18,7 @@ if __name__ == "__main__":
     
     myNodeList = NodeList(nx*ny)
 
-    cycles = 10000
+    cycles = 15
     dtmin = 1e-3
 
     print("numNodes =",myNodeList.numNodes)
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     # box.addDomain()
     hydro.addBoundary(box)
 
-    integrator = Integrator2d([hydro],dtmin=dtmin)
+    integrator = RungeKutta4Integrator2d([hydro],dtmin=dtmin)
 
 
     density = myNodeList.getFieldDouble("density")
@@ -70,7 +70,7 @@ if __name__ == "__main__":
                             fieldNames=["density","specificInternalEnergy","pressure"],
                             dumpCycle=200)
 
-    controller = Controller(integrator=integrator,periodicWork=[],statStep=50,tstop=1)
+    controller = Controller(integrator=integrator,periodicWork=[],statStep=1,tstop=1)
 
     # controller.Step(cycles)
 

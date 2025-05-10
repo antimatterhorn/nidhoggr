@@ -86,6 +86,12 @@ public:
             for (const auto& boundary : boundaries)
                 boundary->ApplyBoundaries(state,nodeList);
     }
+    
+    virtual std::string
+    name() const { return "Physics"; }
+
+    virtual std::string
+    description() const { return "The base class for all physics packages"; }
 };
 
 #endif //PHYSICS_HH

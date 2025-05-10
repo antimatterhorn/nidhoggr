@@ -102,4 +102,8 @@ public:
     FinalizeStep(const State<dim>* finalState) override {
 
     }
+
+    virtual std::string name() const override { return "kinetics"; }
+    virtual std::string description() const override {
+        return "The kinetics physics package for particles"; }
 };

@@ -85,6 +85,7 @@ class GridHydroHLL : public Hydro<dim> {
 protected:
     Mesh::Grid<dim>* grid;
     std::vector<int> insideIds;
+    double dtmin, dxmin;
 public:
     using Vector = Lin::Vector<dim>;
     using VectorField = Field<Vector>;
@@ -112,6 +113,10 @@ public:
             if (!grid->onBoundary(i))
                 insideIds.push_back(i);
         }
+
+        dxmin = 1e30;
+        for (int i = 0; i<dim; i++)
+            dxmin = std::min(dxmin,grid->spacing(i));
     }
 
     ~GridHydroHLL() {}
@@ -133,6 +138,8 @@ public:
             const double dt) override {
         NodeList* nodeList = this->nodeList;
 
+        EOSLookup();
+        dtmin = 1e30;
         // Primitive state fields
         auto* rho = initialState->template getField<double>("density");
         auto* v   = initialState->template getField<Vector>("velocity");
@@ -196,6 +203,8 @@ public:
 
             dvdt->setValue(i, dvi);
             dudt->setValue(i, dui);
+
+            dtmin = std::min(dtmin,0.4*dxmin/ci);
         }
     }
 
@@ -223,6 +232,10 @@ public:
         EOSLookup();
     }
 
+    virtual double EstimateTimestep() const override {
+        return dtmin;
+    }
+
     virtual void 
     EOSLookup() {        
         NodeList* nodeList = this->nodeList;
@@ -244,4 +257,8 @@ public:
         ScalarField* pr = nodeList->getField<double>(fieldName);
         return pr->getValue(idx);
     }
+
+    virtual std::string name() const override { return "gridHydroHLL"; }
+    virtual std::string description() const override {
+        return "The HLL solver for hydro"; }
 };

@@ -41,25 +41,11 @@ public:
 
         dvdt->copyValues(acceleration);  // dv/dt = a
 
-        // Estimate min dt if needed
-        dtmin = 1e30;
-        #pragma omp parallel for
-        for (int i = 0; i < numZones; ++i) {
-            double amag = acceleration->getValue(i).mag2();
-            double vmag = velocity->getValue(i).mag2();
-            if (amag > 1e-20) { // avoid div by zero
-                double localDt = vmag / amag;
-                #pragma omp critical
-                dtmin = std::min(dtmin, localDt);
-            }
-        }
-
         this->lastDt = dt;
     }
 
     virtual double EstimateTimestep() const override {
-        double timestepCoefficient = 1e-4;  // Tunable
-        return timestepCoefficient * sqrt(dtmin);
+        return 1e30; // this physics package does not support setting the timestep for now
     }
 
     virtual void FinalizeStep(const State<dim>* finalState) override {
@@ -81,4 +67,8 @@ public:
             svelocity->copyValues(fvelocity);
         }
     }
+
+    virtual std::string name() const override { return "constantGridAccel"; }
+    virtual std::string description() const override {
+        return "Constant acceleration in the grid"; }
 };

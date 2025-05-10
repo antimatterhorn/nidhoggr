@@ -18,4 +18,8 @@ public:
     }
 
     ~FEM() { delete mesh; }
+
+    virtual std::string name() const override { return "FEM"; }
+    virtual std::string description() const override {
+        return "FEM Physics"; }
 };

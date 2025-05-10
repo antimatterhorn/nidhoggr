@@ -122,4 +122,8 @@ public:
             svelocity->copyValues(fvelocity);
         }
     }
+
+    virtual std::string name() const override { return "pointSourceGravity"; }
+    virtual std::string description() const override {
+        return "Point source gravity physics package for particles"; }
 };

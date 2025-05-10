@@ -29,6 +29,10 @@ public:
         if (nodeList->getField<double>("soundSpeed") == nullptr)
             nodeList->insertField<double>("soundSpeed");
     }
+
+    virtual std::string name() const override { return "hydro"; }
+    virtual std::string description() const override {
+        return "Some kind of hydro"; }
 };
 
 #endif

@@ -19,7 +19,7 @@ if __name__ == "__main__":
     myNodeList = NodeList(nx*ny)
 
     cycles = 10000
-    dtmin = 1e-3
+    dtmin = 1e-5
 
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
@@ -42,7 +42,7 @@ if __name__ == "__main__":
     gravityVector = Vector2d(0.,-20)
     gravity  = ConstantGridAccel2d(myNodeList,constants,gravityVector)
 
-    integrator = Integrator2d([hydro,gravity],dtmin=dtmin)
+    integrator = RungeKutta4Integrator2d([hydro,gravity],dtmin=dtmin)
 
 
     density = myNodeList.getFieldDouble("density")
@@ -54,7 +54,7 @@ if __name__ == "__main__":
     for j in range(ny):
         for i in range(nx):
             idx = myGrid.index(i,j,0)
-            energy.setValue(idx, 1e-5)
+            energy.setValue(idx, 1.0)
             density.setValue(idx, 1.0)
             pos = position[idx]
             x = pos.x
@@ -74,7 +74,7 @@ if __name__ == "__main__":
                             fieldNames=["density","specificInternalEnergy","pressure"],
                             dumpCycle=200)
 
-    controller = Controller(integrator=integrator,periodicWork=[],statStep=50,tstop=1)
+    controller = Controller(integrator=integrator,periodicWork=[],statStep=1,tstop=1)
 
     # controller.Step(cycles)
 
