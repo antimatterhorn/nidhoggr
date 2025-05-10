@@ -19,7 +19,7 @@ if __name__ == "__main__":
     myNodeList = NodeList(nx*ny)
 
     cycles = 10000
-    dtmin = 1e-4
+    dtmin = 1e-3
 
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
@@ -58,9 +58,11 @@ if __name__ == "__main__":
             y = pos.y
             a = 0.1 * np.sin(4 * np.pi * x / nx)
             if j < ny//2:
-                velocity.setValue(idx, Vector2d(-0.5,a)) 
+                velocity.setValue(idx, Vector2d(-3.0,a))
+                density.setValue(idx, 1.0)
             else:
-                velocity.setValue(idx, Vector2d(0.5,a))
+                velocity.setValue(idx, Vector2d(3.0,a))
+                density.setValue(idx, 2.0)
 
 
     meshWriter = SiloDump(baseName="HLL",

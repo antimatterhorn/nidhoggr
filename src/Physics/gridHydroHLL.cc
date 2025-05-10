@@ -147,6 +147,7 @@ public:
         auto* pressure   = nodeList->getField<double>("pressure");
         auto* soundSpeed = nodeList->getField<double>("soundSpeed");
 
+        #pragma omp parallel for
         for (int h = 0; h < insideIds.size(); ++h) {
             int i = insideIds[h];
 
@@ -155,6 +156,10 @@ public:
             double ui   = u->getValue(i);
             double Pi   = pressure->getValue(i);
             double ci   = soundSpeed->getValue(i);
+
+            if (!std::isfinite(rhoi) || !std::isfinite(ui) || !std::isfinite(vi[0]) || !std::isfinite(vi[1]))
+                std::cerr << "BAD STATE at cell " << i << ": rho=" << rhoi << ", u=" << ui << ", v=" << vi.toString() << std::endl;
+
 
             double ei = ui + 0.5 * vi.mag2();     // total specific energy
             Vector momi = vi * rhoi;              // momentum
@@ -208,6 +213,13 @@ public:
         density->copyValues(fdensity);
         velocity->copyValues(fvelocity);
         u->copyValues(fu);
+
+        #pragma omp parallel for
+        for(int i = 0 ; i < nodeList->size() ; ++i) {
+            density->setValue(i,std::max(density->getValue(i),1e-12));
+            u->setValue(i,std::max(u->getValue(i),1e-12));
+        }
+
         EOSLookup();
     }
 

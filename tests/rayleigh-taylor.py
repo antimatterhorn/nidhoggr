@@ -19,7 +19,7 @@ if __name__ == "__main__":
     myNodeList = NodeList(nx*ny)
 
     cycles = 10000
-    dtmin = 1e-4
+    dtmin = 1e-3
 
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     # box.addDomain()
     hydro.addBoundary(box)
 
-    gravityVector = Vector2d(0.,-9.8)
+    gravityVector = Vector2d(0.,-20)
     gravity  = ConstantGridAccel2d(myNodeList,constants,gravityVector)
 
     integrator = Integrator2d([hydro,gravity],dtmin=dtmin)
@@ -59,12 +59,14 @@ if __name__ == "__main__":
             pos = position[idx]
             x = pos.x
             y = pos.y
-            a = 0.1 * np.sin(np.pi * x / nx)
-            if j < ny//2:
-                density.setValue(idx, 2.0)
-                velocity.setValue(idx, Vector2d(0,-a))
+
+            # sinusoidal vertical offset of the interface
+            interface_y = ny / 2 + 1.0 * np.sin(5.0 * np.pi * x / nx)
+
+            if y < interface_y:
+                density.setValue(idx, 2.0)  # heavy fluid below
             else:
-                density.setValue(idx, 1.0)
+                density.setValue(idx, 1.0)  # light fluid above
 
 
     meshWriter = SiloDump(baseName="HLL",
