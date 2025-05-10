@@ -50,7 +50,7 @@ void Integrator<dim>::Step() {
         }
     }
     if (smallestDt < dt)
-        dt *= 0.2;
+        dt *= 0.5;
     else
         dt *= 1.2;
     dt = std::max(dt, this->dtmin);

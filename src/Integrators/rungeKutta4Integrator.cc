@@ -79,7 +79,7 @@ public:
             }
         }
         if (smallestDt < dt)
-            dt *= 0.2;
+            dt *= 0.5;
         else
             dt *= 1.2;
         this->dt = std::max(dt, this->dtmin);

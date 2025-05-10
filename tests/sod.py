@@ -1,9 +1,9 @@
 from nidhoggr import *
 import matplotlib.pyplot as plt
-
+from Animation import *
 
 if __name__ == "__main__":
-    animate = False
+    animate = True
     
     nx = 500
     ny = 10
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     # box.addDomain()
     hydro.addBoundary(box)
 
-    integrator = Integrator2d([hydro],dtmin=dtmin)
+    integrator = RungeKutta4Integrator2d([hydro],dtmin=dtmin)
 
 
     density = myNodeList.getFieldDouble("density")
@@ -59,9 +59,19 @@ if __name__ == "__main__":
                             fieldNames=["density","specificInternalEnergy","pressure","velocity"],
                             dumpCycle=50)
 
-    controller = Controller(integrator=integrator,periodicWork=[meshWriter],statStep=50)
+    controller = Controller(integrator=integrator,periodicWork=[],statStep=50)
 
-    controller.Step(cycles)
+    if(animate):
+        title = MakeTitle(controller,"time","time")
+
+        bounds = (nx,ny)
+        update_method = AnimationUpdateMethod2d(call=hydro.getCell2d,
+                                                stepper=controller.Step,
+                                                title=title,
+                                                fieldName="density")
+        AnimateGrid2d(bounds,update_method,extremis=[-5,5],frames=cycles,cmap="plasma")
+    else:
+        controller.Step(cycles)
 
     xs = []
     ys = []
