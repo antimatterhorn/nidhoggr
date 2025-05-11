@@ -3,23 +3,19 @@ import matplotlib.pyplot as plt
 from Animation import *
 
 if __name__ == "__main__":
-    animate = True
-    
-    nx = 500
-    ny = 10
-    dx = 1
-    dy = 1
-
+    commandLine = CommandLineArguments(animate = True,
+                                       siloDump = False,
+                                        cycles = 3000,
+                                        nx = 100,
+                                        ny = 20,
+                                        dx = 1,
+                                        dy = 1,
+                                        dtmin = 0.001)
 
     myGrid = Grid2d(nx,ny,dx,dy)
-
     print("grid size:",myGrid.size())
     
     myNodeList = NodeList(nx*ny)
-
-    cycles = 3000
-    dtmin = 0.001
-
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
@@ -28,18 +24,14 @@ if __name__ == "__main__":
     eos = IdealGasEOS(1.4,constants)
     print(eos,"gamma =",eos.gamma)
 
-
     hydro = GridHydroHLL2d(myNodeList,constants,eos,myGrid)
-    
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
     box = ReflectingGridBoundaries2d(grid=myGrid)
-    # box.addDomain()
     hydro.addBoundary(box)
 
     integrator = RungeKutta4Integrator2d([hydro],dtmin=dtmin)
-
 
     density = myNodeList.getFieldDouble("density")
     energy  = myNodeList.getFieldDouble("specificInternalEnergy")
@@ -54,12 +46,16 @@ if __name__ == "__main__":
                 density.setValue(idx, 0.125)
                 energy.setValue(idx, 2.0)   # low pressure side
 
-    meshWriter = SiloDump(baseName="HLL",
-                            nodeList=myNodeList,
-                            fieldNames=["density","specificInternalEnergy","pressure","velocity"],
-                            dumpCycle=50)
+    periodicWork = []
+    
+    if siloDump:
+        meshWriter = SiloDump(baseName="HLL",
+                                nodeList=myNodeList,
+                                fieldNames=["density","specificInternalEnergy","pressure","velocity"],
+                                dumpCycle=50)
+        periodicWork += [meshWriter]
 
-    controller = Controller(integrator=integrator,periodicWork=[],statStep=50)
+    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=50)
 
     if(animate):
         title = MakeTitle(controller,"time","time")

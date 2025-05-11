@@ -4,31 +4,25 @@ from Animation import *
 
 
 if __name__ == "__main__":
-    animate = True
-    
-    nx = 100
-    ny = 100
-    dx = 1
-    dy = 1
-
+    commandLine = CommandLineArguments(animate = True,
+                                        siloDump = False,
+                                        cycles = 3000,
+                                        nx = 100,
+                                        ny = 100,
+                                        dx = 1,
+                                        dy = 1,
+                                        dtmin = 0.001)
 
     myGrid = Grid2d(nx,ny,dx,dy)
-
     print("grid size:",myGrid.size())
     
     myNodeList = NodeList(nx*ny)
-
-    cycles = 10000
-    dtmin = 1e-5
-
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
     constants = MKS()
-    print("G =",constants.G)
     eos = IdealGasEOS(1.4,constants)
     print(eos,"gamma =",eos.gamma)
-
 
     hydro = GridHydroHLL2d(myNodeList,constants,eos,myGrid)
     
@@ -36,20 +30,17 @@ if __name__ == "__main__":
     print("field names =",myNodeList.fieldNames)
 
     box = ReflectingGridBoundaries2d(grid=myGrid)
-    # box.addDomain()
     hydro.addBoundary(box)
 
-    gravityVector = Vector2d(0.,-20)
+    gravityVector = Vector2d(0.,-10)
     gravity  = ConstantGridAccel2d(myNodeList,constants,gravityVector)
 
     integrator = RungeKutta4Integrator2d([hydro,gravity],dtmin=dtmin)
-
 
     density = myNodeList.getFieldDouble("density")
     energy  = myNodeList.getFieldDouble("specificInternalEnergy")
     velocity = myNodeList.getFieldVector2d("velocity")
     position = myNodeList.getFieldVector2d("position")
-
 
     for j in range(ny):
         for i in range(nx):
@@ -68,15 +59,16 @@ if __name__ == "__main__":
             else:
                 density.setValue(idx, 1.0)  # light fluid above
 
+    periodicWork = []
 
-    meshWriter = SiloDump(baseName="HLL",
-                            nodeList=myNodeList,
-                            fieldNames=["density","specificInternalEnergy","pressure"],
-                            dumpCycle=200)
+    if siloDump:
+        meshWriter = SiloDump(baseName="HLL",
+                                nodeList=myNodeList,
+                                fieldNames=["density","specificInternalEnergy","pressure","velocity"],
+                                dumpCycle=50)
+        periodicWork += [meshWriter]
 
-    controller = Controller(integrator=integrator,periodicWork=[],statStep=1,tstop=1)
-
-    # controller.Step(cycles)
+    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=50)
 
     if(animate):
         title = MakeTitle(controller,"time","time")
@@ -86,6 +78,6 @@ if __name__ == "__main__":
                                                 stepper=controller.Step,
                                                 title=title,
                                                 fieldName="density")
-        AnimateGrid2d(bounds,update_method,extremis=[-5,5],frames=cycles,cmap="plasma")
+        AnimateGrid2d(bounds,update_method,extremis=[0,5],frames=cycles,cmap="plasma")
     else:
         controller.Step(cycles)
