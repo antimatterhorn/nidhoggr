@@ -3,8 +3,8 @@
 #include "integrator.hh"
 
 template <int dim>
-Integrator<dim>::Integrator(std::vector<Physics<dim>*> packages, double dtmin)
-    : packages(packages), dt(dtmin), dtmin(dtmin), cycle(0), time(0.0) {}
+Integrator<dim>::Integrator(std::vector<Physics<dim>*> packages, double dtmin, bool verbose)
+    : packages(packages), dt(dtmin), dtmin(dtmin), cycle(0), time(0.0), verbose(verbose) {}
 
 template <int dim>
 Integrator<dim>::~Integrator() {}
@@ -50,13 +50,18 @@ void Integrator<dim>::VoteDt() {
             double newdt = physics->EstimateTimestep();
             if (newdt < smallestDt) {
                 smallestDt = newdt;
-                //std::cout << physics->name() << " requested timestep of " << newdt << "\n";
+                if (verbose)
+                    std::cout << physics->name() << " requested timestep of " << newdt << "\n";
             }
         }
-        if (smallestDt < dt)
-            dt *= 0.5;
-        else
-            dt *= 1.2;
+        if (dt < smallestDt) {
+            // Lerp up to the new dt (e.g., 20% toward it)
+            dt = dt + 0.2 * (smallestDt - dt);
+        } else {
+            // Snap down to the safest (smallest) timestep
+            dt = smallestDt;
+        }
+
         this->dt = std::max(dt, this->dtmin);
 }
 

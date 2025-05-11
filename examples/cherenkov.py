@@ -62,7 +62,7 @@ if __name__ == "__main__":
     # Create the integrator and assign packages to it
     # ------------------------------------------------
     integrator = RungeKutta4Integrator2d(packages=packages,
-                              dtmin=0.01)
+                              dtmin=0.01,verbose=False)
     print(integrator)
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)

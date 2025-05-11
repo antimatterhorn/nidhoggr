@@ -105,7 +105,7 @@ if __name__ == "__main__":
 
     waveEqn.addBoundary(box)
 
-    integrator = RungeKutta4Integrator2d(packages=packages,dtmin=0.05)
+    integrator = RungeKutta4Integrator2d(packages=packages,dtmin=0.05,verbose=False)
     print(integrator)
 
     print("numNodes =",myNodeList.numNodes)

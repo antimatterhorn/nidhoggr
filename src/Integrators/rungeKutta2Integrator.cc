@@ -5,8 +5,8 @@ class RungeKutta2Integrator : public Integrator<dim> {
 protected:
 
 public:
-    RungeKutta2Integrator(std::vector<Physics<dim>*> packages, double dtmin) : 
-        Integrator<dim>(packages,dtmin) {}
+    RungeKutta2Integrator(std::vector<Physics<dim>*> packages, double dtmin, bool verbose) : 
+        Integrator<dim>(packages,dtmin,verbose) {}
 
     ~RungeKutta2Integrator() {}
 

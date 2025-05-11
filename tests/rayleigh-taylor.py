@@ -11,7 +11,8 @@ if __name__ == "__main__":
                                         ny = 100,
                                         dx = 1,
                                         dy = 1,
-                                        dtmin = 0.001)
+                                        dtmin = 0.001,
+                                        intVerbose = False)
 
     myGrid = Grid2d(nx,ny,dx,dy)
     print("grid size:",myGrid.size())
@@ -32,7 +33,7 @@ if __name__ == "__main__":
     gravityVector = Vector2d(0.,-10)
     gravity  = ConstantGridAccel2d(myNodeList,constants,gravityVector)
 
-    integrator = RungeKutta4Integrator2d([hydro,gravity],dtmin=dtmin)
+    integrator = RungeKutta4Integrator2d([hydro,gravity],dtmin=dtmin,verbose=intVerbose)
 
     density = myNodeList.getFieldDouble("density")
     energy  = myNodeList.getFieldDouble("specificInternalEnergy")

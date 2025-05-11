@@ -31,7 +31,7 @@ if __name__ == "__main__":
     box = ReflectingGridBoundaries2d(grid=myGrid)
     hydro.addBoundary(box)
 
-    integrator = RungeKutta4Integrator2d([hydro],dtmin=dtmin)
+    integrator = RungeKutta4Integrator2d([hydro],dtmin=dtmin,verbose=False)
 
     density = myNodeList.getFieldDouble("density")
     energy  = myNodeList.getFieldDouble("specificInternalEnergy")

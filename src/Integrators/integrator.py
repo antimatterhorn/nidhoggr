@@ -4,7 +4,7 @@ from PYB11Generator import *
 class Integrator:
     def pyinit(self,
                packages="std::vector<Physics<%(dim)s>*>",
-               dtmin="double"):
+               dtmin="double", verbose=("bool" , False)):
         return
     def Step(self):
         return

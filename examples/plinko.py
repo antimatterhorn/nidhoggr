@@ -79,7 +79,7 @@ if __name__ == "__main__":
     for bound in cbounds:
         kinetics.addBoundary(bound)
 
-    integrator = RungeKutta2Integrator2d(packages=packages, dtmin=0.01)
+    integrator = RungeKutta2Integrator2d(packages=packages, dtmin=0.01,verbose=False)
     print(integrator)
 
 

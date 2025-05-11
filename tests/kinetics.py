@@ -15,7 +15,7 @@ if __name__ == "__main__":
     kinetics = Kinetics2d(myNodeList,constants)
     packages = [constantGravity,kinetics]
 
-    integrator = RungeKutta2Integrator2d(packages=packages, dtmin=0.01)
+    integrator = RungeKutta2Integrator2d(packages=packages, dtmin=0.01,verbose=False)
     print(integrator)
 
 

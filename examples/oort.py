@@ -56,7 +56,7 @@ if __name__ == "__main__":
                                       pointSourceVelocity = mmVel)
     packages = [movingGrav,sourceGrav]
     integrator = RungeKutta4Integrator2d(packages=packages,
-                                         dtmin=1e-3)
+                                         dtmin=1e-3,verbose=False)
 
     r0 = 120000
     v0 = np.sqrt(cmass*constants.G/r0)

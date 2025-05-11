@@ -14,10 +14,11 @@ class Integrator {
 protected:
     std::vector<Physics<dim>*> packages;
     unsigned int cycle;
+    bool verbose;
     double time, dt, dtmin;
 
 public:
-    Integrator(std::vector<Physics<dim>*> packages, double dtmin);
+    Integrator(std::vector<Physics<dim>*> packages, double dtmin, bool verbose);
     ~Integrator();
 
     virtual void Step();

@@ -26,7 +26,7 @@ if __name__ == "__main__":
 
     constantGravity = SimplePhysics2d(myNodeListEul,constants)
     packages = [constantGravity]
-    integrator = Integrator2d(packages=packages,dtmin=dtmin)
+    integrator = Integrator2d(packages=packages,dtmin=dtmin,verbose=False)
     dumpEul = dumpState(myNodeListEul,workCycle=1)
 
     controller = Controller(integrator=integrator,periodicWork=[dumpEul],statStep=10)
@@ -34,7 +34,7 @@ if __name__ == "__main__":
 
     constantGravity = SimplePhysics2d(myNodeListRK2,constants)
     packages = [constantGravity]
-    integrator = RungeKutta2Integrator2d(packages=packages,dtmin=dtmin)
+    integrator = RungeKutta2Integrator2d(packages=packages,dtmin=dtmin,verbose=False)
     dumpRK2 = dumpState(myNodeListRK2,workCycle=1)
 
     controller = Controller(integrator=integrator,periodicWork=[dumpRK2],statStep=10)
@@ -42,7 +42,7 @@ if __name__ == "__main__":
 
     constantGravity = SimplePhysics2d(myNodeListRK4,constants)
     packages = [constantGravity]
-    integrator = RungeKutta4Integrator2d(packages=packages,dtmin=dtmin)
+    integrator = RungeKutta4Integrator2d(packages=packages,dtmin=dtmin,verbose=False)
     dumpRK4 = dumpState(myNodeListRK4,workCycle=1)
 
     controller = Controller(integrator=integrator,periodicWork=[dumpRK4],statStep=10)

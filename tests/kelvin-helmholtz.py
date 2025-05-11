@@ -10,7 +10,8 @@ if __name__ == "__main__":
                                         ny = 100,
                                         dx = 0.01,
                                         dy = 0.01,
-                                        dtmin = 0.001)
+                                        dtmin = 0.001,
+                                        intVerbose = False)
 
     myGrid = Grid2d(nx,ny,dx,dy)
     print("grid size:",myGrid.size())
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     box = PeriodicGridBoundaries2d(grid=myGrid)
     hydro.addBoundary(box)
 
-    integrator = RungeKutta4Integrator2d([hydro],dtmin=dtmin)
+    integrator = RungeKutta4Integrator2d([hydro],dtmin=dtmin,verbose=intVerbose)
 
     density = myNodeList.getFieldDouble("density")
     energy  = myNodeList.getFieldDouble("specificInternalEnergy")
