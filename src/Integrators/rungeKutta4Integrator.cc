@@ -70,18 +70,6 @@ public:
         this->time += dt;
         this->cycle += 1;
 
-        double smallestDt = 1e30;
-        for (Physics<dim>* physics : packages) {
-            double newdt = physics->EstimateTimestep();
-            if (newdt < smallestDt) {
-                smallestDt = newdt;
-                //std::cout << physics->name() << " requested timestep of " << newdt << "\n";
-            }
-        }
-        if (smallestDt < dt)
-            dt *= 0.5;
-        else
-            dt *= 1.2;
-        this->dt = std::max(dt, this->dtmin);
+        this->VoteDt();
     }
 };

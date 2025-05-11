@@ -1,5 +1,4 @@
-#ifndef INTEGRATOR_CC
-#define INTEGRATOR_CC
+#pragma once
 
 #include "integrator.hh"
 
@@ -41,19 +40,24 @@ void Integrator<dim>::Step() {
         physics->FinalizeStep(&newState);
     }
 
-    double smallestDt = 1e30;
-    for (Physics<dim>* physics : packages) {
-        double newdt = physics->EstimateTimestep();
-        if (newdt < smallestDt) {
-            smallestDt = newdt;
-            //std::cout << physics->name() << " requested timestep of " << newdt << "\n";
+    VoteDt();
+}
+
+template <int dim>
+void Integrator<dim>::VoteDt() {
+        double smallestDt = 1e30;
+        for (Physics<dim>* physics : packages) {
+            double newdt = physics->EstimateTimestep();
+            if (newdt < smallestDt) {
+                smallestDt = newdt;
+                //std::cout << physics->name() << " requested timestep of " << newdt << "\n";
+            }
         }
-    }
-    if (smallestDt < dt)
-        dt *= 0.5;
-    else
-        dt *= 1.2;
-    dt = std::max(dt, this->dtmin);
+        if (smallestDt < dt)
+            dt *= 0.5;
+        else
+            dt *= 1.2;
+        this->dt = std::max(dt, this->dtmin);
 }
 
 template <int dim>
@@ -64,5 +68,3 @@ unsigned int Integrator<dim>::Cycle() { return cycle; }
 
 template <int dim>
 double const Integrator<dim>::Dt() { return dt; }
-
-#endif // INTEGRATOR_CC

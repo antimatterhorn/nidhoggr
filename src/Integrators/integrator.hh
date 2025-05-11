@@ -1,5 +1,4 @@
-#ifndef INTEGRATOR_HH
-#define INTEGRATOR_HH
+#pragma once
 
 #include <vector>
 #include <iostream>
@@ -22,6 +21,7 @@ public:
     ~Integrator();
 
     virtual void Step();
+    virtual void VoteDt();
     virtual double const Time();
     virtual unsigned int Cycle();
     virtual double const Dt();
@@ -29,4 +29,3 @@ public:
 
 #include "integrator.cc"
 
-#endif // INTEGRATOR_HH

@@ -25,9 +25,6 @@ if __name__ == "__main__":
     print(eos,"gamma =",eos.gamma)
 
     hydro = GridHydroHLL2d(myNodeList,constants,eos,myGrid)
-    
-    print("numNodes =",myNodeList.numNodes)
-    print("field names =",myNodeList.fieldNames)
 
     box = ReflectingGridBoundaries2d(grid=myGrid)
     hydro.addBoundary(box)
@@ -42,6 +39,9 @@ if __name__ == "__main__":
     velocity = myNodeList.getFieldVector2d("velocity")
     position = myNodeList.getFieldVector2d("position")
 
+    p0 = 2.5
+    gamma = eos.gamma
+
     for j in range(ny):
         for i in range(nx):
             idx = myGrid.index(i,j,0)
@@ -52,19 +52,23 @@ if __name__ == "__main__":
             y = pos.y
 
             # sinusoidal vertical offset of the interface
-            interface_y = ny / 2 + 1.0 * np.sin(5.0 * np.pi * x / nx)
+            interface_y = ny / 2 + 0.8 * np.sin(5.0 * np.pi * x / nx)
 
             if y < interface_y:
-                density.setValue(idx, 2.0)  # heavy fluid below
+                rho = 1.0
+                density.setValue(idx, rho)  # heavy fluid below
+                energy.setValue(idx, p0 / ((gamma - 1.0) * rho))
             else:
-                density.setValue(idx, 1.0)  # light fluid above
+                rho = 2.0
+                density.setValue(idx, rho)  # light fluid above
+                energy.setValue(idx, p0 / ((gamma - 1.0) * rho))
 
     periodicWork = []
 
     if siloDump:
         meshWriter = SiloDump(baseName="HLL",
                                 nodeList=myNodeList,
-                                fieldNames=["density","specificInternalEnergy","pressure","velocity"],
+                                fieldNames=["density","specificInternalEnergy","pressure","velocity","acceleration"],
                                 dumpCycle=50)
         periodicWork += [meshWriter]
 
