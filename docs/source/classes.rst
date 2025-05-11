@@ -84,7 +84,7 @@ An example of this pattern for simple forward Euler integration is shown below:
 
 .. literalinclude:: ../../src/Integrators/integrator.cc
    :language: c++
-   :lines: 6-51
+   :lines: 6-66
 
 .. note::
    While this class is a foward Euler integrator, it is also the base class for all integrators in Nidhoggr.

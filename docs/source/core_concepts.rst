@@ -206,7 +206,8 @@ Collider boundaries can be assigned to lagrangian physics packages with the ``ad
 Integrators
 --------------------
 Nidhoggr's integrators all have essentially the same interface: they take as arguments your physics packages
-as ``packages=[python list]`` and a ``dtmin=[float]`` argument to set the lowest allowable timestep. As of |today|, the 
+as ``packages=[python list]``, a ``dtmin=[float]`` argument to set the lowest allowable timestep, and a ``verbose=[boolean]`` 
+argument that determines whether or not to print to screen which physics package is controlling the timestep. As of |today|, the 
 integrators available in Nidhoggr are
 
 .. code-block:: text
