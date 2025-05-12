@@ -81,6 +81,14 @@ Vector<dim> operator*(const double other, const Vector<dim>& vec);
 
 }
 
+template<int dim>
+Lin::Vector<dim> unitAxis(int axis) {
+    Lin::Vector<dim> n;
+    for (int d = 0; d < dim; ++d)
+        n[d] = (d == axis) ? 1.0 : 0.0;
+    return n;
+}
+
 #include "vectorMath.cc"
 
 #endif // VECTORMATH_HH
