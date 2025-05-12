@@ -14,7 +14,7 @@ First run: a simple example
 In the ``tests`` directory, create a file called ``example.py``. In this file, we're going to write a simple script
 that simulates a ball travelling along a parabolic path.
 
-First we import the necessary packages amd we'll use the ``MKS`` class, which is a convenient way to 
+First, we import the necessary packages and we'll use the ``MKS`` class, which is a convenient way to 
 define units of length (meters), mass (kilograms) and time (seconds). We also want to create the ball data structure, which
 in this case is a Nodelist with a single node.
 
