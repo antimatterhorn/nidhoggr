@@ -55,7 +55,7 @@ signature just to verify that it was created successfully.
 
 
 To create our intial conditions, we'll access the fields of our Nodelist and set the values of the 0th node to some initial state, in this case, 
-a radius of 1 and mass of 1.
+a radius of 1cm and mass of 1kg.
 Then we'll set the velocity to some initial value pointing up and to the right and set the position of the ball to the origin.
 
 .. literalinclude:: getting_started.py
