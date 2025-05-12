@@ -1,7 +1,7 @@
 // hydrostaticEquilibrium1D.cc
-#include "hydrostaticEquilibrium.hh"
+#include "stellarEvolution.hh"
 
-HydrostaticEquilibrium::HydrostaticEquilibrium(StellarGrid1D* grid, NodeList* nodeList, PhysicalConstants& constants)
+StellarEvolution::StellarEvolution(StellarGrid1d* grid, NodeList* nodeList, PhysicalConstants& constants)
     : Physics<1>(nodeList, constants), grid(grid), constants(constants) {
     if (nodeList->getField<double>("pressure") == nullptr)
         nodeList->insertField<double>("pressure");
@@ -9,7 +9,7 @@ HydrostaticEquilibrium::HydrostaticEquilibrium(StellarGrid1D* grid, NodeList* no
         nodeList->insertField<double>("density");
 }
 
-void HydrostaticEquilibrium::evaluate() {
+void StellarEvolution::evaluate() {
     Field<double>* P = nodeList->getField<double>("pressure");
     Field<double>* rho = nodeList->getField<double>("density");
 

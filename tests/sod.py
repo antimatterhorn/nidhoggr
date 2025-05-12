@@ -55,7 +55,7 @@ if __name__ == "__main__":
                                 dumpCycle=50)
         periodicWork += [meshWriter]
 
-    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=50)
+    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=50,tstop=1)
 
     if(animate):
         title = MakeTitle(controller,"time","time")
