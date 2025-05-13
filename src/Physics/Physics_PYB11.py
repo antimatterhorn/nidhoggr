@@ -8,7 +8,8 @@ PYB11includes = ['"physics.hh"',
                 '"hydro.hh"',
                 '"simplePhysics.cc"',
                 '"eulerHydro.cc"',
-                '"gridHydroHLL.cc"',
+                '"gridHydroHLLE.cc"',
+                '"gridHydroHLLC.cc"',
                 '"kinetics.cc"',
                 '"fem.cc"']
 
@@ -21,6 +22,7 @@ from waveEquation import *
 from hydro import *
 from simplePhysics import *
 from eulerHydro import *
-from gridHydroHLL import *
+from gridHydroHLLE import *
+from gridHydroHLLC import *
 from kinetics import *
 from fem import *
