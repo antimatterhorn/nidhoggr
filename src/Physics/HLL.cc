@@ -78,6 +78,7 @@ computeHLLEFlux(int iL, int iR, int axis,
     return result;
 }
 
+//LEGACY UNLIMITED VERSION
 template<int dim>
 HLLFlux<dim>
 computeHLLCFlux(int iL, int iR, int axis,
@@ -88,10 +89,13 @@ computeHLLCFlux(int iL, int iR, int axis,
                 const Field<double>& cs) {
     using Vector = Lin::Vector<dim>;
 
+    constexpr double tiny = 1e-12;
+    constexpr double rho_floor = 1e-12;
+
     // Left state
-    double rhoL = rho.getValue(iL);
+    double rhoL = std::max(rho.getValue(iL), rho_floor);
     Vector vL   = v.getValue(iL);
-    double uL   = u.getValue(iL);
+    double uL   = std::max(u.getValue(iL), rho_floor);
     double pL   = p.getValue(iL);
     double cL   = cs.getValue(iL);
     Vector momL = rhoL * vL;
@@ -100,9 +104,9 @@ computeHLLCFlux(int iL, int iR, int axis,
     double vnL  = vL[axis];
 
     // Right state
-    double rhoR = rho.getValue(iR);
+    double rhoR = std::max(rho.getValue(iR), rho_floor);
     Vector vR   = v.getValue(iR);
-    double uR   = u.getValue(iR);
+    double uR   = std::max(u.getValue(iR), rho_floor);
     double pR   = p.getValue(iR);
     double cR   = cs.getValue(iR);
     Vector momR = rhoR * vR;
@@ -114,18 +118,19 @@ computeHLLCFlux(int iL, int iR, int axis,
     double sL = std::min(vnL - cL, vnR - cR);
     double sR = std::max(vnL + cL, vnR + cR);
 
-    // Estimate contact speed s*
-    double numerator = pR - pL + rhoL * vnL * (sL - vnL) - rhoR * vnR * (sR - vnR);
+    // Estimate contact wave speed
+    double numerator   = pR - pL + rhoL * vnL * (sL - vnL) - rhoR * vnR * (sR - vnR);
     double denominator = rhoL * (sL - vnL) - rhoR * (sR - vnR);
-    double sStar = (std::abs(denominator) < 1e-12) ? 0.0 : numerator / denominator;
+    if (std::abs(denominator) < tiny)
+        denominator = (denominator >= 0.0) ? tiny : -tiny;
+    double sStar = numerator / denominator;
 
-    // Left flux
+    // Compute fluxes
     double massFluxL = rhoL * vnL;
     Vector momFluxL = vnL * momL;
     momFluxL[axis] += pL;
     double energyFluxL = vnL * (EL + pL);
 
-    // Right flux
     double massFluxR = rhoR * vnR;
     Vector momFluxR = vnR * momR;
     momFluxR[axis] += pR;
@@ -133,6 +138,102 @@ computeHLLCFlux(int iL, int iR, int axis,
 
     HLLFlux<dim> flux;
 
+    if (sL >= 0.0) {
+        flux.mass     = massFluxL;
+        flux.momentum = momFluxL;
+        flux.energy   = energyFluxL;
+        return flux;
+    }
+
+    if (sR <= 0.0) {
+        flux.mass     = massFluxR;
+        flux.momentum = momFluxR;
+        flux.energy   = energyFluxR;
+        return flux;
+    }
+
+    // Star region calculations
+    double denomL = std::max(sL - sStar, tiny);
+    double denomR = std::max(sR - sStar, tiny);
+
+    double rhoSL = std::max(rhoL * (sL - vnL) / denomL, rho_floor);
+    double rhoSR = std::max(rhoR * (sR - vnR) / denomR, rho_floor);
+
+    Vector n = unitAxis<dim>(axis);
+    Vector vL_star = vL - n * vnL;
+    Vector vR_star = vR - n * vnR;
+
+    Vector momSL = momL + (sStar - vnL) * (rhoSL * vL_star);
+    Vector momSR = momR + (sStar - vnR) * (rhoSR * vR_star);
+
+    double ESL = EL + (sStar - vnL) * (rhoSL * (eL + 0.5 * (sStar - vnL)));
+    double ESR = ER + (sStar - vnR) * (rhoSR * (eR + 0.5 * (sStar - vnR)));
+
+    if (sStar >= 0.0) {
+        flux.mass     = massFluxL + sL * (rhoSL - rhoL);
+        flux.momentum = momFluxL + sL * (momSL - momL);
+        flux.energy   = energyFluxL + sL * (ESL - EL);
+    } else {
+        flux.mass     = massFluxR + sR * (rhoSR - rhoR);
+        flux.momentum = momFluxR + sR * (momSR - momR);
+        flux.energy   = energyFluxR + sR * (ESR - ER);
+    }
+
+    // Final check: if any flux component is NaN, print warning
+    if (!std::isfinite(flux.mass) ||
+        !std::isfinite(flux.energy) ||
+        !std::isfinite(flux.momentum[0])) {
+        std::cerr << "HLLC NaN: sStar=" << sStar
+                  << ", rhoL=" << rhoL << ", rhoR=" << rhoR
+                  << ", vnL=" << vnL << ", vnR=" << vnR
+                  << ", sL=" << sL << ", sR=" << sR
+                  << ", denom=" << denominator << std::endl;
+    }
+
+    return flux;
+}
+
+//LIMITED VERSION
+template<int dim>
+HLLFlux<dim> computeHLLCFluxFromStates(
+    double rhoL, const Lin::Vector<dim>& vL, double uL, double pL, double cL,
+    double rhoR, const Lin::Vector<dim>& vR, double uR, double pR, double cR,
+    int axis) {
+
+    using Vector = Lin::Vector<dim>;
+
+    Vector momL = rhoL * vL;
+    Vector momR = rhoR * vR;
+    double eL = uL + 0.5 * vL.mag2();
+    double eR = uR + 0.5 * vR.mag2();
+    double EL = rhoL * eL;
+    double ER = rhoR * eR;
+    double vnL = vL[axis];
+    double vnR = vR[axis];
+
+    // Estimate wave speeds
+    double sL = std::min(vnL - cL, vnR - cR);
+    double sR = std::max(vnL + cL, vnR + cR);
+
+    // Contact wave speed estimate (Toro)
+    double numerator = pR - pL + rhoL * vnL * (sL - vnL) - rhoR * vnR * (sR - vnR);
+    double denominator = rhoL * (sL - vnL) - rhoR * (sR - vnR);
+    const double tiny = 1e-12;
+    if (std::abs(denominator) < tiny)
+        denominator = (denominator >= 0.0) ? tiny : -tiny;
+    double sStar = numerator / denominator;
+
+    // Left flux
+    double massFluxL = rhoL * vnL;
+    Vector momFluxL = vnL * momL; momFluxL[axis] += pL;
+    double energyFluxL = vnL * (EL + pL);
+
+    // Right flux
+    double massFluxR = rhoR * vnR;
+    Vector momFluxR = vnR * momR; momFluxR[axis] += pR;
+    double energyFluxR = vnR * (ER + pR);
+
+    HLLFlux<dim> flux;
     if (sL >= 0.0) {
         flux.mass = massFluxL;
         flux.momentum = momFluxL;
@@ -144,8 +245,11 @@ computeHLLCFlux(int iL, int iR, int axis,
     } else {
         Vector n = unitAxis<dim>(axis);
 
-        double rhoSL = rhoL * (sL - vnL) / (sL - sStar);
-        double rhoSR = rhoR * (sR - vnR) / (sR - sStar);
+        double denomL = std::max(sL - sStar, tiny);
+        double denomR = std::max(sR - sStar, tiny);
+
+        double rhoSL = std::max(rhoL * (sL - vnL) / denomL, tiny);
+        double rhoSR = std::max(rhoR * (sR - vnR) / denomR, tiny);
 
         Vector vL_star = vL - n * vnL;
         Vector vR_star = vR - n * vnR;
@@ -157,13 +261,13 @@ computeHLLCFlux(int iL, int iR, int axis,
         double ESR = ER + (sStar - vnR) * (rhoSR * (eR + 0.5 * (sStar - vnR)));
 
         if (sStar >= 0.0) {
-            flux.mass     = massFluxL + sL * (rhoSL - rhoL);
+            flux.mass = massFluxL + sL * (rhoSL - rhoL);
             flux.momentum = momFluxL + sL * (momSL - momL);
-            flux.energy   = energyFluxL + sL * (ESL - EL);
+            flux.energy = energyFluxL + sL * (ESL - EL);
         } else {
-            flux.mass     = massFluxR + sR * (rhoSR - rhoR);
+            flux.mass = massFluxR + sR * (rhoSR - rhoR);
             flux.momentum = momFluxR + sR * (momSR - momR);
-            flux.energy   = energyFluxR + sR * (ESR - ER);
+            flux.energy = energyFluxR + sR * (ESR - ER);
         }
     }
 

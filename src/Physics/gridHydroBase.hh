@@ -75,9 +75,17 @@ public:
             Vector vi = v->getValue(i);
             double rhoi = rho->getValue(i);
             double ui = u->getValue(i);
+            rhoi = std::max(rhoi, 1e-12);
+            ui   = std::max(ui, 1e-12);
             double ci = soundSpeed->getValue(i);
 
             double ei = ui + 0.5 * vi.mag2();
+
+            if (rhoi > 1e10 || ui > 1e10 || vi.magnitude() > 1e5) {
+                std::cerr << "FATAL: Exploding state at cell " << i
+                        << " rho=" << rhoi << " u=" << ui << " v=" << vi.toString() << std::endl;
+                std::exit(EXIT_FAILURE);
+            }
 
             Vector momi = vi * rhoi;
             double Ei = rhoi * ei;
@@ -91,6 +99,20 @@ public:
             for (int k = 0; k < dim; ++k) {
                 int jL = neighbors[2 * k];
                 int jR = neighbors[2 * k + 1];
+
+                // Check validity of jL and jR
+                for (int q : {jL, jR, i}) {
+                    if (!std::isfinite(rho->getValue(q)) ||
+                        !std::isfinite(u->getValue(q)) ||
+                        !std::isfinite(v->getValue(q)[0])) {
+                        std::cerr << "BAD INPUT at cell " << q << ": "
+                                << "rho=" << rho->getValue(q)
+                                << ", u=" << u->getValue(q)
+                                << ", vx=" << v->getValue(q)[0] << std::endl;
+                        std::exit(EXIT_FAILURE);
+                    }
+                }
+
 
                 auto flux_L = this->computeFlux(jL, i, k, *rho, *v, *u, *pressure, *soundSpeed);
                 auto flux_R = this->computeFlux(i, jR, k, *rho, *v, *u, *pressure, *soundSpeed);
@@ -108,7 +130,7 @@ public:
             dvdt->setValue(i, dvi);
             dudt->setValue(i, dui);
 
-            local_dtmin = std::min(local_dtmin, 0.4 * dxmin / ci);
+            local_dtmin = std::min(local_dtmin, 0.1 * dxmin / (ci+vi.magnitude()));
         }
 
         dtmin = local_dtmin;

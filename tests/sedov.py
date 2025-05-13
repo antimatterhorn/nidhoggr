@@ -10,7 +10,7 @@ if __name__ == "__main__":
                                        ny = 100,
                                        dx = 1,
                                        dy = 1,
-                                       dtmin = 0.001)
+                                       dtmin = 1e-7)
 
     myGrid = Grid2d(nx,ny,dx,dy)
     print("grid size:",myGrid.size())
