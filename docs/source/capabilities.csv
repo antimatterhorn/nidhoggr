@@ -1,12 +1,12 @@
 ﻿Component,Working,Under Development,Planned
 Physics,N-body gravity,FEM,SPH
-,Gravity point sources,,
+,Gravity point sources,HLLC hydro,
 ,Constant direction gravity,,
 ,Particle kinetics,,
 ,Acoustic wave solvers,,
 ,Shallow wave solvers,,
 ,Chemical reaction solvers,,
-,HLL hydro,,
+,HLLE hydro,,
 Equations of State,Ideal gas,,Helmholtz
 ,Polytrope,,
 Time Integrators,Forward Euler,,Symplectic
