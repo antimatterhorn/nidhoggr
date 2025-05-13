@@ -78,6 +78,7 @@ computeHLLEFlux(int iL, int iR, int axis,
     return result;
 }
 
+//LEGACY UNLIMITED VERSION
 template<int dim>
 HLLFlux<dim>
 computeHLLCFlux(int iL, int iR, int axis,
@@ -187,6 +188,87 @@ computeHLLCFlux(int iL, int iR, int axis,
                   << ", vnL=" << vnL << ", vnR=" << vnR
                   << ", sL=" << sL << ", sR=" << sR
                   << ", denom=" << denominator << std::endl;
+    }
+
+    return flux;
+}
+
+//LIMITED VERSION
+template<int dim>
+HLLFlux<dim> computeHLLCFluxFromStates(
+    double rhoL, const Lin::Vector<dim>& vL, double uL, double pL, double cL,
+    double rhoR, const Lin::Vector<dim>& vR, double uR, double pR, double cR,
+    int axis) {
+
+    using Vector = Lin::Vector<dim>;
+
+    Vector momL = rhoL * vL;
+    Vector momR = rhoR * vR;
+    double eL = uL + 0.5 * vL.mag2();
+    double eR = uR + 0.5 * vR.mag2();
+    double EL = rhoL * eL;
+    double ER = rhoR * eR;
+    double vnL = vL[axis];
+    double vnR = vR[axis];
+
+    // Estimate wave speeds
+    double sL = std::min(vnL - cL, vnR - cR);
+    double sR = std::max(vnL + cL, vnR + cR);
+
+    // Contact wave speed estimate (Toro)
+    double numerator = pR - pL + rhoL * vnL * (sL - vnL) - rhoR * vnR * (sR - vnR);
+    double denominator = rhoL * (sL - vnL) - rhoR * (sR - vnR);
+    const double tiny = 1e-12;
+    if (std::abs(denominator) < tiny)
+        denominator = (denominator >= 0.0) ? tiny : -tiny;
+    double sStar = numerator / denominator;
+
+    // Left flux
+    double massFluxL = rhoL * vnL;
+    Vector momFluxL = vnL * momL; momFluxL[axis] += pL;
+    double energyFluxL = vnL * (EL + pL);
+
+    // Right flux
+    double massFluxR = rhoR * vnR;
+    Vector momFluxR = vnR * momR; momFluxR[axis] += pR;
+    double energyFluxR = vnR * (ER + pR);
+
+    HLLFlux<dim> flux;
+    if (sL >= 0.0) {
+        flux.mass = massFluxL;
+        flux.momentum = momFluxL;
+        flux.energy = energyFluxL;
+    } else if (sR <= 0.0) {
+        flux.mass = massFluxR;
+        flux.momentum = momFluxR;
+        flux.energy = energyFluxR;
+    } else {
+        Vector n = unitAxis<dim>(axis);
+
+        double denomL = std::max(sL - sStar, tiny);
+        double denomR = std::max(sR - sStar, tiny);
+
+        double rhoSL = std::max(rhoL * (sL - vnL) / denomL, tiny);
+        double rhoSR = std::max(rhoR * (sR - vnR) / denomR, tiny);
+
+        Vector vL_star = vL - n * vnL;
+        Vector vR_star = vR - n * vnR;
+
+        Vector momSL = momL + (sStar - vnL) * (rhoSL * vL_star);
+        Vector momSR = momR + (sStar - vnR) * (rhoSR * vR_star);
+
+        double ESL = EL + (sStar - vnL) * (rhoSL * (eL + 0.5 * (sStar - vnL)));
+        double ESR = ER + (sStar - vnR) * (rhoSR * (eR + 0.5 * (sStar - vnR)));
+
+        if (sStar >= 0.0) {
+            flux.mass = massFluxL + sL * (rhoSL - rhoL);
+            flux.momentum = momFluxL + sL * (momSL - momL);
+            flux.energy = energyFluxL + sL * (ESL - EL);
+        } else {
+            flux.mass = massFluxR + sR * (rhoSR - rhoR);
+            flux.momentum = momFluxR + sR * (momSR - momR);
+            flux.energy = energyFluxR + sR * (ESR - ER);
+        }
     }
 
     return flux;
