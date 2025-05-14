@@ -18,7 +18,7 @@ protected:
     double time, dt, dtmin;
 
 public:
-    Integrator(std::vector<Physics<dim>*> packages, double dtmin, bool verbose);
+    Integrator(std::vector<Physics<dim>*> packages, double dtmin, bool verbose = false);
     ~Integrator();
 
     virtual void Step();
