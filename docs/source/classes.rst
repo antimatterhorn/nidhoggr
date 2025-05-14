@@ -43,7 +43,7 @@ is simply updating the ``State`` to the current values of the ``NodeList``.
 .. literalinclude:: ../../src/Physics/constantGravity.cc
    :language: c++
    :linenos:
-   :lines: 40-65
+   :lines: 40-68
    :lineno-start: 40
 
 ``EvaluateDerivatives`` is used to compute the derivatives of the ``State`` object at each node. In this case, we are computing the 
@@ -69,7 +69,7 @@ The final bit of code in ``EvaluateDerivatives`` merely calculates the minimum t
 .. literalinclude:: ../../src/Physics/constantGravity.cc
    :language: c++
    :linenos:
-   :lines: 75-102
+   :lines: 77-104
    :lineno-start: 75
 
 ``FinalizeStep`` is meant to tie up any further calculations that should happen at the end of a time step. In this case, we merely push
