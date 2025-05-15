@@ -16,7 +16,7 @@ if __name__ == "__main__":
     myNodeListCN  = NodeList(1)
 
     cycles = 10
-    dtmin = 2
+    dtmin = 1/cycles
 
     #constants = PhysicalConstants(1.0, 1.0, 1.0)
     constants = MKS()
