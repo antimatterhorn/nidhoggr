@@ -74,15 +74,46 @@ if __name__ == "__main__":
     xs = t_values
     ys = theta_vec(t_values)
 
-    plt.plot(xe, ye, 'o', label="Euler Step")  
-    plt.plot(xr2, yr2, 'o', label="RK2")  
-    plt.plot(xr4, yr4, 'o', label="RK4") 
-    plt.plot(xrc, yrc, 'o', label="CN")  
-    plt.plot(xs,ys,label="analytic")
+    plt.plot(xs, ys, '-', label="analytic", linewidth=2, color='black')
+    plt.plot(xe, ye, 'o', label="Euler Step", markersize=4)
+    plt.plot(xr2, yr2, 's', label="RK2", markersize=4)
+    plt.plot(xr4, yr4, '^', label="RK4", markersize=4)
+    plt.plot(xrc, yrc, 'd', label="CN", markersize=4)
 
     plt.xlabel('t')
     plt.ylabel('y')
 
     plt.grid(True)
-    plt.legend()
+    plt.legend(loc='best')
+    plt.show()
+    
+    # Compute analytic values at integrator time samples
+    ye_analytic  = theta_vec(np.array(xe))
+    yr2_analytic = theta_vec(np.array(xr2))
+    yr4_analytic = theta_vec(np.array(xr4))
+    yrc_analytic = theta_vec(np.array(xrc))
+
+    # Compute residuals
+    residual_euler = abs(np.array(ye)  - ye_analytic)
+    residual_rk2   = abs(np.array(yr2) - yr2_analytic)
+    residual_rk4   = abs(np.array(yr4) - yr4_analytic)
+    residual_cn    = abs(np.array(yrc) - yrc_analytic)
+
+    # Plot residuals
+    plt.figure(figsize=(10, 6))
+
+    plt.plot(xe,  residual_euler, 'o-', label="Euler Residual")
+    plt.plot(xr2, residual_rk2,   's-', label="RK2 Residual")
+    plt.plot(xr4, residual_rk4,   '^-', label="RK4 Residual")
+    plt.plot(xrc, residual_cn,    'd-', label="CN Residual")
+
+    plt.axhline(0.0, color='gray', linestyle='--', linewidth=1)
+
+    plt.xlabel("t")
+    plt.ylabel("Residual (numerical - analytic)")
+    plt.yscale("log") 
+    plt.title("Integrator Residuals")
+    plt.grid(True)
+    plt.legend(loc="best")
+    plt.tight_layout()
     plt.show()
