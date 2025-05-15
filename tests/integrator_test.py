@@ -13,6 +13,7 @@ if __name__ == "__main__":
     myNodeListEul = NodeList(1)
     myNodeListRK2 = NodeList(1)
     myNodeListRK4 = NodeList(1)
+    myNodeListCN  = NodeList(1)
 
     cycles = 10
     dtmin = 2
@@ -47,6 +48,14 @@ if __name__ == "__main__":
 
     controller = Controller(integrator=integrator,periodicWork=[dumpRK4],statStep=10)
     controller.Step(cycles)
+
+    constantGravity = SimplePhysics2d(myNodeListCN,constants)
+    packages = [constantGravity]
+    integrator = CrankNicolsonIntegrator2d(packages=packages,dtmin=dtmin,verbose=False)
+    dumpCN = dumpState(myNodeListCN,workCycle=1)
+
+    controller = Controller(integrator=integrator,periodicWork=[dumpCN],statStep=10)
+    controller.Step(cycles)
     
     import matplotlib.pyplot as plt
     import numpy as np
@@ -60,13 +69,15 @@ if __name__ == "__main__":
     xe,ye       = zip(*dumpEul.dump)
     xr2,yr2     = zip(*dumpRK2.dump)
     xr4,yr4     = zip(*dumpRK4.dump)
+    xrc,yrc     = zip(*dumpCN.dump)
 
     xs = t_values
     ys = theta_vec(t_values)
 
     plt.plot(xe, ye, 'o', label="Euler Step")  
     plt.plot(xr2, yr2, 'o', label="RK2")  
-    plt.plot(xr4, yr4, 'o', label="RK4")  
+    plt.plot(xr4, yr4, 'o', label="RK4") 
+    #plt.plot(xrc, yrc, 'o', label="CN")  
     plt.plot(xs,ys,label="analytic")
 
     plt.xlabel('t')
