@@ -3,7 +3,7 @@
 template <int dim>
 class CrankNicolsonIntegrator : public Integrator<dim> {
 public:
-    CrankNicolsonIntegrator(std::vector<Physics<dim>*> packages, double dtmin, bool verbose = false) : 
+    CrankNicolsonIntegrator(std::vector<Physics<dim>*> packages, double dtmin, bool verbose = false) :
         Integrator<dim>(packages, dtmin, verbose) {}
 
     ~CrankNicolsonIntegrator() {}
@@ -23,35 +23,43 @@ public:
             physics->ApplyBoundaries();
 
             State<dim>* state = physics->getState();
+
             State<dim> k1(state->size());
             State<dim> k2(state->size());
 
             k1.ghost(state);
             k2.ghost(state);
 
-            // Evaluate at current state
+            // Derivatives at current time/state
             physics->EvaluateDerivatives(state, k1, time, 0.0);
 
-            // Predictor step: Euler
+            // Initial guess: Euler forward
             State<dim> predicted(state->size());
             predicted.clone(state);
             predicted += k1 * dt;
 
-            // Corrector iterations (fixed-point)
-            const int maxIterations = 3;
+            // Fixed-point iteration
+            const double tolerance = 1e-10;
+            const int maxIterations = 10;
+
             for (int iter = 0; iter < maxIterations; ++iter) {
-                // Evaluate derivatives at predicted state (future time)
                 physics->EvaluateDerivatives(&predicted, k2, time + dt, 0.0);
 
-                // Average derivative: (k1 + k2) / 2
-                State<dim> avg(state->size());
-                avg.clone(&k1);
-                avg += k2;
-                avg *= 0.5 * dt;
+                State<dim> newPredicted(state->size());
+                newPredicted.clone(state);
+                State<dim> avgDeriv = k1;
+                avgDeriv += k2;
+                avgDeriv *= 0.5 * dt;
+                newPredicted += avgDeriv;
 
-                // Update predicted state
-                predicted.clone(state);
-                predicted += avg;
+                double delta = (newPredicted - predicted).L2Norm();
+                if (this->verbose)
+                    std::cout << "CrankNicolson iteration " << iter << ": Δ = " << delta << "\n";
+
+                if (delta < tolerance)
+                    break;
+
+                predicted.swap(newPredicted);  // update for next iteration
             }
 
             physics->ApplyBoundaries();
