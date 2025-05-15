@@ -119,6 +119,16 @@ Field<T>& Field<T>::operator+=(const Field<T>& other) {
 }
 
 template <typename T>
+Field<T>& Field<T>::operator-=(const Field<T>& other) {
+    if (this->size() != other.size())
+        throw std::invalid_argument("Field sizes do not match for subtraction");
+    for (int i = 0; i < this->size(); ++i)
+        (*this)[i] -= other[i];
+    return *this;
+}
+
+
+template <typename T>
 Field<T>& Field<T>::operator*=(const double other) {
     for (int i = 0; i < this->size(); ++i) {
         this->setValue(i, this->getValue(i) * other); // Perform element-wise scalar multiplication

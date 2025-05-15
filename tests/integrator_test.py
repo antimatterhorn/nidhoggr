@@ -77,7 +77,7 @@ if __name__ == "__main__":
     plt.plot(xe, ye, 'o', label="Euler Step")  
     plt.plot(xr2, yr2, 'o', label="RK2")  
     plt.plot(xr4, yr4, 'o', label="RK4") 
-    #plt.plot(xrc, yrc, 'o', label="CN")  
+    plt.plot(xrc, yrc, 'o', label="CN")  
     plt.plot(xs,ys,label="analytic")
 
     plt.xlabel('t')
