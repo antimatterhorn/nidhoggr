@@ -10,12 +10,13 @@ class dumpState:
         self.dump.append([time,y])
 
 if __name__ == "__main__":
+    commandLine = CommandLineArguments(cycles=50)
+    
     myNodeListEul = NodeList(1)
     myNodeListRK2 = NodeList(1)
     myNodeListRK4 = NodeList(1)
     myNodeListCN  = NodeList(1)
 
-    cycles = 50
     dtmin = 1.0/cycles
 
     #constants = PhysicalConstants(1.0, 1.0, 1.0)
