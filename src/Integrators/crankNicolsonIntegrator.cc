@@ -43,7 +43,7 @@ public:
             const int maxIterations = 10;
 
             for (int iter = 0; iter < maxIterations; ++iter) {
-                physics->EvaluateDerivatives(&predicted, k2, time + dt, 0.0);
+                physics->EvaluateDerivatives(&predicted, k2, time, dt);
 
                 State<dim> newPredicted(state->size());
                 newPredicted.clone(state);
@@ -53,6 +53,7 @@ public:
                 newPredicted += avgDeriv;
 
                 double delta = (newPredicted - predicted).L2Norm();
+
                 if (this->verbose)
                     std::cout << "CrankNicolson iteration " << iter << ": Δ = " << delta << "\n";
 
