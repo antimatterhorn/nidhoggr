@@ -251,6 +251,12 @@ public:
 
     }
 
+    State<dim> deepCopy() {
+        State<dim> out(this->size());
+        out.clone(this);
+        return out;
+    }
+
     void
     ghost(const State* other) {
         fields.clear(); 

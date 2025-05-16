@@ -45,11 +45,11 @@ public:
             for (int iter = 0; iter < maxIterations; ++iter) {
                 physics->EvaluateDerivatives(&predicted, k2, time, dt);
 
-                State<dim> newPredicted(state->size());
-                newPredicted.clone(state);
-                State<dim> avgDeriv = k1;
+                State<dim> newPredicted = state->deepCopy();
+                State<dim> avgDeriv = k1.deepCopy();
                 avgDeriv += k2;
                 avgDeriv *= 0.5 * dt;
+
                 newPredicted += avgDeriv;
 
                 double delta = (newPredicted - predicted).L2Norm();

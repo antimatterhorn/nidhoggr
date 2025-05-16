@@ -48,7 +48,7 @@ public:
 
         #pragma omp parallel for
         for (int i = 0; i < numNodes; ++i) {
-            double yi = (*y)[i];
+            const double yi = (*y)[i];
             dydt->setValue(i, yi + evalTime * evalTime);
         }
     }
