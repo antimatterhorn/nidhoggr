@@ -1,6 +1,9 @@
 #include "physics.hh"
 #include <iostream>
 
+// Physics/implicitPhysics.cc 
+// This is a simple example of a physics class that requires implicit time integration.
+// y' = y + t^2
 template <int dim>
 class ImplicitPhysics : public Physics<dim> {
 protected:
@@ -30,8 +33,8 @@ public:
         State<dim> state = this->state;
         NodeList* nodeList = this->nodeList;
 
-        ScalarField* sy       = state.template getField<double>("y");
-        ScalarField* y        = nodeList->template getField<double>("y");
+        ScalarField* sy = state.template getField<double>("y");
+        ScalarField* y  = nodeList->template getField<double>("y");
 
         sy->copyValues(y);
     }
@@ -43,7 +46,7 @@ public:
 
         const double evalTime = time + dt;
 
-        ScalarField* y = initialState->template getField<double>("y");
+        ScalarField* y    = initialState->template getField<double>("y");
         ScalarField* dydt = deriv.template getField<double>("y");
 
         for (int i = 0; i < numNodes; ++i) {
@@ -52,15 +55,14 @@ public:
         }
     }
 
-
     virtual void
     FinalizeStep(const State<dim>* finalState) override {
         State<dim> state = this->state;
         NodeList* nodeList = this->nodeList;
 
-        ScalarField* sy       = state.template getField<double>("y");
-        ScalarField* fy       = finalState->template getField<double>("y");
-        ScalarField* y        = nodeList->template getField<double>("y");
+        ScalarField* sy = state.template getField<double>("y");
+        ScalarField* fy = finalState->template getField<double>("y");
+        ScalarField* y  = nodeList->template getField<double>("y");
 
         sy->copyValues(fy);
         y->copyValues(fy);
