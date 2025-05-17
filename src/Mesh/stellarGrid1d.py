@@ -1,5 +1,7 @@
 from PYB11Generator import *
 
 class StellarGrid1d:
-    def pyinit1(self,numZones="int",totalMass="double"):
+    def pyinit(self,numZones="int",totalMass="double"):
+        return
+    def size(self):
         return

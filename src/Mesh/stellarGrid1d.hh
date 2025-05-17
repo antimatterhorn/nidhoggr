@@ -12,4 +12,5 @@ public:
 
     double dm(int i) const;
     void computeRadiusFromMass(const std::vector<double>& rho);
+    int size() const { return nz;}
 };
