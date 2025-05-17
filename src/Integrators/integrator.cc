@@ -62,7 +62,7 @@ void Integrator<dim>::VoteDt() {
             dt = smallestDt;
         }
 
-        this->dt = std::max(dt, this->dtmin);
+        this->dt = std::max(dt, this->dtmin) * this->dtMultiplier;
 }
 
 template <int dim>

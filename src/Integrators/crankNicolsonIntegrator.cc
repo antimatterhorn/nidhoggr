@@ -57,8 +57,12 @@ public:
                 if (this->verbose)
                     std::cout << "CrankNicolson iteration " << iter << ": Δ = " << delta << "\n";
 
-                if (delta < tolerance)
+                if (delta < tolerance) {
+                    (iter < maxIterations*0.5 ? 
+                        this->dtMultiplier *= 1.2 : 
+                        (iter > maxIterations*0.8 ? this->dtMultiplier *= 0.8 : this->dtMultiplier *= 1));
                     break;
+                }                    
 
                 predicted.swap(newPredicted);  // update for next iteration
             }

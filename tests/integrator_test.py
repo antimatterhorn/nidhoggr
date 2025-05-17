@@ -10,13 +10,14 @@ class dumpState:
         self.dump.append([time,y])
 
 if __name__ == "__main__":
+    commandLine = CommandLineArguments(cycles=200)
+    
     myNodeListEul = NodeList(1)
     myNodeListRK2 = NodeList(1)
     myNodeListRK4 = NodeList(1)
     myNodeListCN  = NodeList(1)
 
-    cycles = 10
-    dtmin = 1/cycles
+    dtmin = 1.0/cycles
 
     #constants = PhysicalConstants(1.0, 1.0, 1.0)
     constants = MKS()
@@ -25,43 +26,70 @@ if __name__ == "__main__":
     print("gamma =",eos.gamma)
 
 
-    constantGravity = SimplePhysics2d(myNodeListEul,constants)
-    packages = [constantGravity]
-    integrator = Integrator2d(packages=packages,dtmin=dtmin,verbose=False)
-    dumpEul = dumpState(myNodeListEul,workCycle=1)
+    import time
 
-    controller = Controller(integrator=integrator,periodicWork=[dumpEul],statStep=10)
+    # ---------------------------
+    # Euler
+    # ---------------------------
+    physics = ImplicitPhysics2d(myNodeListEul, constants)
+    packages = [physics]
+    integrator = Integrator2d(packages=packages, dtmin=dtmin, verbose=False)
+    dumpEul = dumpState(myNodeListEul, workCycle=1)
+    controller = Controller(integrator=integrator, periodicWork=[dumpEul], statStep=cycles*2, tstop=1)
+
+    start = time.time()
     controller.Step(cycles)
+    elapsed = time.time() - start
+    print(f"Euler: {controller.cycle} cycles in {elapsed:.6f} seconds")
 
-    constantGravity = SimplePhysics2d(myNodeListRK2,constants)
-    packages = [constantGravity]
-    integrator = RungeKutta2Integrator2d(packages=packages,dtmin=dtmin,verbose=False)
-    dumpRK2 = dumpState(myNodeListRK2,workCycle=1)
+    # ---------------------------
+    # RK2
+    # ---------------------------
+    physics = ImplicitPhysics2d(myNodeListRK2, constants)
+    packages = [physics]
+    integrator = RungeKutta2Integrator2d(packages=packages, dtmin=dtmin, verbose=False)
+    dumpRK2 = dumpState(myNodeListRK2, workCycle=1)
+    controller = Controller(integrator=integrator, periodicWork=[dumpRK2], statStep=cycles*2, tstop=1)
 
-    controller = Controller(integrator=integrator,periodicWork=[dumpRK2],statStep=10)
+    start = time.time()
     controller.Step(cycles)
+    elapsed = time.time() - start
+    print(f"RK2: {controller.cycle} cycles in {elapsed:.6f} seconds")
 
-    constantGravity = SimplePhysics2d(myNodeListRK4,constants)
-    packages = [constantGravity]
-    integrator = RungeKutta4Integrator2d(packages=packages,dtmin=dtmin,verbose=False)
-    dumpRK4 = dumpState(myNodeListRK4,workCycle=1)
+    # ---------------------------
+    # RK4
+    # ---------------------------
+    physics = ImplicitPhysics2d(myNodeListRK4, constants)
+    packages = [physics]
+    integrator = RungeKutta4Integrator2d(packages=packages, dtmin=dtmin, verbose=False)
+    dumpRK4 = dumpState(myNodeListRK4, workCycle=1)
+    controller = Controller(integrator=integrator, periodicWork=[dumpRK4], statStep=cycles*2, tstop=1)
 
-    controller = Controller(integrator=integrator,periodicWork=[dumpRK4],statStep=10)
+    start = time.time()
     controller.Step(cycles)
+    elapsed = time.time() - start
+    print(f"RK4: {controller.cycle} cycles in {elapsed:.6f} seconds")
 
-    constantGravity = SimplePhysics2d(myNodeListCN,constants)
-    packages = [constantGravity]
-    integrator = CrankNicolsonIntegrator2d(packages=packages,dtmin=dtmin,verbose=False)
-    dumpCN = dumpState(myNodeListCN,workCycle=1)
+    # ---------------------------
+    # Crank-Nicolson
+    # ---------------------------
+    physics = ImplicitPhysics2d(myNodeListCN, constants)
+    packages = [physics]
+    integrator = CrankNicolsonIntegrator2d(packages=packages, dtmin=dtmin, verbose=False)
+    dumpCN = dumpState(myNodeListCN, workCycle=1)
+    controller = Controller(integrator=integrator, periodicWork=[dumpCN], statStep=cycles*2, tstop=1)
 
-    controller = Controller(integrator=integrator,periodicWork=[dumpCN],statStep=10)
+    start = time.time()
     controller.Step(cycles)
+    elapsed = time.time() - start
+    print(f"Crank–Nicolson: {controller.cycle} cycles in {elapsed:.6f} seconds")
+
     
     import matplotlib.pyplot as plt
     import numpy as np
 
     def theta(t):
-        return 10.0*t**2 - 0.5*t**3
+        return -t*t - 2*t + 2*np.exp(t) - 2
 
     theta_vec = np.vectorize(theta)
     t_values = np.linspace(0, cycles*dtmin, cycles*10)
