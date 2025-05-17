@@ -34,8 +34,7 @@ public:
             physics->EvaluateDerivatives(state, k1, time, 0.0);
 
             // Initial guess: Euler forward
-            State<dim> predicted(state->size());
-            predicted.clone(state);
+            State<dim> predicted = state->deepCopy();
             predicted += k1 * dt;
 
             // Fixed-point iteration

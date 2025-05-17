@@ -19,6 +19,14 @@ Simulates the transmission of an acoustic wave through a diffraction grating.
    :width: 80%
    :align: center
 
+doubleSlit.py
+---------------------
+Simulates a double slit experiment. 
+
+.. image:: doubleSlit.gif
+   :width: 80%
+   :align: center
+
 imageToStringArt.py
 ---------------------
 Creates the instructions for (and previews) an image made from strings stretched across a wheel with a chosen number of pins.

@@ -49,3 +49,9 @@ algebra computational package through its Vector and Tensor class methods.
 .. note::
     Nihoggr's Vector and Tensor classes are limited to a maximum of three dimensions along any
     span.
+
+Implicit vs. Explicit Time integration
+---------------------------------------
+Most of the physics packages in Nidhoggr are designed for use with explicit time integration
+and can become quite unstable if you try to run them with implicit time integration (e.g. Crank-Nicolson).
+As of version 0.8.5, the only physics module that is stable under implicit time integration is ImplicitPhysicsXd. 

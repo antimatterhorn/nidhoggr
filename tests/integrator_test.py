@@ -21,11 +21,7 @@ if __name__ == "__main__":
 
     #constants = PhysicalConstants(1.0, 1.0, 1.0)
     constants = MKS()
-    print("G =",constants.G)
-    eos = IdealGasEOS(5.0/3.0,constants)
-    print("gamma =",eos.gamma)
-
-
+    
     import time
 
     # ---------------------------

@@ -26,8 +26,8 @@ public:
             physics->PreStepInitialize();
             physics->ApplyBoundaries();
 
-            State<dim>* state = physics->getState();
-            State<dim> interim(state->size());
+            State<dim>* state  = physics->getState();
+            State<dim> interim = state->deepCopy();
             State<dim> k1(state->size());
             State<dim> k2(state->size());
             State<dim> k3(state->size());
@@ -40,7 +40,6 @@ public:
 
             physics->EvaluateDerivatives(state,k1,time,0);
 
-            interim.clone(state);
             interim+=k1*(dt/2.0);  
             physics->EvaluateDerivatives(&interim,k2,time,dt/2.0);
 
@@ -59,8 +58,7 @@ public:
             k1+=k4;
             k1*=(dt/6.0);
 
-            State<dim> newState(state->size());
-            newState.clone(state);
+            State<dim> newState = state->deepCopy();
             newState += k1;
 
             physics->ApplyBoundaries();
