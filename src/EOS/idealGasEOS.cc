@@ -21,7 +21,11 @@ public:
     // Method to compute internal energy given density and pressure
     virtual void 
     setInternalEnergy(Field<double>* internalEnergy, Field<double>* density, Field<double>* pressure) const override {
-        //return pressure / ((gamma - 1.0) * density);
+        for (int i = 0; i < internalEnergy->size(); ++i) {
+            const double rho = density->getValue(i);
+            const double P = pressure->getValue(i);
+            internalEnergy->setValue(i, P / ((gamma - 1.0) * rho));
+        }
     }
 
     // Method to compute sound speed given density and pressure
