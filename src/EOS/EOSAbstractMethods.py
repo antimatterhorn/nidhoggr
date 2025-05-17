@@ -25,3 +25,17 @@ class EOSAbstractMethods:
                     density = "Field<double>*",
                     internalEnergy = "Field<double>*"):
         return "void"
+    
+    @PYB11const
+    def setTemperature(self,
+                    temperature  = "Field<double>*",
+                    density = "Field<double>*",
+                    internalEnergy = "Field<double>*"):
+        return "void"
+    
+    @PYB11const
+    def setInternalEnergyFromTemperature(self,
+                    internalEnergy = "Field<double>*",
+                    density = "Field<double>*",
+                    temperature = "Field<double>*"):
+        return "void"
