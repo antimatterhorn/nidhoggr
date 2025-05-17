@@ -36,15 +36,13 @@ public:
 
             physics->EvaluateDerivatives(state,k1,time,0);
 
-            interim.ghost(state);
-            interim+=*state;
-            interim+=k1*dt; 
+            interim = state->deepCopy();
+            interim +=k1*dt; 
 
             physics->EvaluateDerivatives(&interim,k2,time,dt);
 
             State<dim> newState(state->size());
-            newState.ghost(state);
-            newState+=*state;
+            newState = state->deepCopy();
 
             k1 += k2;
             k1 *= 0.5*dt;
