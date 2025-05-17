@@ -94,6 +94,8 @@ public:
             nodeList->insertField<double>("xi");
         if (nodeList->getField<double>("maxphi") == nullptr)
             nodeList->insertField<double>("maxphi");
+        if (nodeList->getField<double>("phisq") == nullptr)
+            nodeList->insertField<double>("phisq");
         if (nodeList->getField<double>("soundSpeed") == nullptr)
             nodeList->insertField<double>("soundSpeed");       
 
@@ -205,12 +207,17 @@ public:
         ScalarField* xi     = nodeList->getField<double>("xi");
         ScalarField* phi    = nodeList->getField<double>("phi");
         ScalarField* mphi   = nodeList->getField<double>("maxphi");
+        ScalarField* phis   = nodeList->getField<double>("phisq");
 
         xi->copyValues(fxi);
         phi->copyValues(fphi);
+        
 
-        for (int i=0; i<numNodes; ++i)
+        for (int i=0; i<numNodes; ++i) {
             mphi->setValue(i,std::max(mphi->getValue(i),std::abs(phi->getValue(i))));
+            phis->setValue(i,phi->getValue(i)*phi->getValue(i));
+        }
+            
     }
 
     virtual double 
