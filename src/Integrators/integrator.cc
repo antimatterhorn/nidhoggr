@@ -32,8 +32,7 @@ void Integrator<dim>::Step() {
 
         derivatives *= dt;
         State<dim> newState(state->size());
-        newState.ghost(state);
-        newState += *state;
+        newState = state->deepCopy();
         newState += derivatives;
 
         physics->ApplyBoundaries();
@@ -54,13 +53,8 @@ void Integrator<dim>::VoteDt() {
                     std::cout << physics->name() << " requested timestep of " << newdt << "\n";
             }
         }
-        if (dt < smallestDt) {
-            // Lerp up to the new dt (e.g., 20% toward it)
-            dt = dt + 0.2 * (smallestDt - dt);
-        } else {
-            // Snap down to the safest (smallest) timestep
-            dt = smallestDt;
-        }
+
+        dt = (dt < smallestDt ?  dt + 0.2 * (smallestDt - dt) : smallestDt);
 
         this->dt = std::max(dt, this->dtmin) * this->dtMultiplier;
 }
