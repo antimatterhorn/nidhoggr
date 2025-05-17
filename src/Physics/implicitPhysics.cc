@@ -46,7 +46,6 @@ public:
         ScalarField* y = initialState->template getField<double>("y");
         ScalarField* dydt = deriv.template getField<double>("y");
 
-        #pragma omp parallel for
         for (int i = 0; i < numNodes; ++i) {
             const double yi = (*y)[i];
             dydt->setValue(i, yi + evalTime * evalTime);
