@@ -203,6 +203,31 @@ public:
         return result;
     }
 
+    State<dim> operator-(const State& other) const {
+        if (this->count() != other.count() || this->size() != other.size()) {
+            throw std::invalid_argument("Incompatible State objects for subtraction");
+        }
+
+        State<dim> result(this->size());
+        result.clone(this);
+
+        for (int i = 0; i < result.count(); ++i) {
+            FieldBase* resultField = result.getFieldByIndex(i);
+            FieldBase* otherField = other.getFieldByIndex(i);
+
+            if (auto* resultDouble = dynamic_cast<Field<double>*>(resultField)) {
+                auto* otherDouble = dynamic_cast<const Field<double>*>(otherField);
+                if (otherDouble) *resultDouble -= *otherDouble;
+            } else if (auto* resultVector = dynamic_cast<Field<Lin::Vector<dim>>*>(resultField)) {
+                auto* otherVector = dynamic_cast<const Field<Lin::Vector<dim>>*>(otherField);
+                if (otherVector) *resultVector -= *otherVector;
+            }
+        }
+
+        return result;
+    }
+
+
     void
     clone(const State* other) {
         fields.clear(); 
@@ -226,6 +251,12 @@ public:
 
     }
 
+    State<dim> deepCopy() {
+        State<dim> out(this->size());
+        out.clone(this);
+        return out;
+    }
+
     void
     ghost(const State* other) {
         fields.clear(); 
@@ -244,6 +275,31 @@ public:
         }
 
     }
+
+    double L2Norm() const {
+        double sum = 0.0;
+
+        for (int i = 0; i < this->count(); ++i) {
+            FieldBase* field = this->getFieldByIndex(i);
+
+            if (auto* f = dynamic_cast<Field<double>*>(field)) {
+                for (int j = 0; j < f->size(); ++j)
+                    sum += (*f)[j] * (*f)[j];
+            } else if (auto* f = dynamic_cast<Field<Lin::Vector<dim>>*>(field)) {
+                for (int j = 0; j < f->size(); ++j)
+                    sum += (*f)[j].mag2();
+            }
+        }
+
+        return std::sqrt(sum);
+    }
+
+    void swap(State& other) {
+        std::swap(this->fields, other.fields);
+        std::swap(this->numNodes, other.numNodes);
+        std::swap(this->lastDt, other.lastDt);
+    }
+
 
     void
     updateLastDt(const double dt) { lastDt = dt;}

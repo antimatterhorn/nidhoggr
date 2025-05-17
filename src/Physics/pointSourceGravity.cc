@@ -68,8 +68,9 @@ public:
         VectorField* dxdt           = deriv.template getField<Vector>("position");
         VectorField* dvdt           = deriv.template getField<Vector>("velocity");
 
-        dtmin = 1e30;
-        #pragma omp parallel for
+        double local_dtmin = 1e30;
+
+        #pragma omp parallel for reduction(min:local_dtmin)
         for (int i=0; i<numNodes ; ++i) {
             Vector pos = position->getValue(i);
             Vector r = (pointSourceLocation - pos);
@@ -78,11 +79,12 @@ public:
             acceleration->setValue(i,a);
             double amag = a.mag2();
             double vmag = v.mag2();
-            dtmin = std::min(dtmin,vmag/amag);
+            local_dtmin = std::min(local_dtmin,vmag/amag);
             dxdt->setValue(i,v+dt*a);
             dvdt->setValue(i,a);
         }
 
+        dtmin = local_dtmin;
         this->lastDt = dt;
     }
 

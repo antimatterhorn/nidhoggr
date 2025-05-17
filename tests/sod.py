@@ -24,7 +24,7 @@ if __name__ == "__main__":
     eos = IdealGasEOS(1.4,constants)
     print(eos,"gamma =",eos.gamma)
 
-    hydro = GridHydroHLL2d(myNodeList,constants,eos,myGrid)
+    hydro = GridHydroHLLE2d(myNodeList,constants,eos,myGrid)
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 

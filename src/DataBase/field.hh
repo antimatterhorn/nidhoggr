@@ -46,6 +46,7 @@ public:
     Field<T> operator-(const Field<T>& other) const;
     Field<T> operator*(const double other) const;
     Field<T>& operator+=(const Field<T>& other);
+    Field<T>& operator-=(const Field<T>& other);
     Field<T>& operator*=(const double other);
 
     bool hasName() const override;

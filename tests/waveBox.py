@@ -45,7 +45,8 @@ if __name__ == "__main__":
                                        ny = 100,
                                        cs = 1.0,
                                        frequency = 10.0,
-                                       amplitude  = 8.0)
+                                       amplitude  = 8.0,
+                                       dtVerbose = False)
     
     constants = MKS()
 
@@ -71,7 +72,7 @@ if __name__ == "__main__":
 
     waveEqn.addBoundary(box)
 
-    integrator = RungeKutta4Integrator2d(packages=packages,dtmin=0.05,verbose=False)
+    integrator = RungeKutta4Integrator2d(packages=packages,dtmin=0.05,verbose=dtVerbose)
     print(integrator)
 
     print("numNodes =",myNodeList.numNodes)

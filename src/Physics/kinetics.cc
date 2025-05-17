@@ -50,7 +50,9 @@ public:
             VectorField* velocity       = nodeList->getField<Vector>("velocity");
 
             //VectorField* dxdt           = deriv.template getField<Vector>("position");
+            double local_dtmin = 1e30;
 
+            #pragma omp parallel for reduction(min:local_dtmin)
             for (int i = 0; i < numNodes - 1; ++i) {
                 dtmin = 1e30;
                 for (int j = i + 1; j < numNodes; ++j) {
@@ -81,11 +83,12 @@ public:
                 }
                 Vector vi = velocity->getValue(i);
                 double si = radius->getValue(i);
-                dtmin = std::min(dtmin,0.25*si/vi.magnitude());
+                local_dtmin = std::min(local_dtmin,0.25*si/vi.magnitude());
             }
+            dtmin = local_dtmin;
         }
         
-
+        
         timeVisited = time;
         this->lastDt = dt;
     }

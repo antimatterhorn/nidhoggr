@@ -15,10 +15,10 @@ protected:
     std::vector<Physics<dim>*> packages;
     unsigned int cycle;
     bool verbose;
-    double time, dt, dtmin;
+    double time, dt, dtmin, dtMultiplier = 1;
 
 public:
-    Integrator(std::vector<Physics<dim>*> packages, double dtmin, bool verbose);
+    Integrator(std::vector<Physics<dim>*> packages, double dtmin, bool verbose = false);
     ~Integrator();
 
     virtual void Step();

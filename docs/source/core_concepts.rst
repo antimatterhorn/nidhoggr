@@ -215,6 +215,7 @@ integrators available in Nidhoggr are
     IntegratorXd - a forward Euler integrator
     RungeKutta2IntegratorXd
     RungeKutta4IntegratorXd
+    CrankNicolsonIntegratorXd - an implicit time integrator
 
 
 The Controller

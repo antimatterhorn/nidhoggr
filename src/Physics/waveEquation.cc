@@ -11,6 +11,7 @@ protected:
     bool ocean = false;
     double C;
     double dtmin;
+    double dxmin = 1e30;
     std::vector<int> insideIds;
 public:
     using Vector = Lin::Vector<dim>;
@@ -26,6 +27,8 @@ public:
 
         ScalarField* cs = nodeList->getField<double>("soundSpeed");
         for (int i=0; i<nodeList->getNumNodes();++i) cs->setValue(i,C);
+        for (int i = 0; i < dim; ++i)
+            dxmin = std::min(dxmin, grid->spacing(i));
     }
 
     WaveEquation(NodeList* nodeList, PhysicalConstants& constants, Mesh::Grid<2>* grid, const std::string& depthMap) : 
@@ -59,6 +62,9 @@ public:
             maxC = std::max(c,maxC);
         }
         C = maxC;
+
+        for (int i = 0; i < dim; ++i)
+            dxmin = std::min(dxmin, grid2d->spacing(i));
     }
 
     ~WaveEquation() {}
@@ -119,7 +125,9 @@ public:
 
         ScalarField* cs     = nodeList->getField<double>("soundSpeed");
 
-        #pragma omp parallel for
+        double local_dtmin = 1e30;
+
+        #pragma omp parallel for reduction(min:local_dtmin)
         for (int p = 0; p < insideIds.size(); ++p) {
             int i = insideIds[p];
         
@@ -172,8 +180,10 @@ public:
         
             DxiDt->setValue(i, laplace * c * c);
             DphiDt->setValue(i, dt * DxiDt->getValue(i) + xi->getValue(i));
+
+            local_dtmin = std::min(local_dtmin, 0.2 * dxmin / c);
         }
-        
+        dtmin = local_dtmin;
     }
 
     double
@@ -205,9 +215,7 @@ public:
 
     virtual double 
     EstimateTimestep() const override { 
-        double dx = (ocean ? grid2d->dx : grid->dx);
-        double cfl = 0.1;  // i hope you're using RK4 or else this is gonna blow up!
-        return cfl/C*dx;
+        return dtmin;
     }
 
     virtual std::string name() const override { return "waveEquation"; }

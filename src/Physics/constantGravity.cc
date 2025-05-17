@@ -54,13 +54,15 @@ public:
         dxdt->operator+(*acceleration*dt);
         dvdt->copyValues(acceleration);
 
-        dtmin = 1e30;
-        #pragma omp parallel for
+        double local_dtmin = 1e30;
+
+        #pragma omp parallel for reduction(min:local_dtmin)
         for (int i=0; i<numNodes ; ++i) {
             double amag = acceleration->getValue(i).mag2();
             double vmag = velocity->getValue(i).mag2();
-            dtmin = std::min(dtmin,vmag/amag);
+            local_dtmin = std::min(local_dtmin,vmag/amag);
         }
+        dtmin = local_dtmin;
         this->lastDt = dt;
     }
 

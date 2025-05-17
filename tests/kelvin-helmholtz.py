@@ -10,7 +10,7 @@ if __name__ == "__main__":
                                         ny = 100,
                                         dx = 0.01,
                                         dy = 0.01,
-                                        dtmin = 0.001,
+                                        dtmin = 0.1e-7,
                                         intVerbose = False)
 
     myGrid = Grid2d(nx,ny,dx,dy)
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     eos = IdealGasEOS(1.4,constants)
     print(eos,"gamma =",eos.gamma)
 
-    hydro = GridHydroHLL2d(myNodeList,constants,eos,myGrid) 
+    hydro = GridHydroHLLC2d(myNodeList,constants,eos,myGrid) 
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
@@ -74,7 +74,7 @@ if __name__ == "__main__":
                                 dumpCycle=50)
         periodicWork += [meshWriter]
 
-    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=50)
+    controller = Controller(integrator=integrator,periodicWork=periodicWork,statStep=1)
 
     if(animate):
         title = MakeTitle(controller,"time","time")

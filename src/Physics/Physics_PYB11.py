@@ -7,8 +7,10 @@ PYB11includes = ['"physics.hh"',
                 '"waveEquation.cc"',
                 '"hydro.hh"',
                 '"simplePhysics.cc"',
+                '"implicitPhysics.cc"',
                 '"eulerHydro.cc"',
-                '"gridHydroHLL.cc"',
+                '"gridHydroHLLE.cc"',
+                '"gridHydroHLLC.cc"',
                 '"kinetics.cc"',
                 '"fem.cc"']
 
@@ -20,7 +22,9 @@ from nBodyGravity import *
 from waveEquation import *
 from hydro import *
 from simplePhysics import *
+from implicitPhysics import *
 from eulerHydro import *
-from gridHydroHLL import *
+from gridHydroHLLE import *
+from gridHydroHLLC import *
 from kinetics import *
 from fem import *
