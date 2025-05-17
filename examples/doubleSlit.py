@@ -12,17 +12,17 @@ class oscillate:
         self.phi = myNodeList.getFieldDouble("phi")
     def __call__(self,cycle,time,dt):
         a = 5*(cos(time))
-        i = int(self.width//8)
-        j = int(self.height//2)
-        idx = self.grid.index(i,j,0)
-        self.phi.setValue(idx,a)
+        i = 2
+        for j in range(self.height):
+            idx = self.grid.index(i,j,0)
+            self.phi.setValue(idx,a)
 
 from Utilities import SiloDump
       
 
 if __name__ == "__main__":
     commandLine = CommandLineArguments(animate = True,
-                                       save = None,
+                                       save = None, # doubleSlit.gif
                                        cycles = 800,
                                        nx = 100,
                                        ny = 100)
@@ -48,12 +48,13 @@ if __name__ == "__main__":
     box = DirichletGridBoundaries2d(grid=grid)
 
     x = nx//3
-    box.addBox(Vector2d(x-nx//25,0),Vector2d(x,ny))
+    dx = 2
+    box.addBox(Vector2d(x-dx,0),Vector2d(x,ny))
     s1 = 0.55*ny
     s2 = 0.45*ny
 
-    box.removeBox(Vector2d(x-nx//25,s2-ny//50),Vector2d(x,s2+ny//50))
-    box.removeBox(Vector2d(x-nx//25,s1-ny//50),Vector2d(x,s1+ny//50))
+    box.removeBox(Vector2d(x-dx,s2-1),Vector2d(x,s2+1))
+    box.removeBox(Vector2d(x-dx,s1-1),Vector2d(x,s1+1))
 
     waveEqn.addBoundary(pm)
     waveEqn.addBoundary(box)
@@ -83,6 +84,6 @@ if __name__ == "__main__":
                                                 stepper=controller.Step,
                                                 title=title,
                                                 fieldName="phisq") # change to 'phi' to view full wave
-        AnimateGrid2d(bounds,update_method,extremis=[0,0.05**2],frames=cycles,cmap='plasma',save_as=save)
+        AnimateGrid2d(bounds,update_method,extremis=[0,0.03],frames=cycles,cmap='plasma',save_as=save)
     else:
         controller.Step(cycles)

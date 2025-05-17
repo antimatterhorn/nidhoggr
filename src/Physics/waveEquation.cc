@@ -214,7 +214,7 @@ public:
         
 
         for (int i=0; i<numNodes; ++i) {
-            mphi->setValue(i,std::max(mphi->getValue(i),std::abs(phi->getValue(i))));
+            mphi->setValue(i,std::max(mphi->getValue(i),phi->getValue(i)*phi->getValue(i)));
             phis->setValue(i,phi->getValue(i)*phi->getValue(i));
         }
             
