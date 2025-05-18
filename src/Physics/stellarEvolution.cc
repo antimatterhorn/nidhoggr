@@ -11,10 +11,10 @@ public:
     using VectorField  = Field<Vector>;
     using ScalarField  = Field<double>;
 
-    StellarGrid1d* grid;
+    Mesh::StellarGrid1d* grid;
     EquationOfState* eos;
 
-    StellarEvolution(StellarGrid1d* grid, NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos)
+    StellarEvolution(Mesh::StellarGrid1d* grid, NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos)
         : Physics<1>(nodeList, constants), grid(grid), eos(eos) {
 
         for (const std::string& name : 

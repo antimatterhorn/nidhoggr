@@ -2,6 +2,7 @@
 #pragma once
 #include <vector>
 
+namespace Mesh {
 class StellarGrid1d {
 public:
     int nz;
@@ -14,3 +15,4 @@ public:
     void computeRadiusFromMass(const std::vector<double>& rho);
     int size() const { return nz;}
 };
+}

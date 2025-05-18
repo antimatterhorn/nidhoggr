@@ -2,8 +2,9 @@ from nidhoggr import *
 
 if __name__ == "__main__":
     commandLine = CommandLineArguments(nz = 100,
-                                        dtmin = 0.1e-7,
-                                        intVerbose = False)
+                                       mass = 1,
+                                       dtmin = 0.1e-7,
+                                       intVerbose = False)
 
     myGrid = StellarGrid1d(numZones = nz, totalMass = 1)
     print("grid size:",myGrid.size())
