@@ -8,6 +8,7 @@ if __name__ == "__main__":
 
     myGrid = StellarGrid1d(numZones = nz, totalMass = 1)
     print("grid size:",myGrid.size())
+    #print(myGrid.m)
     constants = SOL()
 
     myNodeList = NodeList(nz)
@@ -17,6 +18,6 @@ if __name__ == "__main__":
     eos = IdealGasEOS(1.4,constants)
     print(eos,"gamma =",eos.gamma)
 
-    stellar = StellarEvolution(myGrid,myNodeList, constants,eos)
-    print("numNodes =",myNodeList.numNodes)
-    print("field names =",myNodeList.fieldNames)
+    #stellar = StellarEvolution1d(myGrid,myNodeList, constants,eos)
+    #print("numNodes =",myNodeList.numNodes)
+    #print("field names =",myNodeList.fieldNames)

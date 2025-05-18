@@ -38,6 +38,9 @@ public:
         ScalarField* rho   = initialState->template getField<double>("density");
         ScalarField* dUdt  = deriv.template getField<double>("specificInternalEnergy");
 
+        NodeList* nodeList = this->nodeList;
+        PhysicalConstants& constants = this->constants;
+
         ScalarField T("temperature", u->size());
         eos->setTemperature(&T, rho, u);
 
@@ -64,6 +67,7 @@ public:
 
     void FinalizeStep(const State<1>* finalState) override {
         NodeList* nodeList = this->nodeList;
+        PhysicalConstants& constants = this->constants;
 
         ScalarField* fu = finalState->template getField<double>("specificInternalEnergy");
         ScalarField* u  = nodeList->getField<double>("specificInternalEnergy");
@@ -85,6 +89,9 @@ public:
     }
 
     void ComputeHydrostaticEquilibrium() {
+        NodeList* nodeList = this->nodeList;
+        PhysicalConstants& constants = this->constants;
+
         ScalarField* P   = nodeList->getField<double>("pressure");
         ScalarField* rho = nodeList->getField<double>("density");
 
@@ -104,6 +111,9 @@ public:
     }
 
     void ComputeLuminosity() {
+        NodeList* nodeList = this->nodeList;
+        PhysicalConstants& constants = this->constants;
+        
         ScalarField* L = nodeList->getField<double>("luminosity");
         ScalarField* T = nodeList->getField<double>("temperature");
 
