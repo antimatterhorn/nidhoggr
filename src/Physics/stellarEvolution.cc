@@ -41,8 +41,11 @@ public:
         NodeList* nodeList = this->nodeList;
         PhysicalConstants& constants = this->constants;
 
+        std::cout << "setting temperature" << std::endl;
+        
         ScalarField T("temperature", u->size());
         eos->setTemperature(&T, rho, u);
+        
 
         // Compute ε_nuc(T)
         std::vector<double> eps(u->size());

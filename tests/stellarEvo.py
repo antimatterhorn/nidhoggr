@@ -21,3 +21,9 @@ if __name__ == "__main__":
     stellar = StellarEvolution(myGrid,myNodeList, constants,eos)
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
+
+    integrator = CrankNicolsonIntegrator1d(packages=[stellar],dtmin=dtmin)
+
+    controller = Controller(integrator=integrator,periodicWork=[],statStep=1)
+
+    controller.Step(2)
