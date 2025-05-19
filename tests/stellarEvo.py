@@ -18,6 +18,6 @@ if __name__ == "__main__":
     eos = IdealGasEOS(1.4,constants)
     print(eos,"gamma =",eos.gamma)
 
-    #stellar = StellarEvolution1d(myGrid,myNodeList, constants,eos)
-    #print("numNodes =",myNodeList.numNodes)
-    #print("field names =",myNodeList.fieldNames)
+    stellar = StellarEvolution(myGrid,myNodeList, constants,eos)
+    print("numNodes =",myNodeList.numNodes)
+    print("field names =",myNodeList.fieldNames)

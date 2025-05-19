@@ -10,11 +10,6 @@ StellarGrid1d::StellarGrid1d(int numZones, double totalMass) : nz(numZones) {
         m[i] = (i + 0.5) * dM;
 }
 
-double StellarGrid1d::dm(int i) const {
-    if (i == 0) return m[1] - m[0];
-    return m[i] - m[i - 1];
-}
-
 void StellarGrid1d::computeRadiusFromMass(const std::vector<double>& rho) {
     r[0] = 1e-5;  // Small seed radius
     for (int i = 1; i < nz; ++i) {

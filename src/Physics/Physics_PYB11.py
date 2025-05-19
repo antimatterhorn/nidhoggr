@@ -29,4 +29,4 @@ from gridHydroHLLE import *
 from gridHydroHLLC import *
 from kinetics import *
 from fem import *
-#from stellarEvolution import *
+from stellarEvolution import *

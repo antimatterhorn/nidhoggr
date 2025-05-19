@@ -13,7 +13,10 @@ public:
 
     StellarGrid1d(int numZones, double totalMass);
 
-    double dm(int i) const;
+    inline double dm(int i) const {
+        if (i == 0) return m[1] - m[0];
+        return m[i] - m[i - 1];
+    }
     void computeRadiusFromMass(const std::vector<double>& rho);
     int size() const { return nz;}
     const std::vector<double>& getMasses() const { return m; }

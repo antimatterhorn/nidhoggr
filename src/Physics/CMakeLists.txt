@@ -1,5 +1,6 @@
 PYB11Generator_add_module(RPS)
 PYB11Generator_add_module(Physics)
+target_link_libraries(Physics PRIVATE Mesh)
 
 # Find OpenMP package
 find_package(OpenMP)
