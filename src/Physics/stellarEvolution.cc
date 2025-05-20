@@ -1,30 +1,32 @@
 #include "physics.hh"
-#include "../Mesh/stellarGrid1d.hh"
 #include "../EOS/equationOfState.hh"
 #include <cmath>
 #include <vector>
 #include <algorithm>
 
 class StellarEvolution : public Physics<1> {
+private:
+    double dm;
+    int numZones;
 public:
     using Vector       = Lin::Vector<1>;
     using VectorField  = Field<Vector>;
     using ScalarField  = Field<double>;
 
-    Mesh::StellarGrid1d* grid;
     EquationOfState* eos;
     double totalMass;
     double centralTemperature;
 
-    StellarEvolution(Mesh::StellarGrid1d* grid, NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, 
+    StellarEvolution(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, 
         double totalMass, double centralTemperature)
-        : Physics<1>(nodeList, constants), grid(grid), eos(eos),
+        : Physics<1>(nodeList, constants), numZones(nodeList->size()), eos(eos),
         totalMass(totalMass), centralTemperature(centralTemperature) {
 
-        grid->InitializeMasses(totalMass);
+        //grid->InitializeMasses(totalMass);
+        // need to do this for mass field now
 
         for (const std::string& name : 
-            {"pressure", "density", "specificInternalEnergy", "luminosity", "temperature"}) {
+            {"pressure", "density", "mass", "radius", "specificInternalEnergy", "luminosity", "temperature"}) {
             if (nodeList->getField<double>(name) == nullptr)
                 nodeList->insertField<double>(name);
         }
@@ -34,6 +36,8 @@ public:
             ScalarField* field = nodeList->getField<double>(name);
             this->state.template addField<double>(field);
         }
+
+        dm = totalMass/numZones;
 
         BuildHydrostaticModel();
     }
@@ -48,13 +52,12 @@ public:
 
         NodeList* nodeList = this->nodeList;
         PhysicalConstants& constants = this->constants;
-
-        std::cout << "setting temperature" << std::endl;
         
-        ScalarField T("temperature", u->size());
+        ScalarField T("temperature", u->size()); // local storage of temperature for computing derivatives
+        ScalarField* m = nodeList->getField<double>("mass");
+
         eos->setTemperature(&T, rho, u);
         
-
         // Compute ε_nuc(T)
         std::vector<double> eps(u->size());
         for (int i = 0; i < u->size(); ++i)
@@ -63,11 +66,11 @@ public:
         // Integrate L from center
         std::vector<double> L(u->size(), 0.0);
         for (int i = 1; i < u->size(); ++i)
-            L[i] = L[i-1] + eps[i-1] * grid->dm(i);
+            L[i] = L[i-1] + eps[i-1] * dm;
 
         // Compute dL/dm and du/dt
         for (int i = 1; i < u->size() - 1; ++i) {
-            double dLdm = (L[i+1] - L[i-1]) / (grid->m[i+1] - grid->m[i-1]);
+            double dLdm = (L[i+1] - L[i-1]) / (m->getValue(i+1) - m->getValue(i-1));
             double du_dt = eps[i] - dLdm;
             dUdt->setValue(i, du_dt);
         }
@@ -105,14 +108,16 @@ public:
 
         ScalarField* P   = nodeList->getField<double>("pressure");
         ScalarField* rho = nodeList->getField<double>("density");
+        ScalarField* m   = nodeList->getField<double>("mass");
+        ScalarField* r   = nodeList->getField<double>("radius");
 
-        const int nz = grid->nz;
+        const int nz = m->size();
         P->setValue(nz - 1, 0.0);  // Surface pressure boundary condition
 
         for (int i = nz - 2; i >= 0; --i) {
-            double r_next = grid->r[i + 1];
-            double dPdm = -constants.G() * grid->m[i + 1] / (4 * M_PI * std::pow(r_next, 4));
-            double Pi = (*P)[i + 1] - dPdm * grid->dm(i);
+            double r_next = r->getValue(i+1);
+            double dPdm = -constants.G() * m->getValue(i+1) / (4 * M_PI * std::pow(r_next, 4));
+            double Pi = (*P)[i + 1] - dPdm *dm;
             P->setValue(i, Pi);
         }
     }
@@ -129,9 +134,9 @@ public:
         ScalarField* T = nodeList->getField<double>("temperature");
 
         (*L)[0] = 0.0;
-        for (int i = 1; i < grid->nz; ++i) {
+        for (int i = 1; i < numZones; ++i) {
             double eps = epsilonNuc((*T)[i - 1]);
-            (*L)[i] = (*L)[i - 1] + eps * grid->dm(i);
+            (*L)[i] = (*L)[i - 1] + eps *dm;
         }
     }
 
@@ -139,8 +144,7 @@ public:
         NodeList* nodeList = this->nodeList;
         PhysicalConstants& constants = this->constants;
 
-        const int nz = grid->nz;
-        const double dm = grid->dm(nz-1);
+        const int nz = numZones;
 
         std::vector<double> m(nz), r(nz), rho(nz), u(nz), P(nz), T(nz);
         m[0] = 0.5 * dm;
@@ -222,8 +226,9 @@ public:
             T[i] = T[0];
         }
 
-        grid->m = m;
-        grid->r = r;
+        // grid->m = m;
+        // grid->r = r;
+        // store these to fields instead
 
         ScalarField* frho = nodeList->getField<double>("density");
         ScalarField* fu   = nodeList->getField<double>("specificInternalEnergy");
