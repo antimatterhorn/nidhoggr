@@ -32,7 +32,7 @@ public:
     virtual void 
     setSoundSpeed(Field<double>* soundSpeed, Field<double>* density, Field<double>* internalEnergy) const override {
         for(int i=0;i<soundSpeed->size();++i)
-            soundSpeed->setValue(i,std::sqrt(gamma * (gamma - 1.0) * density->getValue(i) * internalEnergy->getValue(i) / density->getValue(i)));
+            soundSpeed->setValue(i,std::sqrt(gamma * (gamma - 1.0) * internalEnergy->getValue(i)));
     }
 
     virtual void 
@@ -59,6 +59,39 @@ public:
             double T = temperature->getValue(i);
             internalEnergy->setValue(i, kB * T / ((gamma - 1.0) * mu * mH));
         }
+    }
+
+    virtual void 
+    setPressure(double* pressure, double* density, double* internalEnergy) const override {
+        *pressure = (gamma - 1.0) * (*density) * (*internalEnergy);
+    }
+
+    virtual void 
+    setInternalEnergy(double* internalEnergy, double* density, double* pressure) const override {
+        *internalEnergy = (*pressure) / ((gamma - 1.0) * (*density));
+    }
+
+    virtual void 
+    setSoundSpeed(double* soundSpeed, double* density,double* internalEnergy) const override {
+        *soundSpeed = std::sqrt(gamma * (gamma - 1.0) * (*internalEnergy));
+    }
+
+    virtual void 
+    setTemperature(double* temperature, double* density, double* internalEnergy) const override {
+        const double kB = constants.kB();
+        const double mu = 1.0;  // mean molecular weight (placeholder)
+        const double mH = constants.protonMass();
+
+        *temperature = (gamma - 1.0) * (*internalEnergy) * mu * mH / kB;
+    }
+
+    virtual void 
+    setInternalEnergyFromTemperature(double* internalEnergy, double* density, double* temperature) const override {
+        const double kB = constants.kB();
+        const double mu = 1.0;
+        const double mH = constants.protonMass();
+
+        *internalEnergy = (*temperature) / ((gamma - 1.0) * mu * mH);
     }
 
 

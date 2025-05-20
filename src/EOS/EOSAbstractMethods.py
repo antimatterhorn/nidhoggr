@@ -5,6 +5,8 @@ from PYB11Generator import *
 
 @PYB11ignore
 class EOSAbstractMethods:
+    # Field methods
+    # --------------
     @PYB11const
     def setPressure(self,
                     pressure = "Field<double>*",
@@ -38,4 +40,46 @@ class EOSAbstractMethods:
                     internalEnergy = "Field<double>*",
                     density = "Field<double>*",
                     temperature = "Field<double>*"):
+        return "void"
+    
+    # Scalar methods
+    # --------------
+    @PYB11const
+    @PYB11pycppname("setPressure")
+    def setPressure1(self,
+                    pressure = "double*",
+                    density = "double*",
+                    internalEnergy = "double*"):
+        return "void"
+    
+    @PYB11const
+    @PYB11pycppname("setInternalEnergy")
+    def setInternalEnergy1(self,
+                    internalEnergy = "double*",
+                    density = "double*",
+                    pressure = "double*"):
+        return "void"
+    
+    @PYB11const
+    @PYB11pycppname("setSoundSpeed")
+    def setSoundSpeed1(self,
+                    soundSpeed = "double*",
+                    density = "double*",
+                    internalEnergy = "double*"):
+        return "void"
+    
+    @PYB11const
+    @PYB11pycppname("setTemperature")
+    def setTemperature1(self,
+                    temperature  = "double*",
+                    density = "double*",
+                    internalEnergy = "double*"):
+        return "void"
+    
+    @PYB11const
+    @PYB11pycppname("setInternalEnergyFromTemperature")
+    def setInternalEnergyFromTemperature1(self,
+                    internalEnergy = "double*",
+                    density = "double*",
+                    temperature = "double*"):
         return "void"

@@ -12,6 +12,8 @@ public:
     
     virtual ~EquationOfState() {}
 
+    // Field-based methods
+
     virtual void 
     setPressure(Field<double>* pressure, Field<double>* density, Field<double>* internalEnergy) const = 0;
 
@@ -26,6 +28,23 @@ public:
 
     virtual void 
     setInternalEnergyFromTemperature(Field<double>* internalEnergy, Field<double>* density, Field<double>* temperature) const = 0;
+
+    // Scalar-based methods
+
+    virtual void 
+    setPressure(double* pressure, double* density, double* internalEnergy) const = 0;
+
+    virtual void 
+    setInternalEnergy(double* internalEnergy, double* density, double* pressure) const = 0;
+
+    virtual void 
+    setSoundSpeed(double* soundSpeed, double* density,double* internalEnergy) const = 0;
+
+    virtual void 
+    setTemperature(double* temperature, double* density, double* internalEnergy) const = 0;
+
+    virtual void 
+    setInternalEnergyFromTemperature(double* internalEnergy, double* density, double* temperature) const = 0;
 };
 
 #endif // EQUATIONOFSTATE_HH
