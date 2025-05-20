@@ -13,21 +13,29 @@ public:
 
     Mesh::StellarGrid1d* grid;
     EquationOfState* eos;
+    double totalMass;
+    double centralTemperature;
 
-    StellarEvolution(Mesh::StellarGrid1d* grid, NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos)
-        : Physics<1>(nodeList, constants), grid(grid), eos(eos) {
+    StellarEvolution(Mesh::StellarGrid1d* grid, NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, 
+        double totalMass, double centralTemperature)
+        : Physics<1>(nodeList, constants), grid(grid), eos(eos),
+        totalMass(totalMass), centralTemperature(centralTemperature) {
+
+        grid->InitializeMasses(totalMass);
 
         for (const std::string& name : 
             {"pressure", "density", "specificInternalEnergy", "luminosity", "temperature"}) {
             if (nodeList->getField<double>(name) == nullptr)
                 nodeList->insertField<double>(name);
         }
-
+        
         for (const std::string& name : 
             {"specificInternalEnergy", "temperature", "luminosity"}) {
             ScalarField* field = nodeList->getField<double>(name);
             this->state.template addField<double>(field);
         }
+
+        BuildHydrostaticModel();
     }
 
     void EvaluateDerivatives(const State<1>* initialState,
@@ -125,5 +133,110 @@ public:
             double eps = epsilonNuc((*T)[i - 1]);
             (*L)[i] = (*L)[i - 1] + eps * grid->dm(i);
         }
+    }
+
+    void BuildHydrostaticModel() {
+        NodeList* nodeList = this->nodeList;
+        PhysicalConstants& constants = this->constants;
+
+        const int nz = grid->nz;
+        const double dm = grid->dm(nz-1);
+
+        std::vector<double> m(nz), r(nz), rho(nz), u(nz), P(nz), T(nz);
+        m[0] = 0.5 * dm;
+        r[0] = 1e-5;
+
+        // Step 1: compute u from T using EOS
+        Field<double> tmpU("tmpU", 1);
+        Field<double> tmpT("tmpT", 1);
+        Field<double> tmpRho("tmpRho", 1);
+
+        T[0] = centralTemperature;
+        tmpT.setValue(0, T[0]);
+        tmpRho.setValue(0, 10.0);
+
+        eos->setInternalEnergyFromTemperature(&tmpU, &tmpRho, &tmpT);
+        u[0] = tmpU[0];
+        tmpU.setValue(0, u[0]);
+
+        // Newton-Raphson solve for rho[0]
+        double rho_guess = tmpRho[0];
+        const double tol = 1e-8;
+        for (int iter = 0; iter < 20; ++iter) {
+            tmpRho.setValue(0, rho_guess);
+            eos->setPressure(&tmpU, &tmpRho, &tmpU);
+            double P_rho = tmpU[0];
+            double targetP = P_rho;
+
+            tmpRho.setValue(0, rho_guess + 1e-6 * rho_guess);
+            eos->setPressure(&tmpU, &tmpRho, &tmpU);
+            double P_plus = tmpU[0];
+
+            double df = (P_plus - P_rho) / (1e-6 * rho_guess);
+            double delta = (P_rho - targetP) / df;
+            rho_guess -= delta;
+
+            if (std::abs(delta / rho_guess) < tol) break;
+        }
+
+        rho[0] = rho_guess;
+
+        eos->setPressure(&tmpU, &tmpRho, &tmpU);
+        P[0] = tmpU[0];
+
+        // Step 2: integrate outward
+        for (int i = 1; i < nz; ++i) {
+            m[i] = m[i-1] + dm;
+
+            // Hydrostatic
+            double dPdm = -constants.G() * m[i-1] / (4.0 * M_PI * std::pow(r[i-1], 4));
+            P[i] = P[i-1] + dPdm * dm;
+
+            u[i] = u[0];
+            tmpU.setValue(0, u[i]);
+
+            // Newton-Raphson solve for rho[i]
+            double rho_i = rho[i-1];
+            for (int iter = 0; iter < 20; ++iter) {
+                tmpRho.setValue(0, rho_i);
+                eos->setPressure(&tmpU, &tmpRho, &tmpU);
+                double P_rho = tmpU[0];
+                double f = P_rho - P[i];
+
+                if (std::abs(f / P[i]) < tol) break;
+
+                tmpRho.setValue(0, rho_i + 1e-6 * rho_i);
+                eos->setPressure(&tmpU, &tmpRho, &tmpU);
+                double P_plus = tmpU[0];
+                double df = (P_plus - P_rho) / (1e-6 * rho_i);
+                rho_i -= f / df;
+
+                rho_i = std::max(rho_i, 1e-12);
+            }
+
+            rho[i] = rho_i;
+
+            // Integrate radius
+            double drdm = 1.0 / (4.0 * M_PI * std::pow(r[i-1], 2) * rho[i-1]);
+            r[i] = r[i-1] + drdm * dm;
+            T[i] = T[0];
+        }
+
+        grid->m = m;
+        grid->r = r;
+
+        ScalarField* frho = nodeList->getField<double>("density");
+        ScalarField* fu   = nodeList->getField<double>("specificInternalEnergy");
+        ScalarField* fP   = nodeList->getField<double>("pressure");
+        ScalarField* fT   = nodeList->getField<double>("temperature");
+
+        for (int i = 0; i < nz; ++i) {
+            frho->setValue(i, rho[i]);
+            fu->setValue(i, u[i]);
+            fP->setValue(i, P[i]);
+            fT->setValue(i, T[i]);
+        }
+
+        std::cout << "Initialized hydrostatic model with central T = " << centralTemperature << std::endl;
     }
 };

@@ -8,5 +8,7 @@ class StellarEvolution(Physics):
                grid="Mesh::StellarGrid1d*",
                nodeList="NodeList*",
                constants="PhysicalConstants&",
-               eos="EquationOfState*"):
+               eos="EquationOfState*",
+               totalMass="double",
+               centralTemperature="double"):
         return

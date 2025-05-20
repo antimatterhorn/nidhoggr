@@ -11,7 +11,13 @@ public:
     std::vector<double> m;   // Enclosed mass at zone centers
     std::vector<double> r;  // Radius at zone centers
 
-    StellarGrid1d(int numZones, double totalMass);
+    StellarGrid1d(int numZones);
+
+    inline void InitializeMasses(double totalMass) {
+        double dM = totalMass / nz;
+        for (int i = 0; i < nz; ++i)
+            m[i] = (i + 0.5) * dM;
+    }
 
     inline double dm(int i) const {
         if (i == 0) return m[1] - m[0];

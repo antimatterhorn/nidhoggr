@@ -2,12 +2,9 @@
 #include "stellarGrid1d.hh"
 #include <cmath>
 namespace Mesh {
-StellarGrid1d::StellarGrid1d(int numZones, double totalMass) : nz(numZones) {
+StellarGrid1d::StellarGrid1d(int numZones) : nz(numZones) {
     m.resize(nz);
     r.resize(nz);
-    double dM = totalMass / nz;
-    for (int i = 0; i < nz; ++i)
-        m[i] = (i + 0.5) * dM;
 }
 
 void StellarGrid1d::computeRadiusFromMass(const std::vector<double>& rho) {
