@@ -15,13 +15,12 @@ public:
     using ScalarField  = Field<double>;
 
     EquationOfState* eos;
-    double totalMass;
-    double centralTemperature;
+    double totalMass, centralTemperature, radius;
 
     StellarEvolution(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, 
-        double totalMass, double centralTemperature)
+        double totalMass, double radius, double centralTemperature)
         : Physics<1>(nodeList, constants), numZones(nodeList->size()), eos(eos),
-        totalMass(totalMass), centralTemperature(centralTemperature) {
+        totalMass(totalMass), radius(radius), centralTemperature(centralTemperature) {
 
         for (const std::string& name : 
             {"pressure", "density", "mass", "radius", "specificInternalEnergy", "luminosity", "temperature"}) {
@@ -141,86 +140,100 @@ public:
     void BuildHydrostaticModel() {
         NodeList* nodeList = this->nodeList;
         PhysicalConstants& constants = this->constants;
+
         const int nz = numZones;
         const double tol = 1e-6;
-        const int maxIter = 20;
-        const double dr = 1e-2;  // fixed radial step
+        const int maxIter = 30;
 
-        // Storage for final converged profile
-        std::vector<double> best_m(nz), best_r(nz), best_rho(nz), best_u(nz), best_P(nz), best_T(nz);
+        // Fixed spacing in radius
+        const double dr = radius / nz;
 
-        // Initial guesses for central density using secant method
-        double rho_c0 = 1e5;
-        double rho_c1 = 2e5;
+        // Initial guess range for central density
+        double rho_c0 = 1e4, rho_c1 = 2e4;
         double M0 = 0.0, M1 = 0.0;
+
+        std::vector<double> best_rho, best_T, best_u, best_P, best_m, best_r;
 
         for (int outer = 0; outer < maxIter; ++outer) {
             double rho_c = (outer == 0 ? rho_c0 : rho_c1);
-            std::vector<double> m(nz), r(nz), rho(nz), u(nz), P(nz), T(nz);
+
+            // Init arrays
+            std::vector<double> rho(nz), T(nz), u(nz), P(nz), m(nz), r(nz);
             r[0] = 1e-5;
-            m[0] = 0.5*dm;
-
-            T[0] = centralTemperature;
+            m[0] = 0.0;
             rho[0] = rho_c;
-
+            T[0] = centralTemperature;
             eos->setInternalEnergyFromTemperature(&u[0], &rho[0], &T[0]);
             eos->setPressure(&P[0], &rho[0], &u[0]);
 
-            double tmpU, tmpRho, tmpP;
-            double alpha = 0.8;
-
             for (int i = 1; i < nz; ++i) {
-                r[i] = r[i - 1] + dr;
+                r[i] = r[i-1] + dr;
 
-                // Hydrostatic equilibrium
-                double dPdr = -constants.G() * m[i - 1] * rho[i - 1] / (r[i - 1] * r[i - 1]);
-                P[i] = P[i - 1] + dPdr * dr;
+                // Integrate mass
+                double dm_dr = 4 * M_PI * r[i-1] * r[i-1] * rho[i-1];
+                m[i] = m[i-1] + dm_dr * dr;
 
-                
-                T[i] = T[0] * std::pow(1.0 - double(i)/nz, alpha);
-                eos->setInternalEnergyFromTemperature(&u[i], &rho[i], &T[i]);
-                tmpU = u[i];
+                // Hydrostatic equilibrium: dP/dr = -G m rho / r^2
+                double dP_dr = -constants.G() * m[i-1] * rho[i-1] / (r[i-1] * r[i-1]);
+                P[i] = P[i-1] + dP_dr * dr;
 
-                double rho_i = rho[i - 1];
+                // Hold T constant for now
+                T[i] = T[0];
+                eos->setInternalEnergyFromTemperature(&u[i], &rho[i-1], &T[i]);
+
+                // Solve for rho_i such that P(rho_i, T[i]) = P[i]
+                double rho_i = rho[i-1];
                 for (int iter = 0; iter < 20; ++iter) {
-                    tmpRho = rho_i;
-                    eos->setInternalEnergyFromTemperature(&tmpU, &tmpRho, &T[i]);  // 👈 Add this
-                    eos->setPressure(&tmpP, &tmpRho, &tmpU);
-                    double f = tmpP - P[i];
+                    double tmp_u, tmp_P;
+                    eos->setInternalEnergyFromTemperature(&tmp_u, &rho_i, &T[i]);
+                    eos->setPressure(&tmp_P, &rho_i, &tmp_u);
+                    double f = tmp_P - P[i];
                     if (std::abs(f / P[i]) < tol) break;
 
+                    // Finite difference
                     double drho = 1e-6 * rho_i;
-                    tmpRho = rho_i + drho;
-                    eos->setPressure(&tmpP, &tmpRho, &tmpU);
-                    double df = (tmpP - (tmpP - f)) / drho;
+                    double rho_pert = rho_i + drho;
+                    double tmp_u_plus, tmp_P_plus;
+                    eos->setInternalEnergyFromTemperature(&tmp_u_plus, &rho_pert, &T[i]);
+                    eos->setPressure(&tmp_P_plus, &rho_pert, &tmp_u_plus);
+                    double df = (tmp_P_plus - tmp_P) / drho;
+
                     rho_i -= f / df;
                     rho_i = std::max(rho_i, 1e-12);
                 }
-                rho[i] = rho_i;
 
-                double dm_i = 4.0 * M_PI * std::pow(r[i - 1], 2) * rho[i - 1] * dr;
-                m[i] = m[i - 1] + dm_i;
+                rho[i] = rho_i;
             }
 
-            double M_calc = m[nz - 1];
-            std::cout << "Iteration " << outer << ": rho_c = " << rho_c << ", M_calc = " << M_calc << std::endl;
+            double Mcalc = m[nz - 1];
+            std::cout << "Iteration " << outer << ": rho_c = " << rho_c << ", M = " << Mcalc << "\n";
 
-            if (std::abs((M_calc - totalMass) / totalMass) < tol) {
-                best_m = m; best_r = r; best_rho = rho; best_u = u; best_P = P; best_T = T;
+            if (std::abs((Mcalc - totalMass) / totalMass) < tol) {
+                best_rho = rho;
+                best_T = T;
+                best_u = u;
+                best_P = P;
+                best_m = m;
+                best_r = r;
                 break;
             }
 
+            // Update secant method
             if (outer == 0) {
-                M0 = M_calc;
+                M0 = Mcalc;
                 rho_c0 = rho_c;
             } else {
-                M1 = M_calc;
+                M1 = Mcalc;
                 double rho_new = rho_c1 - (M1 - totalMass) * (rho_c1 - rho_c0) / (M1 - M0 + 1e-12);
                 rho_c0 = rho_c1;
                 M0 = M1;
                 rho_c1 = std::max(rho_new, 1e-4);
             }
         }
+
+        // Rescale radius to hit target R
+        double r_scale = radius / best_r.back();
+        for (double& ri : best_r) ri *= r_scale;
 
         // Assign to fields
         ScalarField* frho = nodeList->getField<double>("density");
@@ -229,17 +242,18 @@ public:
         ScalarField* fT   = nodeList->getField<double>("temperature");
         ScalarField* fr   = nodeList->getField<double>("radius");
         ScalarField* fm   = nodeList->getField<double>("mass");
-
         for (int i = 0; i < nz; ++i) {
             frho->setValue(i, best_rho[i]);
+            fT->setValue(i, best_T[i]);
             fu->setValue(i, best_u[i]);
             fP->setValue(i, best_P[i]);
-            fT->setValue(i, best_T[i]);
-            fr->setValue(i, best_r[i]);
             fm->setValue(i, best_m[i]);
+            fr->setValue(i, best_r[i]);
         }
 
-        printTable(frho->size(), *fr, *frho, *fu, *fP, *fT);
+
+
+        printTable(frho->size(), *fr, *frho, *fm, *fu, *fP, *fT);
     }
 };
 

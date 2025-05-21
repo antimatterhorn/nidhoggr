@@ -3,6 +3,8 @@ from nidhoggr import *
 if __name__ == "__main__":
     commandLine = CommandLineArguments(nz = 100,
                                        mass = 1,
+                                       radius = 1,
+                                       centralTemperature = 1.5e7,
                                        dtmin = 0.1e-7,
                                        intVerbose = False)
     constants = SOL()
@@ -14,7 +16,8 @@ if __name__ == "__main__":
     eos = IdealGasEOS(1.67,constants)
     print(eos,"gamma =",eos.gamma)
 
-    stellar = StellarEvolution(myNodeList, constants, eos, mass, 15e6)
+    stellar = StellarEvolution(nodeList=myNodeList, constants=constants, eos=eos, 
+                               totalMass=mass, radius=radius, centralTemperature=centralTemperature)
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 

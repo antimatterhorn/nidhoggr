@@ -9,5 +9,6 @@ class StellarEvolution(Physics):
                constants="PhysicalConstants&",
                eos="EquationOfState*",
                totalMass="double",
+               radius="double",
                centralTemperature="double"):
         return
