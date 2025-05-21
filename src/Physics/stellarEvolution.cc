@@ -148,51 +148,20 @@ public:
         r[0] = 1e-5;
 
         // Step 1: compute u from T using EOS
-        double tmpU;
-        double tmpT;
-        double tmpRho;
-        double tmpP;
-
         T[0] = centralTemperature;
-        tmpT    = T[0];
-        tmpRho  = 1e6;
+        rho[0]  = 1e6;
 
-        eos->setInternalEnergyFromTemperature(&tmpU, &tmpRho, &tmpT);
-        u[0] = tmpU;
+        eos->setInternalEnergyFromTemperature(&u[0], &rho[0], &T[0]);
+        eos->setPressure(&P[0], &rho[0], &u[0]);
 
-        // Newton-Raphson solve for rho[0]
-        double rho_guess = tmpRho;
-        const double tol = 1e-8;
-        for (int iter = 0; iter < 20; ++iter) {
-            tmpRho = rho_guess;
-            eos->setPressure(&tmpP, &tmpRho, &tmpU);
-            double P_rho = tmpP;
-            double targetP = P_rho;
+        std::cout << "central temp = " << T[0] << " P = " << P[0] << " rho = " << rho[0] << std::endl;
 
-            tmpRho = rho_guess + 1e-6 * rho_guess;
-            eos->setPressure(&tmpP, &tmpRho, &tmpU);
-            double P_plus = tmpP;
-
-            double df = (P_plus - P_rho) / (1e-6 * rho_guess);
-            double delta = (P_rho - targetP) / df;
-            rho_guess -= delta;
-
-            if (std::abs(delta / rho_guess) < tol) break;
-        }
-
-        rho[0] = rho_guess;
-        tmpRho = rho_guess;
-
-        eos->setPressure(&tmpU, &tmpRho, &tmpU);
-        P[0] = tmpU;
-
-        std::cout << "central temp = " << tmpT << " P = " << tmpU << " rho = " << rho_guess << std::endl;
+        double tmpU,tmpRho,tmpP;
+        double tol = 1e-6;
 
         // Step 2: integrate outward
         for (int i = 1; i < nz; ++i) {
             m[i] = m[i-1] + dm;
-
-            
 
             // Hydrostatic
             double dPdm = -constants.G() * m[i-1] / (4.0 * M_PI * std::pow(r[i-1], 4));
