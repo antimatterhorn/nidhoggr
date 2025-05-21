@@ -18,6 +18,10 @@ protected:
     double lastDt;
     std::vector<Boundaries<dim>*> boundaries;
 public:
+    using Vector = Lin::Vector<dim>;
+    using VectorField = Field<Vector>;
+    using ScalarField = Field<double>;
+
     Physics(NodeList* nodeList, PhysicalConstants& constants) : 
         nodeList(nodeList), 
         constants(constants),
@@ -56,11 +60,11 @@ public:
         if (nodeList->mass() == nullptr)
             nodeList->insertField<double>("mass"); // Add the mass field to the nodeList
 
-        if (nodeList->velocity<dim>() == nullptr) 
-            nodeList->insertField<Lin::Vector<dim>>("velocity"); // Add the velocity field to the nodeList
-
-        if (nodeList->position<dim>() == nullptr) 
-            nodeList->insertField<Lin::Vector<dim>>("position"); // Add the position field to the nodeList
+        for (const std::string& name : 
+            {"position", "velocity"}) {
+            if (nodeList->getField<Vector>(name) == nullptr)
+                nodeList->insertField<Vector>(name);
+        }
     }
 
     virtual double 
