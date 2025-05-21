@@ -1,10 +1,9 @@
 #include "physics.hh"
 #include "../EOS/equationOfState.hh"
+#include "../Utilities/printTable.hh"
 #include <cmath>
 #include <vector>
 #include <algorithm>
-#include <iostream>
-#include <iomanip>
 
 class StellarEvolution : public Physics<1> {
 private:
@@ -185,6 +184,7 @@ public:
                 double rho_i = rho[i - 1];
                 for (int iter = 0; iter < 20; ++iter) {
                     tmpRho = rho_i;
+                    eos->setInternalEnergyFromTemperature(&tmpU, &tmpRho, &T[i]);  // 👈 Add this
                     eos->setPressure(&tmpP, &tmpRho, &tmpU);
                     double f = tmpP - P[i];
                     if (std::abs(f / P[i]) < tol) break;
@@ -230,8 +230,6 @@ public:
         ScalarField* fr   = nodeList->getField<double>("radius");
         ScalarField* fm   = nodeList->getField<double>("mass");
 
-        printTable(best_r,best_rho,best_T,best_P,best_u);
-
         for (int i = 0; i < nz; ++i) {
             frho->setValue(i, best_rho[i]);
             fu->setValue(i, best_u[i]);
@@ -240,29 +238,8 @@ public:
             fr->setValue(i, best_r[i]);
             fm->setValue(i, best_m[i]);
         }
-    }
 
-    void printTable(const std::vector<double>& r,
-                    const std::vector<double>& rho,
-                    const std::vector<double>& T,
-                    const std::vector<double>& P,
-                    const std::vector<double>& u) {
-        std::cout << std::fixed << std::setprecision(6);
-
-        std::cout << std::setw(12) << "r"
-                << std::setw(16) << "rho"
-                << std::setw(16) << "T"
-                << std::setw(16) << "P" 
-                << std::setw(16) << "u" << "\n";
-
-        for (size_t i = 0; i < r.size(); ++i) {
-            std::cout << std::setw(12) << std::scientific << r[i]
-                    << std::setw(16) << std::scientific << rho[i]
-                    << std::setw(16) << std::scientific << T[i]
-                    << std::setw(16) << std::scientific << P[i]
-                    << std::setw(16) << std::scientific << u[i]
-                    << "\n";
-        }
+        printTable(frho->size(), *fr, *frho, *fu, *fP, *fT);
     }
 };
 
