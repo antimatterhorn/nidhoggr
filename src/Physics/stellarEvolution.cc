@@ -140,63 +140,85 @@ public:
     void BuildHydrostaticModel() {
         NodeList* nodeList = this->nodeList;
         PhysicalConstants& constants = this->constants;
-
         const int nz = numZones;
+        const double tol = 1e-6;
+        const int maxIter = 20;
+        const double dr = 1e-3;  // fixed radial step
 
-        std::vector<double> m(nz), r(nz), rho(nz), u(nz), P(nz), T(nz);
-        m[0] = 0.5 * dm;
-        r[0] = 1e-5;
+        // Storage for final converged profile
+        std::vector<double> best_m(nz), best_r(nz), best_rho(nz), best_u(nz), best_P(nz), best_T(nz);
 
-        // Step 1: compute u from T using EOS
-        T[0] = centralTemperature;
-        rho[0]  = 1e6;
+        // Initial guesses for central density
+        double rho_c0 = 1e5;
+        double rho_c1 = 2e5;
+        double M0 = 0.0, M1 = 0.0;
 
-        eos->setInternalEnergyFromTemperature(&u[0], &rho[0], &T[0]);
-        eos->setPressure(&P[0], &rho[0], &u[0]);
+        for (int outer = 0; outer < maxIter; ++outer) {
+            double rho_c = (outer == 0 ? rho_c0 : rho_c1);
+            std::vector<double> m(nz), r(nz), rho(nz), u(nz), P(nz), T(nz);
+            r[0] = 1e-5;
+            m[0] = 0.0;
 
-        std::cout << "central temp = " << T[0] << " P = " << P[0] << " rho = " << rho[0] << std::endl;
+            T[0] = centralTemperature;
+            rho[0] = rho_c;
 
-        double tmpU,tmpRho,tmpP;
-        double tol = 1e-6;
+            eos->setInternalEnergyFromTemperature(&u[0], &rho[0], &T[0]);
+            eos->setPressure(&P[0], &rho[0], &u[0]);
 
-        // Step 2: integrate outward
-        for (int i = 1; i < nz; ++i) {
-            m[i] = m[i-1] + dm;
+            double tmpU, tmpRho, tmpP;
 
-            // Hydrostatic
-            double dPdm = -constants.G() * m[i-1] / (4.0 * M_PI * std::pow(r[i-1], 4));
-            P[i] = P[i-1] + dPdm * dm;
+            for (int i = 1; i < nz; ++i) {
+                r[i] = r[i - 1] + dr;
 
-            u[i] = u[0];
-            tmpU = u[i];
+                // Hydrostatic equilibrium
+                double dPdr = -constants.G() * m[i - 1] * rho[i - 1] / (r[i - 1] * r[i - 1]);
+                P[i] = P[i - 1] + dPdr * dr;
 
-            // Newton-Raphson solve for rho[i]
-            double rho_i = rho[i-1];
-            for (int iter = 0; iter < 20; ++iter) {
-                tmpRho = rho_i;
-                eos->setPressure(&tmpU, &tmpRho, &tmpU);
-                double P_rho = tmpU;
-                double f = P_rho - P[i];
+                u[i] = u[0];
+                tmpU = u[i];
 
-                if (std::abs(f / P[i]) < tol) break;
+                double rho_i = rho[i - 1];
+                for (int iter = 0; iter < 20; ++iter) {
+                    tmpRho = rho_i;
+                    eos->setPressure(&tmpP, &tmpRho, &tmpU);
+                    double f = tmpP - P[i];
+                    if (std::abs(f / P[i]) < tol) break;
 
-                tmpRho = rho_i + 1e-6 * rho_i;
-                eos->setPressure(&tmpU, &tmpRho, &tmpU);
-                double P_plus = tmpU;
-                double df = (P_plus - P_rho) / (1e-6 * rho_i);
-                rho_i -= f / df;
+                    double drho = 1e-6 * rho_i;
+                    tmpRho = rho_i + drho;
+                    eos->setPressure(&tmpP, &tmpRho, &tmpU);
+                    double df = (tmpP - (tmpP - f)) / drho;
+                    rho_i -= f / df;
+                    rho_i = std::max(rho_i, 1e-12);
+                }
+                rho[i] = rho_i;
 
-                rho_i = std::max(rho_i, 1e-12);
+                double dm_i = 4.0 * M_PI * std::pow(r[i - 1], 2) * rho[i - 1] * dr;
+                m[i] = m[i - 1] + dm_i;
+                T[i] = T[0];
             }
 
-            rho[i] = rho_i;
+            double M_calc = m[nz - 1];
+            std::cout << "Iteration " << outer << ": rho_c = " << rho_c << ", M_calc = " << M_calc << std::endl;
 
-            // Integrate radius
-            double drdm = 1.0 / (4.0 * M_PI * std::pow(r[i-1], 2) * rho[i-1]);
-            r[i] = r[i-1] + drdm * dm;
-            T[i] = T[0];
+            if (std::abs((M_calc - totalMass) / totalMass) < tol) {
+                best_m = m; best_r = r; best_rho = rho; best_u = u; best_P = P; best_T = T;
+                break;
+            }
+
+            if (outer == 0) {
+                M0 = M_calc;
+                rho_c0 = rho_c;
+            } else {
+                M1 = M_calc;
+                double rho_new = rho_c1 - (M1 - totalMass) * (rho_c1 - rho_c0) / (M1 - M0 + 1e-12);
+                rho_c0 = rho_c1;
+                M0 = M1;
+                rho_c1 = std::max(rho_new, 1e-4);
+            }
         }
 
+        // Assign to fields
         ScalarField* frho = nodeList->getField<double>("density");
         ScalarField* fu   = nodeList->getField<double>("specificInternalEnergy");
         ScalarField* fP   = nodeList->getField<double>("pressure");
@@ -205,14 +227,15 @@ public:
         ScalarField* fm   = nodeList->getField<double>("mass");
 
         for (int i = 0; i < nz; ++i) {
-            std::cout << m[i] << " " << rho[i] << std::endl;
-            
-            frho->setValue(i, rho[i]);
-            fu->setValue(i, u[i]);
-            fP->setValue(i, P[i]);
-            fT->setValue(i, T[i]);
-            fr->setValue(i, r[i]);
-            fm->setValue(i, m[i]);
+            frho->setValue(i, best_rho[i]);
+            fu->setValue(i, best_u[i]);
+            fP->setValue(i, best_P[i]);
+            fT->setValue(i, best_T[i]);
+            fr->setValue(i, best_r[i]);
+            fm->setValue(i, best_m[i]);
         }
+
+        std::cout << "Hydrostatic model built with central T = " << centralTemperature << std::endl;
     }
+
 };

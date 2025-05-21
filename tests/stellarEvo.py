@@ -14,7 +14,7 @@ if __name__ == "__main__":
     eos = IdealGasEOS(5.0/3.0,constants)
     print(eos,"gamma =",eos.gamma)
 
-    stellar = StellarEvolution(myNodeList, constants, eos, mass, 1e6)
+    stellar = StellarEvolution(myNodeList, constants, eos, mass, 15e6)
     print("numNodes =",myNodeList.numNodes)
     print("field names =",myNodeList.fieldNames)
 
