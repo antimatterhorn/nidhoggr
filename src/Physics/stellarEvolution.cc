@@ -3,6 +3,8 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
+#include <iostream>
+#include <iomanip>
 
 class StellarEvolution : public Physics<1> {
 private:
@@ -148,7 +150,7 @@ public:
         // Storage for final converged profile
         std::vector<double> best_m(nz), best_r(nz), best_rho(nz), best_u(nz), best_P(nz), best_T(nz);
 
-        // Initial guesses for central density
+        // Initial guesses for central density using secant method
         double rho_c0 = 1e5;
         double rho_c1 = 2e5;
         double M0 = 0.0, M1 = 0.0;
@@ -157,7 +159,7 @@ public:
             double rho_c = (outer == 0 ? rho_c0 : rho_c1);
             std::vector<double> m(nz), r(nz), rho(nz), u(nz), P(nz), T(nz);
             r[0] = 1e-5;
-            m[0] = 0.0;
+            m[0] = 0.5*dm;
 
             T[0] = centralTemperature;
             rho[0] = rho_c;
@@ -166,6 +168,7 @@ public:
             eos->setPressure(&P[0], &rho[0], &u[0]);
 
             double tmpU, tmpRho, tmpP;
+            double alpha = 0.8;
 
             for (int i = 1; i < nz; ++i) {
                 r[i] = r[i - 1] + dr;
@@ -174,7 +177,9 @@ public:
                 double dPdr = -constants.G() * m[i - 1] * rho[i - 1] / (r[i - 1] * r[i - 1]);
                 P[i] = P[i - 1] + dPdr * dr;
 
-                u[i] = u[0];
+                
+                T[i] = T[0] * std::pow(1.0 - double(i)/nz, alpha);
+                eos->setInternalEnergyFromTemperature(&u[i], &rho[i], &T[i]);
                 tmpU = u[i];
 
                 double rho_i = rho[i - 1];
@@ -195,7 +200,6 @@ public:
 
                 double dm_i = 4.0 * M_PI * std::pow(r[i - 1], 2) * rho[i - 1] * dr;
                 m[i] = m[i - 1] + dm_i;
-                T[i] = T[0];
             }
 
             double M_calc = m[nz - 1];
@@ -226,6 +230,8 @@ public:
         ScalarField* fr   = nodeList->getField<double>("radius");
         ScalarField* fm   = nodeList->getField<double>("mass");
 
+        printTable(best_r,best_rho,best_T,best_P,best_u);
+
         for (int i = 0; i < nz; ++i) {
             frho->setValue(i, best_rho[i]);
             fu->setValue(i, best_u[i]);
@@ -234,8 +240,30 @@ public:
             fr->setValue(i, best_r[i]);
             fm->setValue(i, best_m[i]);
         }
-
-        std::cout << "Hydrostatic model built with central T = " << centralTemperature << std::endl;
     }
 
+    void printTable(const std::vector<double>& r,
+                    const std::vector<double>& rho,
+                    const std::vector<double>& T,
+                    const std::vector<double>& P,
+                    const std::vector<double>& u) {
+        std::cout << std::fixed << std::setprecision(6);
+
+        std::cout << std::setw(12) << "r"
+                << std::setw(16) << "rho"
+                << std::setw(16) << "T"
+                << std::setw(16) << "P" 
+                << std::setw(16) << "u" << "\n";
+
+        for (size_t i = 0; i < r.size(); ++i) {
+            std::cout << std::setw(12) << std::scientific << r[i]
+                    << std::setw(16) << std::scientific << rho[i]
+                    << std::setw(16) << std::scientific << T[i]
+                    << std::setw(16) << std::scientific << P[i]
+                    << std::setw(16) << std::scientific << u[i]
+                    << "\n";
+        }
+    }
 };
+
+
