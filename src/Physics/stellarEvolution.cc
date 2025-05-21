@@ -144,7 +144,7 @@ public:
         const int nz = numZones;
         const double tol = 1e-6;
         const int maxIter = 20;
-        const double dr = 1e-3;  // fixed radial step
+        const double dr = 1e-2;  // fixed radial step
 
         // Storage for final converged profile
         std::vector<double> best_m(nz), best_r(nz), best_rho(nz), best_u(nz), best_P(nz), best_T(nz);
