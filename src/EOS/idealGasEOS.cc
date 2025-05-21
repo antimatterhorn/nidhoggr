@@ -91,7 +91,7 @@ public:
         const double mu = 1.0;
         const double mH = constants.protonMass();
 
-        *internalEnergy = (*temperature) / ((gamma - 1.0) * mu * mH);
+        *internalEnergy = (*temperature) * kB / ((gamma - 1.0) * mu * mH);
     }
 
 

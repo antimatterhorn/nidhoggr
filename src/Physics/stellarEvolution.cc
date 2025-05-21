@@ -151,10 +151,11 @@ public:
         double tmpU;
         double tmpT;
         double tmpRho;
+        double tmpP;
 
         T[0] = centralTemperature;
         tmpT    = T[0];
-        tmpRho  = 1;
+        tmpRho  = 1e6;
 
         eos->setInternalEnergyFromTemperature(&tmpU, &tmpRho, &tmpT);
         u[0] = tmpU;
@@ -164,13 +165,13 @@ public:
         const double tol = 1e-8;
         for (int iter = 0; iter < 20; ++iter) {
             tmpRho = rho_guess;
-            eos->setPressure(&tmpU, &tmpRho, &tmpU);
-            double P_rho = tmpU;
+            eos->setPressure(&tmpP, &tmpRho, &tmpU);
+            double P_rho = tmpP;
             double targetP = P_rho;
 
             tmpRho = rho_guess + 1e-6 * rho_guess;
-            eos->setPressure(&tmpU, &tmpRho, &tmpU);
-            double P_plus = tmpU;
+            eos->setPressure(&tmpP, &tmpRho, &tmpU);
+            double P_plus = tmpP;
 
             double df = (P_plus - P_rho) / (1e-6 * rho_guess);
             double delta = (P_rho - targetP) / df;
@@ -180,9 +181,12 @@ public:
         }
 
         rho[0] = rho_guess;
+        tmpRho = rho_guess;
 
         eos->setPressure(&tmpU, &tmpRho, &tmpU);
         P[0] = tmpU;
+
+        std::cout << "central temp = " << tmpT << " P = " << tmpU << " rho = " << rho_guess << std::endl;
 
         // Step 2: integrate outward
         for (int i = 1; i < nz; ++i) {
@@ -228,8 +232,8 @@ public:
         ScalarField* fu   = nodeList->getField<double>("specificInternalEnergy");
         ScalarField* fP   = nodeList->getField<double>("pressure");
         ScalarField* fT   = nodeList->getField<double>("temperature");
-        ScalarField* fr   = nodeList->getField<double>("mass");
-        ScalarField* fm   = nodeList->getField<double>("radius");
+        ScalarField* fr   = nodeList->getField<double>("radius");
+        ScalarField* fm   = nodeList->getField<double>("mass");
 
         for (int i = 0; i < nz; ++i) {
             std::cout << m[i] << " " << rho[i] << std::endl;
@@ -241,7 +245,5 @@ public:
             fr->setValue(i, r[i]);
             fm->setValue(i, m[i]);
         }
-
-        std::cout << "Initialized hydrostatic model with central T = " << centralTemperature << std::endl;
     }
 };
