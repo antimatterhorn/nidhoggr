@@ -91,14 +91,14 @@ An example of this pattern for simple forward Euler integration is shown below:
 
 Equations of State
 ------------------
-Equations of state are possibly the simplest classes in Nidhoggr. They consume Field objects and set the values of 
-other Fields according to their respective closure equations. Most of the logic for how they work is self-described 
-by the base class interface file ``equationOfState.hh``.
+Equations of state are possibly the simplest classes in Nidhoggr. They consume Field objects (or referenced doubles) 
+and set the values of other Fields according to their respective closure equations. Most of the logic for how they 
+work is self-described by the base class interface file ``equationOfState.hh``.
 
 .. literalinclude:: ../../src/EOS/equationOfState.hh
    :language: c++
    :linenos:
-   :lines: 9-20
+   :lines: 9-48
    :lineno-start: 9
 
 .. note::

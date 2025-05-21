@@ -88,16 +88,11 @@ public:
     void
     VerifyWaveFields() {
         NodeList* nodeList = this->nodeList;
-        if (nodeList->getField<double>("phi") == nullptr)
-            nodeList->insertField<double>("phi");
-        if (nodeList->getField<double>("xi") == nullptr)
-            nodeList->insertField<double>("xi");
-        if (nodeList->getField<double>("maxphi") == nullptr)
-            nodeList->insertField<double>("maxphi");
-        if (nodeList->getField<double>("phisq") == nullptr)
-            nodeList->insertField<double>("phisq");
-        if (nodeList->getField<double>("soundSpeed") == nullptr)
-            nodeList->insertField<double>("soundSpeed");       
+        for (const std::string& name : 
+            {"phi", "xi", "maxphi", "phisq", "soundSpeed"}) {
+            if (nodeList->getField<double>(name) == nullptr)
+                nodeList->insertField<double>(name);
+        }    
 
         ScalarField* xi     = nodeList->getField<double>("xi");
         ScalarField* phi    = nodeList->getField<double>("phi");
