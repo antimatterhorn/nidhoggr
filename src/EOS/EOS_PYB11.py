@@ -1,7 +1,7 @@
 from PYB11Generator import *
 PYB11includes = ['"equationOfState.hh"',
                  '"idealGasEOS.cc"',
-                 '"polytropicEOS.cc"',
+                 #'"polytropicEOS.cc"',
                  '"helmholtzEOS.cc"']
 
 from equationOfState import *
