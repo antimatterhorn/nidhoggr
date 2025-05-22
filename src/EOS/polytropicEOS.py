@@ -3,7 +3,7 @@ from equationOfState import *
 from EOSAbstractMethods import *
 
 class PolytropicEOS(EquationOfState):
-    def pyinit(self,specificHeatRatio="double",constants="PhysicalConstants&"):
+    def pyinit(self,polytropicConstant="double",polytropicIndex="double",constants="PhysicalConstants&"):
         return
     
     gamma = PYB11property("double", getter="getGamma", doc="Specific heat ratio.")

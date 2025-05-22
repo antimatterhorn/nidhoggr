@@ -21,6 +21,7 @@ if __name__ == "__main__":
     constants = CGS()
     eos = IdealGasEOS(1.4, constants)
     #eos = HelmholtzEOS("helm_table_small.dat",constants)
+    #eos = PolytropicEOS(1.0,1.4,constants)
     nodeList = NodeList(N)
 
     rho_field = FieldofDouble("rho")
