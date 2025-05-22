@@ -5,6 +5,8 @@
 /src/*/__pycache__
 /tests/__pycache__
 /examples/__pycache__
+/gui/__pycache__
+/gui/nodes/__pycache__
 .vscode
 *.aux
 *.dvi
