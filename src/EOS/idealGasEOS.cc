@@ -95,6 +95,6 @@ public:
     }
 
 
-    double 
-    getGamma() const { return gamma; }
+    virtual double 
+    getGamma() const override { return gamma; }
 };

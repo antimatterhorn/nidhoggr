@@ -163,6 +163,7 @@ public:
             m[0] = 0.0;
             rho[0] = rho_c;
             T[0] = centralTemperature;
+            double gamma = eos->getGamma();
             eos->setInternalEnergyFromTemperature(&u[0], &rho[0], &T[0]);
             eos->setPressure(&P[0], &rho[0], &u[0]);
 
@@ -177,8 +178,8 @@ public:
                 double dP_dr = -constants.G() * m[i-1] * rho[i-1] / (r[i-1] * r[i-1]);
                 P[i] = P[i-1] + dP_dr * dr;
 
-                // Hold T constant for now
-                T[i] = T[0];
+                //T[i] = T[i-1]/P[i-1]*dP_dr*dr*(gamma-1)/gamma + T[i-1];
+                T[i] = T[0]; // change this
                 eos->setInternalEnergyFromTemperature(&u[i], &rho[i-1], &T[i]);
 
                 // Solve for rho_i such that P(rho_i, T[i]) = P[i]

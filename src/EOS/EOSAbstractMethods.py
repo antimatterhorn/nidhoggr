@@ -83,3 +83,8 @@ class EOSAbstractMethods:
                     density = "double*",
                     temperature = "double*"):
         return "void"
+    
+    @PYB11const
+    @PYB11pycppname("getGamma")
+    def getGamma(self):
+        return "double"
