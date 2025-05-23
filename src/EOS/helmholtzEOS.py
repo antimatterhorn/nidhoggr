@@ -5,8 +5,6 @@ from EOSAbstractMethods import *
 class HelmholtzEOS(EquationOfState):
     def pyinit(self,tableFile="std::string&",constants="PhysicalConstants&"):
         return
-    
-    gamma = PYB11property("double", getter="getGamma", doc="Specific heat ratio.")
 
 #-------------------------------------------------------------------------------
 # Add the virtual interface

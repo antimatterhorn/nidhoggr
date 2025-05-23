@@ -159,10 +159,6 @@ public:
         throw std::runtime_error("not implemented yet.");
     }
 
-
-    virtual double 
-    getGamma() const override { return 0; };
-
     virtual std::string name() const override {
         return "HelmholtzEOS";
     }

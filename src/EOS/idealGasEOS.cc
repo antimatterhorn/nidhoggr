@@ -95,8 +95,7 @@ public:
     }
 
 
-    virtual double 
-    getGamma() const override { return gamma; }
+    double getGamma() const{ return gamma; }
 
     virtual std::string name() const override {
         return "IdealGasEOS";

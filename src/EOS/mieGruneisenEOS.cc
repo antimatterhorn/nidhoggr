@@ -120,9 +120,4 @@ public:
     name() const override {
         return "Mie-GrüneisenEOS";
     }
-
-    virtual double 
-    getGamma() const override { 
-        return Gamma0;
-    }
 };

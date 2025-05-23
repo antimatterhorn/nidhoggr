@@ -46,9 +46,6 @@ public:
     virtual void 
     setInternalEnergyFromTemperature(double* internalEnergy, double* density, double* temperature) const = 0;
 
-    virtual double 
-    getGamma() const = 0;
-
     virtual std::string 
     name() const = 0;
 };
