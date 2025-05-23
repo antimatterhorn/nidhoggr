@@ -31,7 +31,7 @@ if __name__ == "__main__":
     if eos == "IdealGasEOS":
         eos = IdealGasEOS(1.4, constants)
     elif eos == "HelmholtzEOS":
-        eos = HelmholtzEOS("helm_table_small.dat",constants)
+        eos = HelmholtzEOS("genHelm.dat",constants)
     elif eos == "MieGruneisenEOS":
         params = MieGruneisenMaterial("granite")  # still in CGS
         eos  = MieGruneisenEOS(constants=constants, **params) # granite params
