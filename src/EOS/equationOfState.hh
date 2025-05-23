@@ -48,6 +48,9 @@ public:
 
     virtual double 
     getGamma() const = 0;
+
+    virtual std::string 
+    name() const = 0;
 };
 
 #endif // EQUATIONOFSTATE_HH

@@ -9,7 +9,10 @@ if __name__ == "__main__":
                                        minrho = 1e-2,
                                        maxrho = 1e6,
                                        minu   = 1e-2,
-                                       maxu   = 1e8)
+                                       maxu   = 1e8,
+                                       eos = "IdealGasEOS")
+
+    assert eos in ["IdealGasEOS","HelmholtzEOS","MieGruneisenEOS","PolytropicEOS"]
 
     # Log-space grid
     log_rho = np.linspace(np.log10(minrho), np.log10(maxrho), nrho)
@@ -19,10 +22,22 @@ if __name__ == "__main__":
     # Flattened input for NodeList and Fields
     N = nrho * nu
     constants = CGS()
-    eos = IdealGasEOS(1.4, constants)
-    #eos = HelmholtzEOS("helm_table_small.dat",constants)
-    #eos = PolytropicEOS(1.0,1.4,constants)
-    nodeList = NodeList(N)
+
+    if eos == "IdealGasEOS":
+        eos = IdealGasEOS(1.4, constants)
+    elif eos == "HelmholtzEOS":
+        eos = HelmholtzEOS("helm_table_small.dat",constants)
+    elif eos == "MieGruneisenEOS":
+        eos  = MieGruneisenEOS(2.7,3.7e5,1.5,1.5,constants) # granite params
+    elif eos == "PolytropicEOS":
+        eos = PolytropicEOS(1.0, 1.4, constants)
+    else:
+        raise ValueError("EOS not implemented")
+
+    print(eos)
+    print(type(eos))
+
+    print(eos.name())
 
     rho_field = FieldofDouble("rho")
     u_field   = FieldofDouble("internalEnergy")
@@ -52,7 +67,7 @@ if __name__ == "__main__":
     ax.set_xlabel("log10(Rho)")
     ax.set_ylabel("log10(U)")
     ax.set_zlabel("log10(P)")
-    ax.set_title("EOS: log Pressure vs log(Rho) and log(U)")
+    ax.set_title(eos.name())
 
     plt.tight_layout()
     plt.show()

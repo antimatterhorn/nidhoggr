@@ -88,3 +88,8 @@ class EOSAbstractMethods:
     @PYB11pycppname("getGamma")
     def getGamma(self):
         return "double"
+    
+    @PYB11const
+    @PYB11pycppname("name")
+    def name(self):
+        return "std::string"
