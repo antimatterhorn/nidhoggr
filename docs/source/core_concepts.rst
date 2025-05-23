@@ -112,6 +112,7 @@ The current list of available equations of state and their constructors is
 
     IdealGasEOS(specificHeatRatio,constants)
     PolyTropicEOS(polyTropicConstant,polyTropicIndex,constants)
+    MieGruneisenEOS(rho0,C0,Gamma0,S,constants)
 
 
 Mesh/Grid Handling
