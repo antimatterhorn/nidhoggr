@@ -16,9 +16,7 @@ public:
     virtual ~MieGruneisenEOS() override {}
 
     virtual void 
-    setPressure(Field<double>* pressure,
-                Field<double>* density,
-                Field<double>* internalEnergy) const override {
+    setPressure(Field<double>* pressure, Field<double>* density, Field<double>* internalEnergy) const override {
         for (int i = 0; i < density->size(); ++i) {
             double rho = density->getValue(i);
             double e   = internalEnergy->getValue(i);
@@ -33,9 +31,7 @@ public:
     }
 
     virtual void 
-    setInternalEnergy(Field<double>* internalEnergy,
-                    Field<double>* density,
-                    Field<double>* pressure) const override {
+    setInternalEnergy(Field<double>* internalEnergy, Field<double>* density, Field<double>* pressure) const override {
         for (int i = 0; i < density->size(); ++i) {
             double rho = density->getValue(i);
             double P   = pressure->getValue(i);
@@ -50,9 +46,7 @@ public:
     }
 
     virtual void 
-    setSoundSpeed(Field<double>* soundSpeed,
-                Field<double>* density,
-                Field<double>* internalEnergy) const override {
+    setSoundSpeed(Field<double>* soundSpeed, Field<double>* density, Field<double>* internalEnergy) const override {
         for (int i = 0; i < density->size(); ++i) {
             double rho = density->getValue(i);
             double e   = internalEnergy->getValue(i);
