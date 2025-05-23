@@ -122,8 +122,13 @@ public:
         throw std::runtime_error("Mie-GrüneisenEOS does not define internal energy from temperature.");
     }
 
-    virtual 
-    std::string name() const override {
+    virtual std::string 
+    name() const override {
         return "Mie-GrüneisenEOS";
+    }
+
+    virtual double 
+    getGamma() const override { 
+        return Gamma0;
     }
 };
