@@ -43,4 +43,4 @@ def MieGruneisenMaterial(name: str):
             S = 1.49
         )
     else:
-        raise ValueError(f"Unknown Mie–Grüneisen material: {name}")
+        raise ValueError(f"Unknown Mie-Grüneisen material: {name}")
