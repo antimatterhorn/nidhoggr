@@ -34,3 +34,4 @@ from Calculators import *
 from Trees import *
 from IO import *
 from Utilities import *
+from TillotsonMaterials import *

@@ -4,10 +4,11 @@ PYB11includes = ['"equationOfState.hh"',
                  '"polytropicEOS.cc"',
                  '"mieGruneisenEOS.cc"',
                  '"helmholtzEOS.cc"',
-                 ]
+                 '"tillotsonEOS.cc"']
 
 from equationOfState import *
 from idealGasEOS import *
 from polytropicEOS import *
 from mieGruneisenEOS import *
 from helmholtzEOS import *
+from tillotsonEOS import *

@@ -69,6 +69,8 @@ public:
     double unitChargeCoulomb() const { return mUnitCcou; }
 
     // All the stuff we provide.
+    double unitPressure() const { return mUnitMkg / (mUnitLm * pow(mUnitTsec, 2.0));}
+    double unitSpecificEnergy() const { return pow(mUnitLm / mUnitTsec, 2.0);}
     double protonMass() const { return mpMKS / mUnitMkg; }
     double electronMass() const { return meMKS / mUnitMkg; }
     double electronCharge() const { return qeMKS / mUnitCcou; }
@@ -87,6 +89,18 @@ public:
 
     // Method to set G directly
     void setG(double newG) { GGravity = newG; }
+
+    double convertDensity(double rhoCGS) const {
+        return rhoCGS * (0.001 / 1.0e-6) / this->unitMassDensity();  // returns rho_CGS * rho_unit / rho_CGS = rho_unit
+    }
+
+    double convertPressure(double PCGS) const {
+        return (PCGS * 0.1) / this->unitPressure();
+    }
+
+    double convertSpecificEnergy(double eCGS) const {
+        return (eCGS * 1.0e-4) / this->unitSpecificEnergy();
+    }
 };
 
 #endif // PHYSICALCONSTANTS_HH

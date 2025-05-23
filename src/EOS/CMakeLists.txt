@@ -1,1 +1,2 @@
 PYB11Generator_add_module(EOS)
+configure_file(TillotsonMaterials.py TillotsonMaterials.py COPYONLY)
