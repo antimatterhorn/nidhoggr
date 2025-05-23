@@ -37,7 +37,7 @@ if __name__ == "__main__":
     elif eos == "PolytropicEOS":
         eos = PolytropicEOS(1.0, 1.4, constants)
     elif eos == "TillotsonEOS":
-        params = TillotsonMaterial("granite")  # still in CGS
+        params = TillotsonMaterial("iron")  # still in CGS
         eos = TillotsonEOS(constants=constants, **params)
     elif eos == "IsothermalEOS":
         eos   = IsothermalEOS(5.0,constants)
