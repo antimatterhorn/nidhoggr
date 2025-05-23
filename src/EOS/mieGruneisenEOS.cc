@@ -11,7 +11,11 @@ private:
 
 public:
     MieGruneisenEOS(double rho0, double C0, double Gamma0, double S, PhysicalConstants& constants)
-        : EquationOfState(constants), rho0(rho0), C0(C0), Gamma0(Gamma0), S(S) {}
+        : EquationOfState(constants), 
+        rho0(constants.convertDensity(rho0)), 
+        C0(constants.convertSoundSpeed(C0)), 
+        Gamma0(Gamma0), 
+        S(S) {}
 
     virtual ~MieGruneisenEOS() override {}
 

@@ -101,6 +101,10 @@ public:
     double convertSpecificEnergy(double eCGS) const {
         return (eCGS * 1.0e-4) / this->unitSpecificEnergy();
     }
+
+    double convertSoundSpeed(double cCGS) const {
+        return (cCGS * 1.0e-2) / (this->unitLengthMeters() / this->unitTimeSec());
+    }
 };
 
 #endif // PHYSICALCONSTANTS_HH

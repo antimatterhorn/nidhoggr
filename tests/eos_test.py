@@ -33,11 +33,12 @@ if __name__ == "__main__":
     elif eos == "HelmholtzEOS":
         eos = HelmholtzEOS("helm_table_small.dat",constants)
     elif eos == "MieGruneisenEOS":
-        eos  = MieGruneisenEOS(2.7,3.7e5,1.5,1.5,constants) # granite params
+        params = MieGruneisenMaterial("granite")  # still in CGS
+        eos  = MieGruneisenEOS(constants=constants, **params) # granite params
     elif eos == "PolytropicEOS":
         eos = PolytropicEOS(1.0, 1.4, constants)
     elif eos == "TillotsonEOS":
-        params = TillotsonMaterial("iron")  # still in CGS
+        params = TillotsonMaterial("granite")  # still in CGS
         eos = TillotsonEOS(constants=constants, **params)
     elif eos == "IsothermalEOS":
         eos   = IsothermalEOS(5.0,constants)

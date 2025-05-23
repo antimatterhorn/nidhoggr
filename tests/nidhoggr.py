@@ -35,3 +35,4 @@ from Trees import *
 from IO import *
 from Utilities import *
 from TillotsonMaterials import *
+from MieGruneisenMaterials import *
