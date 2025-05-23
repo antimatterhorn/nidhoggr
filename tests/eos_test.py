@@ -12,7 +12,12 @@ if __name__ == "__main__":
                                        maxu   = 1e8,
                                        eos = "IdealGasEOS")
 
-    assert eos in ["IdealGasEOS","HelmholtzEOS","MieGruneisenEOS","PolytropicEOS","TillotsonEOS"]
+    assert eos in ["IdealGasEOS",
+                   "HelmholtzEOS",
+                   "MieGruneisenEOS",
+                   "PolytropicEOS",
+                   "TillotsonEOS",
+                   "IsothermalEOS"]
 
     # Log-space grid
     log_rho = np.linspace(np.log10(minrho), np.log10(maxrho), nrho)
@@ -34,6 +39,8 @@ if __name__ == "__main__":
     elif eos == "TillotsonEOS":
         params = TillotsonMaterial("granite")  # still in CGS
         eos = TillotsonEOS(constants=constants, **params)
+    elif eos == "IsothermalEOS":
+        eos   = IsothermalEOS(5.0,constants)
     else:
         raise ValueError("EOS not implemented")
 
