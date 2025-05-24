@@ -20,7 +20,8 @@ Let's use ``constantGravity.cc`` in the ``src/Physics`` directory as an example 
 
 In the constructor for ``ConstantGravity``, we pass in the ``NodeList`` pointer, a ``PhysicalConstants`` object, and a ``Vector`` that
 prescribes the direction and magnitude of the acceleration. Then we enroll the ``acceleration``, ``velocity``, and ``position`` Vector 
-Fields using the type templated EnrollFields method. This ensures that these fields exist on the NodeList, and if they don't, this 
+Fields using the type templated EnrollFields method from the Physics base class. 
+This ensures that these fields exist on the NodeList, and if they don't, this 
 method will create them. 
 
 Next we enroll the ``position`` and ``velocity`` Fields to the ``State``.
