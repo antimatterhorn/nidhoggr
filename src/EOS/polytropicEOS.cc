@@ -80,7 +80,8 @@ public:
     double getKappa() const { return kappa; }
     double getIndex() const { return index; }
 
-    virtual std::string name() const override {
+    virtual std::string 
+    name() const override {
         return "PolytropicEOS";
     }
 };

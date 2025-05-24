@@ -50,17 +50,20 @@ public:
     virtual ~TillotsonEOS() override {}
 
     // Field-based methods
-    virtual void setPressure(Field<double>* pressure, Field<double>* density, Field<double>* internalEnergy) const override {
+    virtual void 
+    setPressure(Field<double>* pressure, Field<double>* density, Field<double>* internalEnergy) const override {
         for (int i = 0; i < density->size(); ++i) {
             (*pressure)[i] = computePressure((*density)[i], (*internalEnergy)[i]);
         }
     }
 
-    virtual void setInternalEnergy(Field<double>* internalEnergy, Field<double>* density, Field<double>* pressure) const override {
+    virtual void 
+    setInternalEnergy(Field<double>* internalEnergy, Field<double>* density, Field<double>* pressure) const override {
         throw std::runtime_error("TillotsonEOS does not support inversion to internal energy.");
     }
 
-    virtual void setSoundSpeed(Field<double>* soundSpeed, Field<double>* density, Field<double>* internalEnergy) const override {
+    virtual void 
+    setSoundSpeed(Field<double>* soundSpeed, Field<double>* density, Field<double>* internalEnergy) const override {
         for (int i = 0; i < density->size(); ++i) {
             const double rho = (*density)[i];
             const double e   = (*internalEnergy)[i];
@@ -80,24 +83,29 @@ public:
         }
     }
 
-    virtual void setTemperature(Field<double>*, Field<double>*, Field<double>*) const override {
+    virtual void 
+    setTemperature(Field<double>*, Field<double>*, Field<double>*) const override {
         throw std::runtime_error("TillotsonEOS does not define temperature.");
     }
 
-    virtual void setInternalEnergyFromTemperature(Field<double>*, Field<double>*, Field<double>*) const override {
+    virtual void 
+    setInternalEnergyFromTemperature(Field<double>*, Field<double>*, Field<double>*) const override {
         throw std::runtime_error("TillotsonEOS does not define internal energy from temperature.");
     }
 
     // Scalar-based methods
-    virtual void setPressure(double* pressure, double* density, double* internalEnergy) const override {
+    virtual void 
+    setPressure(double* pressure, double* density, double* internalEnergy) const override {
         *pressure = computePressure(*density, *internalEnergy);
     }
 
-    virtual void setInternalEnergy(double*, double*, double*) const override {
+    virtual void 
+    setInternalEnergy(double*, double*, double*) const override {
         throw std::runtime_error("TillotsonEOS does not support inversion to internal energy.");
     }
 
-    virtual void setSoundSpeed(double* soundSpeed, double* density, double* internalEnergy) const override {
+    virtual void 
+    setSoundSpeed(double* soundSpeed, double* density, double* internalEnergy) const override {
         const double rho = *density;
         const double e = *internalEnergy;
 
@@ -115,15 +123,18 @@ public:
         *soundSpeed = std::sqrt(std::max(cs2, 0.0));
     }
 
-    virtual void setTemperature(double*, double*, double*) const override {
+    virtual void 
+    setTemperature(double*, double*, double*) const override {
         throw std::runtime_error("TillotsonEOS does not define temperature.");
     }
 
-    virtual void setInternalEnergyFromTemperature(double*, double*, double*) const override {
+    virtual void 
+    setInternalEnergyFromTemperature(double*, double*, double*) const override {
         throw std::runtime_error("TillotsonEOS does not define internal energy from temperature.");
     }
 
-    virtual std::string name() const override {
+    virtual std::string 
+    name() const override {
         return "TillotsonEOS";
     }
 };

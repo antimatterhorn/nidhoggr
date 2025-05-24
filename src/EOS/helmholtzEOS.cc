@@ -23,7 +23,8 @@ private:
         return std::distance(grid.begin(), it) - 1;
     }
     
-    double bilinearInterp(const std::vector<std::vector<double>>& table,
+    double 
+    bilinearInterp(const std::vector<std::vector<double>>& table,
                           double logRho, double logU) const {
         size_t i = findIndex(logRhoGrid, logRho);
         size_t j = findIndex(logUGrid, logU);
@@ -46,7 +47,8 @@ private:
     }
 
     
-    void loadTable(const std::string& filename) {
+    void 
+    loadTable(const std::string& filename) {
         FILE* file = std::fopen(filename.c_str(), "r");
         if (!file) {
             throw std::runtime_error("Failed to open EOS table: " + filename);
@@ -93,7 +95,8 @@ private:
     }
 
 
-    void computeHelmholtzApprox(double rho, double u, double& P, double& cs) {
+    void 
+    computeHelmholtzApprox(double rho, double u, double& P, double& cs) {
         const double kB = constants.kB();            // erg/K
         const double mH = constants.protonMass();    // g
         const double mu = 0.6;                       // mean molecular weight
@@ -222,11 +225,13 @@ public:
     }
 
 
-    virtual std::string name() const override {
+    virtual std::string 
+    name() const override {
         return "HelmholtzEOS";
     }
 
-    void generateTable() {
+    void 
+    generateTable() {
         // Define log-spaced rho and u values
         logRhoGrid = logspace(-2, 10, 300);  // log10(rho) from 1e-2 to 1e10
         logUGrid   = logspace(-2, 12, 300);  // log10(u) from 1e-2 to 1e12
