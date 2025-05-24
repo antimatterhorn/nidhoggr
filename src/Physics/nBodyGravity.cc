@@ -16,7 +16,8 @@ public:
         plummerLength(plummerLength) {
 
         int numNodes = nodeList->size();
-        this->template EnrollFields<Vector>({"mass", "acceleration", "velocity", "position"});
+        this->template EnrollFields<double>({"mass"});
+        this->template EnrollFields<Vector>({"acceleration", "velocity", "position"});
         this->template EnrollStateFields<Vector>({"velocity", "position"});
     }
 
