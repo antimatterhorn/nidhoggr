@@ -15,27 +15,28 @@ Let's use ``constantGravity.cc`` in the ``src/Physics`` directory as an example 
 .. literalinclude:: ../../src/Physics/constantGravity.cc
    :language: c++
    :linenos:
-   :lines: 4-29
+   :lines: 4-27
    :lineno-start: 4
 
 In the constructor for ``ConstantGravity``, we pass in the ``NodeList`` pointer, a ``PhysicalConstants`` object, and a ``Vector`` that
-prescribes the direction and magnitude of the acceleration. Then we check for the
-existence of certain Fields on the NodeList that are required by this particular physics class, and if they don't exist, we
-create them on the NodeList with ``nodeList->insertField<T>(name)``, in this case ``acceleration`` which is a ``Vector``. 
+prescribes the direction and magnitude of the acceleration. Then we enroll the ``acceleration``, ``velocity``, and ``position`` Vector 
+Fields using the type templated EnrollFields method. This ensures that these fields exist on the NodeList, and if they don't, this 
+method will create them. 
 
-Next we grab the ``State<dim>`` object from the base physics class and assign the ``position`` and ``velocity`` Fields to it. 
+Next we enroll the ``position`` and ``velocity`` Fields to the ``State``.
 In the case of 
 the constant gravity package, the only derivatives are the position derivative and velocity derivative, and as a standard, we keep
-antiderivatives on the ``State`` object (to be preserved as copies) and derivatives on the ``NodeList`` object (to be altered in series
-by successive physics packages). For that reason, we do not assign ``acceleration`` to the ``State`` object for this physics class.
+antiderivatives on the ``State`` object (to be preserved as copies) while derivatives remain on the ``NodeList`` object 
+(to be altered in series by successive physics packages). For that reason, we do not assign ``acceleration`` to the ``State`` 
+object for this physics class.
 You can think of ``State`` Fields as the independent variables that are being solved for at the next time step, and their derivatives 
 are dependent variables that change within a step.
 
 .. literalinclude:: ../../src/Physics/constantGravity.cc
    :language: c++
    :linenos:
-   :lines: 33-38
-   :lineno-start: 33
+   :lines: 29-34
+   :lineno-start: 29
 
 The PrestepInitialize method is used to initialize the ``State`` object at the beginning of a time step. In this case, ``ConstantGravity``
 is simply updating the ``State`` to the current values of the ``NodeList``.
@@ -43,8 +44,8 @@ is simply updating the ``State`` to the current values of the ``NodeList``.
 .. literalinclude:: ../../src/Physics/constantGravity.cc
    :language: c++
    :linenos:
-   :lines: 40-68
-   :lineno-start: 40
+   :lines: 36-63
+   :lineno-start: 36
 
 ``EvaluateDerivatives`` is used to compute the derivatives of the ``State`` object at each node. In this case, we are computing the 
 change in velocity and position due to a constant acceleration, so we have a pair of ODEs:
@@ -69,8 +70,8 @@ The final bit of code in ``EvaluateDerivatives`` merely calculates the minimum t
 .. literalinclude:: ../../src/Physics/constantGravity.cc
    :language: c++
    :linenos:
-   :lines: 77-104
-   :lineno-start: 75
+   :lines: 65-104
+   :lineno-start: 65
 
 ``FinalizeStep`` is meant to tie up any further calculations that should happen at the end of a time step. In this case, we merely push
 the values of the ``finalState`` passed from the integrator to the physics ``State`` object and the corresponding Fields in the ``NodeList``
@@ -98,7 +99,7 @@ work is self-described by the base class interface file ``equationOfState.hh``.
 .. literalinclude:: ../../src/EOS/equationOfState.hh
    :language: c++
    :linenos:
-   :lines: 9-48
+   :lines: 9-51
    :lineno-start: 9
 
 .. note::
