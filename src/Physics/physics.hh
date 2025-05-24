@@ -35,8 +35,7 @@ public:
 
     virtual void
     EnrollScalars(std::initializer_list<const std::string> fields) {
-        for (const std::string& name : 
-            fields) {
+        for (const std::string& name : fields) {
             if (nodeList->getField<double>(name) == nullptr)
                 nodeList->insertField<double>(name);
         }
@@ -44,10 +43,27 @@ public:
 
     virtual void
     EnrollVectors(std::initializer_list<const std::string> fields) {
-        for (const std::string& name : 
-            fields) {
+        for (const std::string& name : fields) {
             if (nodeList->getField<Vector>(name) == nullptr)
                 nodeList->insertField<Vector>(name);
+        }
+    }
+
+    virtual void
+    EnrollStateScalars(std::initializer_list<const std::string> fields) {
+        State<dim>* state = &this->state;
+        for (const std::string& name : fields) {
+            ScalarField* field = nodeList->getField<double>(name);
+            state->template addField<double>(field);
+        }
+    }
+
+    virtual void
+    EnrollStateVectors(std::initializer_list<const std::string> fields) {
+        State<dim>* state = &this->state;
+        for (const std::string& name : fields) {
+            VectorField* field = nodeList->getField<Vector>(name);
+            state->template addField<Vector>(field);
         }
     }
 

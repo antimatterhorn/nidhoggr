@@ -22,8 +22,7 @@ public:
         for (int i = 0; i < numZones; ++i)
             nodeList->getField<Vector>("acceleration")->setValue(i, gravityVector);
 
-        VectorField* velocity = nodeList->getField<Vector>("velocity");
-        this->state.template addField<Vector>(velocity);
+        this->EnrollStateVectors({"velocity"});
     }
 
     virtual void PreStepInitialize() override {

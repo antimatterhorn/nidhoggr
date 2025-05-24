@@ -15,12 +15,8 @@ public:
         Physics<dim>(nodeList,constants) {
 
         int numNodes = nodeList->size();
-        if (nodeList->getField<double>("y") == nullptr)
-            nodeList->insertField<double>("y");
-
-        ScalarField* y = nodeList->getField<double>("y");
-        State<dim>* state = &this->state;
-        state->template addField<double>(y);
+        this->EnrollScalars({"y"});
+        this->EnrollStateScalars({"y"});
     }
 
     ~SimplePhysics() {}

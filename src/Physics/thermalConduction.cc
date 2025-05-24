@@ -18,11 +18,7 @@ public:
 
     virtual void
     VerifyHydroFields(NodeList* nodeList) {
-        for (const std::string& name : 
-            {"pressure", "density", "specificInternalEnergy", "soundSpeed"}) {
-            if (nodeList->getField<double>(name) == nullptr)
-                nodeList->insertField<double>(name);
-        }
+        this->EnrollScalars({"pressure", "density", "specificInternalEnergy", "soundSpeed"});
     }
 
     virtual void PreStepInitialize() override {

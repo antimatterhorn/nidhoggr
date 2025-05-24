@@ -21,11 +21,7 @@ public:
         for (int i=0; i<numNodes; ++i)
             nodeList->getField<Vector>("acceleration")->setValue(i,gravityVector);
 
-        VectorField* position = nodeList->getField<Vector>("position");
-        State<dim>* state = &this->state;
-        state->template addField<Vector>(position);
-        VectorField* velocity = nodeList->getField<Vector>("velocity");
-        state->template addField<Vector>(velocity);
+        this->EnrollStateVectors({"velocity", "position"});
     }
 
     ~ConstantGravity() {}

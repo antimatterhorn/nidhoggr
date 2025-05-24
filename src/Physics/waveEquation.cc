@@ -87,15 +87,8 @@ public:
 
     void
     VerifyWaveFields() {
-        NodeList* nodeList = this->nodeList;
         this->EnrollScalars({"phi", "xi", "maxphi", "phisq", "soundSpeed"});
-
-        ScalarField* xi     = nodeList->getField<double>("xi");
-        ScalarField* phi    = nodeList->getField<double>("phi");
-
-        State<dim>* state = &this->state;
-        state->template addField<double>(xi);
-        state->template addField<double>(phi);
+        this->EnrollStateScalars({"phi", "xi"});
     }
 
     virtual void

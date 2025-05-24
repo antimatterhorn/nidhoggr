@@ -17,12 +17,7 @@ public:
 
         int numNodes = nodeList->size();
         this->EnrollVectors({"acceleration", "velocity", "position"});
-
-        VectorField* position = nodeList->getField<Vector>("position");
-        State<dim>* state = &this->state;
-        state->template addField<Vector>(position);
-        VectorField* velocity = nodeList->getField<Vector>("velocity");
-        state->template addField<Vector>(velocity);
+        this->EnrollStateVectors({"velocity", "position"});
     }
 
     ~NBodyGravity() {}

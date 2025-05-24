@@ -12,20 +12,18 @@ public:
 
     EulerHydro(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, Mesh::Grid<dim>* grid) : 
         Hydro<dim>(nodeList,constants,eos), grid(grid){
-        VerifyEulerHydroFields(nodeList);
+        this->EnrollVectors({"position"});
 
-        Field<double>* density            = nodeList->getField<double>("density");
-        Field<Lin::Vector<dim>>* velocity = nodeList->getField<Lin::Vector<dim>>("velocity");
-        Field<double>* u                  = nodeList->getField<double>("specificInternalEnergy");
-
-        State<dim>* state = &this->state;
-        state->template addField<double>(density);
-        state->template addField<Lin::Vector<dim>>(velocity);
-        state->template addField<double>(u);
+        this->EnrollStateScalars({"density", "specificInternalEnergy"});
+        this->EnrollStateVectors({"velocity"});
 
         for(int i=0;i<grid->size();i++)
             if(!grid->onBoundary(i))
                 insideIds.push_back(i);
+
+        Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
+        for(int i=0;i<position->size();++i)
+            position->setValue(i,grid->getPosition(i));
     }
 
     ~EulerHydro() {}
@@ -38,16 +36,6 @@ public:
         Field<double>* u            = nodeList->getField<double>("specificInternalEnergy");
 
         EOSLookup();
-    }
-
-    virtual void
-    VerifyEulerHydroFields(NodeList* nodeList) {
-        this->EnrollVectors({"position"});
-                
-        Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
-        for(int i=0;i<position->size();++i) {
-            position->setValue(i,grid->getPosition(i));
-        }
     }
 
     virtual void EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt) override {

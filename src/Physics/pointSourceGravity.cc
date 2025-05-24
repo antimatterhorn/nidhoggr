@@ -27,12 +27,8 @@ public:
 
         int numNodes = nodeList->size();
         this->EnrollVectors({"acceleration", "velocity", "position"});
-
-        State<dim>* state = &this->state;
-        VectorField* position = nodeList->getField<Vector>("position");
-        state->template addField<Vector>(position);
-        VectorField* velocity = nodeList->getField<Vector>("velocity");
-        state->template addField<Vector>(velocity);
+        this->EnrollStateVectors({"velocity", "position"});
+        
         std::cout << "point source mass: "<< pointSourceMass<<"\n";
     }
 
