@@ -42,10 +42,9 @@ public:
 
         grid2d->assignPositions(nodeList);
 
-        if (nodeList->getField<double>("depth") == nullptr)
-            nodeList->insertField<double>("depth");
-
+        this->template EnrollFields<double>({"depth"});
         grid2d->template insertField<double>("depth");
+        
         ImportDepthMap map(depthMap);
         map.populateDepthField(grid2d);
 
