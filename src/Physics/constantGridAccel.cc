@@ -17,12 +17,12 @@ public:
         gravityVector(gravityVector) {
 
         int numZones = nodeList->size();
-        this->EnrollVectors({"acceleration", "velocity", "position"});
+        this->template EnrollFields<Vector>({"acceleration", "velocity", "position"});
 
         for (int i = 0; i < numZones; ++i)
             nodeList->getField<Vector>("acceleration")->setValue(i, gravityVector);
 
-        this->EnrollStateVectors({"velocity"});
+        this->template EnrollStateFields<Vector>({"velocity"});
     }
 
     virtual void PreStepInitialize() override {

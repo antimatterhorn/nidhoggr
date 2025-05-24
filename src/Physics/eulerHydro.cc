@@ -8,14 +8,18 @@ protected:
     Mesh::Grid<dim>* grid;
     std::vector<int> insideIds;
 public:
+    using Vector = Lin::Vector<dim>;
+    using VectorField = Field<Vector>;
+    using ScalarField = Field<double>;
+    
     EulerHydro() {}
 
     EulerHydro(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, Mesh::Grid<dim>* grid) : 
         Hydro<dim>(nodeList,constants,eos), grid(grid){
-        this->EnrollVectors({"position"});
+        this->template EnrollFields<Vector>({"position"});
 
-        this->EnrollStateScalars({"density", "specificInternalEnergy"});
-        this->EnrollStateVectors({"velocity"});
+        this->template EnrollStateFields<double>({"density", "specificInternalEnergy"});
+        this->template EnrollStateFields<Vector>({"velocity"});
 
         for(int i=0;i<grid->size();i++)
             if(!grid->onBoundary(i))

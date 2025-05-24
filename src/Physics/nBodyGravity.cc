@@ -16,8 +16,8 @@ public:
         plummerLength(plummerLength) {
 
         int numNodes = nodeList->size();
-        this->EnrollVectors({"acceleration", "velocity", "position"});
-        this->EnrollStateVectors({"velocity", "position"});
+        this->template EnrollFields<Vector>({"acceleration", "velocity", "position"});
+        this->template EnrollStateFields<Vector>({"velocity", "position"});
     }
 
     ~NBodyGravity() {}

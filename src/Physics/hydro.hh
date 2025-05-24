@@ -12,7 +12,7 @@ public:
 
     Hydro(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos) : 
         Physics<dim>(nodeList,constants), eos(eos) {
-        this->EnrollScalars({"pressure", "density", "specificInternalEnergy", "soundSpeed"});
+        this->template EnrollFields<double>({"pressure", "density", "specificInternalEnergy", "soundSpeed"});
     }
 
     virtual ~Hydro() {}

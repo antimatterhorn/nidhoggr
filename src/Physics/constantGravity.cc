@@ -16,12 +16,12 @@ public:
         gravityVector(gravityVector) {
 
         int numNodes = nodeList->size();
-        this->EnrollVectors({"acceleration", "velocity", "position"});
+        this->template EnrollFields<Vector>({"acceleration", "velocity", "position"});
         
         for (int i=0; i<numNodes; ++i)
             nodeList->getField<Vector>("acceleration")->setValue(i,gravityVector);
 
-        this->EnrollStateVectors({"velocity", "position"});
+        this->template EnrollStateFields<Vector>({"velocity", "position"});
     }
 
     ~ConstantGravity() {}

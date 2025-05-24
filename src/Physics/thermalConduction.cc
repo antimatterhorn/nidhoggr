@@ -18,7 +18,7 @@ public:
 
     virtual void
     VerifyHydroFields(NodeList* nodeList) {
-        this->EnrollScalars({"pressure", "density", "specificInternalEnergy", "soundSpeed"});
+        this->template EnrollFields<double>({"pressure", "density", "specificInternalEnergy", "soundSpeed"});
     }
 
     virtual void PreStepInitialize() override {

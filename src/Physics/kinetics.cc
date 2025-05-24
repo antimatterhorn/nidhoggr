@@ -15,9 +15,9 @@ public:
         Physics<dim>(nodeList,constants) {
 
         int numNodes = nodeList->size();
-        this->EnrollScalars({"mass", "radius"});
-        this->EnrollVectors({"acceleration", "velocity", "position"});
-        this->EnrollStateVectors({"position"});
+        this->template EnrollFields<double>({"mass", "radius"});
+        this->template EnrollFields<Vector>({"acceleration", "velocity", "position"});
+        this->template EnrollStateFields<Vector>({"position"});
 
         // kinetics will operate solely on the spatial derivative. velocities merely change direction
         // i.e. there is no acceleration term for this physics package so no dvdt

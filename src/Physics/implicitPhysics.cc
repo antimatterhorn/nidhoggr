@@ -18,8 +18,8 @@ public:
         Physics<dim>(nodeList,constants) {
 
         int numNodes = nodeList->size();
-        this->EnrollScalars({"y"});
-        this->EnrollStateScalars({"y"});
+        this->template EnrollFields<double>({"y"});
+        this->template EnrollStateFields<double>({"y"});
     }
 
     ~ImplicitPhysics() {}

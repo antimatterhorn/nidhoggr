@@ -87,8 +87,8 @@ public:
 
     void
     VerifyWaveFields() {
-        this->EnrollScalars({"phi", "xi", "maxphi", "phisq", "soundSpeed"});
-        this->EnrollStateScalars({"phi", "xi"});
+        this->template EnrollFields<double>({"phi", "xi", "maxphi", "phisq", "soundSpeed"});
+        this->template EnrollStateFields<double>({"phi", "xi"});
     }
 
     virtual void
