@@ -1,3 +1,4 @@
 PYB11Generator_add_module(EOS)
+PYB11Generator_add_module(Opac)
 configure_file(TillotsonMaterials.py TillotsonMaterials.py COPYONLY)
 configure_file(MieGruneisenMaterials.py MieGruneisenMaterials.py COPYONLY)

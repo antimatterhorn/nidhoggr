@@ -8,17 +8,21 @@ protected:
     Mesh::Grid<dim>* grid;
     EquationOfState* eos;
 public:
+    using Vector = Lin::Vector<dim>;
+    using VectorField = Field<Vector>;
+    using ScalarField = Field<double>;
 
-    Hydro(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, Mesh::Grid<dim>* grid) : 
+    ThermalConduction(NodeList* nodeList, PhysicalConstants& constants, EquationOfState* eos, Mesh::Grid<dim>* grid) : 
         Physics<dim>(nodeList,constants), eos(eos), grid(grid) {
-        VerifyHydroFields(nodeList);
+        VerifyFields(nodeList);
     }
 
-    virtual ~Hydro() {}
+    virtual ~ThermalConduction() {}
 
     virtual void
-    VerifyHydroFields(NodeList* nodeList) {
+    VerifyFields(NodeList* nodeList) {
         this->template EnrollFields<double>({"pressure", "density", "specificInternalEnergy", "soundSpeed"});
+        this->template EnrollStateFields<double>({"specificInternalEnergy"});
     }
 
     virtual void PreStepInitialize() override {
@@ -28,6 +32,30 @@ public:
     virtual void EvaluateDerivatives(const State<dim>* initialState, State<dim>& deriv, const double time, const double dt) override {
         NodeList* nodeList = this->nodeList;
         int numZones = nodeList->size();
+
+        ScalarField* rho    = nodeList->getField<double>("density");
+        ScalarField* u      = initialState->template getField<double>("specificInternalEnergy");
+
+        ScalarField* dudt   = deriv.template getField<Vector>("specificInternalEnergy");
+
+        for (int i = 0 ; i < numZones ; ++i) {
+            if (!grid->onBoundary(i)) {
+                // const int iL = grid->left(i);
+                // const int iR = grid->right(i);
+
+                // const double dxL = grid->dx(iL, i);
+                // const double dxR = grid->dx(i, iR);
+
+                // const double gradT_L = (T[i] - T[iL]) / dxL;
+                // const double gradT_R = (T[iR] - T[i]) / dxR;
+
+                // const double flux_L = -kappa[i] * gradT_L;
+                // const double flux_R = -kappa[i] * gradT_R;
+
+                // const double volume = grid->cellVolume(i);
+                // du_dt[i] = (flux_L - flux_R) / volume;
+            }
+        }
 
         this->lastDt = dt;
     }

@@ -24,6 +24,7 @@ from LinearAlgebra import *
 from Physics import *
 from State import *
 from EOS import *
+from Opac import *
 from PhysicalConstants import *
 from Units import *
 from Integrators import *
