@@ -8,12 +8,9 @@ class TillotsonEOS : public EquationOfState {
 private:
     double rho0, A, B, alpha, beta, a, b, e0, eiv, ecv;
 
-    inline double computeEta(double rho) const { return rho / rho0; }
-    inline double computeMu(double eta) const { return eta - 1.0; }
-
     double computePressure(double rho, double e) const {
-        double eta = computeEta(rho);
-        double mu = computeMu(eta);
+        double eta = rho/rho0;
+        double mu = eta - 1.0;
 
         if (rho >= rho0 || e < eiv) {
             // Compressed or low-energy regime
