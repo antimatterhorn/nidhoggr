@@ -88,11 +88,7 @@ public:
     void
     VerifyWaveFields() {
         NodeList* nodeList = this->nodeList;
-        for (const std::string& name : 
-            {"phi", "xi", "maxphi", "phisq", "soundSpeed"}) {
-            if (nodeList->getField<double>(name) == nullptr)
-                nodeList->insertField<double>(name);
-        }    
+        this->EnrollScalars({"phi", "xi", "maxphi", "phisq", "soundSpeed"});
 
         ScalarField* xi     = nodeList->getField<double>("xi");
         ScalarField* phi    = nodeList->getField<double>("phi");

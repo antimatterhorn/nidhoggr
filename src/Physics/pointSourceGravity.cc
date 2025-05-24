@@ -26,11 +26,7 @@ public:
         
 
         int numNodes = nodeList->size();
-        for (const std::string& name : 
-            {"acceleration", "position", "velocity"}) {
-            if (nodeList->getField<Vector>(name) == nullptr)
-                nodeList->insertField<Vector>(name);
-        }
+        this->EnrollVectors({"acceleration", "velocity", "position"});
 
         State<dim>* state = &this->state;
         VectorField* position = nodeList->getField<Vector>("position");

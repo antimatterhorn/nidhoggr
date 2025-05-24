@@ -17,8 +17,7 @@ public:
         gravityVector(gravityVector) {
 
         int numZones = nodeList->size();
-        if (nodeList->getField<Vector>("acceleration") == nullptr)
-            nodeList->insertField<Vector>("acceleration");
+        this->EnrollVectors({"acceleration", "velocity", "position"});
 
         for (int i = 0; i < numZones; ++i)
             nodeList->getField<Vector>("acceleration")->setValue(i, gravityVector);

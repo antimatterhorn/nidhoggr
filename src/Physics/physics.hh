@@ -34,6 +34,24 @@ public:
     }
 
     virtual void
+    EnrollScalars(std::initializer_list<const std::string> fields) {
+        for (const std::string& name : 
+            fields) {
+            if (nodeList->getField<double>(name) == nullptr)
+                nodeList->insertField<double>(name);
+        }
+    }
+
+    virtual void
+    EnrollVectors(std::initializer_list<const std::string> fields) {
+        for (const std::string& name : 
+            fields) {
+            if (nodeList->getField<Vector>(name) == nullptr)
+                nodeList->insertField<Vector>(name);
+        }
+    }
+
+    virtual void
     ZeroTimeInitialize() {}
 
     virtual void

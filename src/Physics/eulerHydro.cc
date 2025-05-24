@@ -42,8 +42,7 @@ public:
 
     virtual void
     VerifyEulerHydroFields(NodeList* nodeList) {
-        if (nodeList->getField<Lin::Vector<dim>>("position") == nullptr)
-            nodeList->insertField<Lin::Vector<dim>>("position");
+        this->EnrollVectors({"position"});
                 
         Field<Lin::Vector<dim>>* position = nodeList->getField<Lin::Vector<dim>>("position");
         for(int i=0;i<position->size();++i) {

@@ -15,13 +15,8 @@ public:
         Physics<dim>(nodeList,constants) {
 
         int numNodes = nodeList->size();
-        for (const std::string& name : 
-            {"acceleration", "position", "velocity"}) {
-            if (nodeList->getField<Vector>(name) == nullptr)
-                nodeList->insertField<Vector>(name);
-        }
-        if (nodeList->getField<double>("radius") == nullptr)
-            nodeList->insertField<double>("radius");
+        this->EnrollScalars({"mass", "radius"});
+        this->EnrollVectors({"acceleration", "velocity", "position"});
 
         VectorField* position = nodeList->getField<Vector>("position");
         State<dim>* state = &this->state;
